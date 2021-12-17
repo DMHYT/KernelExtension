@@ -1,0 +1,3 @@
+In this folder you can define Minecraft headers for your mod's native module,
+for them not to be in the native module folder itself.
+You can remove this file, if you're gonna create the header in this folder.

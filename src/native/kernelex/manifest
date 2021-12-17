@@ -1,0 +1,11 @@
+{
+    "shared": {
+        "name": "kernelex",
+		"include": []
+    },
+    "depends": [
+    	"innercore",
+    	"nativejs",
+		"gnustl_shared"
+	]
+}

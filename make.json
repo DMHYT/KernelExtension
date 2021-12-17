@@ -1,0 +1,84 @@
+{
+    "global": {
+        "info": {
+            "name": "Kernel Extension",
+            "author": "vsdum",
+            "version": "1.0",
+            "description": "A library mod that adds small, but useful features, not exported by InnerCore itself.",
+            "clientside": false
+        },
+        "api": "CoreEngine"
+    },
+    "make": {
+        "debugAbi": "armeabi-v7a",
+        "abis": [
+            "armeabi-v7a",
+            "x86"
+        ],
+        "linkNative": [
+            "minecraftpe",
+            "innercore",
+            "nativejs"
+        ],
+        "excludeFromRelease": [],
+        "pushTo": "storage/emulated/0/games/horizon/packs/Inner_Core_1/innercore/mods/KernelExtension",
+        "ndkPath": null
+    },
+    "resources": [
+        {
+            "path": "src/assets/res",
+            "type": "resource_directory"
+        },
+        {
+            "path": "src/assets/gui",
+            "type": "gui"
+        },
+        {
+            "path": "src/assets/resource_packs/*",
+            "type": "minecraft_resource_pack"
+        },
+        {
+            "path": "src/assets/behavior_packs/*",
+            "type": "minecraft_behavior_pack"
+        }
+    ],
+    "sources": [
+        {
+            "source": "src/dev",
+            "target": "main.js",
+            "type": "main",
+            "language": "typescript"
+        },
+        {
+            "source": "src/launcher.js",
+            "type": "launcher",
+            "language": "javascript"
+        },
+        {
+            "source": "src/lib/*",
+            "type": "library",
+            "language": "javascript"
+        },
+        {
+            "source": "src/preloader/*",
+            "type": "preloader",
+            "language": "javascript"
+        }
+    ],
+    "compile": [
+        {
+            "source": "src/native/*",
+            "type": "native"
+        },
+        {
+            "source": "src/java/*",
+            "type": "java"
+        }
+    ],
+    "additional": [
+        {
+            "source": "src/assets/root/*",
+            "targetDir": "."
+        }
+    ]
+}

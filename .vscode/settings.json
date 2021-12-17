@@ -1,0 +1,21 @@
+{
+    "java.dependency.packagePresentation": "flat",
+    "java.dependency.syncWithFolderExplorer": true,
+    "files.exclude": {
+        "**/__pycache__/**": true,
+        "**/tsconfig.json": true,
+        ".gitignore": true,
+        ".classpath": true,
+        "toolchain/ndk": true,
+        "toolchain/classpath": true,
+        "toolchain/bin": true,
+        "toolchain/adb": true,
+        "toolchain/build/gcc": true,
+        "toolchain/build/gradle": true,
+        "toolchain/build/lock": true,
+        "**/*.log": true
+    },
+    "java.project.referencedLibraries": [
+        "toolchain/classpath/*.jar"
+    ]
+}
