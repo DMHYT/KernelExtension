@@ -5,6 +5,7 @@
 class ActorUniqueID {
     public:
     long long id;
+    ActorUniqueID(long long);
 };
 
 

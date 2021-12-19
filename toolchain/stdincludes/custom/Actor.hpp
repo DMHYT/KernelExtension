@@ -98,7 +98,7 @@ class Actor {
     virtual bool hasEnteredWater() const;
     virtual bool isImmersedInWater() const;
     virtual bool isInWaterOrRain() const;
-    virtual void isInLava() const;
+    virtual bool isInLava() const;
     virtual bool isUnderLiquid(MaterialType) const;
     virtual bool isOverWater() const;
     virtual void makeStuckInBlock(Vec3 const&);
