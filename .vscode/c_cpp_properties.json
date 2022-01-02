@@ -4,7 +4,6 @@
             "name": "Android",
             "includePath": [
                 "${workspaceFolder}/toolchain/ndk/arm/sysroot/usr/include",
-                "${workspaceFolder}/toolchain/ndk/arm/include/c++/4.9.x/tr1",
                 "${workspaceFolder}/toolchain/ndk/arm/include/c++/4.9.x",
                 "${workspaceFolder}/toolchain/ndk/arm/lib/gcc/arm-linux-androideabi/4.9.x/include",
                 "${workspaceFolder}/toolchain/ndk/arm/include/c++/4.9.x/arm-linux-androideabi",
