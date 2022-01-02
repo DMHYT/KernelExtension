@@ -1,10 +1,10 @@
 #include <mod.h>
+#include "modules/loot.hpp"
 
 
 class KernelExtensionMain : public Module {
 public:
 	KernelExtensionMain(): Module("kernelex") {};
-
 	virtual void initialize() {
 		
     }
@@ -13,4 +13,5 @@ public:
 
 MAIN {
 	Module* main = new KernelExtensionMain();
+	Module* loot = new KEXLootModule(main);
 }
