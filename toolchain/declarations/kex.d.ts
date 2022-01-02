@@ -152,7 +152,7 @@ declare module vsdum {
                 setTempted(tempted: boolean): void;
                 dropTowards(stack: ItemStack, x: number, y: number, z: number): void;
                 isTrading(): boolean;
-                isDownwardFlowingLiquid(): boolean;
+                inDownwardFlowingLiquid(): boolean;
                 getJumpDuration(): number;
                 setJumpDuration(dur: number): void;
                 isScared(): boolean;
@@ -372,6 +372,91 @@ declare module vsdum {
             export class TickingArea extends common.INativeInterface {
                 static class: java.lang.Class<TickingArea>;
                 constructor(pointer: number);
+            }
+        }
+    }
+}
+
+type MinMax = { min: number, max: number }
+
+declare module vsdum {
+    export module kex {
+        export module modules {
+            export class LootModule extends java.lang.Object {
+                static class: java.lang.Class<LootModule>;
+                static createLootTableModifier(tableName: string): LootModifier;
+                static createConditionsList(): LootConditions;
+            }
+            export interface LootModifier {
+                createNewPool(): LootPool;
+                createNewPool(rolls: number): LootPool;
+                createNewPool(minRolls: number, maxRolls: number): LootPool;
+                modifyWithAnotherLootTable(path: string): LootModifier;
+                addItem(id: number, count: number | MinMax, data: number, chance: number, rolls?: number | MinMax): LootModifier;
+                addAddonItem(namespace: string, identifier: string, count: number | MinMax, data: number, chance: number, rolls?: number | MinMax): LootModifier;
+            }
+            export interface LootPool {
+                beginConditions(): LootConditions;
+                beginTiers(): LootTiers;
+                addEntry(): LootEntry;
+                endPool(): LootModifier;
+            }
+            export interface LootConditions {
+                addEntityOnFireCondition(onFire: boolean): LootConditions;
+                addEntityOnGroundCondition(onGround: boolean): LootConditions;
+                addEntityPropertiesCondition(onFire: boolean, onGround: boolean): LootConditions;
+                addMarkVariantCondition(markVariant: number): LootConditions;
+                addKilledByPlayerCondition(): LootConditions;
+                addKilledByPlayerOrPetsCondition(): LootConditions;
+                addRandomChanceCondition(chance: number, maxChance?: number): LootConditions;
+                addRandomChanceWithLootingCondition(chance: number, lootingMultiplier: number): LootConditions;
+                addRandomDifficultyChanceCondition(defaultChance: number, easy?: number, normal?: number, hard?: number, peaceful?: number): LootConditions;
+                addRandomRegionalDifficultyChanceCondition(defaultChance: number, easy?: number, normal?: number, hard?: number, peaceful?: number): LootConditions;
+                endConditions(): LootPool;
+            }
+            export interface LootTiers {
+                setBonusChance(bonusChance: number): LootTiers;
+                setBonusRolls(bonusRolls: number): LootTiers;
+                setInitialRange(initialRange: number): LootTiers;
+                endTiers(): LootPool;
+            }
+            export interface LootEntry {
+                describeItem(numericId: number): LootEntry;
+                describeItem(namespace: string, identifier: string): LootEntry;
+                setCount(count: number): LootEntry;
+                setCount(min: number, max: number): LootEntry;
+                setData(data: number): LootEntry;
+                setData(minData: number, maxData: number): LootEntry;
+                setDamage(damage: number): LootEntry;
+                setDamage(minDamage: number, maxDamage: number): LootEntry;
+                setCustomName(name: string): LootEntry;
+                setWeight(weight: number): LootEntry;
+                setQuality(quality: number): LootEntry;
+                beginFunctions(): LootEntryFunctions;
+                endEntry(): LootPool;
+            }
+            export interface LootEntryFunctions {
+                addEnchantBookForTradingFunction(baseCost: number, baseRandomCost: number, perLevelCost: number, perLevelRandomCost: number): LootEntryFunctions;
+                addEnchantRandomGearFunction(chance?: number): LootEntryFunctions;
+                addEnchantRandomlyFunction(treasure?: boolean): LootEntryFunctions;
+                addEnchantWithLevelsFunction(levels: number, treasure?: boolean): LootEntryFunctions;
+                addEnchantWithLevelsFunction(minLevels: number, maxLevels: number, treasure?: boolean): LootEntryFunctions;
+                addExplorationMapFunction(destination: string): LootEntryFunctions;
+                addFillContainerFunction(lootTable: string): LootEntryFunctions;
+                addFurnaceSmeltFunction(conditions?: LootConditions): LootEntryFunctions;
+                addLootingEnchantFunction(): LootEntryFunctions;
+                addLootingEnchantFunction(minCount: number, maxCount: number): LootEntryFunctions;
+                addRandomAuxValueFunction(): LootEntryFunctions;
+                addRandomAuxValueFunction(minValue: number, maxValue: number): LootEntryFunctions;
+                addRandomDyeFunction(): LootEntryFunctions;
+                addActorIdFunction(actorId: string): LootEntryFunctions;
+                addBannerDetailsFunction(type: number): LootEntryFunctions;
+                addBookContentsFunction(author: string, title: string, pages: string[]): LootEntryFunctions;
+                addDataFromColorIndexFunction(): LootEntryFunctions;
+                addLoreFunction(lore: string[]): LootEntryFunctions;
+                addSpecificEnchantsFunction(enchants: java.util.Map<string, number>): LootEntryFunctions;
+                addTraderMaterialTypeFunction(): LootEntryFunctions;
+                endFunctions(): LootEntry;
             }
         }
     }
