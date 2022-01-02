@@ -139,7 +139,7 @@ public class Actor implements INativeInterface {
     protected static native void nativeSetTempted(long ptr, boolean tempted);
     protected static native void nativeDropTowards(long ptr, long stackptr, float x, float y, float z);
     protected static native boolean nativeIsTrading(long ptr);
-    protected static native boolean nativeIsDownwardFlowingLiquid(long ptr);
+    protected static native boolean nativeInDownwardFlowingLiquid(long ptr);
     protected static native int nativeGetJumpDuration(long ptr);
     protected static native void nativeSetJumpDuration(long ptr, int dur);
     protected static native boolean nativeIsScared(long ptr);
@@ -981,9 +981,9 @@ public class Actor implements INativeInterface {
         return nativeIsTrading(this.pointer);
     }
 
-    public boolean isDownwardFlowingLiquid()
+    public boolean inDownwardFlowingLiquid()
     {
-        return nativeIsDownwardFlowingLiquid(this.pointer);
+        return nativeInDownwardFlowingLiquid(this.pointer);
     }
 
     public int getJumpDuration()
