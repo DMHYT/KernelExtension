@@ -256,7 +256,7 @@ class Actor {
     void setEnchanted(bool);
     int getMarkVariant() const;
     bool hasDimension() const;
-    bool wasLastHitByPlayer() const;
+    bool wasLastHitByPlayer();
     void* _getBlockWhenClimbing() const;
     bool hasSaddle() const;
     bool isDelayedAttacking() const;
@@ -277,7 +277,7 @@ class Actor {
     bool hasTickingArea() const;
     bool getIsOnScreen() const;
     bool isOverScaffolding() const;
-    bool shouldOrphan(BlockSource&) const;
+    bool shouldOrphan(BlockSource&);
     void setTradingPlayer(Player*);
     bool isPredictedMovementEnabled() const;
     //addDefinitionGroup
@@ -341,7 +341,7 @@ class Actor {
     bool isOrphan() const;
     void dropTowards(ItemStack const&, Vec3);
     bool isTrading() const;
-    bool isDownwardFlowingLiquid() const;
+    bool inDownwardFlowingLiquid() const;
     int getJumpDuration() const;
     bool isScared() const;
     Random* getRandom() const;
@@ -362,7 +362,7 @@ class Actor {
     Player* getTradingPlayer() const;
     bool isDoorBreaker() const;
     bool isAutonomous() const;
-    bool isWASDControlled() const;
+    bool isWASDControlled();
     void setScared(bool);
     bool hasAnyEffects() const;
     void setAABB(AABB const&);

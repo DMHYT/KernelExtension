@@ -582,9 +582,9 @@ JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsTrading
 (JNIEnv*, jclass, jlong ptr) {
     return ((Actor*) ptr)->isTrading();
 }
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsDownwardFlowingLiquid
+JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeInDownwardFlowingLiquid
 (JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->isDownwardFlowingLiquid();
+    return ((Actor*) ptr)->inDownwardFlowingLiquid();
 }
 JNIEXPORT jint JNICALL Java_vsdum_kex_natives_Actor_nativeGetJumpDuration
 (JNIEnv*, jclass, jlong ptr) {
