@@ -378,6 +378,123 @@ declare module vsdum {
 }
 
 type MinMax = { min: number, max: number }
+type FeatureTypes = "buriedtreasure" | "endcity" | "fortress" | "mansion" | "mineshaft" | "monument" | "pillageroutpost" | "ruins" | "shipwreck" | "stronghold" | "temple" | "village";
+type EnchantTypes = Lowercase<keyof typeof EEnchantment>;
+
+declare namespace LootTableTypes {
+    export type LootPoolEntryFunction = {
+        function: "enchant_book_for_trading",
+        base_cost: number,
+        base_random_cost: number,
+        per_level_cost: number,
+        per_level_random_cost: number;
+    } | {
+        function: "enchant_random_gear",
+        chance?: number;
+    } | {
+        function: "enchant_randomly",
+        treasure?: boolean;
+    } | {
+        function: "enchant_with_levels",
+        levels?: number | MinMax,
+        treasure?: boolean;
+    } | {
+        function: "exploration_map",
+        destination?: FeatureTypes;
+    } | {
+        function: "fill_container",
+        loot_table?: string;
+    } | {
+        function: "furnace_smelt",
+        conditions?: LootCondition[];
+    } | {
+        function: "looting_enchant",
+        count?: MinMax;
+    } | {
+        function: "random_aux_value",
+        values?: MinMax;
+    } | {
+        function: "random_block_state",
+        block_state?: string,
+        values?: MinMax;
+    } | { function: "random_dye" | "set_data_from_color_index" | "trader_material_type" } | {
+        function: "set_actor_id",
+        id?: string;
+    } | {
+        function: "set_banner_details",
+        type?: number;
+    } | {
+        function: "set_book_contents",
+        author: string,
+        title: string,
+        pages: string[];
+    } | {
+        function: "set_count",
+        count?: number | MinMax;
+    } | {
+        function: "set_damage",
+        damage?: number | MinMax;
+    } | {
+        function: "set_data",
+        data?: number | MinMax;
+    } | {
+        function: "set_lore",
+        lore?: string[];
+    } | {
+        function: "set_name",
+        name?: string;
+    } | {
+        function: "specific_enchants",
+        enchants?: { id?: EnchantTypes, level?: number }[];
+    }
+    export type LootPoolEntry = { type: "empty" } | { type: "loot_table", pools?: LootPool[] } | {
+        type: "item",
+        name?: string,
+        count?: number,
+        quality?: number,
+        weight?: number,
+        functions?: LootPoolEntryFunction[];
+    }
+    export type LootCondition = {
+        condition: "entity_properties",
+        entity?: "this",
+        properties?: {
+            on_fire?: boolean,
+            on_ground?: boolean;
+        };
+    } | {
+        condition: "has_mark_variant",
+        value?: number;
+    } | { condition: "killed_by_player" | "killed_by_player_or_pets" } | {
+        condition: "random_chance",
+        chance?: number,
+        max_chance?: number;
+    } | {
+        condition: "random_chance_with_looting",
+        chance?: number,
+        looting_multiplier?: number;
+    } | {
+        condition: "random_difficulty_chance" | "random_regional_difficulty_chance",
+        default_chance?: number,
+        easy?: number,
+        normal?: number,
+        hard?: number,
+        peaceful?: number;
+    }
+    export interface LootTiers {
+        bonus_chance?: number,
+        bonus_rolls?: number,
+        initial_range?: number;
+    }
+    export interface LootPool {
+        type?: "item",
+        rolls?: number | MinMax,
+        tiers?: LootTiers,
+        conditions?: LootCondition[],
+        entries?: LootPoolEntry[];
+    }
+    export interface JsonFormat { pools?: LootPool[] }
+}
 
 declare module vsdum {
     export module kex {
@@ -392,6 +509,7 @@ declare module vsdum {
                 createNewPool(rolls: number): LootPool;
                 createNewPool(minRolls: number, maxRolls: number): LootPool;
                 modifyWithAnotherLootTable(path: string): LootModifier;
+                modifyWithJSON(json: LootTableTypes.JsonFormat): LootModifier;
                 addItem(id: number, count: number | MinMax, data: number, chance: number, rolls?: number | MinMax): LootModifier;
                 addAddonItem(namespace: string, identifier: string, count: number | MinMax, data: number, chance: number, rolls?: number | MinMax): LootModifier;
             }
@@ -441,7 +559,7 @@ declare module vsdum {
                 addEnchantRandomlyFunction(treasure?: boolean): LootEntryFunctions;
                 addEnchantWithLevelsFunction(levels: number, treasure?: boolean): LootEntryFunctions;
                 addEnchantWithLevelsFunction(minLevels: number, maxLevels: number, treasure?: boolean): LootEntryFunctions;
-                addExplorationMapFunction(destination: string): LootEntryFunctions;
+                addExplorationMapFunction(destination: FeatureTypes): LootEntryFunctions;
                 addFillContainerFunction(lootTable: string): LootEntryFunctions;
                 addFurnaceSmeltFunction(conditions?: LootConditions): LootEntryFunctions;
                 addLootingEnchantFunction(): LootEntryFunctions;
@@ -461,3 +579,4 @@ declare module vsdum {
         }
     }
 }
+declare function WRAP_JAVA(clazz: "vsdum.kex.modules.LootModule"): typeof vsdum.kex.modules.LootModule;

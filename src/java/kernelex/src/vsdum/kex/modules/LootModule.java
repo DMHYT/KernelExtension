@@ -15,7 +15,9 @@ import org.json.JSONObject;
 import org.mozilla.javascript.ScriptableObject;
 
 import android.support.annotation.Nullable;
+import android.util.Pair;
 import vsdum.kex.common.AddonUtils;
+import vsdum.kex.common.CommonTypes;
 import vsdum.kex.common.IJSONSerializable;
 import vsdum.kex.common.JsonUtils;
 
@@ -37,7 +39,7 @@ public class LootModule {
         }
     }
 
-    protected static class LootModifier implements IJSONSerializable {
+    public static class LootModifier implements IJSONSerializable {
 
         private final List<LootPool> pools = new ArrayList<>();
 
@@ -87,10 +89,14 @@ public class LootModule {
                                 LootPool pool = new LootPool(this);
                                 pool.obj.remove("entries");
                                 Iterator<String> poolKeys = poolJson.keys();
-                                while(poolKeys.hasNext())
+                                if(poolKeys.hasNext())
                                 {
-                                    String poolKey = poolKeys.next();
-                                    pool.obj.put(poolKey, poolJson.get(poolKey));
+                                    while(poolKeys.hasNext())
+                                    {
+                                        String poolKey = poolKeys.next();
+                                        pool.obj.put(poolKey, poolJson.get(poolKey));
+                                    }
+                                    this.pools.add(pool);
                                 }
                             }
                         }
@@ -98,6 +104,31 @@ public class LootModule {
                 }
             } catch(Exception ex) {}
             return this;            
+        }
+
+        public LootModifier modifyWithJSON(ScriptableObject scr)
+        {
+            JSONObject scrJson = CommonTypes.scriptableToJson(scr);
+            try {
+                JSONArray poolsArray = scrJson.getJSONArray("pools");
+                for(int i = 0; i < poolsArray.length(); ++i)
+                {
+                    JSONObject poolJson = poolsArray.getJSONObject(i);
+                    LootPool pool = new LootPool(this);
+                    pool.obj.remove("entries");
+                    Iterator<String> poolKeys = poolJson.keys();
+                    if(poolKeys.hasNext())
+                    {
+                        while(poolKeys.hasNext())
+                        {
+                            String poolKey = poolKeys.next();
+                            pool.obj.put(poolKey, poolJson.get(poolKey));
+                        }
+                        this.pools.add(pool);
+                    }
+                }
+            } catch(JSONException ex) {}
+            return this;
         }
 
         public LootModifier addItem(int id, int count, int data, float chance)
@@ -124,15 +155,8 @@ public class LootModule {
 
         public LootModifier addItem(int id, int count, int data, float chance, ScriptableObject rolls)
         {
-            if(!rolls.has("min", rolls) || !rolls.has("max", rolls))
-                throw new IllegalArgumentException("You have to specify \'min\' and \'max\' rolls of the item entry in the loot table, if you pass object in the fifth parameter. If you don\'t need rolls count randomization, pass integer instead of object in the fifth parameter.");
-            Object minRollsO = rolls.get("min", rolls);
-            Object maxRollsO = rolls.get("max", rolls);
-            if(!(minRollsO instanceof Integer) || !(maxRollsO instanceof Integer))
-                throw new IllegalArgumentException("\'min\' and \'max\' properties in the rolls count range object must be of integer type!");
-            int minRolls = ((Integer) minRollsO).intValue();
-            int maxRolls = ((Integer) maxRollsO).intValue();
-            LootPool pool = this.createNewPool(minRolls, maxRolls)
+            Pair<Integer, Integer> drolls = CommonTypes.deserializeMinMaxScriptable(rolls);
+            LootPool pool = this.createNewPool(drolls.first.intValue(), drolls.second.intValue())
                 .addEntry()
                     .describeItem(id)
                     .setCount(count)
@@ -154,18 +178,11 @@ public class LootModule {
 
         public LootModifier addItem(int id, ScriptableObject count, int data, float chance, int rolls)
         {
-            if(!count.has("min", count) || !count.has("max", count))
-                throw new IllegalArgumentException("You have to specify \'min\' and \'max\' count of the item in the loot table, if you pass object in the second parameter. If you don\'t need item count randomization, pass integer instead of object in the second parameter.");
-            Object minCountO = count.get("min", count);
-            Object maxCountO = count.get("max", count);
-            if(!(minCountO instanceof Integer) || !(maxCountO instanceof Integer))
-                throw new IllegalArgumentException("\'min\' and \'max\' properties in the item count range object must be of integer type!");
-            int minCount = ((Integer) minCountO).intValue();
-            int maxCount = ((Integer) maxCountO).intValue();
+            Pair<Integer, Integer> dcount = CommonTypes.deserializeMinMaxScriptable(count);
             LootPool pool = this.createNewPool(rolls)
                 .addEntry()
                     .describeItem(id)
-                    .setCount(minCount, maxCount)
+                    .setCount(dcount.first.intValue(), dcount.second.intValue())
                     .setData(data)
                     .endEntry();
             if(chance < 1.0f)
@@ -179,26 +196,12 @@ public class LootModule {
 
         public LootModifier addItem(int id, ScriptableObject count, int data, float chance, ScriptableObject rolls)
         {
-            if(!count.has("min", count) || !count.has("max", count))
-                throw new IllegalArgumentException("You have to specify \'min\' and \'max\' count of the item in the loot table, if you pass object in the second parameter. If you don\'t need item count randomization, pass integer instead of object in the second parameter.");
-            Object minCountO = count.get("min", count);
-            Object maxCountO = count.get("max", count);
-            if(!(minCountO instanceof Integer) || !(maxCountO instanceof Integer))
-                throw new IllegalArgumentException("\'min\' and \'max\' properties in the item count range object must be of integer type!");
-            int minCount = ((Integer) minCountO).intValue();
-            int maxCount = ((Integer) maxCountO).intValue();
-            if(!rolls.has("min", rolls) || !rolls.has("max", rolls))
-                throw new IllegalArgumentException("You have to specify \'min\' and \'max\' rolls of the item entry in the loot table, if you pass object in the fifth parameter. If you don\'t need rolls count randomization, pass integer instead of object in the fifth parameter.");
-            Object minRollsO = rolls.get("min", rolls);
-            Object maxRollsO = rolls.get("max", rolls);
-            if(!(minRollsO instanceof Integer) || !(maxRollsO instanceof Integer))
-                throw new IllegalArgumentException("\'min\' and \'max\' properties in the rolls count range object must be of integer type!");
-            int minRolls = ((Integer) minRollsO).intValue();
-            int maxRolls = ((Integer) maxRollsO).intValue();
-            LootPool pool = this.createNewPool(minRolls, maxRolls)
+            Pair<Integer, Integer> dcount = CommonTypes.deserializeMinMaxScriptable(count);
+            Pair<Integer, Integer> drolls = CommonTypes.deserializeMinMaxScriptable(rolls);
+            LootPool pool = this.createNewPool(drolls.first.intValue(), drolls.second.intValue())
                 .addEntry()
                     .describeItem(id)
-                    .setCount(minCount, maxCount)
+                    .setCount(dcount.first.intValue(), dcount.second.intValue())
                     .setData(data)
                     .endEntry();
             if(chance < 1.0f)
@@ -234,15 +237,8 @@ public class LootModule {
 
         public LootModifier addAddonItem(String namespace, String identifier, int count, int data, float chance, ScriptableObject rolls)
         {
-            if(!rolls.has("min", rolls) || !rolls.has("max", rolls))
-                throw new IllegalArgumentException("You have to specify \'min\' and \'max\' rolls of the item entry in the loot table, if you pass object in the sixth parameter. If you don\'t need rolls count randomization, pass integer instead of object in the sixth parameter.");
-            Object minRollsO = rolls.get("min", rolls);
-            Object maxRollsO = rolls.get("max", rolls);
-            if(!(minRollsO instanceof Integer) || !(maxRollsO instanceof Integer))
-                throw new IllegalArgumentException("\'min\' and \'max\' properties in the rolls count range object must be of integer type!");
-            int minRolls = ((Integer) minRollsO).intValue();
-            int maxRolls = ((Integer) maxRollsO).intValue();
-            LootPool pool = this.createNewPool(minRolls, maxRolls)
+            Pair<Integer, Integer> drolls = CommonTypes.deserializeMinMaxScriptable(rolls);
+            LootPool pool = this.createNewPool(drolls.first.intValue(), drolls.second.intValue())
                 .addEntry()
                     .describeItem(namespace, identifier)
                     .setCount(count)
@@ -264,18 +260,11 @@ public class LootModule {
 
         public LootModifier addAddonItem(String namespace, String identifier, ScriptableObject count, int data, float chance, int rolls)
         {
-            if(!count.has("min", count) || !count.has("max", count))
-                throw new IllegalArgumentException("You have to specify \'min\' and \'max\' count of the item in the loot table, if you pass object in the third parameter. If you don\'t need item count randomization, pass integer instead of object in the third parameter.");
-            Object minCountO = count.get("min", count);
-            Object maxCountO = count.get("max", count);
-            if(!(minCountO instanceof Integer) || !(maxCountO instanceof Integer))
-                throw new IllegalArgumentException("\'min\' and \'max\' properties in the item count range object must be of integer type!");
-            int minCount = ((Integer) minCountO).intValue();
-            int maxCount = ((Integer) maxCountO).intValue();
+            Pair<Integer, Integer> dcount = CommonTypes.deserializeMinMaxScriptable(count);
             LootPool pool = this.createNewPool(rolls)
                 .addEntry()
                     .describeItem(namespace, identifier)
-                    .setCount(minCount, maxCount)
+                    .setCount(dcount.first.intValue(), dcount.second.intValue())
                     .setData(data)
                     .endEntry();
             if(chance < 1.0f)
@@ -289,26 +278,12 @@ public class LootModule {
 
         public LootModifier addAddonItem(String namespace, String identifier, ScriptableObject count, int data, float chance, ScriptableObject rolls)
         {
-            if(!count.has("min", count) || !count.has("max", count))
-                throw new IllegalArgumentException("You have to specify \'min\' and \'max\' count of the item in the loot table, if you pass object in the third parameter. If you don\'t need item count randomization, pass integer instead of object in the third parameter.");
-            Object minCountO = count.get("min", count);
-            Object maxCountO = count.get("max", count);
-            if(!(minCountO instanceof Integer) || !(maxCountO instanceof Integer))
-                throw new IllegalArgumentException("\'min\' and \'max\' properties in the item count range object must be of integer type!");
-            int minCount = ((Integer) minCountO).intValue();
-            int maxCount = ((Integer) maxCountO).intValue();
-            if(!rolls.has("min", rolls) || !rolls.has("max", rolls))
-                throw new IllegalArgumentException("You have to specify \'min\' and \'max\' rolls of the item entry in the loot table, if you pass object in the sixth parameter. If you don\'t need rolls count randomization, pass integer instead of object in the sixth parameter.");
-            Object minRollsO = rolls.get("min", rolls);
-            Object maxRollsO = rolls.get("max", rolls);
-            if(!(minRollsO instanceof Integer) || !(maxRollsO instanceof Integer))
-                throw new IllegalArgumentException("\'min\' and \'max\' properties in the rolls count range object must be of integer type!");
-            int minRolls = ((Integer) minRollsO).intValue();
-            int maxRolls = ((Integer) maxRollsO).intValue();
-            LootPool pool = this.createNewPool(minRolls, maxRolls)
+            Pair<Integer, Integer> dcount = CommonTypes.deserializeMinMaxScriptable(count);
+            Pair<Integer, Integer> drolls = CommonTypes.deserializeMinMaxScriptable(rolls);
+            LootPool pool = this.createNewPool(drolls.first.intValue(), drolls.second.intValue())
                 .addEntry()
                     .describeItem(namespace, identifier)
-                    .setCount(minCount, maxCount)
+                    .setCount(dcount.first.intValue(), dcount.second.intValue())
                     .setData(data)
                     .endEntry();
             if(chance < 1.0f)
@@ -323,12 +298,7 @@ public class LootModule {
         public void serialize(JSONObject obj)
         {
             try {
-                JSONArray poolsArray = obj.optJSONArray("pools");
-                if(poolsArray == null)
-                {
-                    poolsArray = new JSONArray();
-                    obj.put("pools", poolsArray);
-                }
+                JSONArray poolsArray = JsonUtils.getOrCreateArray(obj, "pools");
                 Iterator<LootPool> iter = this.pools.iterator();
                 while(iter.hasNext())
                 {
@@ -338,7 +308,7 @@ public class LootModule {
             } catch(JSONException ex) {}
         }
 
-        protected static class LootPool {
+        public static class LootPool {
 
             private final JSONObject obj = new JSONObject();
             private final LootModifier modifier;
@@ -359,7 +329,7 @@ public class LootModule {
                 return new Conditions(this);
             }
 
-            protected static class Conditions implements IJSONSerializable {
+            public static class Conditions implements IJSONSerializable {
 
                 @Nullable private LootPool pool = null;
                 private final JSONArray arr = new JSONArray();
@@ -559,7 +529,7 @@ public class LootModule {
                 return new Tiers(this);
             }
 
-            protected static class Tiers implements IJSONSerializable {
+            public static class Tiers implements IJSONSerializable {
                 
                 @Nullable private LootPool pool = null;
                 private final JSONObject obj = new JSONObject();
@@ -621,7 +591,7 @@ public class LootModule {
                 return new Entry(this);
             }
 
-            protected static class Entry {
+            public static class Entry {
                 
                 private final LootPool pool;
                 private final JSONObject obj = new JSONObject();
@@ -673,49 +643,61 @@ public class LootModule {
 
                 public Entry setData(int data)
                 {
-                    try {
-                        JsonUtils.getOrCreateArray(this.obj, "functions")
-                            .put(new JSONObject()
-                                .put("function", "set_data")
-                                .put("data", data));
-                    } catch(JSONException ex) {}
+                    if(data != 0)
+                    {
+                        try {
+                            JsonUtils.getOrCreateArray(this.obj, "functions")
+                                .put(new JSONObject()
+                                    .put("function", "set_data")
+                                    .put("data", data));
+                        } catch(JSONException ex) {}
+                    }
                     return this;
                 }
 
                 public Entry setData(int min, int max)
                 {
-                    try {
-                        JsonUtils.getOrCreateArray(this.obj, "functions")
-                            .put(new JSONObject()
-                                .put("function", "set_data")
-                                .put("data", new JSONObject()
-                                    .put("min", min)
-                                    .put("max", max)));
-                    } catch(JSONException ex) {}
+                    if(!(min == max && min == 0))
+                    {
+                        try {
+                            JsonUtils.getOrCreateArray(this.obj, "functions")
+                                .put(new JSONObject()
+                                    .put("function", "set_data")
+                                    .put("data", new JSONObject()
+                                        .put("min", min)
+                                        .put("max", max)));
+                        } catch(JSONException ex) {}
+                    }
                     return this;
                 }
 
                 public Entry setDamage(int damage)
                 {
-                    try {
-                        JsonUtils.getOrCreateArray(this.obj, "functions")
-                            .put(new JSONObject()
-                                .put("function", "set_damage")
-                                .put("damage", damage));
-                    } catch(JSONException ex) {}
+                    if(damage != 0)
+                    {
+                        try {
+                            JsonUtils.getOrCreateArray(this.obj, "functions")
+                                .put(new JSONObject()
+                                    .put("function", "set_damage")
+                                    .put("damage", damage));
+                        } catch(JSONException ex) {}
+                    }
                     return this;
                 }
 
                 public Entry setDamage(int min, int max)
                 {
-                    try {
-                        JsonUtils.getOrCreateArray(this.obj, "functions")
-                            .put(new JSONObject()
-                                .put("function", "set_damage")
-                                .put("damage", new JSONObject()
-                                    .put("min", min)
-                                    .put("max", max)));
-                    } catch(JSONException ex) {}
+                    if(!(min == max && min == 0))
+                    {
+                        try {
+                            JsonUtils.getOrCreateArray(this.obj, "functions")
+                                .put(new JSONObject()
+                                    .put("function", "set_damage")
+                                    .put("damage", new JSONObject()
+                                        .put("min", min)
+                                        .put("max", max)));
+                        } catch(JSONException ex) {}
+                    }
                     return this;
                 }
 
@@ -754,7 +736,7 @@ public class LootModule {
                     return new Functions(this);
                 }
 
-                protected static class Functions {
+                public static class Functions {
 
                     private final Entry entry;
 

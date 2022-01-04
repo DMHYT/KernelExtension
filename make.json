@@ -5,7 +5,8 @@
             "author": "vsdum",
             "version": "1.0",
             "description": "A library mod that adds small, but useful features, not exported by InnerCore itself.",
-            "clientside": false
+            "clientside": false,
+            "icon": "src/icon.png"
         },
         "api": "CoreEngine"
     },

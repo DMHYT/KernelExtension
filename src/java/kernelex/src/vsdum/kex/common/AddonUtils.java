@@ -27,10 +27,15 @@ public final class AddonUtils {
                 while(idsIter.hasNext())
                 {
                     String stringId = idsIter.next();
-                    Integer numericId = Integer.valueOf(obj.getInt(stringId));
-                    if(!vanillaNumericToStringIdMap.containsKey(numericId))
+                    int numericId = obj.getInt(stringId);
+                    if(key.equals("blocks") && numericId > 255)
                     {
-                        vanillaNumericToStringIdMap.put(numericId, stringId);
+                        numericId = 255 - numericId;
+                    }
+                    Integer numericIdO = Integer.valueOf(numericId);
+                    if(!vanillaNumericToStringIdMap.containsKey(numericIdO))
+                    {
+                        vanillaNumericToStringIdMap.put(numericIdO, stringId);
                     }
                 }
             }
@@ -54,7 +59,7 @@ public final class AddonUtils {
     {
         if(IDRegistry.isVanilla(id))
         {
-            return vanillaNumericToStringIdMap.get(Integer.valueOf(id));
+            return "minecraft:" + vanillaNumericToStringIdMap.get(Integer.valueOf(id));
         } else return "minecraft:" + NativeAPI.convertNameId(IDRegistry.getNameByID(id));
     }
 
