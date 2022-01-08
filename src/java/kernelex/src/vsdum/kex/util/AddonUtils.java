@@ -1,4 +1,4 @@
-package vsdum.kex.common;
+package vsdum.kex.util;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -9,6 +9,8 @@ import com.zhekasmirnov.innercore.api.mod.adaptedscript.AdaptedScriptAPI.IDRegis
 import com.zhekasmirnov.innercore.utils.FileTools;
 
 import org.json.JSONObject;
+
+import android.support.annotation.Nullable;
 
 public final class AddonUtils {
 
@@ -66,6 +68,17 @@ public final class AddonUtils {
     public static String getAddonItemIdentifier(String namespace, String identifier)
     {
         return namespace + ":" + identifier;
+    }
+
+    @Nullable public static String getBlockNameId(int id)
+    {
+        if(IDRegistry.isVanilla(id))
+        {
+            if(id > 255) id = 255 - id;
+            Integer idO = Integer.valueOf(id);
+            if(!vanillaNumericToStringIdMap.containsKey(idO)) return null;
+            return vanillaNumericToStringIdMap.get(idO);
+        } else return NativeAPI.convertNameId(IDRegistry.getNameByID(id));
     }
 
 }

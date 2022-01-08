@@ -1,4 +1,4 @@
-package vsdum.kex.common;
+package vsdum.kex.util;
 
 import org.json.JSONArray;
 import org.json.JSONException;
