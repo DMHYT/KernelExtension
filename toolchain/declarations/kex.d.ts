@@ -3,6 +3,42 @@
 
 declare module vsdum {
     export module kex {
+        export module util {
+            export class ItemFabricHelper extends java.lang.Object {
+                static class: java.lang.Class<ItemFabricHelper>;
+                static killItem(id: number): Nullable<ItemFabricInterface>;
+            }
+            interface ItemFabricInterface {
+                readonly nameId: string;
+                readonly nameToDisplay: string;
+                readonly iconName: string;
+                readonly iconIndex: number;
+                readonly durability: number;
+                readonly stack: number;
+                readonly animationId: number;
+                readonly maxUseDuration: number;
+                readonly creativeCategory: number;
+                readonly enchantType: number;
+                readonly enchantValue: number;
+                readonly repairItemIds: native.Array<number>;
+                readonly isGlint: boolean;
+                readonly isHandEquipped: boolean;
+                readonly isLiquidClip: boolean;
+                readonly isIconControlled: boolean;
+                readonly isIconAnimated: boolean;
+                readonly isArmorDamageable: boolean;
+                readonly isStackedByData: boolean;
+                readonly isAllowedInOffhand: boolean;
+                readonly initProperties: string;
+                setFactoryProperties(id: number): void;
+            }
+        }
+    }
+}
+declare function WRAP_JAVA(clazz: "vsdum.kex.util.ItemFabricHelper"): typeof vsdum.kex.util.ItemFabricHelper;
+
+declare module vsdum {
+    export module kex {
         export module common {
             export class INativeInterface extends java.lang.Object {
                 static class: java.lang.Class<INativeInterface>;
@@ -580,3 +616,57 @@ declare module vsdum {
     }
 }
 declare function WRAP_JAVA(clazz: "vsdum.kex.modules.LootModule"): typeof vsdum.kex.modules.LootModule;
+
+declare module vsdum {
+    export module kex {
+        export module modules {
+            interface BlockData {
+                readonly materialName: Nullable<string>;
+                readonly destroyLevel: number;
+                readonly isNative: boolean;
+            }
+            export class ToolsModule extends java.lang.Object {
+                static class: java.lang.Class<ToolsModule>;
+                static getBlockDestroyTime(blockID: number): number;
+                static getToolLevel(itemID: number): number;
+                static getToolLevelViaBlock(itemID: number, blockID: number): number;
+                static getTierByName(tierName: string): Nullable<ToolsModule.ItemTier>;
+                static registerSword(id: number, nameId: string, name: string, textureName: string, textureMeta: number, tier: ToolsModule.ItemTier, isTech?: boolean): void;
+                static registerAxe(id: number, nameId: string, name: string, textureName: string, textureMeta: number, tier: ToolsModule.ItemTier, isTech?: boolean): void;
+                static registerPickaxe(id: number, nameId: string, name: string, textureName: string, textureMeta: number, tier: ToolsModule.ItemTier, isTech?: boolean): void;
+                static registerShovel(id: number, nameId: string, name: string, textureName: string, textureMeta: number, tier: ToolsModule.ItemTier, isTech?: boolean): void;
+                static registerHoe(id: number, nameId: string, name: string, textureName: string, textureMeta: number, tier: ToolsModule.ItemTier, isTech?: boolean): void;
+                static addBlockMaterial(name: string, breakingMultiplier: number): void;
+                static getBlockMaterialBreakingMultiplier(name: string): number;
+                static getBlockData(id: number): BlockData;
+                static getBlockMaterialName(id: number): Nullable<string>;
+                static getBlockDestroyLevel(id: number): number;
+                static getBlockIsNative(id: number): boolean;
+                static setBlockData(id: number, materialName: string, destroyLevel: number, isNative: boolean): void;
+                static setBlockMaterialName(id: number, materialName: string): void;
+                static setBlockDestroyLevel(id: number, destroyLevel: number): void;
+                static setBlockIsNative(id: number, isNative: boolean): void;
+                static getDestroyTimeViaTool(block: Tile, x: number, y: number, z: number, side: number, item: ItemInstance): number;
+                static addCalcDestroyTimeCallback(id: number, func: ToolAPI.ToolParams["calcDestroyTime"]): void;
+                static addOnDestroyCallback(id: number, func: ToolAPI.ToolParams["onDestroy"]): void;
+                static addOnAttackCallback(id: number, func: ToolAPI.ToolParams["onAttack"]): void;
+                static addOnBrokeCallback(id: number, func: ToolAPI.ToolParams["onBroke"]): void;
+                static addModifyEnchantCallback(id: number, func: ToolAPI.ToolParams["modifyEnchant"]): void;
+                static addOnMineBlockCallback(id: number, func: ToolAPI.ToolParams["onMineBlock"]): void;
+                static registerCustomTool(id: number, nameId: string, name: string, textureName: string, textureMeta: number, tier: ToolsModule.ItemTier, isTech: boolean, isWeapon: boolean, blockMaterials: Nullable<string[]>, brokenId: number, baseAttackDamage: number): void;
+            }
+            export module ToolsModule {
+                export class ItemTier extends java.lang.Object {
+                    static class: java.lang.Class<ItemTier>;
+                    constructor(name: string, level: number, uses: number, speed: number, attackDamageBonus: number, enchantmentValue: number);
+                    getLevel(): number;
+                    getUses(): number;
+                    getSpeed(): number;
+                    getAttackDamageBonus(): number;
+                    getEnchantmentValue(): number;
+                }
+            }
+        }
+    }
+}
+declare function WRAP_JAVA(clazz: "vsdum.kex.modules.ToolsModule"): typeof vsdum.kex.modules.ToolsModule;
