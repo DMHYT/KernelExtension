@@ -16,10 +16,10 @@ import org.mozilla.javascript.ScriptableObject;
 
 import android.support.annotation.Nullable;
 import android.util.Pair;
-import vsdum.kex.common.AddonUtils;
-import vsdum.kex.common.CommonTypes;
 import vsdum.kex.common.IJSONSerializable;
-import vsdum.kex.common.JsonUtils;
+import vsdum.kex.util.AddonUtils;
+import vsdum.kex.util.CommonTypes;
+import vsdum.kex.util.JsonUtils;
 
 public class LootModule {
     
