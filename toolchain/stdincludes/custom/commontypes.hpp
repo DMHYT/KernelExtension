@@ -3,6 +3,7 @@
 
 class BlockPos {
     public:
+    int x, y, z;
     BlockPos(float, float, float);
     BlockPos(double, double, double);
     BlockPos(int, int, int);

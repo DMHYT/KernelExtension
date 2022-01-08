@@ -17,7 +17,9 @@ enum AttributeBuffType: int {};
 enum ArmorSlot: int {};
 enum ArmorTextureType: int {};
 class Attribute;
-class Block;
+#ifndef KEX_BLOCK_HPP
+    class Block;
+#endif
 #ifndef KEX_BLOCKPOS_HPP
     class BlockPos;
 #endif
@@ -31,7 +33,9 @@ class ItemActor;
 class ItemStack;
 class ItemStackBase;
 enum ItemUseMethod: int {};
-class Level;
+#ifndef KEX_LEVEL_HPP
+    class Level;
+#endif
 class LootTable;
 enum MaterialType: int {};
 #ifndef KEX_MOBEFFECT_HPP
@@ -42,7 +46,9 @@ enum MaterialType: int {};
 #endif
 class MolangVariableMap;
 enum PaletteColor: int {};
-class Player;
+#ifndef KEX_PLAYER_HPP
+    class Player;
+#endif
 class Random;
 class RenderParams;
 class TickingArea;
