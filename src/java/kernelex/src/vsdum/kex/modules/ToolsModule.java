@@ -18,6 +18,7 @@ import vsdum.kex.util.CommonTypes;
 
 public class ToolsModule {
 
+    public static native void defineCallbackClass();
     protected static native long[] nativeGrabVanillaItemTiers();
     protected static native long nativeNewItemTier(int level, int uses, float speed, int attackDamageBonus, int enchantmentValue);
     protected static native int nativeGetItemTierLevel(long ptr);
@@ -40,7 +41,7 @@ public class ToolsModule {
     protected static native Object nativeGetBlockData(int id);
     protected static native void nativeSetBlockData(int id, String materialName, int destroyLevel, boolean isNative);
     public static native int getToolLevel(int id);
-    public static native int getToolLevelViaBlock(int id);
+    public static native int getToolLevelViaBlock(int itemID, int blockID);
     protected static native void nativeRegisterCustomTool(int id, String nameId, String name, String textureName, int textureMeta, long tierPtr, boolean isTech, boolean isWeapon, String[] blockMaterials, int brokenId, int baseAttackDamage);
     protected static native float nativeGetDestroyTimeViaTool(int id, int data, long stackptr, int x, int y, int z, int side);
 
@@ -58,6 +59,7 @@ public class ToolsModule {
 
     @Nullable public static final ItemTier getTierByName(String name)
     {
+        if(name == "golden") name = "gold";
         if(!tiersByName.containsKey(name)) return null;
         return tiersByName.get(name);
     }

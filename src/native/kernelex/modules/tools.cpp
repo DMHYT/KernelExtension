@@ -1,4 +1,3 @@
-#include <cstring>
 #include <string>
 #include <jni.h>
 #include <hook.h>
@@ -16,6 +15,7 @@
 #include <GameMode.hpp>
 #include <Item.hpp>
 #include <ItemStackBase.hpp>
+#include <ItemStack.hpp>
 #include <items/HatchetItem.hpp>
 #include <items/HoeItem.hpp>
 #include <items/PickaxeItem.hpp>
@@ -30,33 +30,54 @@
 #include "tools.hpp"
 
 
-LastDestroyedBlock KEXToolsModule::lastDestroyed;
+jclass KEXToolsModule::callbackClass = nullptr;
+LastDestroyedBlock* KEXToolsModule::lastDestroyed = new LastDestroyedBlock();
 std::unordered_map<std::string, std::vector<int>> KEXToolsModule::materializedBlocks;
 std::unordered_map<int, BlockDataInterface> KEXToolsModule::blockData;
 std::unordered_map<int, int> KEXToolsModule::toolsToBrokenIds;
+std::unordered_set<int> KEXToolsModule::customTools;
+
+bool KEXToolsModule::isCustomTool(int id) {
+    return customTools.find(id) != customTools.end();
+}
 
 void KEXToolsModule::putNeededBlocksByMaterialName(std::string const& materialName, DiggerItem* item) {
     auto found = materializedBlocks.find(materialName);
     if(found != materializedBlocks.end()) {
         std::vector<int> blocks = found->second;
         for(int blockId : blocks) {
+            if(!isCustomTool(IdConversion::dynamicToStatic(item->id, IdConversion::ITEM)) && blockData.find(blockId)->second.isNative) continue;
             int dynamicId = IdConversion::staticToDynamic(blockId, IdConversion::BLOCK);
             BlockLegacy* block = BlockRegistry::getBlockById(dynamicId);
             if(block != nullptr) {
-                item->blocks.push_back(block);
+                item->blocks.insert(block);
             }
         }
     }
 }
 
-char* KEXToolsModule::getBlockMaterialName(int id) {
+void KEXToolsModule::addMaterializedBlock(int blockId, std::string const& materialName) {
+    auto found = materializedBlocks.find(materialName);
+    if(found == materializedBlocks.end()) {
+        std::vector<int> newVec;
+        newVec.push_back(blockId);
+        materializedBlocks.emplace(materialName, newVec);
+    } else {
+        found->second.push_back(blockId);
+    }
+}
+
+const char* KEXToolsModule::getBlockMaterialName(int id) {
     auto found = blockData.find(id);
     if(found != blockData.end()) {
-        return found->second.materialName;
+        std::string materialName = found->second.materialName;
+        if(!materialName.empty()) {
+            return materialName.c_str();
+        }
     } else {
-        blockData.insert(std::unordered_map<int, BlockDataInterface>::value_type(id, BlockDataInterface()));
-        return nullptr;
+        blockData.emplace(id, BlockDataInterface());
     }
+    return nullptr;
 }
 
 int KEXToolsModule::getBlockDestroyLevel(int id) {
@@ -64,7 +85,7 @@ int KEXToolsModule::getBlockDestroyLevel(int id) {
     if(found != blockData.end()) {
         return found->second.destroyLevel;
     } else {
-        blockData.insert(std::unordered_map<int, BlockDataInterface>::value_type(id, BlockDataInterface()));
+        blockData.emplace(id, BlockDataInterface());
         return 0;
     }
 }
@@ -74,19 +95,21 @@ bool KEXToolsModule::getBlockIsNative(int id) {
     if(found != blockData.end()) {
         return found->second.isNative;
     } else {
-        blockData.insert(std::unordered_map<int, BlockDataInterface>::value_type(id, BlockDataInterface()));
+        blockData.emplace(id, BlockDataInterface());
         return false;
     }
 }
 
-void KEXToolsModule::setBlockMaterialName(int id, char* materialName) {
+void KEXToolsModule::setBlockMaterialName(int id, const char* materialName) {
     auto found = blockData.find(id);
     if(found != blockData.end()) {
-        found->second.materialName = materialName;
+        found->second.materialName = std::string(materialName);
+        addMaterializedBlock(id, found->second.materialName);
     } else {
         BlockDataInterface iface;
-        iface.materialName = materialName;
-        blockData.insert(std::unordered_map<int, BlockDataInterface>::value_type(id, iface));
+        iface.materialName = std::string(materialName);
+        blockData.emplace(id, iface);
+        addMaterializedBlock(id, iface.materialName);
     }
 }
 
@@ -97,7 +120,7 @@ void KEXToolsModule::setBlockDestroyLevel(int id, int destroyLevel) {
     } else {
         BlockDataInterface iface;
         iface.destroyLevel = destroyLevel;
-        blockData.insert(std::unordered_map<int, BlockDataInterface>::value_type(id, iface));
+        blockData.emplace(id, iface);
     }
 }
 
@@ -108,20 +131,13 @@ void KEXToolsModule::setBlockIsNative(int id, bool isNative) {
     } else {
         BlockDataInterface iface;
         iface.isNative = isNative;
-        blockData.insert(std::unordered_map<int, BlockDataInterface>::value_type(id, iface));
+        blockData.emplace(id, iface);
     }
 }
 
 bool KEXToolsModule::patchedCanDestroySpecial(DiggerItem* _this, Block const& block) {
     int blockLevel = KEXToolsModule::getBlockDestroyLevel(IdConversion::dynamicToStatic(block.legacy->id, IdConversion::BLOCK));
     return _this->hasBlock(block) && _this->tier->getLevel() >= blockLevel;
-}
-
-void KEXToolsModule::patchDiggersVtables() {
-    void** vtable_digger = (void**) SYMBOL("mcpe", "_ZTV10DiggerItem") + 2;
-    void** vtable_pickaxe = (void**) SYMBOL("mcpe", "_ZTV11PickaxeItem") + 2;
-    vtable_digger[getVtableOffset("_ZTV10DiggerItem", "_ZNK10DiggerItem17canDestroySpecialERK5Block")] = ADDRESS(patchedCanDestroySpecial);
-    vtable_pickaxe[getVtableOffset("_ZTV11PickaxeItem", "_ZNK11PickaxeItem17canDestroySpecialERK5Block")] = ADDRESS(patchedCanDestroySpecial);
 }
 
 // 0 - nothing, 1 - prevent item from breaking, 2 - replace the item with brokenId
@@ -131,37 +147,37 @@ unsigned char KEXToolsModule::modifiedItemStackHurtAndBreak(ItemStackBase* stack
     int brokenId;
     if(found != KEXToolsModule::toolsToBrokenIds.end()) brokenId = found->second;
     else brokenId = 0;
-    JNIEnv* env;
     bool replace = true;
-    ATTACH_JAVA(env, JNI_VERSION_1_4) {
-        jclass moduleClass = env->FindClass("vsdum/kex/modules/ToolsModule");
-        jmethodID onBrokeMethod = env->GetStaticMethodID(moduleClass, "onBroke", "(J)Z");
-        replace = !( env->CallStaticBooleanMethod(moduleClass, onBrokeMethod, ((jlong) stack)) );
+    if(KEXToolsModule::callbackClass != nullptr) {
+        JNIEnv* env;
+        ATTACH_JAVA(env, JNI_VERSION_1_4) {
+            jmethodID onBrokeMethod = env->GetStaticMethodID(KEXToolsModule::callbackClass, "onBroke", "(J)Z");
+            replace = !( env->CallStaticBooleanMethod(KEXToolsModule::callbackClass, onBrokeMethod, ((jlong) stack)) );
+        }
     }
     if(!replace) return 1;
     else {
         if(brokenId == 0) return 0;
         else return 2;
     } 
+    return 0;
 }
 
 void KEXToolsModule::initialize() {
     DLHandleManager::initializeHandle("libminecraftpe.so", "mcpe");
-    patchDiggersVtables();
+    HookManager::addCallback(SYMBOL("mcpe", "_ZNK11PickaxeItem17canDestroySpecialERK5Block"), LAMBDA((HookManager::CallbackController* controller, PickaxeItem* item, Block const& block), {
+        controller->replace();
+        Logger::debug("KEX", "Hooked canDestroySpecial");
+        return patchedCanDestroySpecial(item, block);
+    }, ), HookManager::CALL | HookManager::LISTENER | HookManager::CONTROLLER | HookManager::RESULT);
     HookManager::addCallback(SYMBOL("mcpe", "_ZN10DiggerItem9setBlocksERKNSt6__ndk16vectorIPK5BlockNS0_9allocatorIS4_EEEE"), LAMBDA((DiggerItem* item), {
-        HatchetItem* axe = dynamic_cast<HatchetItem*>(item);
-        if(axe != nullptr) {
-            putNeededBlocksByMaterialName(std::string("wood"), (DiggerItem*) item);
-        } else {
-            PickaxeItem* pickaxe = dynamic_cast<PickaxeItem*>(item);
-            if(pickaxe != nullptr) {
-                putNeededBlocksByMaterialName(std::string("stone"), (DiggerItem*) item);
-            } else {
-                ShovelItem* shovel = dynamic_cast<ShovelItem*>(item);
-                if(shovel != nullptr) {
-                    putNeededBlocksByMaterialName(std::string("dirt"), (DiggerItem*) item);
-                }
-            }
+        if(!isCustomTool(IdConversion::staticToDynamic(item->id, IdConversion::ITEM))) {
+            STATIC_VTABLE_SYMBOL(HatchetItem_vtable, "_ZTV11HatchetItem");
+            STATIC_VTABLE_SYMBOL(PickaxeItem_vtable, "_ZTV11PickaxeItem");
+            STATIC_VTABLE_SYMBOL(ShovelItem_vtable, "_ZTV10ShovelItem");
+            if(*(void**) item == HatchetItem_vtable) putNeededBlocksByMaterialName(std::string("wood"), item);
+            if(*(void**) item == PickaxeItem_vtable) putNeededBlocksByMaterialName(std::string("stone"), item);
+            if(*(void**) item == ShovelItem_vtable) putNeededBlocksByMaterialName(std::string("dirt"), item);
         }
     }, ), HookManager::RETURN | HookManager::LISTENER);
     HookManager::addCallback(SYMBOL("mcpe", "_ZN13ItemStackBase12hurtAndBreakEiP5Actor"), LAMBDA((HookManager::CallbackController* controller, ItemStackBase* stack, int damageValue, Actor* actor), {
@@ -172,16 +188,14 @@ void KEXToolsModule::initialize() {
         } else if(result == 2) {
             auto found = toolsToBrokenIds.find(IdConversion::dynamicToStatic(stack->getId(), IdConversion::ITEM));
             controller->replace();
-            *stack = ItemStackBase(*ItemRegistry::getItemById(IdConversion::staticToDynamic(found->second, IdConversion::ITEM)), 1, 0);
+            ItemStack* newStack = new ItemStack(*(ItemRegistry::getItemById(IdConversion::staticToDynamic(found->second, IdConversion::ITEM))), 1, 0);
+            *stack = *newStack;
             return true;
         }
     }, ), HookManager::CALL | HookManager::LISTENER | HookManager::CONTROLLER | HookManager::RESULT);
     HookManager::addCallback(SYMBOL("mcpe", "_ZN12SurvivalMode17startDestroyBlockERK8BlockPoshRb"), LAMBDA((SurvivalMode* mode, BlockPos const& pos, unsigned char side, bool& someBoolRef), {
         if(mode->player->getLevel()->isClientSide()) {
-            lastDestroyed.x = pos.x;
-            lastDestroyed.y = pos.y;
-            lastDestroyed.z = pos.z;
-            lastDestroyed.side = side;
+            lastDestroyed->onEvent(pos.x, pos.y, pos.z, side);
         }
     }, ), HookManager::CALL | HookManager::LISTENER);
     // the hook of SurvivalMode::startDestroyBlock is the main one,
@@ -190,10 +204,7 @@ void KEXToolsModule::initialize() {
     // startDestroyBlock is called in creative mode
     HookManager::addCallback(SYMBOL("mcpe", "_ZN8GameMode12destroyBlockERK8BlockPosh"), LAMBDA((GameMode* mode, BlockPos const& pos, unsigned char side), {
         if(mode->player->getLevel()->isClientSide()) {
-            lastDestroyed.x = pos.x;
-            lastDestroyed.y = pos.y;
-            lastDestroyed.z = pos.z;
-            lastDestroyed.side = side;
+            lastDestroyed->onEvent(pos.x, pos.y, pos.z, side);
         }
     }, ), HookManager::CALL | HookManager::LISTENER);
 }
@@ -217,49 +228,42 @@ CustomWeaponItem::CustomWeaponItem(std::__ndk1::string const& nameId, int id, in
     attackDamage = baseAttackDamage + tier.getAttackDamageBonus();
 }
 float CustomWeaponItem::getDestroySpeed(ItemStackBase const& stack, Block const& block) const {
-    STATIC_SYMBOL(WeaponItem_getDestroySpeed, "_ZNK10WeaponItem15getDestroySpeedERK13ItemStackBaseRK5Block", (WeaponItem*, ItemStackBase const&, Block const&));
-    void* output = WeaponItem_getDestroySpeed((WeaponItem*) this, stack, block);
-    float super = *(float*)&output;
-    JNIEnv* env;
-    ATTACH_JAVA(env, JNI_VERSION_1_4) {
-        jclass moduleClass = env->FindClass("vsdum/kex/modules/ToolsModule");
-        jmethodID calcMethod = env->GetStaticMethodID(moduleClass, "calcDestroyTime", "(JIIIIIBFFFF)F");
-        super = env->CallStaticFloatMethod(moduleClass, calcMethod, ((jlong) &stack), IdConversion::dynamicToStatic(block.legacy->id, IdConversion::BLOCK), block.data, KEXToolsModule::lastDestroyed.x, KEXToolsModule::lastDestroyed.y, KEXToolsModule::lastDestroyed.z, (jbyte) KEXToolsModule::lastDestroyed.side, block.legacy->destroyTime, 1.0f, 1.0f, block.legacy->destroyTime) / block.legacy->destroyTime;
-    }
-    return super;
+    return KEXToolsModule::lastDestroyed->getOrCalculateSpeed(stack, block, (CustomWeaponItem*) this);
 }
 bool CustomWeaponItem::hurtActor(ItemStack& stack, Actor& actor, Mob& mob) const {
     bool result = true;
-    JNIEnv* env;
-    ATTACH_JAVA(env, JNI_VERSION_1_4) {
-        jclass moduleClass = env->FindClass("vsdum/kex/modules/ToolsModule");
-        jmethodID modifyEnchantMethod = env->GetStaticMethodID(moduleClass, "modifyEnchant", "(JIIIIII)V");
-        env->CallStaticVoidMethod(moduleClass, modifyEnchantMethod, ((jlong) &stack), 0, 0, 0, 0, 0, 0);
-        jmethodID onAttackMethod = env->GetStaticMethodID(moduleClass, "onAttack", "(JJJ)Z");
-        bool output = env->CallStaticBooleanMethod(moduleClass, onAttackMethod, ((jlong) &stack), actor.getUniqueID()->id, mob.getUniqueID()->id);
-        if(!output) {
-            STATIC_SYMBOL(WeaponItem_hurtActor, "_ZNK10WeaponItem9hurtActorER9ItemStackR5ActorR3Mob", (WeaponItem*, ItemStack&, Actor&, Mob&));
-            result = WeaponItem_hurtActor((WeaponItem*) this, stack, actor, mob);
-        } else {
-            result = false;
+    if(KEXToolsModule::callbackClass != nullptr) {
+        JNIEnv* env;
+        ATTACH_JAVA(env, JNI_VERSION_1_4) {
+            jmethodID modifyEnchantMethod = env->GetStaticMethodID(KEXToolsModule::callbackClass, "modifyEnchant", "(JIIIIII)V");
+            env->CallStaticVoidMethod(KEXToolsModule::callbackClass, modifyEnchantMethod, ((jlong) &stack), 0, 0, 0, 0, 0, 0);
+            jmethodID onAttackMethod = env->GetStaticMethodID(KEXToolsModule::callbackClass, "onAttack", "(JJJ)Z");
+            bool output = env->CallStaticBooleanMethod(KEXToolsModule::callbackClass, onAttackMethod, ((jlong) &stack), actor.getUniqueID()->id, mob.getUniqueID()->id);
+            if(!output) {
+                STATIC_SYMBOL(WeaponItem_hurtActor, "_ZNK10WeaponItem9hurtActorER9ItemStackR5ActorR3Mob", (WeaponItem*, ItemStack&, Actor&, Mob&));
+                result = WeaponItem_hurtActor((WeaponItem*) this, stack, actor, mob);
+            } else {
+                result = false;
+            }
         }
     }
     return result;
 }
 bool CustomWeaponItem::mineBlock(ItemStack& stack, Block const& block, int x, int y, int z, Actor* actor) const {
-    JNIEnv* env;
-    ATTACH_JAVA(env, JNI_VERSION_1_4) {
-        int staticId = IdConversion::dynamicToStatic(block.legacy->id, IdConversion::BLOCK);
-        jclass moduleClass = env->FindClass("vsdum/kex/modules/ToolsModule");
-        jmethodID modifyEnchantMethod = env->GetStaticMethodID(moduleClass, "modifyEnchant", "(JIIIIII)V");
-        env->CallStaticVoidMethod(moduleClass, modifyEnchantMethod, ((jlong) &stack), x, y, z, KEXToolsModule::lastDestroyed.side, staticId, block.data);
-        jmethodID onMineBlockMethod = env->GetStaticMethodID(moduleClass, "onMineBlock", "(JIIIIII)V");
-        env->CallStaticVoidMethod(moduleClass, onMineBlockMethod, ((jlong) &stack), x, y, z, KEXToolsModule::lastDestroyed.side, staticId, block.data);
-        jmethodID onDestroyMethod = env->GetStaticMethodID(moduleClass, "onDestroy", "(JIIIIIIJ)Z");
-        bool output = env->CallStaticBooleanMethod(moduleClass, onDestroyMethod, ((jlong) &stack), x, y, z, KEXToolsModule::lastDestroyed.side, staticId, block.data, actor->getUniqueID()->id);
-        if(!output) {
-            STATIC_SYMBOL(Item_mineBlock, "_ZNK4Item9mineBlockER9ItemStackRK5BlockiiiP5Actor", (Item*, ItemStack&, Block const&, int, int, int, Actor*));
-            Item_mineBlock((Item*) this, stack, block, x, y, z, actor);
+    if(KEXToolsModule::callbackClass != nullptr) {
+        JNIEnv* env;
+        ATTACH_JAVA(env, JNI_VERSION_1_4) {
+            int staticId = IdConversion::dynamicToStatic(block.legacy->id, IdConversion::BLOCK);
+            jmethodID modifyEnchantMethod = env->GetStaticMethodID(KEXToolsModule::callbackClass, "modifyEnchant", "(JIIIIII)V");
+            env->CallStaticVoidMethod(KEXToolsModule::callbackClass, modifyEnchantMethod, ((jlong) &stack), x, y, z, KEXToolsModule::lastDestroyed->side, staticId, block.data);
+            jmethodID onMineBlockMethod = env->GetStaticMethodID(KEXToolsModule::callbackClass, "onMineBlock", "(JIIIIII)V");
+            env->CallStaticVoidMethod(KEXToolsModule::callbackClass, onMineBlockMethod, ((jlong) &stack), x, y, z, KEXToolsModule::lastDestroyed->side, staticId, block.data);
+            jmethodID onDestroyMethod = env->GetStaticMethodID(KEXToolsModule::callbackClass, "onDestroy", "(JIIIIIIJ)Z");
+            bool output = env->CallStaticBooleanMethod(KEXToolsModule::callbackClass, onDestroyMethod, ((jlong) &stack), x, y, z, KEXToolsModule::lastDestroyed->side, staticId, block.data, actor->getUniqueID()->id);
+            if(!output) {
+                STATIC_SYMBOL(Item_mineBlock, "_ZNK4Item9mineBlockER9ItemStackRK5BlockiiiP5Actor", (Item*, ItemStack&, Block const&, int, int, int, Actor*));
+                Item_mineBlock((Item*) this, stack, block, x, y, z, actor);
+            }
         }
     }
     return true;
@@ -273,54 +277,42 @@ CustomDiggerItem::CustomDiggerItem(std::__ndk1::string const& nameId, int id, in
     }
 }
 float CustomDiggerItem::getDestroySpeed(ItemStackBase const& stack, Block const& block) const {
-    STATIC_SYMBOL(DiggerItem_getDestroySpeed, "_ZNK10DiggerItem15getDestroySpeedERK13ItemStackBaseRK5Block", (DiggerItem*, ItemStackBase const&, Block const&));
-    void* output = DiggerItem_getDestroySpeed((DiggerItem*) this, stack, block);
-    float super = *(float*)&output;
-    JNIEnv* env;
-    ATTACH_JAVA(env, JNI_VERSION_1_4) {
-        int staticId = IdConversion::dynamicToStatic(block.legacy->id, IdConversion::BLOCK);
-        jclass moduleClass = env->FindClass("vsdum/kex/modules/ToolsModule");
-        jmethodID modifyEnchantMethod = env->GetStaticMethodID(moduleClass, "modifyEnchant", "(JIIIBII)V");
-        env->CallStaticVoidMethod(moduleClass, modifyEnchantMethod, ((jlong) &stack), KEXToolsModule::lastDestroyed.x, KEXToolsModule::lastDestroyed.y, KEXToolsModule::lastDestroyed.z, (jbyte) KEXToolsModule::lastDestroyed.side, staticId, block.data);
-        jmethodID calcMethod = env->GetStaticMethodID(moduleClass, "calcDestroyTime", "(JIIIIIBFFFF)F");
-        float materialDivider = tier->getSpeed();
-        float efficiencyModifier = destroySpeedBonus(stack);
-        super = env->CallStaticFloatMethod(moduleClass, calcMethod, ((jlong) &stack), staticId, block.data, KEXToolsModule::lastDestroyed.x, KEXToolsModule::lastDestroyed.y, KEXToolsModule::lastDestroyed.z, (jbyte) KEXToolsModule::lastDestroyed.side, block.legacy->destroyTime, materialDivider, efficiencyModifier, block.legacy->destroyTime / materialDivider / efficiencyModifier) / block.legacy->destroyTime;
-    }
-    return super;
+    return KEXToolsModule::lastDestroyed->getOrCalculateSpeed(stack, block, (CustomDiggerItem*) this);
 }
 bool CustomDiggerItem::hurtActor(ItemStack& stack, Actor& actor, Mob& mob) const {
     bool result = true;
-    JNIEnv* env;
-    ATTACH_JAVA(env, JNI_VERSION_1_4) {
-        jclass moduleClass = env->FindClass("vsdum/kex/modules/ToolsModule");
-        jmethodID modifyEnchantMethod = env->GetStaticMethodID(moduleClass, "modifyEnchant", "(JIIIIII)V");
-        env->CallStaticVoidMethod(moduleClass, modifyEnchantMethod, ((jlong) &stack), 0, 0, 0, 0, 0, 0);
-        jmethodID onAttackMethod = env->GetStaticMethodID(moduleClass, "onAttack", "(JJJ)Z");
-        bool output = env->CallStaticBooleanMethod(moduleClass, onAttackMethod, ((jlong) &stack), actor.getUniqueID()->id, mob.getUniqueID()->id);
-        if(!output) {
-            STATIC_SYMBOL(Item_hurtActor, "_ZNK4Item9hurtActorER9ItemStackR5ActorR3Mob", (Item*, ItemStack&, Actor&, Mob&));
-            result = Item_hurtActor((Item*) this, stack, actor, mob);
-        } else {
-            result = false;
+    if(KEXToolsModule::callbackClass != nullptr) {
+        JNIEnv* env;
+        ATTACH_JAVA(env, JNI_VERSION_1_4) {
+            jmethodID modifyEnchantMethod = env->GetStaticMethodID(KEXToolsModule::callbackClass, "modifyEnchant", "(JIIIIII)V");
+            env->CallStaticVoidMethod(KEXToolsModule::callbackClass, modifyEnchantMethod, ((jlong) &stack), 0, 0, 0, 0, 0, 0);
+            jmethodID onAttackMethod = env->GetStaticMethodID(KEXToolsModule::callbackClass, "onAttack", "(JJJ)Z");
+            bool output = env->CallStaticBooleanMethod(KEXToolsModule::callbackClass, onAttackMethod, ((jlong) &stack), actor.getUniqueID()->id, mob.getUniqueID()->id);
+            if(!output) {
+                STATIC_SYMBOL(Item_hurtActor, "_ZNK4Item9hurtActorER9ItemStackR5ActorR3Mob", (Item*, ItemStack&, Actor&, Mob&));
+                result = Item_hurtActor((Item*) this, stack, actor, mob);
+            } else {
+                result = false;
+            }
         }
     }
     return result;
 }
 bool CustomDiggerItem::mineBlock(ItemStack& stack, Block const& block, int x, int y, int z, Actor* actor) const {
-    JNIEnv* env;
-    ATTACH_JAVA(env, JNI_VERSION_1_4) {
-        int staticId = IdConversion::dynamicToStatic(block.legacy->id, IdConversion::BLOCK);
-        jclass moduleClass = env->FindClass("vsdum/kex/modules/ToolsModule");
-        jmethodID modifyEnchantMethod = env->GetStaticMethodID(moduleClass, "modifyEnchant", "(JIIIBII)V");
-        env->CallStaticVoidMethod(moduleClass, modifyEnchantMethod, ((jlong) &stack), x, y, z, KEXToolsModule::lastDestroyed.side, staticId, block.data);
-        jmethodID onMineBlockMethod = env->GetStaticMethodID(moduleClass, "onMineBlock", "(JIIIBII)V");
-        env->CallStaticVoidMethod(moduleClass, onMineBlockMethod, ((jlong) &stack), x, y, z, KEXToolsModule::lastDestroyed.side, staticId, block.data);
-        jmethodID onDestroyMethod = env->GetStaticMethodID(moduleClass, "onDestroy", "(JIIIBIIJ)Z");
-        bool output = env->CallStaticBooleanMethod(moduleClass, onDestroyMethod, ((jlong) &stack), x, y, z, KEXToolsModule::lastDestroyed.side, staticId, block.data, actor->getUniqueID()->id);
-        if(!output) {
-            STATIC_SYMBOL(DiggerItem_mineBlock, "_ZNK10DiggerItem9mineBlockER9ItemStackRK5BlockiiiP5Actor", (Item*, ItemStack&, Block const&, int, int, int, Actor*));
-            DiggerItem_mineBlock((Item*) this, stack, block, x, y, z, actor);
+    if(KEXToolsModule::callbackClass != nullptr) {
+        JNIEnv* env;
+        ATTACH_JAVA(env, JNI_VERSION_1_4) {
+            int staticId = IdConversion::dynamicToStatic(block.legacy->id, IdConversion::BLOCK);
+            jmethodID modifyEnchantMethod = env->GetStaticMethodID(KEXToolsModule::callbackClass, "modifyEnchant", "(JIIIBII)V");
+            env->CallStaticVoidMethod(KEXToolsModule::callbackClass, modifyEnchantMethod, ((jlong) &stack), x, y, z, KEXToolsModule::lastDestroyed->side, staticId, block.data);
+            jmethodID onMineBlockMethod = env->GetStaticMethodID(KEXToolsModule::callbackClass, "onMineBlock", "(JIIIBII)V");
+            env->CallStaticVoidMethod(KEXToolsModule::callbackClass, onMineBlockMethod, ((jlong) &stack), x, y, z, KEXToolsModule::lastDestroyed->side, staticId, block.data);
+            jmethodID onDestroyMethod = env->GetStaticMethodID(KEXToolsModule::callbackClass, "onDestroy", "(JIIIBIIJ)Z");
+            bool output = env->CallStaticBooleanMethod(KEXToolsModule::callbackClass, onDestroyMethod, ((jlong) &stack), x, y, z, KEXToolsModule::lastDestroyed->side, staticId, block.data, actor->getUniqueID()->id);
+            if(!output) {
+                STATIC_SYMBOL(DiggerItem_mineBlock, "_ZNK10DiggerItem9mineBlockER9ItemStackRK5BlockiiiP5Actor", (Item*, ItemStack&, Block const&, int, int, int, Actor*));
+                DiggerItem_mineBlock((Item*) this, stack, block, x, y, z, actor);
+            }
         }
     }
     return true;
@@ -347,7 +339,63 @@ void CustomToolFactory::setBaseAttackDamage(int damage) { baseAttackDamage = dam
 CustomToolFactory* CustomToolProvider::getFactory() { return factory; }
 
 
+float LastDestroyedBlock::getOrCalculateSpeed(ItemStackBase const& stack, Block const& block, CustomWeaponItem* item) {
+    if(x == calculatedForX && y == calculatedForY && z == calculatedForZ) {
+        return destroyTime;
+    } else {
+        calculatedForX = x;
+        calculatedForY = y;
+        calculatedForZ = z;
+        STATIC_SYMBOL(WeaponItem_getDestroySpeed, "_ZNK10WeaponItem15getDestroySpeedERK13ItemStackBaseRK5Block", (WeaponItem*, ItemStackBase const&, Block const&));
+        void* output = WeaponItem_getDestroySpeed((WeaponItem*) item, stack, block);
+        float result = *(float*)&output;
+        if(KEXToolsModule::callbackClass != nullptr) {
+            JNIEnv* env;
+            ATTACH_JAVA(env, JNI_VERSION_1_4) {
+                jmethodID calcMethod = env->GetStaticMethodID(KEXToolsModule::callbackClass, "calcDestroyTime", "(JIIIIIBFFFF)F");
+                result = env->CallStaticFloatMethod(KEXToolsModule::callbackClass, calcMethod, ((jlong) &stack), IdConversion::dynamicToStatic(block.legacy->id, IdConversion::BLOCK), block.data, x, y, z, (jbyte) side, block.legacy->destroyTime, 1.0f, 1.0f, block.legacy->destroyTime) / block.legacy->destroyTime;
+            }
+        }
+        destroyTime = result;
+        return result;
+    }
+}
+float LastDestroyedBlock::getOrCalculateSpeed(ItemStackBase const& stack, Block const& block, CustomDiggerItem* item) {
+    if(x == calculatedForX && y == calculatedForY && z == calculatedForZ) {
+        return destroyTime;
+    } else {
+        calculatedForX = x;
+        calculatedForY = y;
+        calculatedForZ = z;
+        STATIC_SYMBOL(DiggerItem_getDestroySpeed, "_ZNK10DiggerItem15getDestroySpeedERK13ItemStackBaseRK5Block", (DiggerItem*, ItemStackBase const&, Block const&));
+        void* output = DiggerItem_getDestroySpeed((DiggerItem*) this, stack, block);
+        float result = *(float*)&output;
+        if(KEXToolsModule::callbackClass != nullptr) {
+            JNIEnv* env;
+            ATTACH_JAVA(env, JNI_VERSION_1_4) {
+                int staticId = IdConversion::dynamicToStatic(block.legacy->id, IdConversion::BLOCK);
+                jmethodID modifyEnchantMethod = env->GetStaticMethodID(KEXToolsModule::callbackClass, "modifyEnchant", "(JIIIBII)V");
+                env->CallStaticVoidMethod(KEXToolsModule::callbackClass, modifyEnchantMethod, ((jlong) &stack), x, y, z, (jbyte) side, staticId, block.data);
+                jmethodID calcMethod = env->GetStaticMethodID(KEXToolsModule::callbackClass, "calcDestroyTime", "(JIIIIIBFFFF)F");
+                float materialDivider = item->tier->getSpeed();
+                float efficiencyModifier = item->destroySpeedBonus(stack);
+                result = env->CallStaticFloatMethod(KEXToolsModule::callbackClass, calcMethod, ((jlong) &stack), staticId, block.data, x, y, z, (jbyte) side, block.legacy->destroyTime, materialDivider, efficiencyModifier, block.legacy->destroyTime / materialDivider / efficiencyModifier) / block.legacy->destroyTime;
+            }
+        }
+        destroyTime = result;
+        return result;
+    }
+}
+void LastDestroyedBlock::onEvent(int xIn, int yIn, int zIn, unsigned char sideIn) {
+    x = xIn, y = yIn, z = zIn, side = sideIn;
+}
+
+
 extern "C" {
+    JNIEXPORT void JNICALL Java_vsdum_kex_modules_ToolsModule_defineCallbackClass
+    (JNIEnv* env, jclass clazz) {
+        KEXToolsModule::callbackClass = (jclass)( env->NewGlobalRef(clazz) );
+    }
     JNIEXPORT jlongArray JNICALL Java_vsdum_kex_modules_ToolsModule_nativeGrabVanillaItemTiers
     (JNIEnv* env, jclass) {
         jlongArray result = env->NewLongArray(6);
@@ -471,59 +519,58 @@ extern "C" {
         return 0.0f;
     }
     JNIEXPORT jstring JNICALL Java_vsdum_kex_modules_ToolsModule_nativeGetBlockMaterialName
-    (JNIEnv* env, jclass, int id) {
-        char* materialName = KEXToolsModule::getBlockMaterialName(id);
+    (JNIEnv* env, jclass, jint id) {
+        const char* materialName = KEXToolsModule::getBlockMaterialName(id);
         if(materialName == nullptr) return NULL;
         return env->NewStringUTF(materialName);
     }
     JNIEXPORT jint JNICALL Java_vsdum_kex_modules_ToolsModule_nativeGetBlockDestroyLevel
-    (JNIEnv*, jclass, int id) {
+    (JNIEnv*, jclass, jint id) {
         return KEXToolsModule::getBlockDestroyLevel(id);
     }
     JNIEXPORT jboolean JNICALL Java_vsdum_kex_modules_ToolsModule_nativeGetBlockIsNative
-    (JNIEnv*, jclass, int id) {
+    (JNIEnv*, jclass, jint id) {
         return KEXToolsModule::getBlockIsNative(id);
     }
     JNIEXPORT void JNICALL Java_vsdum_kex_modules_ToolsModule_nativeSetBlockMaterialName
-    (JNIEnv* env, jclass, int id, jstring materialName) {
+    (JNIEnv* env, jclass, jint id, jstring materialName) {
         const char* cMaterialName = env->GetStringUTFChars(materialName, 0);
-        char* cMaterialNameNew;
-        strcpy((char*) cMaterialName, (const char*) cMaterialNameNew);
-        KEXToolsModule::setBlockMaterialName(id, cMaterialNameNew);
+        KEXToolsModule::setBlockMaterialName(id, cMaterialName);
         env->ReleaseStringUTFChars(materialName, cMaterialName);
     }
     JNIEXPORT void JNICALL Java_vsdum_kex_modules_ToolsModule_nativeSetBlockDestroyLevel
-    (JNIEnv*, jclass, int id, jint destroyLevel) {
+    (JNIEnv*, jclass, jint id, jint destroyLevel) {
         KEXToolsModule::setBlockDestroyLevel(id, destroyLevel);
     }
     JNIEXPORT void JNICALL Java_vsdum_kex_modules_ToolsModule_nativeSetBlockIsNative
-    (JNIEnv*, jclass, int id, jboolean isNative) {
+    (JNIEnv*, jclass, jint id, jboolean isNative) {
         KEXToolsModule::setBlockIsNative(id, isNative);
     }
     JNIEXPORT jobject JNICALL Java_vsdum_kex_modules_ToolsModule_nativeGetBlockData
-    (JNIEnv* env, jclass, int id) {
+    (JNIEnv* env, jclass, jint id) {
         auto found = KEXToolsModule::blockData.find(id);
         if(found == KEXToolsModule::blockData.end()) {
-            KEXToolsModule::blockData.insert(std::unordered_map<int, BlockDataInterface>::value_type(id, BlockDataInterface()));
+            KEXToolsModule::blockData.emplace(id, BlockDataInterface());
             found = KEXToolsModule::blockData.find(id);
         }
         BlockDataInterface iface = found->second;
         jclass dataClass = env->FindClass("vsdum/kex/modules/ToolsModule$BlockData");
-        return env->NewObject(dataClass, env->GetMethodID(dataClass, "<init>", "(Ljava/lang/String;IZ)V"), iface.materialName != nullptr ? env->NewStringUTF(iface.materialName) : NULL, iface.destroyLevel, iface.isNative);
+        return env->NewObject(dataClass, env->GetMethodID(dataClass, "<init>", "(Ljava/lang/String;IZ)V"), iface.materialName.empty() ? env->NewStringUTF(iface.materialName.c_str()) : NULL, iface.destroyLevel, iface.isNative);
     }
     JNIEXPORT void JNICALL Java_vsdum_kex_modules_ToolsModule_nativeSetBlockData
-    (JNIEnv* env, jclass, int id, jstring materialName, jint destroyLevel, jboolean isNative) {
+    (JNIEnv* env, jclass, jint id, jstring materialName, jint destroyLevel, jboolean isNative) {
         const char* cMaterialName = env->GetStringUTFChars(materialName, 0);
         auto found = KEXToolsModule::blockData.find(id);
         if(found == KEXToolsModule::blockData.end()) {
-            KEXToolsModule::blockData.insert(std::unordered_map<int, BlockDataInterface>::value_type(id, BlockDataInterface()));
+            KEXToolsModule::blockData.emplace(id, BlockDataInterface());
             found = KEXToolsModule::blockData.find(id);
         }
         BlockDataInterface iface = found->second;
-        strcpy((char*) cMaterialName, (const char*) iface.materialName);
+        iface.materialName = std::string(cMaterialName);
         env->ReleaseStringUTFChars(materialName, cMaterialName);
         iface.destroyLevel = destroyLevel;
         iface.isNative = isNative;
+        KEXToolsModule::addMaterializedBlock(id, iface.materialName);
     }
     JNIEXPORT jint JNICALL Java_vsdum_kex_modules_ToolsModule_getToolLevel
     (JNIEnv*, jclass, jint id) {
@@ -557,15 +604,13 @@ extern "C" {
                 float speed = VTABLE_CALL<float>(Item_getDestroySpeed, item, stack, *(BlockRegistry::getBlockStateForIdData(id, data)));
                 float result = baseDestroyTime / speed;
                 JNIEnv* env;
-                ATTACH_JAVA(env, JNI_VERSION_1_4) {
-                    jclass moduleClass = env->FindClass("vsdum/kex/modules/ToolsModule");
-                    jmethodID calcMethod = env->GetStaticMethodID(moduleClass, "calcDestroyTime", "(JIIFFFF)F");
-                    float materialDivider = 1.0f;
-                    DiggerItem* digger = dynamic_cast<DiggerItem*>(item);
-                    if(digger != nullptr) materialDivider = digger->tier->getSpeed();
-                    float bonus = item->destroySpeedBonus(*stack);
-                    result = env->CallStaticFloatMethod(moduleClass, calcMethod, stackptr, id, data, baseDestroyTime, materialDivider, bonus, baseDestroyTime / speed);
-                }
+                jclass moduleClass = env->FindClass("vsdum/kex/modules/ToolsModule");
+                jmethodID calcMethod = env->GetStaticMethodID(moduleClass, "calcDestroyTime", "(JIIFFFF)F");
+                float materialDivider = 1.0f;
+                DiggerItem* digger = dynamic_cast<DiggerItem*>(item);
+                if(digger != nullptr) materialDivider = digger->tier->getSpeed();
+                float bonus = item->destroySpeedBonus(*stack);
+                result = env->CallStaticFloatMethod(moduleClass, calcMethod, stackptr, id, data, baseDestroyTime, materialDivider, bonus, baseDestroyTime / speed);
             }
             return baseDestroyTime;
         }
@@ -582,7 +627,7 @@ extern "C" {
         factory->setBaseAttackDamage(baseAttackDamage);
         factory->initParameters(id, std::string(cNameId), std::string(cName), std::string(cTextureName), textureMeta);
         factory->props.stack = 1;
-        if(brokenId != 0) KEXToolsModule::toolsToBrokenIds.insert(std::unordered_map<int, int>::value_type(id, brokenId));
+        if(brokenId != 0) KEXToolsModule::toolsToBrokenIds.emplace(id, brokenId);
         if(blockMaterials != NULL) {
             std::vector<std::string> materials;
             jsize l = env->GetArrayLength(blockMaterials);
@@ -604,5 +649,6 @@ extern "C" {
         env->ReleaseStringUTFChars(nameId, cNameId);
         env->ReleaseStringUTFChars(name, cName);
         env->ReleaseStringUTFChars(textureName, cTextureName);
+        KEXToolsModule::customTools.insert(id);
     }
 }

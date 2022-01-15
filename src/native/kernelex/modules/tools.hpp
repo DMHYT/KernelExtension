@@ -1,4 +1,5 @@
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 #include <string>
 #include <mod.h>
@@ -6,6 +7,7 @@
 #include <innercore/legacy_item_registry.h>
 #include <Item.hpp>
 #include <items/DiggerItem.hpp>
+#include <items/HatchetItem.hpp>
 #include <items/WeaponItem.hpp>
 
 #ifndef KEX_MODULES_TOOLS_HPP
@@ -14,36 +16,49 @@
 
 class BlockDataInterface {
     public:
-    char* materialName = nullptr;
+    std::string materialName = std::string("");
     int destroyLevel = 0;
     bool isNative = false;
 };
 
 
-struct LastDestroyedBlock {
+class CustomWeaponItem;
+class CustomDiggerItem;
+class LastDestroyedBlock {
+    public:
     int x = 0;
     int y = 0;
     int z = 0;
     unsigned char side = 0;
-    LastDestroyedBlock();
+    float destroyTime = 0.0f;
+    int calculatedForX = 0;
+    int calculatedForY = 0;
+    int calculatedForZ = 0;
+    LastDestroyedBlock() {};
+    float getOrCalculateSpeed(ItemStackBase const&, Block const&, CustomWeaponItem*);
+    float getOrCalculateSpeed(ItemStackBase const&, Block const&, CustomDiggerItem*);
+    void onEvent(int, int, int, unsigned char);
 };
 
 
 class KEXToolsModule : public Module {
     public:
-    static LastDestroyedBlock lastDestroyed;
+    static jclass callbackClass;
+    static LastDestroyedBlock* lastDestroyed;
     static std::unordered_map<std::string, std::vector<int>> materializedBlocks;
     static std::unordered_map<int, BlockDataInterface> blockData;
     static std::unordered_map<int, int> toolsToBrokenIds;
+    static std::unordered_set<int> customTools;
+    static bool isCustomTool(int id);
     static void putNeededBlocksByMaterialName(std::string const&, DiggerItem*);
-    static char* getBlockMaterialName(int id);
+    static void addMaterializedBlock(int id, std::string const&);
+    static const char* getBlockMaterialName(int id);
     static int getBlockDestroyLevel(int id);
     static bool getBlockIsNative(int id);
-    static void setBlockMaterialName(int id, char* materialName);
+    static void setBlockMaterialName(int id, const char* materialName);
     static void setBlockDestroyLevel(int id, int destroyLevel);
     static void setBlockIsNative(int id, bool isNative);
     static bool patchedCanDestroySpecial(DiggerItem*, Block const&);
-    static void patchDiggersVtables();
     static unsigned char modifiedItemStackHurtAndBreak(ItemStackBase*, int);
     KEXToolsModule(Module* parent): Module(parent, "kex.tools") {};
     virtual void initialize();

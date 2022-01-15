@@ -1,13 +1,13 @@
-const ItemFabricHelper = WRAP_JAVA("vsdum.kex.util.ItemFabricHelper");
+const ItemFactoryHelper = WRAP_JAVA("vsdum.kex.util.ItemFactoryHelper");
 const ToolsModule = WRAP_JAVA("vsdum.kex.modules.ToolsModule");
 type ItemTier = vsdum.kex.modules.ToolsModule.ItemTier;
 
 
 declare namespace ToolAPI {
     export var blockMaterials: any;
-    export var toolMaterials: any;
-    export var toolData: any;
-    export var blockData: any;
+    export var toolMaterials: { [materialName: string]: ToolMaterial };
+    export var toolData: { [numericId: number]: ToolParams };
+    export var blockData: { [numericId: number]: { material: string, level: number, isNative: boolean } };
     export var unnamedMaterialNum: number;
     export var ToolType: {
         readonly sword: {},
@@ -24,6 +24,8 @@ declare namespace ToolAPI {
         enchantability?: number;
     }
     export function startDestroyHook(coords: Callback.ItemUseCoordinates, block: Tile, carried: ItemInstance): void;
+    export function destroyBlockHook(coords: Callback.ItemUseCoordinates, block: Tile, item: ItemInstance, player: number): void;
+    export function playerAttackHook(attacker: number, victim: number, item: ItemInstance): void;
 }
 
 
@@ -156,10 +158,7 @@ namespace Item {
 }
 
 
-ToolAPI.blockMaterials = null;
-ToolAPI.toolMaterials = null;
-ToolAPI.toolData = null;
-ToolAPI.blockData = null;
+ToolAPI.blockData = {};
 ToolAPI.unnamedMaterialNum = 0;
 ToolAPI.ToolType = {
     sword: { __flag: "__sword" },
@@ -170,14 +169,15 @@ ToolAPI.ToolType = {
 }
 ToolAPI.addBlockMaterial = (name, breakingMultiplier) => ToolsModule.addBlockMaterial(name, breakingMultiplier);
 ToolAPI.addToolMaterial = (name, material) => {
-    if(ToolsModule.getTierByName(name) == null)
-        new ToolsModule.ItemTier(name,
+    if(ToolsModule.getTierByName(name) == null || name !== "golden") {
+        const tier = new ToolsModule.ItemTier(name,
             material.level || 0, 
             material.durability || 1, 
             material.efficiency || 1, 
             material.damage || 0, 
             material.enchantability || 14);
-    else Logger.Log("KEX-WARNING", `Tool material with name \'${name}\' has already been registered before! Skipping...`);
+        ToolAPI.toolMaterials[name] = { level: tier.getLevel(), durability: tier.getUses(), efficiency: tier.getSpeed(), damage: tier.getAttackDamageBonus(), enchantability: tier.getEnchantmentValue() }
+    } else Logger.Log(`Tool material with name \'${name}\' has already been registered before! Skipping...`, "KEX-WARNING");
 }
 ToolAPI.dropExpOrbs = (x, y, z, value, blockSource?: BlockSource) => (blockSource || BlockSource.getCurrentClientRegion()).spawnExpOrbs(x, y, z, value);
 ToolAPI.getBlockData = blockID => {
@@ -191,8 +191,14 @@ ToolAPI.getBlockMaterial = blockID => {
     return materialName == null ? null : { name: materialName, multiplier: ToolsModule.getBlockMaterialBreakingMultiplier(materialName) }
 }
 ToolAPI.getBlockMaterialName = blockID => ToolsModule.getBlockMaterialName(blockID);
-ToolAPI.registerBlockDiggingLevel = (blockID, level) => ToolsModule.setBlockDestroyLevel(blockID, level);
-ToolAPI.registerBlockMaterial = (blockID, materialName, level, isNative) => ToolsModule.setBlockData(blockID, materialName, level || 0, isNative || false);
+ToolAPI.registerBlockDiggingLevel = (blockID, level) => {
+    ToolsModule.setBlockDestroyLevel(blockID, level);
+}
+ToolAPI.registerBlockMaterial = (blockID, materialName, level, isNative) => {
+    Logger.Log(`${blockID}:${materialName}:${level}:${isNative}:${Object.keys(ToolAPI.blockData).length}`, "KEX");
+    Logger.Flush();
+    ToolsModule.setBlockData(blockID, materialName, level || 0, isNative || false);
+}
 ToolAPI.resetEngine = () => {}
 ToolAPI.registerTool = (id, toolMaterial, blockMaterials, params) => {
     let materialName: string = "";
@@ -202,7 +208,7 @@ ToolAPI.registerTool = (id, toolMaterial, blockMaterials, params) => {
     }
     const tier = ToolsModule.getTierByName(materialName) ?? ToolsModule.getTierByName("wood");
     if(typeof params !== "undefined") {
-        const factory = ItemFabricHelper.killItem(id);
+        const factory = ItemFactoryHelper.killItem(id);
         if(factory == null) throw new java.lang.IllegalStateException("You cannot call ToolAPI.registerTool before creating the item itself!");
         switch(params.__flag) {
             case "__sword": ToolsModule.registerSword(id, factory.nameId, factory.nameToDisplay, factory.iconName, factory.iconIndex, tier); break;
@@ -217,7 +223,7 @@ ToolAPI.registerTool = (id, toolMaterial, blockMaterials, params) => {
                 }
                 Item.createCustomTool(factory.nameId, factory.nameToDisplay, { name: factory.iconName, meta: factory.iconIndex }, { stack: factory.stack, tier: materialName }, params);
         }
-        factory.setFactoryProperties(id);
+        factory.applyOldFactoryProperties(id);
     }
 }
 ToolAPI.registerSword = (id, toolMaterial, params) => {
@@ -227,21 +233,42 @@ ToolAPI.registerSword = (id, toolMaterial, params) => {
         ToolAPI.addToolMaterial(materialName, toolMaterial);
     }
     const tier = ToolsModule.getTierByName(materialName) ?? ToolsModule.getTierByName("wood");
-    const factory = ItemFabricHelper.killItem(id);
+    const factory = ItemFactoryHelper.killItem(id);
     if(typeof params === "object" && Object.keys(params).length - Number(typeof params.__flag !== "undefined") > 0) {
         Item.createCustomTool(factory.nameId, factory.nameToDisplay, { name: factory.iconName, meta: factory.iconIndex }, { stack: factory.stack, tier: materialName }, params);
     } else ToolsModule.registerSword(id, factory.nameId, factory.nameToDisplay, factory.iconName, factory.iconIndex, tier);
 }
 ToolAPI.startDestroyHook = () => {}
+ToolAPI.destroyBlockHook = () => {}
+ToolAPI.playerAttackHook = () => {}
 ToolAPI.getToolData = itemID => typeof ToolAPI.toolData[itemID] !== "undefined" ? ToolAPI.toolData[itemID] : null;
 ToolAPI.getToolLevel = itemID => ToolsModule.getToolLevel(itemID);
 ToolAPI.getToolLevelViaBlock = (itemID, blockID) => ToolsModule.getToolLevelViaBlock(itemID, blockID);
 ToolAPI.getDestroyTimeViaTool = (fullBlock, toolItem, coords) => ToolsModule.getDestroyTimeViaTool(fullBlock, coords.x, coords.y, coords.z, coords.side, toolItem);
 Block.isNativeTile = blockID => ToolsModule.getBlockIsNative(blockID);
-Block.setDestroyLevelForID = (blockID, level) => ToolsModule.setBlockDestroyLevel(blockID, level);
+Block.setDestroyLevelForID = (blockID, level) => ToolAPI.registerBlockDiggingLevel(blockID, level);
 
 
-(() => {
+Callback.addCallback("LevelPreLoaded", () => {
+    for(let k in ToolAPI.blockMaterials) ToolAPI.addBlockMaterial(k, ToolAPI.blockMaterials[k].multiplier);
+    ToolAPI.blockMaterials = null;
+    const materialsToDelete = [ "wood", "stone", "iron", "diamond", "golden", "netherite" ];
+    for(let materialName in ToolAPI.toolMaterials) {
+        const copy = { ...ToolAPI.toolMaterials[materialName] };
+        if(!!~materialsToDelete.indexOf(materialName)) delete ToolAPI.toolMaterials[materialName];
+        ToolAPI.addToolMaterial(materialName, copy);
+    }
+    for(let id in ToolAPI.toolData) {
+        const copy = { ...ToolAPI.toolData[id] };
+        delete ToolAPI.toolData[id];
+        const numericId = parseInt(id);
+        ToolAPI.registerTool(numericId, copy.toolMaterial, [], copy);
+    }
+    for(let id in ToolAPI.blockData) {
+        const numericId = parseInt(id);
+        ToolAPI.registerBlockMaterial(numericId, ToolAPI.blockData[id].material, ToolAPI.blockData[id].level, typeof ToolAPI.blockData[id].isNative === "boolean" ? ToolAPI.blockData[id].isNative : false);
+    }
+    ToolAPI.blockData = {};
     interface JSONToolAPIData {
         materials: { [key: string]: (number | string)[] },
         destroy_levels: (number | string)[][];
@@ -253,4 +280,4 @@ Block.setDestroyLevelForID = (blockID, level) => ToolsModule.setBlockDestroyLeve
         typeof Block.dropFunctions[id] !== "undefined" && delete Block.dropFunctions[id];
         Block.setDestroyLevelForID(id as number, level + 1);
     }));
-})();
+});
