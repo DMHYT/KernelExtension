@@ -1,5 +1,6 @@
 #include <mod.h>
 #include "modules/loot.hpp"
+#include "modules/items.hpp"
 #include "modules/tools.hpp"
 
 
@@ -15,5 +16,6 @@ public:
 MAIN {
 	Module* main = new KernelExtensionMain();
 	Module* loot = new KEXLootModule(main);
+	Module* items = new KEXItemsModule(main);
 	Module* tools = new KEXToolsModule(main);
 }
