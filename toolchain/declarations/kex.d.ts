@@ -4,38 +4,22 @@
 declare module vsdum {
     export module kex {
         export module util {
-            export class ItemFabricHelper extends java.lang.Object {
-                static class: java.lang.Class<ItemFabricHelper>;
-                static killItem(id: number): Nullable<ItemFabricInterface>;
+            export class ItemFactoryHelper extends java.lang.Object {
+                static class: java.lang.Class<ItemFactoryHelper>;
+                static killItem(id: number): Nullable<ItemFactoryInterface>;
             }
-            interface ItemFabricInterface {
+            interface ItemFactoryInterface {
                 readonly nameId: string;
                 readonly nameToDisplay: string;
                 readonly iconName: string;
                 readonly iconIndex: number;
-                readonly durability: number;
                 readonly stack: number;
-                readonly animationId: number;
-                readonly maxUseDuration: number;
-                readonly creativeCategory: number;
-                readonly enchantType: number;
-                readonly enchantValue: number;
-                readonly repairItemIds: native.Array<number>;
-                readonly isGlint: boolean;
-                readonly isHandEquipped: boolean;
-                readonly isLiquidClip: boolean;
-                readonly isIconControlled: boolean;
-                readonly isIconAnimated: boolean;
-                readonly isArmorDamageable: boolean;
-                readonly isStackedByData: boolean;
-                readonly isAllowedInOffhand: boolean;
-                readonly initProperties: string;
-                setFactoryProperties(id: number): void;
+                applyOldFactoryProperties(id: number): void;
             }
         }
     }
 }
-declare function WRAP_JAVA(clazz: "vsdum.kex.util.ItemFabricHelper"): typeof vsdum.kex.util.ItemFabricHelper;
+declare function WRAP_JAVA(clazz: "vsdum.kex.util.ItemFactoryHelper"): typeof vsdum.kex.util.ItemFactoryHelper;
 
 declare module vsdum {
     export module kex {
