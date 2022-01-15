@@ -1,4 +1,5 @@
 #include <stl/vector>
+#include <stl/set>
 #include <Item.hpp>
 
 #ifndef KEX_ITEMS_DIGGERITEM_HPP
@@ -7,10 +8,14 @@
 
 class DiggerItem : public Item {
     public:
-    char filler1[324]; // 324
-    std::__ndk1::vector<BlockLegacy*> blocks; // 348
-    char filler2[260]; // 608
-    Item::Tier* tier; // 616
+    char filler1[86]; // 90
+    short id; // 92
+    char filler2[208]; // 300
+    float speed; // 304
+    Item::Tier* tier; // 308
+    int attackDamage; // 312
+    char filler3[12]; // 324
+    std::__ndk1::set<BlockLegacy const*> blocks; // 348
     virtual int getAttackDamage() const;
     virtual bool isHandEquipped() const;
     virtual void* appendFormattedHovertext(ItemStackBase const&, Level&, std::__ndk1::string&, bool) const;

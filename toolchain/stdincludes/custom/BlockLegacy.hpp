@@ -4,10 +4,10 @@
 
 class BlockLegacy {
     public:
-    char filler1[212];
-    short id;
-    char filler2[522];
-    float destroyTime;
+    char filler1[184]; // 184
+    float destroyTime; // 188
+    char filler2[24]; // 212
+    short id; // 214
 };
 
 

@@ -105,7 +105,7 @@ class Item {
     virtual bool isLiquidClipItem(int) const;
     virtual bool shouldInteractionWithBlockBypassLiquid(Block const&) const;
     virtual bool requiresInteract() const;
-    virtual void* appendFormattedHoverText(ItemStackBase&, Level&, std::__ndk1::string&, bool) const;
+    virtual void* appendFormattedHovertext(ItemStackBase const&, Level&, std::__ndk1::string&, bool) const;
     virtual bool isValidRepairItem(ItemStackBase const&, ItemStackBase const&) const;
     virtual void* getEnchantSlot() const;
     virtual int getEnchantValue() const;
@@ -169,7 +169,7 @@ class Item {
     virtual void setIconAtlas(std::__ndk1::string const&, int);
     virtual bool canBeCharged() const;
     virtual void* playSoundIncrementally(ItemInstance const&, Mob&) const;
-    virtual float getFurnaceBurnIntervalMultiplier(ItemStackBase const&) const;
+    virtual float getFurnaceBurnIntervalMultipler(ItemStackBase const&) const;
     virtual float getFurnaceXPmultiplier(ItemStackBase const&) const;
     virtual void* getAuxValuesDescription() const;
     virtual void* _checkUseOnPermissions(Actor&, ItemStackBase&, unsigned char const&, BlockPos const&) const;
