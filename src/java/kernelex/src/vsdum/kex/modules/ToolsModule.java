@@ -302,7 +302,7 @@ public class ToolsModule {
         return defaultTime;
     }
 
-    public static boolean onDestroy(long stackPtr, int x, int y, int z, int side, int id, int data, long player)
+    public static boolean onDestroy(long stackPtr, int x, int y, int z, byte side, int id, int data, long player)
     {
         ItemStack stack = ItemStack.fromPtr(stackPtr);
         if(stack != null)

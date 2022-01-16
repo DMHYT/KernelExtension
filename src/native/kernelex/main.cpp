@@ -4,7 +4,7 @@
 #include "modules/items.hpp"
 #include "modules/tools.hpp"
 
-#include "Java.h"
+#include "utils/java_utils.hpp"
 
 
 class KernelExtensionMain : public Module {
@@ -16,14 +16,12 @@ public:
 };
 
 
-MAIN {
+extern "C" JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *) {
+    KEXJavaUtils::init(vm);
+    return JNI_VERSION_1_6;
+} NO_JNI_MAIN {
 	Module* main = new KernelExtensionMain();
 	Module* loot = new KEXLootModule(main);
 	Module* items = new KEXItemsModule(main);
 	Module* tools = new KEXToolsModule(main);
-}
-
-extern "C" JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *) {
-    Java::init(vm);
-    return JNI_VERSION_1_6;
 }

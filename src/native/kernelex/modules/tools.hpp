@@ -43,10 +43,9 @@ class LastDestroyedBlock {
 
 class KEXToolsModule : public Module {
     public:
-    static jclass callbackClass;
     static LastDestroyedBlock* lastDestroyed;
     static std::unordered_map<std::string, std::vector<int>> materializedBlocks;
-    static std::unordered_map<int, BlockDataInterface> blockData;
+    static std::unordered_map<int, BlockDataInterface*> blockData;
     static std::unordered_map<int, int> toolsToBrokenIds;
     static std::unordered_set<int> customTools;
     static bool isCustomTool(int id);

@@ -36,7 +36,7 @@ ItemParamsModifier* KEXItemsModule::getOrCreateModifier(int id) {
     if(found != itemParamsModifiers.end()) {
         return found->second;
     } else {
-        itemParamsModifiers.insert(std::unordered_map<int, ItemParamsModifier*>::value_type(id, new ItemParamsModifier()));
+        itemParamsModifiers.emplace(id, new ItemParamsModifier());
         return itemParamsModifiers.at(id);
     }
 }

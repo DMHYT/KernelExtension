@@ -5,6 +5,7 @@
 #include <logger.h>
 #include "../../../../../../DMH/cppheaders/json/value.h"
 #include "../../../../../../DMH/cppheaders/json/reader.h"
+#include "../utils/java_utils.hpp"
 #include "loot.hpp"
 
 
@@ -29,23 +30,15 @@ void KEXLootModule::initialize() {
             void* result = controller->callAndReplace<void*>(table, &newJson);
             return result;
         } else {
-            JNIEnv* env;
+            JNIEnv* env = KEXJavaUtils::attach();
             Json::Value newJson = nullptr;
-            ATTACH_JAVA(env, JNI_VERSION_1_4) {
-                jclass clazz = env->FindClass("vsdum/kex/modules/LootModule");
-                jmethodID method = env->GetStaticMethodID(clazz, "modify", "(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;");
-                jstring jTableName = env->NewStringUTF(tableName.c_str());
-                jstring jTableJson = env->NewStringUTF(json->toStyledString().c_str());
-                jobject result = env->CallStaticObjectMethod(clazz, method, jTableName, jTableJson);
-                if(result != NULL) {
-                    const char* cmodified = env->GetStringUTFChars((jstring) result, 0);
-                    Logger::debug("KEX", "Modified LootTable from Java: %s", cmodified);
-                    Logger::flush();
-                    cachedModifiedTables.insert(std::unordered_map<std::string, std::string>::value_type(tableName, std::string(cmodified)));
-                    newJson = Json::Value(0);
-                    jsonReader->parse(std::__ndk1::string(cmodified), newJson, true);
-                    env->ReleaseStringUTFChars((jstring) result, cmodified);
-                }
+            jstring modified = KEXJavaBridge::LootModule::modify(tableName.c_str(), json->toStyledString().c_str());
+            if(modified != NULL) {
+                const char* cModified = env->GetStringUTFChars(modified, 0);
+                cachedModifiedTables.emplace(tableName, std::string(cModified));
+                newJson = Json::Value(0);
+                jsonReader->parse(std::__ndk1::string(cModified), newJson, true);
+                env->ReleaseStringUTFChars(modified, cModified);
             }
             if(newJson != nullptr) {
                 void* result = controller->callAndReplace<void*>(table, &newJson);
