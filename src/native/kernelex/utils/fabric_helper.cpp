@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <string>
 #include <jni.h>
+#include <logger.h>
 #include <innercore/legacy_item_registry.h>
 
 
@@ -14,6 +15,7 @@ extern "C" {
             return 0;
         }
         LegacyItemRegistry::registeredFactories.erase(id);
+        Logger::debug("KEX", "Successfully killed factory for item %d", id);
         return (jlong) factory;
     }
     JNIEXPORT void JNICALL Java_vsdum_kex_util_ItemFactoryHelper_nativePutPropertiesToNewFactory
@@ -24,6 +26,7 @@ extern "C" {
             LegacyItemRegistry::LegacyItemFactoryBase* newFactory = found->second;
             if(newFactory != nullptr) {
                 newFactory->props = oldFactory->props;
+                Logger::debug("KEX", "Successfully applied old factory properties to the item %d", id);
             }
         }
     }

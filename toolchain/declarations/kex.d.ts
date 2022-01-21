@@ -637,7 +637,7 @@ declare module vsdum {
                 static addOnBrokeCallback(id: number, func: ToolAPI.ToolParams["onBroke"]): void;
                 static addModifyEnchantCallback(id: number, func: ToolAPI.ToolParams["modifyEnchant"]): void;
                 static addOnMineBlockCallback(id: number, func: ToolAPI.ToolParams["onMineBlock"]): void;
-                static registerCustomTool(id: number, nameId: string, name: string, textureName: string, textureMeta: number, tier: ToolsModule.ItemTier, isTech: boolean, isWeapon: boolean, blockMaterials: Nullable<string[]>, brokenId: number, baseAttackDamage: number): void;
+                static registerCustomTool(id: number, nameId: string, name: string, textureName: string, textureMeta: number, tier: ToolsModule.ItemTier, isTech: boolean, isWeapon: boolean, blockMaterials: Nullable<string[]>, brokenId: number, baseAttackDamage: number, enchantType: number): void;
             }
             export module ToolsModule {
                 export class ItemTier extends java.lang.Object {

@@ -19,15 +19,6 @@ interface FoodParamsDescription {
     }[]
 }
 
-interface ArmorParamsDescription {
-    type: ArmorType,
-    armor: number,
-    durability: number,
-    texture: string,
-    isTech?: boolean,
-    knockbackres?: number;
-}
-
 namespace Item {
     // @ts-ignore
     export function createFoodItem(nameID: string, name: string, texture: TextureData, params: FoodParamsDescription): NativeItem {
@@ -46,18 +37,6 @@ namespace Item {
             delete params.food;
         } else params.food = 1;
         result.setProperties(JSON.stringify(params));
-        return result;
-    }
-    // @ts-ignore
-    export function createArmorItem(nameID: string, name: string, texture: TextureData, params: ArmorParamsDescription): NativeItem {
-        const result = createArmorItem(nameID, name, texture, params);
-        if(typeof params.knockbackres === "number" && params.knockbackres > 0.0) {
-            result.setProperties(JSON.stringify({
-                "minecraft:knockback_resistance": {
-                    protection: params.knockbackres
-                }
-            }));
-        }
         return result;
     }
 }

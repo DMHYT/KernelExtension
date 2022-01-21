@@ -1,7 +1,5 @@
 package vsdum.kex.util;
 
-import com.zhekasmirnov.innercore.api.mod.adaptedscript.AdaptedScriptAPI.Logger;
-
 import android.support.annotation.Nullable;
 import vsdum.kex.common.INativeInterface;
 
@@ -17,11 +15,7 @@ public class ItemFactoryHelper {
 
     @Nullable public static ItemFactoryInterface killItem(int id)
     {
-        Logger.debug("KEX", String.format("Killing item with id %d", new Object[]{Integer.valueOf(id)}));
-        Logger.Flush();
         long ptr = nativeKillItem(id);
-        Logger.debug("KEX", "Killed!");
-        Logger.Flush();
         return ptr != 0L ? new ItemFactoryInterface(ptr) : null;
     }
 
@@ -52,11 +46,7 @@ public class ItemFactoryHelper {
 
         public void applyOldFactoryProperties(int id)
         {
-            Logger.Log("KEX", String.format("Applying old factory properties to the item with id %d", new Object[]{ Integer.valueOf(id) }));
-            Logger.Flush();
             nativePutPropertiesToNewFactory(this.pointer, id);
-            Logger.Log("KEX", "Applied!");
-            Logger.Flush();
         }
 
     }

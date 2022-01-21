@@ -27,6 +27,11 @@ void ItemParamsModifier::applyTo(int id) {
         VTABLE_FIND_OFFSET(Item_isValidRepairItem, _ZTV4Item, _ZNK5Item17isValidRepairItemERK13ItemStackBaseRK13ItemStackBase);
         vtable[Item_isValidRepairItem] = ADDRESS(_anvilRepairDisable);
     }
+    if(cooldownTime > 0) {
+        void** vtable = *(void***) item;
+        VTABLE_FIND_OFFSET(Item_getCooldownTime, _ZTV4Item, _ZNK4Item15getCooldownTimeEv);
+        vtable[Item_getCooldownTime] = ADDRESS(_getCooldownTimePatch);
+    }
 }
 
 
@@ -47,6 +52,11 @@ void KEXItemsModule::initialize() {
             iter->second->applyTo(iter->first);
         }
     }));
+}
+
+
+int ItemParamsModifier::_getCooldownTimePatch(Item* item) {
+    return KEXItemsModule::itemParamsModifiers.at(IdConversion::dynamicToStatic(item->id, IdConversion::ITEM))->cooldownTime;
 }
 
 
@@ -90,5 +100,12 @@ extern "C" {
     (JNIEnv*, jclass, jint id) {
         ItemParamsModifier* mod = KEXItemsModule::getOrCreateModifier(id);
         mod->cannotBeRepairedInAnvil = true;
+    }
+    JNIEXPORT void JNICALL Java_vsdum_kex_modules_ItemsModule_setCooldownTime
+    (JNIEnv*, jclass, jint id, jint cooldownTime) {
+        if(cooldownTime > 0) {
+            ItemParamsModifier* mod = KEXItemsModule::getOrCreateModifier(id);
+            mod->cooldownTime = cooldownTime;
+        }
     }
 }

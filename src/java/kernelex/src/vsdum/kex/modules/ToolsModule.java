@@ -18,7 +18,6 @@ import vsdum.kex.util.CommonTypes;
 
 public class ToolsModule {
 
-    public static native void defineCallbackClass();
     protected static native long[] nativeGrabVanillaItemTiers();
     protected static native long nativeNewItemTier(int level, int uses, float speed, int attackDamageBonus, int enchantmentValue);
     protected static native int nativeGetItemTierLevel(long ptr);
@@ -42,7 +41,7 @@ public class ToolsModule {
     protected static native void nativeSetBlockData(int id, String materialName, int destroyLevel, boolean isNative);
     public static native int getToolLevel(int id);
     public static native int getToolLevelViaBlock(int itemID, int blockID);
-    protected static native void nativeRegisterCustomTool(int id, String nameId, String name, String textureName, int textureMeta, long tierPtr, boolean isTech, boolean isWeapon, String[] blockMaterials, int brokenId, int baseAttackDamage);
+    protected static native void nativeRegisterCustomTool(int id, String nameId, String name, String textureName, int textureMeta, long tierPtr, boolean isTech, boolean isWeapon, String[] blockMaterials, int brokenId, int baseAttackDamage, int enchantType);
     protected static native float nativeGetDestroyTimeViaTool(int id, int data, long stackptr, int x, int y, int z, int side);
 
     private static final Map<String, ItemTier> tiersByName = new HashMap<>();
@@ -115,7 +114,7 @@ public class ToolsModule {
 
     public static void registerSword(int id, String nameId, String name, String textureName, int textureMeta, ItemTier tier)
     {
-        registerSword(id, nameId, name, textureName, textureMeta, tier, true);
+        registerSword(id, NativeAPI.convertNameId(nameId), name, textureName, textureMeta, tier, true);
     }
 
     public static void registerSword(int id, String nameId, String name, String textureName, int textureMeta, ItemTier tier, boolean isTech)
@@ -125,7 +124,7 @@ public class ToolsModule {
 
     public static void registerAxe(int id, String nameId, String name, String textureName, int textureMeta, ItemTier tier)
     {
-        registerAxe(id, nameId, name, textureName, textureMeta, tier, true);
+        registerAxe(id, NativeAPI.convertNameId(nameId), name, textureName, textureMeta, tier, true);
     }
 
     public static void registerAxe(int id, String nameId, String name, String textureName, int textureMeta, ItemTier tier, boolean isTech)
@@ -135,7 +134,7 @@ public class ToolsModule {
 
     public static void registerPickaxe(int id, String nameId, String name, String textureName, int textureMeta, ItemTier tier)
     {
-        registerPickaxe(id, nameId, name, textureName, textureMeta, tier, true);
+        registerPickaxe(id, NativeAPI.convertNameId(nameId), name, textureName, textureMeta, tier, true);
     }
 
     public static void registerPickaxe(int id, String nameId, String name, String textureName, int textureMeta, ItemTier tier, boolean isTech)
@@ -145,7 +144,7 @@ public class ToolsModule {
 
     public static void registerShovel(int id, String nameId, String name, String textureName, int textureMeta, ItemTier tier)
     {
-        registerShovel(id, nameId, name, textureName, textureMeta, tier, true);
+        registerShovel(id, NativeAPI.convertNameId(nameId), name, textureName, textureMeta, tier, true);
     }
 
     public static void registerShovel(int id, String nameId, String name, String textureName, int textureMeta, ItemTier tier, boolean isTech)
@@ -155,7 +154,7 @@ public class ToolsModule {
 
     public static void registerHoe(int id, String nameId, String name, String textureName, int textureMeta, ItemTier tier)
     {
-        registerHoe(id, nameId, name, textureName, textureMeta, tier, true);
+        registerHoe(id, NativeAPI.convertNameId(nameId), name, textureName, textureMeta, tier, true);
     }
 
     public static void registerHoe(int id, String nameId, String name, String textureName, int textureMeta, ItemTier tier, boolean isTech)
@@ -376,9 +375,9 @@ public class ToolsModule {
         }
     }
 
-    public static void registerCustomTool(int id, String nameId, String name, String textureName, int textureMeta, ItemTier tier, boolean isTech, boolean isWeapon, String[] blockMaterials, int brokenId, int baseAttackDamage)
+    public static void registerCustomTool(int id, String nameId, String name, String textureName, int textureMeta, ItemTier tier, boolean isTech, boolean isWeapon, String[] blockMaterials, int brokenId, int baseAttackDamage, int enchantType)
     {
-        nativeRegisterCustomTool(id, nameId, name, textureName, textureMeta, tier.getPointer(), isTech, isWeapon, blockMaterials, brokenId, baseAttackDamage);
+        nativeRegisterCustomTool(id, NativeAPI.convertNameId(nameId), name, textureName, textureMeta, tier.getPointer(), isTech, isWeapon, blockMaterials, brokenId, baseAttackDamage, enchantType);
     }
 
 }

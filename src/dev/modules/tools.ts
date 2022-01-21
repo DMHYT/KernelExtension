@@ -121,7 +121,7 @@ namespace Item {
         );
         if(typeof params.stack === "number" && params.stack > 1) Item.getItemById(id).setMaxStackSize(params.stack);
     }
-    export function createCustomTool(id: string, name: string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: string | ToolAPI.ToolMaterial }, toolParams?: ToolAPI.ToolParams): void {
+    export function createCustomTool(id: string, name: string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: string | ToolAPI.ToolMaterial }, toolParams?: ToolAPI.ToolParams, numericId?: number): void {
         let materialName: string = "";
         if(typeof params.tier === "object") {
             materialName = `__unnamedToolMaterial${ToolAPI.unnamedMaterialNum++}`;
@@ -132,8 +132,9 @@ namespace Item {
             blockMaterialsArr = [];
             Object.keys(toolParams.blockMaterials).forEach(k => toolParams.blockMaterials[k] && blockMaterialsArr.push(k));
         }
+        numericId = typeof numericId !== "undefined" ? numericId : ItemID[id];
         ToolsModule.registerCustomTool(
-            ItemID[id], id,
+            numericId, id,
             typeof name === "string" ? name : "<unnamed custom tool>",
             typeof texture.name === "string" ? texture.name : "missing_item",
             typeof texture.meta === "number" && texture.meta > 0 ? texture.meta : typeof texture.data === "number" && texture.data > 0 ? texture.data : 0,
@@ -142,16 +143,17 @@ namespace Item {
             typeof toolParams === "object" && typeof toolParams.isWeapon === "boolean" ? toolParams.isWeapon : false,
             blockMaterialsArr,
             typeof toolParams === "object" && typeof toolParams.brokenId === "number" && toolParams.brokenId != 0 ? toolParams.brokenId : 0,
-            typeof toolParams === "object" && typeof toolParams.damage === "number" && toolParams.damage > 0 ? toolParams.damage : 0
+            typeof toolParams === "object" && typeof toolParams.damage === "number" && toolParams.damage > 0 ? toolParams.damage : 0,
+            typeof toolParams.enchantType === "number" ? toolParams.enchantType : EEnchantType.ALL
         );
         if(typeof toolParams === "object") {
-            typeof toolParams.calcDestroyTime === "function" && ToolsModule.addCalcDestroyTimeCallback(ItemID[id], toolParams.calcDestroyTime);
-            typeof toolParams.modifyEnchant === "function" && ToolsModule.addModifyEnchantCallback(ItemID[id], toolParams.modifyEnchant);
-            typeof toolParams.onAttack === "function" && ToolsModule.addOnAttackCallback(ItemID[id], toolParams.onAttack);
-            typeof toolParams.onBroke === "function" && ToolsModule.addOnBrokeCallback(ItemID[id], toolParams.onBroke);
-            typeof toolParams.onDestroy === "function" && ToolsModule.addOnDestroyCallback(ItemID[id], toolParams.onDestroy);
-            typeof toolParams.onMineBlock === "function" && ToolsModule.addOnMineBlockCallback(ItemID[id], toolParams.onMineBlock);
-            ToolAPI.toolData[ItemID[id]] = toolParams;
+            typeof toolParams.calcDestroyTime === "function" && ToolsModule.addCalcDestroyTimeCallback(numericId, toolParams.calcDestroyTime);
+            typeof toolParams.modifyEnchant === "function" && ToolsModule.addModifyEnchantCallback(numericId, toolParams.modifyEnchant);
+            typeof toolParams.onAttack === "function" && ToolsModule.addOnAttackCallback(numericId, toolParams.onAttack);
+            typeof toolParams.onBroke === "function" && ToolsModule.addOnBrokeCallback(numericId, toolParams.onBroke);
+            typeof toolParams.onDestroy === "function" && ToolsModule.addOnDestroyCallback(numericId, toolParams.onDestroy);
+            typeof toolParams.onMineBlock === "function" && ToolsModule.addOnMineBlockCallback(numericId, toolParams.onMineBlock);
+            ToolAPI.toolData[numericId] = toolParams;
         }
         if(typeof params.stack === "number" && params.stack > 1) Item.getItemById(id).setMaxStackSize(params.stack);
     }
@@ -195,8 +197,6 @@ ToolAPI.registerBlockDiggingLevel = (blockID, level) => {
     ToolsModule.setBlockDestroyLevel(blockID, level);
 }
 ToolAPI.registerBlockMaterial = (blockID, materialName, level, isNative) => {
-    Logger.Log(`${blockID}:${materialName}:${level}:${isNative}:${Object.keys(ToolAPI.blockData).length}`, "KEX");
-    Logger.Flush();
     ToolsModule.setBlockData(blockID, materialName, level || 0, isNative || false);
 }
 ToolAPI.resetEngine = () => {}
@@ -221,7 +221,7 @@ ToolAPI.registerTool = (id, toolMaterial, blockMaterials, params) => {
                     params.blockMaterials = {};
                     blockMaterials.forEach(material => params.blockMaterials[material] = true);
                 }
-                Item.createCustomTool(factory.nameId, factory.nameToDisplay, { name: factory.iconName, meta: factory.iconIndex }, { stack: factory.stack, tier: materialName }, params);
+                Item.createCustomTool(factory.nameId, factory.nameToDisplay, { name: factory.iconName, meta: factory.iconIndex }, { stack: factory.stack, tier: materialName }, params, id);
         }
         factory.applyOldFactoryProperties(id);
     }
@@ -249,20 +249,22 @@ Block.isNativeTile = blockID => ToolsModule.getBlockIsNative(blockID);
 Block.setDestroyLevelForID = (blockID, level) => ToolAPI.registerBlockDiggingLevel(blockID, level);
 
 
-Callback.addCallback("LevelPreLoaded", () => {
+(() => {
     for(let k in ToolAPI.blockMaterials) ToolAPI.addBlockMaterial(k, ToolAPI.blockMaterials[k].multiplier);
     ToolAPI.blockMaterials = null;
     const materialsToDelete = [ "wood", "stone", "iron", "diamond", "golden", "netherite" ];
     for(let materialName in ToolAPI.toolMaterials) {
         const copy = { ...ToolAPI.toolMaterials[materialName] };
         if(!!~materialsToDelete.indexOf(materialName)) delete ToolAPI.toolMaterials[materialName];
-        ToolAPI.addToolMaterial(materialName, copy);
+        else ToolAPI.addToolMaterial(materialName, copy);
     }
     for(let id in ToolAPI.toolData) {
         const copy = { ...ToolAPI.toolData[id] };
         delete ToolAPI.toolData[id];
         const numericId = parseInt(id);
-        ToolAPI.registerTool(numericId, copy.toolMaterial, [], copy);
+        if(!IDRegistry.isVanilla(numericId)) {
+            ToolAPI.registerTool(numericId, copy.toolMaterial, [], copy);
+        }
     }
     for(let id in ToolAPI.blockData) {
         const numericId = parseInt(id);
@@ -280,4 +282,7 @@ Callback.addCallback("LevelPreLoaded", () => {
         typeof Block.dropFunctions[id] !== "undefined" && delete Block.dropFunctions[id];
         Block.setDestroyLevelForID(id as number, level + 1);
     }));
-});
+})();
+
+
+Callback.addCallback("ItemUse", (c, i, b, e, p) => Debug.m(`${Item.getMaxDamage(i.id)}`));

@@ -2,7 +2,7 @@
 
 #include "modules/loot.hpp"
 #include "modules/items.hpp"
-#include "modules/tools.hpp"
+#include "modules/tools/module.hpp"
 
 #include "utils/java_utils.hpp"
 

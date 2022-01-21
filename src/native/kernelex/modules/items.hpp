@@ -16,11 +16,13 @@ class ItemParamsModifier {
     float furnaceBurnIntervalMultiplier = -1.0f;
     float furnaceXPMultiplier = -1.0f;
     bool cannotBeRepairedInAnvil = false;
+    int cooldownTime = -1;
     ItemParamsModifier() {}
     void applyTo(int id);
     static bool _anvilRepairDisable(ItemStackBase const&, ItemStackBase const&) {
         return false;
     }
+    static int _getCooldownTimePatch(Item* item);
 };
 
 
