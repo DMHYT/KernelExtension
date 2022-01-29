@@ -1,6 +1,29 @@
 /// <reference path="core-engine.d.ts" />
 
 
+declare module com {
+    export module zhekasmirnov {
+        export module innercore {
+            export module api {
+                export class NativeItemInstance extends java.lang.Object {
+                    static class: java.lang.Class<NativeItemInstance>;
+                    count: number;
+                    data: number;
+                    extra: Nullable<NativeItemInstanceExtra>;
+                    id: number;
+                    isValid: boolean;
+                    constructor(ptr: number);
+                    constructor(id: number, count: number, data: number);
+                    getPointer(): number;
+                    destroy(): void;
+                    toString(): string;
+                }
+            }
+        }
+    }
+}
+
+
 declare module vsdum {
     export module kex {
         export module util {
@@ -39,8 +62,8 @@ declare module vsdum {
         export module natives {
             export class Actor extends common.INativeInterface {
                 static class: java.lang.Class<Actor>;
+                static isValid(entityUID: number): boolean;
                 constructor(entity: number);
-                constructor(pointer: number, flagForPointerOverload: boolean);
                 isBreakingObstruction(): boolean;
                 setBreakingObstruction(breaking: boolean): void;
                 isDancing(): boolean;
@@ -170,7 +193,7 @@ declare module vsdum {
                 setLayingDown(laying: boolean): void;
                 getTempted(): boolean;
                 setTempted(tempted: boolean): void;
-                dropTowards(stack: ItemStack, x: number, y: number, z: number): void;
+                dropTowards(stack: com.zhekasmirnov.innercore.api.NativeItemInstance, x: number, y: number, z: number): void;
                 isTrading(): boolean;
                 inDownwardFlowingLiquid(): boolean;
                 getJumpDuration(): number;
@@ -285,15 +308,15 @@ declare module vsdum {
                 onLightningHit(): void;
                 feed(amount: number): void;
                 getPickRadius(): number;
-                getArmor(slot: number): Nullable<ItemStack>;
-                setArmor(slot: number, stack: ItemStack): void;
+                getArmor(slot: number): Nullable<ItemInstance>;
+                setArmor(slot: number, stack: com.zhekasmirnov.innercore.api.NativeItemInstance): void;
                 getArmorMaterialTypeInSlot(slot: number): number;
                 getArmorMaterialTextureTypeInSlot(slot: number): number;
-                getEquippedSlot(slot: number): Nullable<ItemStack>;
-                setEquippedSlot(slot: number, stack: ItemStack): void;
-                getCarriedItem(): Nullable<ItemStack>;
-                setCarriedItem(stack: ItemStack): void;
-                setOffhandSlot(stack: ItemStack): void;
+                getEquippedSlot(slot: number): Nullable<ItemInstance>;
+                setEquippedSlot(slot: number, stack: com.zhekasmirnov.innercore.api.NativeItemInstance): void;
+                getCarriedItem(): Nullable<ItemInstance>;
+                setCarriedItem(stack: com.zhekasmirnov.innercore.api.NativeItemInstance): void;
+                setOffhandSlot(stack: com.zhekasmirnov.innercore.api.NativeItemInstance): void;
                 consumeTotem(): void;
                 getPortalCooldown(): number;
                 getPortalWaitTime(): number;
@@ -311,8 +334,8 @@ declare module vsdum {
                 isWorldBuilder(): boolean;
                 isCreative(): boolean;
                 isAdventure(): boolean;
-                add(stack: ItemStack): void;
-                drop(stack: ItemStack, someBool: boolean): void;
+                add(stack: com.zhekasmirnov.innercore.api.NativeItemInstance): void;
+                drop(stack: com.zhekasmirnov.innercore.api.NativeItemInstance, someBool: boolean): void;
                 setAuxValue(aux: number): void;
                 wobble(): void;
                 hasHurt(): boolean;
@@ -325,6 +348,8 @@ declare module vsdum {
                 pushOutOfBlocks(x: number, y: number, z: number): void;
                 doWaterSplashEffect(): void;
                 spawnTrailBubbles(): void;
+                isMob(): boolean;
+                asMob(): Nullable<Mob>;
             }
         }
     }
@@ -334,19 +359,141 @@ declare function WRAP_JAVA(clazz: "vsdum.kex.natives.Actor"): typeof vsdum.kex.n
 declare module vsdum {
     export module kex {
         export module natives {
-            export class Dimension extends common.INativeInterface {
-                static class: java.lang.Class<Dimension>;
-                constructor(pointer: number);
+            export class Mob extends Actor {
+                static class: java.lang.Class<Mob>;
+                constructor(entity: number);
+                constructor(actor: Actor);
+                setSleeping(sleeping: boolean): void;
+                setSprinting(sprinting: boolean): void;
+                getSpeed(): number;
+                setSpeed(speed: number): void;
+                getJumpPower(): number;
+                getMeleeWeaponDamageBonus(mob: Mob): number;
+                getMeleeKnockbackBonus(): number;
+                travel(strafe: number, vertical: number, forward: number): void;
+                applyFinalFriction(friction: number, discardFriction: boolean): void;
+                isLookingAtAnEntity(): boolean;
+                getItemUseDuration(): number;
+                getItemUseStartupProgress(): number;
+                getItemUseIntervalProgress(): number;
+                getMaxHeadXRot(): number;
+                getLastHurtByMob(): Nullable<Mob>;
+                setLastHurtByMob(mob: Mob): void;
+                getLastHurtMob(): Nullable<Actor>;
+                setLastHurtMob(actor: Actor): void;
+                isAlliedTo(mob: Mob): boolean;
+                canBeControlledByRider(): boolean;
+                leaveCaravan(): void;
+                joinCaravan(caravanHead: Mob): void;
+                hasCaravanTail(): boolean;
+                getCaravanHead(): Nullable<Mob>;
+                getArmorValue(): number;
+                getArmorCoverPercentage(): number;
+                getItemSlot(slot: number): Nullable<ItemInstance>;
+                setItemSlot(slot: number, instance: com.zhekasmirnov.innercore.api.NativeItemInstance): void;
+                isTransitioningSitting(): boolean;
+                setTransitioningSitting(transitioningSitting: boolean): void;
+                canExistWhenDisallowMob(): boolean;
+                jumpFromGround(): void;
+                getNoActionTime(): number;
+                resetNoActionTime(): void;
+                wantsToBeJockey(): boolean;
+                setWantsToBeJockey(wantsToBeJockey: boolean): void;
+                isLayingEgg(): boolean;
+                setIsLayingEgg(laying: boolean): void;
+                getGlidingTicks(): number;
+                getFrictionModifier(): number;
+                setFrictionModifier(frictionModifier: number): void;
+                snapToYBodyRot(rot: number): void;
+                snapToYHeadRot(rot: number): void;
+                incrementArrowCount(increment: number): void;
+                canPickUpLoot(item: com.zhekasmirnov.innercore.api.NativeItemInstance): boolean;
+                getJumpMultiplier(): number;
+                hasBeenHurtByMobInLastTicks(ticks: number): boolean;
+                isHeadInWater(): boolean;
+                getMovementComponentCurrentSpeed(): number;
+                setMovementComponentCurrentSpeed(speed: number): void;
+                getFlightSpeed(): number;
+                setFlightSpeed(speed: number): void;
+                isInterpolationActive(): boolean;
+                setInterpolationActive(interpolationActive: boolean): void;
+                setYHeadRot(rot: number): void;
+                getRiderRotLimit(): number;
+                setRiderRotLimit(lim: number): void;
+                getRollCounter(): number;
+                isRolling(): boolean;
+                setRolling(rolling: boolean): void;
+                getSpawnMethod(): number;
+                setSpawnMethod(method: number): void;
+                getXxa(): number;
+                setXxa(xxa: number): void;
+                getYya(): number;
+                setYya(yya: number): void;
+                getZza(): number;
+                setZza(yya: number): void;
+                getTravelType(): number;
+                setSurfaceMob(isSurfaceMob: boolean): void;
+                isPregnant(): boolean;
+                setIsPregnant(pregnant: boolean): void;
+                isNaturallySpawned(): boolean;
+                setNaturallySpawned(naturallySpawned: boolean): void;
+                getRiderLockedBodyRot(): number;
+                setRiderLockedBodyRot(rot: number): void;
+                isFrostWalking(): boolean;
+                setJumpVelRedux(redux: number): void;
+                calcMoveRelativeSpeed(travelType: number): number;
+                isEating(): boolean;
+                setEating(eating: boolean): void;
+                getEatCounter(): number;
+                setEatCounter(counter: number): void;
+                hasBoundOrigin(): boolean;
+                getCaravanSize(): number;
+                shouldApplyWaterGravity(): boolean;
+                isGliding(): boolean;
+                getFirstCaravanHead(): Nullable<Mob>;
+                getYRotA(): number;
+                setYRotA(yrota: number): void;
+                setJumping(jumping: boolean): void;
+                setSpeedModifier(speedModifier: number): void;
+                getCurrentSwingDuration(): number;
+                isSwinging(): boolean;
+                calculateJumpImpulse(): number;
+                isSlime(): boolean;
+                asSlime(): Nullable<Slime>;
             }
         }
     }
 }
+declare function WRAP_JAVA(clazz: "vsdum.kex.natives.Mob"): typeof vsdum.kex.natives.Mob;
 
 declare module vsdum {
     export module kex {
         export module natives {
-            export class ItemStack extends common.INativeInterface {
-                static class: java.lang.Class<ItemStack>;
+            export class Slime extends Mob {
+                static class: java.lang.Class<Slime>;
+                constructor(entity: number);
+                constructor(mob: Mob);
+                constructor(actor: Actor);
+                decreaseSquish(): number;
+                justJumped(): boolean;
+                justLanded(): boolean;
+                getSquishValue(): number;
+                getOldSquishValue(): number;
+                getTargetSquish(): number;
+                getSlimeSize(): number;
+                setSlimeSize(size: number): void;
+            }
+        }
+    }
+}
+declare function WRAP_JAVA(clazz: "vsdum.kex.natives.Slime"): typeof vsdum.kex.natives.Slime;
+
+
+declare module vsdum {
+    export module kex {
+        export module natives {
+            export class Dimension extends common.INativeInterface {
+                static class: java.lang.Class<Dimension>;
                 constructor(pointer: number);
             }
         }
@@ -604,6 +751,25 @@ declare function WRAP_JAVA(clazz: "vsdum.kex.modules.LootModule"): typeof vsdum.
 declare module vsdum {
     export module kex {
         export module modules {
+            export class ItemsModule extends java.lang.Object {
+                static class: java.lang.Class<ItemsModule>;
+                setRequiresWorldBuilder(id: number, requiresWorldBuilder: boolean): void;
+                setExplodable(id: number, explodable: boolean): void;
+                setFireResistant(id: number, fireResistant: boolean): void;
+                setShouldDespawn(id: number, shouldDespawn: boolean): void;
+                setIsMirroredArt(id: number, isMirroredArt: boolean): void;
+                setFurnaceBurnIntervalMultiplier(id: number, multiplier: number): void;
+                setFurnaceXPMultiplier(id: number, multiplier: number): void;
+                setCannotBeRepairedInAnvil(id: number): void;
+            }
+        }
+    }
+}
+declare function WRAP_JAVA(clazz: "vsdum.kex.modules.ItemsModule"): typeof vsdum.kex.modules.ItemsModule;
+
+declare module vsdum {
+    export module kex {
+        export module modules {
             interface BlockData {
                 readonly materialName: Nullable<string>;
                 readonly destroyLevel: number;
@@ -631,13 +797,7 @@ declare module vsdum {
                 static setBlockDestroyLevel(id: number, destroyLevel: number): void;
                 static setBlockIsNative(id: number, isNative: boolean): void;
                 static getDestroyTimeViaTool(block: Tile, x: number, y: number, z: number, side: number, item: ItemInstance): number;
-                static addCalcDestroyTimeCallback(id: number, func: ToolAPI.ToolParams["calcDestroyTime"]): void;
-                static addOnDestroyCallback(id: number, func: ToolAPI.ToolParams["onDestroy"]): void;
-                static addOnAttackCallback(id: number, func: ToolAPI.ToolParams["onAttack"]): void;
-                static addOnBrokeCallback(id: number, func: ToolAPI.ToolParams["onBroke"]): void;
-                static addModifyEnchantCallback(id: number, func: ToolAPI.ToolParams["modifyEnchant"]): void;
-                static addOnMineBlockCallback(id: number, func: ToolAPI.ToolParams["onMineBlock"]): void;
-                static registerCustomTool(id: number, nameId: string, name: string, textureName: string, textureMeta: number, tier: ToolsModule.ItemTier, isTech: boolean, isWeapon: boolean, blockMaterials: Nullable<string[]>, brokenId: number, baseAttackDamage: number, enchantType: number): void;
+                static registerCustomTool(id: number, nameId: string, name: string, textureName: string, textureMeta: number, tier: ToolsModule.ItemTier, isTech: boolean, isWeapon: boolean, blockMaterials: Nullable<string[]>, brokenId: number, baseAttackDamage: number, enchantType: number, toolData: ToolAPI.ToolParams): void;
             }
             export module ToolsModule {
                 export class ItemTier extends java.lang.Object {

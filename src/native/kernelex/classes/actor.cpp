@@ -6,359 +6,283 @@
 #include <MobEffect.hpp>
 
 
+#define __EXPORT__(RET, NAME, ...) JNIEXPORT RET JNICALL Java_vsdum_kex_natives_Actor_native##NAME(JNIEnv* env, jclass clazz, jlong ptr, ##__VA_ARGS__)
+
+
 extern "C" {
+    JNIEXPORT jlong JNICALL Java_vsdum_kex_natives_Actor_wrap
+    (JNIEnv*, jclass, jlong uid) {
+        Actor* actor = Actor::wrap(uid);
+        if(actor != nullptr) {
+            return (jlong) actor;
+        }
+        return 0;
+    }
+    __EXPORT__(jboolean, IsBreakingObstruction) {
+        return ((Actor*) ptr)->isBreakingObstruction();
+    }
+    __EXPORT__(void, SetBreakingObstruction, jboolean breaking) {
+        ((Actor*) ptr)->setBreakingObstruction(breaking);
+    }
+    __EXPORT__(jboolean, IsDancing) {
+        return ((Actor*) ptr)->isDancing();
+    }
+    __EXPORT__(void, SetDancing, jboolean dancing) {
+        ((Actor*) ptr)->setDancing(dancing);
+    }
+    __EXPORT__(void, HealEffects, jint value) {
+        ((Actor*) ptr)->healEffects(value);
+    }
+    __EXPORT__(jint, GetColor) {
+        return ((Actor*) ptr)->getColor();
+    }
+    __EXPORT__(void, SetColor, jint color) {
+        ((Actor*) ptr)->setColor((PaletteColor) color);
+    }
+    __EXPORT__(jint, GetColor2) {
+        return ((Actor*) ptr)->getColor2();
+    }
+    __EXPORT__(void, SetColor2, jint color) {
+        ((Actor*) ptr)->setColor2((PaletteColor) color);
+    }
+    __EXPORT__(jboolean, IsInClouds) {
+        return ((Actor*) ptr)->isInClouds();
+    }
+    __EXPORT__(jboolean, HasUniqueID) {
+        return ((Actor*) ptr)->hasUniqueID();
+    }
+    __EXPORT__(jlong, GetUniqueID) {
+        ActorUniqueID* uid = ((Actor*) ptr)->getUniqueID();
+        if(uid == nullptr) return 0;
+        return uid->id;
+    }
+    __EXPORT__(jint, GetHurtDir) {
+        return ((Actor*) ptr)->getHurtDir();
+    }
+    __EXPORT__(void, SetHurtDir, jint dir) {
+        ((Actor*) ptr)->setHurtDir(dir);
+    }
+    __EXPORT__(jboolean, IsEnchanted) {
+        VTABLE_FIND_OFFSET(Actor_isEnchanted, _ZTV5Actor, _ZNK5Actor11isEnchantedEv);
+        return VTABLE_CALL<bool>(Actor_isEnchanted, (Actor*) ptr);
+    }
+    __EXPORT__(void, SetEnchanted, jboolean enchanted) {
+        ((Actor*) ptr)->setEnchanted(enchanted);
+    }
+    __EXPORT__(jint, GetMarkVariant) {
+        return ((Actor*) ptr)->getMarkVariant();
+    }
+    __EXPORT__(void, SetMarkVariant, jint variant) {
+        ((Actor*) ptr)->setMarkVariant(variant);
+    }
+    __EXPORT__(jboolean, HasDimension) {
+        return ((Actor*) ptr)->hasDimension();
+    }
+    __EXPORT__(jboolean, CanChangeDimensions) {
+        VTABLE_FIND_OFFSET(Actor_canChangeDimensions, _ZTV5Actor, _ZNK5Actor19canChangeDimensionsEv);
+        return VTABLE_CALL<bool>(Actor_canChangeDimensions, (Actor*) ptr);
+    }
+    __EXPORT__(jint, GetDimensionId) {
+        VTABLE_FIND_OFFSET(Actor_getDimensionId, _ZTV5Actor, _ZNK5Actor14getDimensionIdEv);
+        return VTABLE_CALL<int>(Actor_getDimensionId, (Actor*) ptr);
+    }
+    __EXPORT__(jlong, GetDimension) {
+        Dimension* dim = ((Actor*) ptr)->getDimension();
+        if(dim == nullptr) return 0;
+        return (jlong) dim;
+    }
+    __EXPORT__(jboolean, WasLastHitByPlayer) {
+        return ((Actor*) ptr)->wasLastHitByPlayer();
+    }
+    __EXPORT__(jboolean, HasSaddle) {
+        return ((Actor*) ptr)->hasSaddle();
+    }
+    __EXPORT__(void, SetSaddle, jboolean saddle) {
+        ((Actor*) ptr)->setSaddle(saddle);
+    }
+    __EXPORT__(jboolean, IsDelayedAttacking) {
+        return ((Actor*) ptr)->isDelayedAttacking();
+    }
+    __EXPORT__(void, SetDelayedAttacking, jboolean delayed) {
+        ((Actor*) ptr)->setDelayedAttacking(delayed);
+    }
+    __EXPORT__(jboolean, CanBeginOrContinueClimbingLadder) {
+        return ((Actor*) ptr)->canBeginOrContinueClimbingLadder();
+    }
+    __EXPORT__(jint, GetStructuralIntegrity) {
+        return ((Actor*) ptr)->getStructuralIntegrity();
+    }
+    __EXPORT__(void, SetStructuralIntegrity, jint integrity) {
+        ((Actor*) ptr)->setStructuralIntegrity(integrity);
+    }
+    __EXPORT__(jboolean, HasLevel) {
+        return ((Actor*) ptr)->hasLevel();
+    }
+    __EXPORT__(jlong, GetLevel) {
+        Level* level = ((Actor*) ptr)->getLevel();
+        if(level == nullptr) return 0;
+        return (jlong) level;
+    }
+    __EXPORT__(jfloat, GetCameraDistance) {
+        return ((Actor*) ptr)->getCameraDistance();
+    }
+    __EXPORT__(void, SetCameraDistance, jfloat distance) {
+        ((Actor*) ptr)->setCameraDistance(distance);
+    }
+    __EXPORT__(jboolean, IsDoorOpener) {
+        return ((Actor*) ptr)->isDoorOpener();
+    }
+    __EXPORT__(void, SetDoorOpener, jboolean opener) {
+        ((Actor*) ptr)->setDoorOpener(opener);
+    }
+    __EXPORT__(jboolean, HasType, jint type) {
+        return ((Actor*) ptr)->hasType((ActorType) type);
+    }
+    __EXPORT__(jboolean, IsType, jint type) {
+        return ((Actor*) ptr)->isType((ActorType) type);
+    }
+    __EXPORT__(void, RemoveEffectNoUpdate, jint effectId) {
+        ((Actor*) ptr)->removeEffectNoUpdate(effectId);
+    }
+    __EXPORT__(jlong, GetEffect__JJ, jlong mobEffect) {
+        MobEffectInstance* effect = ((Actor*) ptr)->getEffect(*((MobEffect*) mobEffect));
+        if(effect == nullptr) return 0;
+        return (jlong) effect;
+    }
+    __EXPORT__(jlong, GetEffect__JI, jint effectId) {
+        MobEffect* effect = MobEffect::getById(effectId);
+        if(effect != nullptr) {
+            MobEffectInstance* instance = ((Actor*) ptr)->getEffect(*effect);
+            if(effect != nullptr) return (jlong) effect;
+        }
+        return 0;
+    }
+    __EXPORT__(jint, GetActiveEffectCount) {
+        return ((Actor*) ptr)->getActiveEffectCount();
+    }
+    __EXPORT__(jboolean, HasEffect__JJ, jlong mobEffect) {
+        return ((Actor*) ptr)->hasEffect(*((MobEffect*) mobEffect));
+    }
+    __EXPORT__(jboolean, HasEffect__JI, jint id) {
+        MobEffect* effect = MobEffect::getById(id);
+        if(effect != nullptr) {
+            return ((Actor*) ptr)->hasEffect(*effect);
+        }
+        return false;
+    }
+    __EXPORT__(jboolean, HasAnyVisibleEffects) {
+        return ((Actor*) ptr)->hasAnyVisibleEffects();
+    }
+    __EXPORT__(void, RemoveEffect, jint id) {
+        ((Actor*) ptr)->removeEffect(id);
+    }
+    __EXPORT__(jboolean, HasAnyEffects) {
+        return ((Actor*) ptr)->hasAnyEffects();
+    }
+    __EXPORT__(void, RemoveAllEffects) {
+        ((Actor*) ptr)->removeAllEffects();
+    }
+    __EXPORT__(void, AddEffect, jlong instancePtr) {
+        ((Actor*) ptr)->addEffect(*((MobEffectInstance*) instancePtr));
+    }
+    __EXPORT__(jboolean, IsInSnow) {
+        return ((Actor*) ptr)->isInSnow();
+    }
+    __EXPORT__(jboolean, CanMate, jlong mate) {
+        return ((Actor*) ptr)->canMate(*((Actor*) mate));
+    }
+    __EXPORT__(jboolean, HasTickingArea) {
+        return ((Actor*) ptr)->hasTickingArea();
+    }
+    __EXPORT__(jlong, GetTickingArea) {
+        TickingArea* area = ((Actor*) ptr)->getTickingArea();
+        if(area == nullptr) return 0;
+        return (jlong) area;
+    }
+    __EXPORT__(jboolean, GetIsOnScreen) {
+        return ((Actor*) ptr)->getIsOnScreen();
+    }
+    __EXPORT__(void, SetIsOnScreen, jboolean onScreen) {
+        ((Actor*) ptr)->setIsOnScreen(onScreen);
+    }
+    __EXPORT__(jboolean, IsOverScaffolding) {
+        return ((Actor*) ptr)->isOverScaffolding();
+    }
+    __EXPORT__(jboolean, IsInScaffolding) {
+        return ((Actor*) ptr)->isInScaffolding();
+    }
+    __EXPORT__(jboolean, ShouldOrphan, jlong bsptr) {
+        return ((Actor*) ptr)->shouldOrphan(*((BlockSource*) bsptr));
+    }
+    __EXPORT__(jboolean, IsOrphan) {
+        return ((Actor*) ptr)->isOrphan();
+    }
+    __EXPORT__(jboolean, IsPredictedMovementEnabled) {
+        return ((Actor*) ptr)->isPredictedMovementEnabled();
+    }
+    __EXPORT__(jboolean, IsInRain) {
+        return ((Actor*) ptr)->isInRain();
+    }
+    __EXPORT__(jboolean, IsWASDControlled) {
+        return ((Actor*) ptr)->isWASDControlled();
+    }
+    __EXPORT__(void, SetWASDControlled, jboolean wasd) {
+        ((Actor*) ptr)->setWASDControlled(wasd);
+    }
+    __EXPORT__(jboolean, HasPriorityAmmunition) {
+        return ((Actor*) ptr)->hasPriorityAmmunition();
+    }
+    __EXPORT__(jboolean, HasRuntimeID) {
+        return ((Actor*) ptr)->hasRuntimeID();
+    }
+    __EXPORT__(jint, GetVariant) {
+        return ((Actor*) ptr)->getVariant();
+    }
+    __EXPORT__(void, SetVariant, jint variant) {
+        ((Actor*) ptr)->setVariant(variant);
+    }
+    __EXPORT__(jboolean, IsRiding__JJ, jlong ridden) {
+        return ((Actor*) ptr)->isRiding((Actor*) ridden);
+    }
+    __EXPORT__(jboolean, IsRider, jlong rider) {
+        return ((Actor*) ptr)->isRider(*((Actor*) rider));
+    }
+    __EXPORT__(void, RemoveAllRiders, jboolean b1, jboolean b2) {
+        ((Actor*) ptr)->removeAllRiders(b1, b2);
+    }
+    __EXPORT__(jboolean, HasPlayerRider) {
+        return ((Actor*) ptr)->hasPlayerRider();
+    }
+    __EXPORT__(jboolean, IsRiding__J) {
+        return ((Actor*) ptr)->isRiding();
+    }
+    __EXPORT__(jlong, GetRide) {
+        Actor* ride = ((Actor*) ptr)->getRide();
+        if(ride == nullptr) return 0;
+        return (jlong) ride;
+    }
+    __EXPORT__(jboolean, HasRider) {
+        return ((Actor*) ptr)->hasRider();
+    }
+    __EXPORT__(jboolean, GetStatusFlag, jint flag) {
+        return ((Actor*) ptr)->getStatusFlag((ActorFlags) flag);
+    }
+    __EXPORT__(jboolean, IsChested) {
+        return ((Actor*) ptr)->isChested();
+    }
+    __EXPORT__(jboolean, IsStackable) {
+        return ((Actor*) ptr)->isStackable();
+    }
+    __EXPORT__(jboolean, IsResting) {
+        return ((Actor*) ptr)->isResting();
+    }
+    __EXPORT__(void, SetResting, jboolean resting) {
+        ((Actor*) ptr)->setResting(resting);
+    }
 
 
 
-JNIEXPORT jlong JNICALL Java_vsdum_kex_natives_Actor_wrap
-(JNIEnv*, jclass, jlong uid) {
-    Actor* actor = Actor::wrap(uid);
-    if(actor != nullptr) {
-        return (jlong) actor;
-    }
-    return 0;
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsBreakingObstruction
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->isBreakingObstruction();
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeSetBreakingObstruction
-(JNIEnv*, jclass, jlong ptr, jboolean breaking) {
-    ((Actor*) ptr)->setBreakingObstruction(breaking);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsDancing
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->isDancing();
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeSetDancing
-(JNIEnv*, jclass, jlong ptr, jboolean dancing) {
-    ((Actor*) ptr)->setDancing(dancing);
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeHealEffects
-(JNIEnv*, jclass, jlong ptr, jint value) {
-    ((Actor*) ptr)->healEffects(value);
-}
-JNIEXPORT jint JNICALL Java_vsdum_kex_natives_Actor_nativeGetColor
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->getColor();
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeSetColor
-(JNIEnv*, jclass, jlong ptr, jint color) {
-    ((Actor*) ptr)->setColor((PaletteColor) color);
-}
-JNIEXPORT jint JNICALL Java_vsdum_kex_natives_Actor_nativeGetColor2
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->getColor2();
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeSetColor2
-(JNIEnv*, jclass, jlong ptr, jint color) {
-    ((Actor*) ptr)->setColor2((PaletteColor) color);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsInClouds
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->isInClouds();
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeHasUniqueID
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->hasUniqueID();
-}
-JNIEXPORT jlong JNICALL Java_vsdum_kex_natives_Actor_nativeGetUniqueID
-(JNIEnv*, jclass, jlong ptr) {
-    ActorUniqueID* uid = ((Actor*) ptr)->getUniqueID();
-    if(uid == nullptr) return 0;
-    return uid->id;
-}
-JNIEXPORT jint JNICALL Java_vsdum_kex_natives_Actor_nativeGetHurtDir
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->getHurtDir();
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeSetHurtDir
-(JNIEnv*, jclass, jlong ptr, jint dir) {
-    ((Actor*) ptr)->setHurtDir(dir);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsEnchanted
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_isEnchanted, _ZTV5Actor, _ZNK5Actor11isEnchantedEv);
-    return VTABLE_CALL<bool>(Actor_isEnchanted, (Actor*) ptr);
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeSetEnchanted
-(JNIEnv*, jclass, jlong ptr, jboolean enchanted) {
-    ((Actor*) ptr)->setEnchanted(enchanted);
-}
-JNIEXPORT jint JNICALL Java_vsdum_kex_natives_Actor_nativeGetMarkVariant
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->getMarkVariant();
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeSetMarkVariant
-(JNIEnv*, jclass, jlong ptr, jint variant) {
-    ((Actor*) ptr)->setMarkVariant(variant);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeHasDimension
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->hasDimension();
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeCanChangeDimensions
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_canChangeDimensions, _ZTV5Actor, _ZNK5Actor19canChangeDimensionsEv);
-    return VTABLE_CALL<bool>(Actor_canChangeDimensions, (Actor*) ptr);
-}
-JNIEXPORT jint JNICALL Java_vsdum_kex_natives_Actor_nativeGetDimensionId
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_getDimensionId, _ZTV5Actor, _ZNK5Actor14getDimensionIdEv);
-    return VTABLE_CALL<int>(Actor_getDimensionId, (Actor*) ptr);
-}
-JNIEXPORT jlong JNICALL Java_vsdum_kex_natives_Actor_nativeGetDimension
-(JNIEnv*, jclass, jlong ptr) {
-    Dimension* dim = ((Actor*) ptr)->getDimension();
-    if(dim == nullptr) return 0;
-    return (jlong) dim;
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeWasLastHitByPlayer
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->wasLastHitByPlayer();
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeHasSaddle
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->hasSaddle();
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeSetSaddle
-(JNIEnv*, jclass, jlong ptr, jboolean saddle) {
-    ((Actor*) ptr)->setSaddle(saddle);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsDelayedAttacking
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->isDelayedAttacking();
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeSetDelayedAttacking
-(JNIEnv*, jclass, jlong ptr, jboolean delayed) {
-    ((Actor*) ptr)->setDelayedAttacking(delayed);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeCanBeginOrContinueClimbingLadder
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->canBeginOrContinueClimbingLadder();
-}
-JNIEXPORT jint JNICALL Java_vsdum_kex_natives_Actor_nativeGetStructuralIntegrity
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->getStructuralIntegrity();
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeSetStructuralIntegrity
-(JNIEnv*, jclass, jlong ptr, int integrity) {
-    ((Actor*) ptr)->setStructuralIntegrity(integrity);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeHasLevel
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->hasLevel();
-}
-JNIEXPORT jlong JNICALL Java_vsdum_kex_natives_Actor_nativeGetLevel
-(JNIEnv*, jclass, jlong ptr) {
-    Level* level = ((Actor*) ptr)->getLevel();
-    if(level == nullptr) return 0;
-    return (jlong) level;
-}
-JNIEXPORT jfloat JNICALL Java_vsdum_kex_natives_Actor_nativeGetCameraDistance
-(JNIEnv*, jclass, jlong ptr) {
-     return ((Actor*) ptr)->getCameraDistance();
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeSetCameraDistance
-(JNIEnv*, jclass, jlong ptr, jfloat distance) {
-    ((Actor*) ptr)->setCameraDistance(distance);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsDoorOpener
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->isDoorOpener();
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeSetDoorOpener
-(JNIEnv*, jclass, jlong ptr, jboolean opener) {
-    ((Actor*) ptr)->setDoorOpener(opener);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeHasType
-(JNIEnv*, jclass, jlong ptr, jint type) {
-    return ((Actor*) ptr)->hasType((ActorType) type);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsType
-(JNIEnv*, jclass, jlong ptr, jint type) {
-    return ((Actor*) ptr)->isType((ActorType) type);
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeRemoveEffectNoUpdate
-(JNIEnv*, jclass, jlong ptr, jint effectId) {
-    ((Actor*) ptr)->removeEffectNoUpdate(effectId);
-}
-JNIEXPORT jlong JNICALL Java_vsdum_kex_natives_Actor_nativeGetEffect__JJ
-(JNIEnv*, jclass, jlong ptr, jlong mobEffect) {
-    MobEffectInstance* effect = ((Actor*) ptr)->getEffect(*((MobEffect*) mobEffect));
-    if(effect == nullptr) return 0;
-    return (jlong) effect;
-}
-JNIEXPORT jlong JNICALL Java_vsdum_kex_natives_Actor_nativeGetEffect__JI
-(JNIEnv*, jclass, jlong ptr, jint effectId) {
-    MobEffect* effect = MobEffect::getById(effectId);
-    if(effect != nullptr) {
-        MobEffectInstance* instance = ((Actor*) ptr)->getEffect(*effect);
-        if(effect != nullptr) return (jlong) effect;
-    }
-    return 0;
-}
-JNIEXPORT jint JNICALL Java_vsdum_kex_natives_Actor_nativeGetActiveEffectCount
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->getActiveEffectCount();
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeHasEffect__JJ
-(JNIEnv*, jclass, jlong ptr, jlong mobEffect) {
-    return ((Actor*) ptr)->hasEffect(*((MobEffect*) mobEffect));
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeHasEffect__JI
-(JNIEnv*, jclass, jlong ptr, jint id) {
-    MobEffect* effect = MobEffect::getById(id);
-    if(effect != nullptr) {
-        return ((Actor*) ptr)->hasEffect(*effect);
-    }
-    return false;
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeHasAnyVisibleEffects
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->hasAnyVisibleEffects();
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeRemoveEffect
-(JNIEnv*, jclass, jlong ptr, jint id) {
-    ((Actor*) ptr)->removeEffect(id);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeHasAnyEffects
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->hasAnyEffects();
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeRemoveAllEffects
-(JNIEnv*, jclass, jlong ptr) {
-    ((Actor*) ptr)->removeAllEffects();
-}
-//getAllEffects TODO
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeAddEffect
-(JNIEnv*, jclass, jlong ptr, jlong instancePtr) {
-    ((Actor*) ptr)->addEffect(*((MobEffectInstance*) instancePtr));
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsInSnow
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->isInSnow();
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeCanMate
-(JNIEnv*, jclass, jlong ptr, jlong mate) {
-    return ((Actor*) ptr)->canMate((*(Actor*) mate));
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeHasTickingArea
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->hasTickingArea();
-}
-JNIEXPORT jlong JNICALL Java_vsdum_kex_natives_Actor_nativeGetTickingArea
-(JNIEnv*, jclass, jlong ptr) {
-    TickingArea* area = ((Actor*) ptr)->getTickingArea();
-    if(area == nullptr) return 0;
-    return (jlong) area;
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeGetIsOnScreen
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->getIsOnScreen();
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeSetIsOnScreen
-(JNIEnv*, jclass, jlong ptr, jboolean onScreen) {
-    ((Actor*) ptr)->setIsOnScreen(onScreen);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsOverScaffolding
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->isOverScaffolding();
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsInScaffolding
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->isInScaffolding();
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeShouldOrphan
-(JNIEnv*, jclass, jlong ptr, jlong bsptr) {
-    return ((Actor*) ptr)->shouldOrphan(*((BlockSource*) bsptr));
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsOrphan
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->isOrphan();
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsPredictedMovementEnabled
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->isPredictedMovementEnabled();
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsInRain
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->isInRain();
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsWASDControlled
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->isWASDControlled();
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeSetWASDControlled
-(JNIEnv*, jclass, jlong ptr, jboolean wasd) {
-    ((Actor*) ptr)->setWASDControlled(wasd);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeHasPriorityAmmunition
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->hasPriorityAmmunition();
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeHasRuntimeID
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->hasRuntimeID();
-}
-JNIEXPORT jint JNICALL Java_vsdum_kex_natives_Actor_nativeGetVariant
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->getVariant();
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeSetVariant
-(JNIEnv*, jclass, jlong ptr, jint variant) {
-    ((Actor*) ptr)->setVariant(variant);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsRiding__JJ
-(JNIEnv*, jclass, jlong ptr, jlong ridden) {
-    return ((Actor*) ptr)->isRiding((Actor*) ridden);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsRider
-(JNIEnv*, jclass, jlong ptr, jlong rider) {
-    return ((Actor*) ptr)->isRider(*((Actor*) rider));
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeRemoveAllRiders
-(JNIEnv*, jclass, jlong ptr, jboolean someBool1, jboolean someBool2) {
-    ((Actor*) ptr)->removeAllRiders(someBool1, someBool2);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeHasPlayerRider
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->hasPlayerRider();
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsRiding__J
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->isRiding();
-}
-JNIEXPORT jlong JNICALL Java_vsdum_kex_natives_Actor_nativeGetRide
-(JNIEnv*, jclass, jlong ptr) {
-    Actor* ride = ((Actor*) ptr)->getRide();
-    if(ride == nullptr) return 0;
-    return (jlong) ride;
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeHasRider
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->hasRider();
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeGetStatusFlag
-(JNIEnv*, jclass, jlong ptr, jint flag) {
-    return ((Actor*) ptr)->getStatusFlag((ActorFlags) flag);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsChested
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->isChested();
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsStackable
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->isStackable();
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsResting
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->isResting();
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeSetResting
-(JNIEnv*, jclass, jlong ptr, jboolean resting) {
-    ((Actor*) ptr)->setResting(resting);
-}
+
 JNIEXPORT jfloat JNICALL Java_vsdum_kex_natives_Actor_nativeGetHealth
 (JNIEnv*, jclass, jlong ptr) {
     return ((Actor*) ptr)->getHealth();
@@ -1167,6 +1091,11 @@ JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeConsumeTotem
     VTABLE_FIND_OFFSET(Actor_consumeTotem, _ZTV5Actor, _ZN5Actor12consumeTotemEv);
     VTABLE_CALL<void>(Actor_consumeTotem, (Actor*) ptr);
 }
+JNIEXPORT jint JNICALL Java_vsdum_kex_natives_Actor_nativeGetEntityTypeId
+(JNIEnv*, jclass, jlong ptr) {
+    VTABLE_FIND_OFFSET(Actor_getEntityTypeId, _ZTV5Actor, _ZNK5Actor15getEntityTypeIdEv);
+    return (int) VTABLE_CALL<ActorType>(Actor_getEntityTypeId, (Actor*) ptr);
+}
 JNIEXPORT jint JNICALL Java_vsdum_kex_natives_Actor_nativeGetPortalCooldown
 (JNIEnv*, jclass, jlong ptr) {
     VTABLE_FIND_OFFSET(Actor_getPortalCooldown, _ZTV5Actor, _ZNK5Actor17getPortalCooldownEv);
@@ -1317,7 +1246,17 @@ JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeSpawnTrailBubbles
     VTABLE_FIND_OFFSET(Actor_spawnTrailBubbles, _ZTV5Actor, _ZN5Actor17spawnTrailBubblesEv);
     VTABLE_CALL<void>(Actor_spawnTrailBubbles, (Actor*) ptr);
 }
+JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsMob
+(JNIEnv*, jclass, jlong ptr) {
+    Actor* actor = (Actor*) ptr;
+    VTABLE_FIND_OFFSET(Actor_getEntityTypeId, _ZTV5Actor, _ZNK5Actor15getEntityTypeIdEv);
+    ActorType type = VTABLE_CALL<ActorType>(Actor_getEntityTypeId, (Actor*) ptr);
+    return ActorClassTree::isMob(type);
+}
 
 
 
 }
+
+
+#undef __EXPORT__

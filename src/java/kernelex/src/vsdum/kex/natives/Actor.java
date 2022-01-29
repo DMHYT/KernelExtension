@@ -1,6 +1,8 @@
 package vsdum.kex.natives;
 
+import com.zhekasmirnov.apparatus.adapter.innercore.game.item.ItemStack;
 import com.zhekasmirnov.apparatus.mcpe.NativeBlockSource;
+import com.zhekasmirnov.innercore.api.NativeItemInstance;
 
 import android.support.annotation.Nullable;
 import vsdum.kex.common.INativeInterface;
@@ -262,6 +264,7 @@ public class Actor implements INativeInterface {
     protected static native void nativeSetCarriedItem(long ptr, long stackptr);
     protected static native void nativeSetOffhandSlot(long ptr, long stackptr);
     protected static native void nativeConsumeTotem(long ptr);
+    protected static native int nativeGetEntityTypeId(long ptr);
     protected static native int nativeGetPortalCooldown(long ptr);
     protected static native int nativeGetPortalWaitTime(long ptr);
     protected static native boolean nativeCanBePulledIntoVehicle(long ptr);
@@ -292,6 +295,12 @@ public class Actor implements INativeInterface {
     protected static native void nativePushOutOfBlocks(long ptr, float x, float y, float z);
     protected static native void nativeDoWaterSplashEffect(long ptr);
     protected static native void nativeSpawnTrailBubbles(long ptr);
+    protected static native boolean nativeIsMob(long ptr);
+
+    public static boolean isValid(long entityUID)
+    {
+        return wrap(entityUID) != 0L;
+    }
     
     protected final long pointer;
 
@@ -307,7 +316,7 @@ public class Actor implements INativeInterface {
         this.pointer = ptr;
     }
 
-    public Actor(long pointer, boolean flag)
+    protected Actor(long pointer, boolean flag)
     {
         this.pointer = pointer;
     }
@@ -971,7 +980,7 @@ public class Actor implements INativeInterface {
         nativeSetTempted(this.pointer, tempted);
     }
 
-    public void dropTowards(ItemStack stack, float x, float y, float z)
+    public void dropTowards(NativeItemInstance stack, float x, float y, float z)
     {
         nativeDropTowards(this.pointer, stack.getPointer(), x, y, z);
     }
@@ -1552,10 +1561,10 @@ public class Actor implements INativeInterface {
     {
         long stackptr = nativeGetArmor(this.pointer, slot);
         if(stackptr == 0L) return null;
-        return new ItemStack(stackptr);
+        return ItemStack.fromPtr(stackptr);
     }
 
-    public void setArmor(int slot, ItemStack stack)
+    public void setArmor(int slot, NativeItemInstance stack)
     {
         nativeSetArmor(this.pointer, slot, stack.getPointer());
     }
@@ -1574,10 +1583,10 @@ public class Actor implements INativeInterface {
     {
         long stackptr = nativeGetEquippedSlot(this.pointer, slot);
         if(stackptr == 0L) return null;
-        return new ItemStack(stackptr);
+        return ItemStack.fromPtr(stackptr);
     }
 
-    public void setEquippedSlot(int slot, ItemStack stack)
+    public void setEquippedSlot(int slot, NativeItemInstance stack)
     {
         nativeSetEquippedSlot(this.pointer, slot, stack.getPointer());
     }
@@ -1586,15 +1595,15 @@ public class Actor implements INativeInterface {
     {
         long stackptr = nativeGetCarriedItem(this.pointer);
         if(stackptr == 0L) return null;
-        return new ItemStack(stackptr);
+        return ItemStack.fromPtr(stackptr);
     }
 
-    public void setCarriedItem(ItemStack stack)
+    public void setCarriedItem(NativeItemInstance stack)
     {
         nativeSetCarriedItem(this.pointer, stack.getPointer());
     }
 
-    public void setOffhandSlot(ItemStack stack)
+    public void setOffhandSlot(NativeItemInstance stack)
     {
         nativeSetOffhandSlot(this.pointer, stack.getPointer());
     }
@@ -1602,6 +1611,11 @@ public class Actor implements INativeInterface {
     public void consumeTotem()
     {
         nativeConsumeTotem(this.pointer);
+    }
+
+    public int getEntityTypeId()
+    {
+        return nativeGetEntityTypeId(this.pointer);
     }
 
     public int getPortalCooldown()
@@ -1684,12 +1698,12 @@ public class Actor implements INativeInterface {
         return nativeIsAdventure(this.pointer);
     }
 
-    public void add(ItemStack stack)
+    public void add(NativeItemInstance stack)
     {
         nativeAdd(this.pointer, stack.getPointer());
     }
 
-    public void drop(ItemStack stack, boolean someBool)
+    public void drop(NativeItemInstance stack, boolean someBool)
     {
         nativeDrop(this.pointer, stack.getPointer(), someBool);
     }
@@ -1752,6 +1766,17 @@ public class Actor implements INativeInterface {
     public void spawnTrailBubbles()
     {
         nativeSpawnTrailBubbles(this.pointer);
+    }
+
+    public boolean isMob()
+    {
+        return nativeIsMob(this.pointer);
+    }
+
+    @Nullable public Mob asMob()
+    {
+        if(!this.isMob()) return null;
+        return new Mob(this);
     }
 
 }
