@@ -14,25 +14,28 @@ class CompoundTag;
 #ifndef KEX_ITEM_HPP
     class Item;
 #endif
-class ItemInstance;
+#ifndef KEX_ITEMINSTANCE_HPP
+    class ItemInstance;
+#endif
 #ifndef KEX_ITEMSTACKBASE_HPP
     class ItemStackBase { public: };
 #endif
 
 class ItemStack : public ItemStackBase {
     public:
-    virtual void reinit(Item const&, int, int);
-    virtual void reinit(BlockLegacy const&, int);
+    // virtual void reinit(Item const&, int, int);
+    // virtual void reinit(BlockLegacy const&, int);
     // here these three pure virtual methods are overloaded
-    virtual void setNull();
-    virtual std::__ndk1::string const& toString() const;
-    virtual std::__ndk1::string const& toDebugString() const;
+    // virtual void setNull();
+    // virtual std::__ndk1::string const& toString() const;
+    // virtual std::__ndk1::string const& toDebugString() const;
     ItemStack(ItemInstance const&);
     ItemStack(Block const&, int, CompoundTag const*);
     ItemStack(ItemStack const&);
     ItemStack(Item const&, int);
     ItemStack(Item const&, int, int);
     ItemStack(BlockLegacy const&, int);
+    ItemStack();
 };
 
 

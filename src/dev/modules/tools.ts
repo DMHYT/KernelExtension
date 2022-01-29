@@ -144,17 +144,9 @@ namespace Item {
             blockMaterialsArr,
             typeof toolParams === "object" && typeof toolParams.brokenId === "number" && toolParams.brokenId != 0 ? toolParams.brokenId : 0,
             typeof toolParams === "object" && typeof toolParams.damage === "number" && toolParams.damage > 0 ? toolParams.damage : 0,
-            typeof toolParams.enchantType === "number" ? toolParams.enchantType : EEnchantType.ALL
+            typeof toolParams.enchantType === "number" ? toolParams.enchantType : EEnchantType.ALL,
+            typeof toolParams === "object" ? toolParams : {}
         );
-        if(typeof toolParams === "object") {
-            typeof toolParams.calcDestroyTime === "function" && ToolsModule.addCalcDestroyTimeCallback(numericId, toolParams.calcDestroyTime);
-            typeof toolParams.modifyEnchant === "function" && ToolsModule.addModifyEnchantCallback(numericId, toolParams.modifyEnchant);
-            typeof toolParams.onAttack === "function" && ToolsModule.addOnAttackCallback(numericId, toolParams.onAttack);
-            typeof toolParams.onBroke === "function" && ToolsModule.addOnBrokeCallback(numericId, toolParams.onBroke);
-            typeof toolParams.onDestroy === "function" && ToolsModule.addOnDestroyCallback(numericId, toolParams.onDestroy);
-            typeof toolParams.onMineBlock === "function" && ToolsModule.addOnMineBlockCallback(numericId, toolParams.onMineBlock);
-            ToolAPI.toolData[numericId] = toolParams;
-        }
         if(typeof params.stack === "number" && params.stack > 1) Item.getItemById(id).setMaxStackSize(params.stack);
     }
 }
@@ -171,7 +163,7 @@ ToolAPI.ToolType = {
 }
 ToolAPI.addBlockMaterial = (name, breakingMultiplier) => ToolsModule.addBlockMaterial(name, breakingMultiplier);
 ToolAPI.addToolMaterial = (name, material) => {
-    if(ToolsModule.getTierByName(name) == null || name !== "golden") {
+    if(ToolsModule.getTierByName(name) == null) {
         const tier = new ToolsModule.ItemTier(name,
             material.level || 0, 
             material.durability || 1, 
@@ -283,6 +275,3 @@ Block.setDestroyLevelForID = (blockID, level) => ToolAPI.registerBlockDiggingLev
         Block.setDestroyLevelForID(id as number, level + 1);
     }));
 })();
-
-
-Callback.addCallback("ItemUse", (c, i, b, e, p) => Debug.m(`${Item.getMaxDamage(i.id)}`));

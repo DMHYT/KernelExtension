@@ -28,12 +28,14 @@ namespace CustomToolPatches {
     namespace Digger {
         float getDestroySpeed(DiggerItem*, ItemStackBase const&, Block const&);
         bool hurtActor(DiggerItem*, ItemStack&, Actor&, Mob&);
-        bool mineBlock(DiggerItem*, ItemStack&, Block const&, int, int, int, Actor*);
+        bool mineBlock__instance(DiggerItem*, ItemInstance&, Block const&, int, int, int, Actor*);
+        bool mineBlock__stack(DiggerItem*, ItemStack&, Block const&, int, int, int, Actor*);
     }
     namespace Weapon {
         float getDestroySpeed(WeaponItem*, ItemStackBase const&, Block const&);
         bool hurtActor(WeaponItem*, ItemStack&, Actor&, Mob&);
-        bool mineBlock(WeaponItem*, ItemStack&, Block const&, int, int, int, Actor*);
+        bool mineBlock__instance(WeaponItem*, ItemInstance&, Block const&, int, int, int, Actor*);
+        bool mineBlock__stack(WeaponItem*, ItemStack&, Block const&, int, int, int, Actor*);
     }
 }
 

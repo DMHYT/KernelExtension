@@ -14,11 +14,11 @@ class ResourcePackManager;
 
 class MobEffect {
     public:
-    virtual MobEffectInstance* applyEffects(Actor*, int, int) const;
-    virtual void removeEffects(Actor*);
-    virtual MobEffectInstance* applyInstantaneousEffect(Actor*, Actor*, Actor*, int, float) const;
-    virtual bool isInstantaneous() const;
-    virtual float getAttributeModifierValue(int, AttributeModifier const&) const;
+    // virtual MobEffectInstance* applyEffects(Actor*, int, int) const;
+    // virtual void removeEffects(Actor*);
+    // virtual MobEffectInstance* applyInstantaneousEffect(Actor*, Actor*, Actor*, int, float) const;
+    // virtual bool isInstantaneous() const;
+    // virtual float getAttributeModifierValue(int, AttributeModifier const&) const;
     static void shutdownEffects();
     void* _createTemporalBuff(AttributeBuff const&, int, int) const;
     void clearTemporalBuffs();

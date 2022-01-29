@@ -8,6 +8,7 @@ import com.zhekasmirnov.innercore.api.NativeAPI;
 import com.zhekasmirnov.innercore.api.NativeItemInstance;
 import com.zhekasmirnov.innercore.api.commontypes.Coords;
 import com.zhekasmirnov.innercore.api.commontypes.FullBlock;
+import com.zhekasmirnov.innercore.api.commontypes.ItemInstance;
 import com.zhekasmirnov.innercore.api.constants.Enchantment;
 
 import org.mozilla.javascript.ScriptableObject;
@@ -52,13 +53,14 @@ public class ToolsModule {
         tiersByName.put("stone", new ItemTier(vanillaTiers[1]));
         tiersByName.put("iron", new ItemTier(vanillaTiers[2]));
         tiersByName.put("diamond", new ItemTier(vanillaTiers[3]));
-        tiersByName.put("gold", new ItemTier(vanillaTiers[4]));
+        ItemTier gold = new ItemTier(vanillaTiers[4]);
+        tiersByName.put("gold", gold);
+        tiersByName.put("golden", gold);
         tiersByName.put("netherite", new ItemTier(vanillaTiers[5]));
     }
 
     @Nullable public static final ItemTier getTierByName(String name)
     {
-        if(name == "golden") name = "gold";
         if(!tiersByName.containsKey(name)) return null;
         return tiersByName.get(name);
     }
@@ -214,14 +216,14 @@ public class ToolsModule {
         return nativeGetBlockMaterialName(blockID);
     }
 
-    @Nullable public static Integer getBlockDestroyLevel(int blockID)
+    public static int getBlockDestroyLevel(int blockID)
     {
-        return (Integer) nativeGetBlockDestroyLevel(blockID);
+        return nativeGetBlockDestroyLevel(blockID);
     }
 
-    @Nullable public static Boolean getBlockIsNative(int blockID)
+    public static boolean getBlockIsNative(int blockID)
     {
-        return (Boolean) nativeGetBlockIsNative(blockID);
+        return nativeGetBlockIsNative(blockID);
     }
 
     public static void setBlockData(int blockID, String materialName, int destroyLevel, boolean isNative)
@@ -249,135 +251,173 @@ public class ToolsModule {
         return nativeGetDestroyTimeViaTool(block.id, block.data, stack.getPointer(), x, y, z, side);
     }
 
-    public static interface CalcDestroyTimeFunction {
-        public float calc(ItemStack stack, Coords itemUseCoords, FullBlock block, ScriptableObject timeData, float defaultTime, ScriptableObject enchantData);
-    }
-
-    public static interface OnDestroyFunction {
-        public boolean onDestroy(ItemStack stack, Coords itemUseCoords, FullBlock block, long player);
-    }
-
-    public static interface OnAttackFunction {
-        public boolean onAttack(ItemStack stack, long victim, long attacker);
-    }
-
-    public static interface OnBrokeFunction {
-        public boolean onBroke(ItemStack stack);
-    }
-
-    public static interface ModifyEnchantFunction {
-        public void modify(ScriptableObject enchantData, ItemStack stack, Coords itemUseCoords, FullBlock block);
-    }
-
-    public static interface OnMineBlockFunction {
-        public void onMine(Coords itemUseCoords, ItemStack carried, FullBlock block);
-    }
-
-    private static final Map<Integer, CalcDestroyTimeFunction> calcDestroyTimeCallbacks = new HashMap<>();
-    private static final Map<Integer, OnDestroyFunction> onDestroyCallbacks = new HashMap<>();
-    private static final Map<Integer, OnAttackFunction> onAttackCallbacks = new HashMap<>();
-    private static final Map<Integer, OnBrokeFunction> onBrokeCallbacks = new HashMap<>();
-    private static final Map<Integer, ModifyEnchantFunction> modifyEnchantCallbacks = new HashMap<>();
-    private static final Map<Integer, OnMineBlockFunction> onMineBlockCallbacks = new HashMap<>();
-
-    public static void addCalcDestroyTimeCallback(int id, CalcDestroyTimeFunction func) { calcDestroyTimeCallbacks.put(Integer.valueOf(id), func); }
-    public static void addOnDestroyCallback(int id, OnDestroyFunction func) { onDestroyCallbacks.put(Integer.valueOf(id), func); }
-    public static void addOnAttackCallback(int id, OnAttackFunction func) { onAttackCallbacks.put(Integer.valueOf(id), func); }
-    public static void addOnBrokeCallback(int id, OnBrokeFunction func) { onBrokeCallbacks.put(Integer.valueOf(id), func); }
-    public static void addModifyEnchantCallback(int id, ModifyEnchantFunction func) { modifyEnchantCallbacks.put(Integer.valueOf(id), func); }
-    public static void addOnMineBlockCallback(int id, OnMineBlockFunction func) { onMineBlockCallbacks.put(Integer.valueOf(id), func); }
+    private static final Map<Integer, ScriptableObject> toolData = new HashMap<>();
 
     public static float calcDestroyTime(long stackPtr, int id, int data, int x, int y, int z, byte side, float baseDestroyTime, float divider, float modifier, float defaultTime)
     {
-        ItemStack stack = ItemStack.fromPtr(stackPtr);
-        if(stack != null)
-        {
-            Integer idO = Integer.valueOf(stack.id);
-            if(calcDestroyTimeCallbacks.containsKey(idO))
+        try {
+            ItemStack stack = ItemStack.fromPtr(stackPtr);
+            if(stack != null)
             {
-                return calcDestroyTimeCallbacks.get(idO).calc(stack, new Coords(x, y, z, side), new FullBlock(id, data), CommonTypes.createTimeDataScriptable(baseDestroyTime, divider, modifier), defaultTime, CommonTypes.createEnchantDataScriptable(stack));
+                Integer idO = Integer.valueOf(stack.id);
+                if(toolData.containsKey(idO))
+                {
+                    ScriptableObject obj = toolData.get(idO);
+                    if(ScriptableObject.hasProperty(obj, "calcDestroyTime"))
+                    {
+                        return CommonTypes.callFloatJSFunction(obj, "calcDestroyTime", new Object[]{
+                            new Coords(x, y, z, side),
+                            new FullBlock(id, data),
+                            CommonTypes.createTimeDataScriptable(baseDestroyTime, divider, modifier),
+                            Float.valueOf(defaultTime),
+                            CommonTypes.createEnchantDataScriptable(stack)
+                        }, defaultTime);
+                    }
+                }
             }
+        } catch(Throwable ex) {
+            ex.printStackTrace();
         }
         return defaultTime;
     }
 
     public static boolean onDestroy(long stackPtr, int x, int y, int z, byte side, int id, int data, long player)
     {
-        ItemStack stack = ItemStack.fromPtr(stackPtr);
-        if(stack != null)
-        {
-            Integer idO = Integer.valueOf(stack.id);
-            if(onDestroyCallbacks.containsKey(idO))
+        try {
+            ItemStack stack = ItemStack.fromPtr(stackPtr);
+            if(stack != null)
             {
-                return onDestroyCallbacks.get(idO).onDestroy(stack, new Coords(x, y, z, side), new FullBlock(id, data), player);
+                Integer idO = Integer.valueOf(stack.id);
+                if(toolData.containsKey(idO))
+                {
+                    ScriptableObject obj = toolData.get(idO);
+                    if(ScriptableObject.hasProperty(obj, "onDestroy"))
+                    {
+                        return CommonTypes.callBooleanJSFunction(obj, "onDestroy", new Object[]{
+                            new ItemInstance(stack.id, stack.count, stack.data, stack.extra),
+                            new Coords(x, y, z, side),
+                            new FullBlock(id, data),
+                            Long.valueOf(player)
+                        }, false);
+                    }
+                }
             }
+        } catch(Throwable ex) {
+            ex.printStackTrace();
         }
         return false;
     }
 
     public static boolean onAttack(long stackPtr, long victim, long attacker)
     {
-        ItemStack stack = ItemStack.fromPtr(stackPtr);
-        if(stack != null)
-        {
-            Integer idO = Integer.valueOf(stack.id);
-            if(onAttackCallbacks.containsKey(idO))
+        try {
+            ItemStack stack = ItemStack.fromPtr(stackPtr);
+            if(stack != null)
             {
-                return onAttackCallbacks.get(idO).onAttack(stack, victim, attacker);
+                Integer idO = Integer.valueOf(stack.id);
+                if(toolData.containsKey(idO))
+                {
+                    ScriptableObject obj = toolData.get(idO);
+                    if(ScriptableObject.hasProperty(obj, "onAttack"))
+                    {
+                        return CommonTypes.callBooleanJSFunction(obj, "onAttack", new Object[]{
+                            new ItemInstance(stack.id, stack.count, stack.data, stack.extra),
+                            Long.valueOf(victim), Long.valueOf(attacker)
+                        }, false);
+                    }
+                }
             }
+        } catch(Throwable ex) {
+            ex.printStackTrace();
         }
         return false;
     }
 
     public static boolean onBroke(long stackPtr)
     {
-        ItemStack stack = ItemStack.fromPtr(stackPtr);
-        if(stack != null)
-        {
-            Integer idO = Integer.valueOf(stack.id);
-            if(onBrokeCallbacks.containsKey(idO))
+        try {
+            ItemStack stack = ItemStack.fromPtr(stackPtr);
+            if(stack != null)
             {
-                return onBrokeCallbacks.get(idO).onBroke(stack);
+                Integer idO = Integer.valueOf(stack.id);
+                if(toolData.containsKey(idO))
+                {
+                    ScriptableObject obj = toolData.get(idO);
+                    if(ScriptableObject.hasProperty(obj, "onBroke"))
+                    {
+                        return CommonTypes.callBooleanJSFunction(obj, "onBroke", new Object[]{
+                            new ItemInstance(stack.id, stack.count, stack.data, stack.extra)
+                        }, false);
+                    }
+                }
             }
+        } catch(Throwable ex) {
+            ex.printStackTrace();
         }
         return false;
     }
 
     public static void modifyEnchant(long stackPtr, int x, int y, int z, byte side, int id, int data)
     {
-        ItemStack stack = ItemStack.fromPtr(stackPtr);
-        if(stack != null)
-        {
-            int idO = Integer.valueOf(stack.id);
-            if(modifyEnchantCallbacks.containsKey(idO))
+        try {
+            ItemStack stack = ItemStack.fromPtr(stackPtr);
+            if(stack != null)
             {
-                ScriptableObject enchantData = CommonTypes.createEnchantDataScriptable(stack);
-                modifyEnchantCallbacks.get(idO).modify(enchantData, stack, new Coords(x, y, z, side), new FullBlock(id, data));
-                short[] modified = CommonTypes.enchantDataScriptableToArray(enchantData);
-                stack.extra.addEnchant(Enchantment.SILK_TOUCH, modified[0]);
-                stack.extra.addEnchant(Enchantment.FORTUNE, modified[1]);
-                stack.extra.addEnchant(Enchantment.EFFICIENCY, modified[2]);
-                stack.extra.addEnchant(Enchantment.UNBREAKING, modified[3]);
+                int idO = Integer.valueOf(stack.id);
+                if(toolData.containsKey(idO))
+                {
+                    ScriptableObject obj = toolData.get(idO);
+                    if(ScriptableObject.hasProperty(obj, "modifyEnchant"))
+                    {
+                        ScriptableObject enchantData = CommonTypes.createEnchantDataScriptable(stack);
+                        CommonTypes.callVoidJSFunction(obj, "modifyEnchant", new Object[]{
+                            enchantData,
+                            new ItemInstance(stack.id, stack.count, stack.data, stack.extra),
+                            new Coords(x, y, z, side),
+                            new FullBlock(id, data)
+                        });
+                        short[] modified = CommonTypes.enchantDataScriptableToArray(enchantData);
+                        stack.extra.addEnchant(Enchantment.SILK_TOUCH, modified[0]);
+                        stack.extra.addEnchant(Enchantment.FORTUNE, modified[1]);
+                        stack.extra.addEnchant(Enchantment.EFFICIENCY, modified[2]);
+                        stack.extra.addEnchant(Enchantment.UNBREAKING, modified[3]);
+                    }
+                }
             }
+        } catch(Throwable ex) {
+            ex.printStackTrace();
         }
     }
 
     public static void onMineBlock(long stackPtr, int x, int y, int z, byte side, int id, int data)
     {
-        ItemStack stack = ItemStack.fromPtr(stackPtr);
-        if(stack != null)
-        {
-            int idO = Integer.valueOf(stack.id);
-            if(onMineBlockCallbacks.containsKey(idO))
+        try {
+            ItemStack stack = ItemStack.fromPtr(stackPtr);
+            if(stack != null)
             {
-                onMineBlockCallbacks.get(idO).onMine(new Coords(x, y, z, side), stack, new FullBlock(id, data));
+                int idO = Integer.valueOf(stack.id);
+                if(toolData.containsKey(idO))
+                {
+                    ScriptableObject obj = toolData.get(idO);
+                    if(ScriptableObject.hasProperty(obj, "onMineBlock"))
+                    {
+                        CommonTypes.callVoidJSFunction(obj, "onMineBlock", new Object[]{
+                            new Coords(x, y, z, side),
+                            new ItemInstance(stack.id, stack.count, stack.data, stack.extra),
+                            new FullBlock(id, data)
+                        });
+                    }
+                }
             }
+        } catch(Throwable ex) {
+            ex.printStackTrace();
         }
     }
 
-    public static void registerCustomTool(int id, String nameId, String name, String textureName, int textureMeta, ItemTier tier, boolean isTech, boolean isWeapon, String[] blockMaterials, int brokenId, int baseAttackDamage, int enchantType)
+    public static void registerCustomTool(int id, String nameId, String name, String textureName, int textureMeta, ItemTier tier, boolean isTech, boolean isWeapon, String[] blockMaterials, int brokenId, int baseAttackDamage, int enchantType, ScriptableObject data)
     {
         nativeRegisterCustomTool(id, NativeAPI.convertNameId(nameId), name, textureName, textureMeta, tier.getPointer(), isTech, isWeapon, blockMaterials, brokenId, baseAttackDamage, enchantType);
+        toolData.put(Integer.valueOf(id), data);
     }
 
 }

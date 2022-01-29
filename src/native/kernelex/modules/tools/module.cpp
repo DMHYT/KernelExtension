@@ -1,9 +1,11 @@
 #include <string>
+#include <string.h>
 #include <unordered_map>
 #include <unordered_set>
 #include <hook.h>
 #include <innercore/id_conversion_map.h>
 #include <innercore/item_registry.h>
+#include <innercore/vtable.h>
 #include <Actor.hpp>
 #include <Block.hpp>
 #include <BlockLegacy.hpp>
@@ -13,6 +15,8 @@
 #include <ItemStack.hpp>
 #include <items/DiggerItem.hpp>
 #include <items/PickaxeItem.hpp>
+#include <items/HatchetItem.hpp>
+#include <items/ShovelItem.hpp>
 #include <items/WeaponItem.hpp>
 #include <Level.hpp>
 #include <Mob.hpp>
@@ -28,6 +32,19 @@ LastDestroyedBlock* KEXToolsModule::lastDestroyed = new LastDestroyedBlock();
 std::unordered_map<int, BlockDataInterface*> KEXToolsModule::blockData;
 std::unordered_map<int, int> KEXToolsModule::toolsToBrokenIds;
 std::unordered_set<int> KEXToolsModule::customTools;
+
+
+ItemStack* KEXToolsModule::itemStackBaseToItemStack(ItemStackBase const& base) {
+    STATIC_VTABLE_SYMBOL(ItemStack_table, "_ZTV9ItemStack");
+    STATIC_VTABLE_SYMBOL(ItemInstance_table, "_ZTV12ItemInstance");
+    const ItemStackBase* pBase = &base;
+    void** vtable = *(void***) pBase;
+    if(vtable == ItemStack_table) {
+        return new ItemStack(*(ItemStack*)pBase);
+    } else if(vtable == ItemInstance_table) {
+        return new ItemStack(*(ItemInstance*)pBase);
+    } else return nullptr;
+}
 
 
 bool KEXToolsModule::isCustomTool(int id) {
@@ -113,6 +130,31 @@ bool KEXToolsModule::patchedCanDestroySpecial(DiggerItem* _this, Block const& bl
 }
 
 
+bool KEXToolsModule::patchedHasBlock(DiggerItem* _this, Block const& block) {
+    const char* materialName = getBlockMaterialName(IdConversion::dynamicToStatic(block.legacy->id, IdConversion::BLOCK));
+    if(materialName == nullptr) return false;
+    void** vtable = *(void***) _this;
+    STATIC_VTABLE_SYMBOL(HatchetItem_table, "_ZTV11HatchetItem");
+    STATIC_VTABLE_SYMBOL(PickaxeItem_table, "_ZTV11PickaxeItem");
+    STATIC_VTABLE_SYMBOL(ShovelItem_table, "_ZTV10ShovelItem");
+    if(vtable == HatchetItem_table) {
+        return strcmp(materialName, "wood") == 0;
+    } else if(vtable == PickaxeItem_table) {
+        return strcmp(materialName, "stone") == 0;
+    } else if(vtable == ShovelItem_table) {
+        return strcmp(materialName, "dirt") == 0;
+    } else {
+        LegacyItemRegistry::LegacyItemFactoryBase* factory = LegacyItemRegistry::findFactoryById(IdConversion::dynamicToStatic(_this->id, IdConversion::ITEM));
+        if(factory == nullptr) return false;
+        if(factory->getType() == CustomToolFactory::_factoryTypeId) {
+            CustomToolFactory* toolFactory = (CustomToolFactory*) factory;
+            return toolFactory->blockMaterials.find(materialName) != toolFactory->blockMaterials.end();
+        }
+        return false;
+    }
+}
+
+
 // 0 - nothing, 1 - prevent item from breaking, 2 - replace the item with brokenId
 unsigned char KEXToolsModule::modifiedItemStackHurtAndBreak(ItemStackBase* stack, int damageValue) {
     int id = IdConversion::dynamicToStatic(stack->getId(), stack->isBlock() ? IdConversion::BLOCK : IdConversion::ITEM);
@@ -134,13 +176,19 @@ void KEXToolsModule::initialize() {
     DLHandleManager::initializeHandle("libminecraftpe.so", "mcpe");
     HookManager::addCallback(SYMBOL("mcpe", "_ZNK11PickaxeItem17canDestroySpecialERK5Block"), LAMBDA((HookManager::CallbackController* controller, PickaxeItem* item, Block const& block), {
         controller->replace();
-        return patchedCanDestroySpecial(item, block);
+        return patchedCanDestroySpecial((DiggerItem*) item, block);
+    }, ), HookManager::CALL | HookManager::LISTENER | HookManager::CONTROLLER | HookManager::RESULT);
+    HookManager::addCallback(SYMBOL("mcpe", "_ZNK10DiggerItem8hasBlockERK5Block"), LAMBDA((HookManager::CallbackController* controller, DiggerItem* item, Block const& block), {
+        controller->replace();
+        return patchedHasBlock(item, block);
     }, ), HookManager::CALL | HookManager::LISTENER | HookManager::CONTROLLER | HookManager::RESULT);
     // HookManager::addCallback(SYMBOL("mcpe", "_ZN10DiggerItem9setBlocksERKNSt6__ndk16vectorIPK5BlockNS0_9allocatorIS4_EEEE"), LAMBDA((DiggerItem* item), {
         
     // }, ), HookManager::RETURN | HookManager::LISTENER);
     HookManager::addCallback(SYMBOL("mcpe", "_ZN13ItemStackBase12hurtAndBreakEiP5Actor"), LAMBDA((HookManager::CallbackController* controller, ItemStackBase* stack, int damageValue, Actor* actor), {
         unsigned char result = modifiedItemStackHurtAndBreak(stack, damageValue);
+        Logger::debug("KEX", "OUTPUT: %d", (int) result);
+        Logger::flush();
         if(result == 1) {
             controller->replace();
             return false;
@@ -171,7 +219,9 @@ void KEXToolsModule::initialize() {
 
 float LastDestroyedBlock::getOrCalculateSpeed(ItemStackBase const& stack, Block const& block, WeaponItem* item) {
     if(x == calculatedForX && y == calculatedForY && z == calculatedForZ) {
-        return destroyTime;
+        Logger::debug("KEX", "RETURNING SPEED %f", destroySpeed);
+        Logger::flush();
+        return destroySpeed;
     } else {
         calculatedForX = x;
         calculatedForY = y;
@@ -179,8 +229,14 @@ float LastDestroyedBlock::getOrCalculateSpeed(ItemStackBase const& stack, Block 
         STATIC_SYMBOL(WeaponItem_getDestroySpeed, "_ZNK10WeaponItem15getDestroySpeedERK13ItemStackBaseRK5Block", (WeaponItem*, ItemStackBase const&, Block const&));
         void* output = WeaponItem_getDestroySpeed(item, stack, block);
         float result = *(float*)&output;
-        result = KEXJavaBridge::ToolsModule::calcDestroyTime(((jlong) &stack), IdConversion::dynamicToStatic(block.legacy->id, IdConversion::BLOCK), block.data, x, y, z, side, block.legacy->destroyTime, 1.0f, 1.0f, block.legacy->destroyTime) / block.legacy->destroyTime;
-        destroyTime = result;
+        ItemStack* stackToUse = KEXToolsModule::itemStackBaseToItemStack(stack);
+        if(stackToUse != nullptr) {
+            float blockDestroyTime = block.legacy->getDestroySpeed();
+            result = blockDestroyTime / KEXJavaBridge::ToolsModule::calcDestroyTime((jlong) stackToUse, IdConversion::dynamicToStatic(block.legacy->id, IdConversion::BLOCK), block.data, x, y, z, side, blockDestroyTime, 1.0f, 1.0f, blockDestroyTime);
+        }
+        delete stackToUse;
+        result = result == 0.0f ? 1.0f : result;
+        destroySpeed = result;
         return result;
     }
 }
@@ -188,7 +244,7 @@ float LastDestroyedBlock::getOrCalculateSpeed(ItemStackBase const& stack, Block 
 
 float LastDestroyedBlock::getOrCalculateSpeed(ItemStackBase const& stack, Block const& block, DiggerItem* item) {
     if(x == calculatedForX && y == calculatedForY && z == calculatedForZ) {
-        return destroyTime;
+        return destroySpeed;
     } else {
         calculatedForX = x;
         calculatedForY = y;
@@ -196,12 +252,21 @@ float LastDestroyedBlock::getOrCalculateSpeed(ItemStackBase const& stack, Block 
         STATIC_SYMBOL(DiggerItem_getDestroySpeed, "_ZNK10DiggerItem15getDestroySpeedERK13ItemStackBaseRK5Block", (DiggerItem*, ItemStackBase const&, Block const&));
         void* output = DiggerItem_getDestroySpeed(item, stack, block);
         float result = *(float*)&output;
-        int staticId = IdConversion::dynamicToStatic(block.legacy->id, IdConversion::BLOCK);
-        KEXJavaBridge::ToolsModule::modifyEnchant(((jlong) &stack), x, y, z, side, staticId, block.data);
-        float materialDivider = item->tier->getSpeed();
-        float efficiencyModifier = item->destroySpeedBonus(stack);
-        result = KEXJavaBridge::ToolsModule::calcDestroyTime(((jlong) &stack), staticId, block.data, x, y, z, side, block.legacy->destroyTime, materialDivider, efficiencyModifier, block.legacy->destroyTime / materialDivider / efficiencyModifier) / block.legacy->destroyTime;
-        destroyTime = result;
+        ItemStack* stackToUse = KEXToolsModule::itemStackBaseToItemStack(stack);
+        if(stackToUse != nullptr) {
+            int staticId = IdConversion::dynamicToStatic(block.legacy->id, IdConversion::BLOCK);
+            KEXJavaBridge::ToolsModule::modifyEnchant((jlong) stackToUse, x, y, z, side, staticId, block.data);
+            float blockDestroyTime = block.legacy->getDestroySpeed();
+            float materialDivider = item->speed;
+            materialDivider = materialDivider == 0.0f ? 1.0f : materialDivider;
+            float efficiencyModifier = item->destroySpeedBonus(stack);
+            efficiencyModifier = efficiencyModifier == 0.0f ? 1.0f : result;
+            float calc = KEXJavaBridge::ToolsModule::calcDestroyTime((jlong) stackToUse, staticId, block.data, x, y, z, side, blockDestroyTime, materialDivider, efficiencyModifier, blockDestroyTime / materialDivider / efficiencyModifier);
+            result = blockDestroyTime / calc;
+        }
+        delete stackToUse;
+        result = result == 0.0f ? 1.0f : result;
+        destroySpeed = result;
         return result;
     }
 }

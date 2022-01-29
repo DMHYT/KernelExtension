@@ -1,5 +1,5 @@
 #include <string>
-#include <vector>
+#include <set>
 #include <innercore/legacy_item_registry.h>
 #include <Item.hpp>
 
@@ -9,9 +9,13 @@
 
 class ToolFactory : public LegacyItemRegistry::LegacyItemFactoryBase {
     public:
+    static const int _factoryTypeId = 200;
     Item::Tier* tier;
     int enchantType;
     virtual void registerItem();
+    virtual int getType() {
+        return _factoryTypeId;
+    }
 };
 
 
@@ -107,10 +111,14 @@ class HoeProvider : public LegacyItemRegistry::LegacyItemProviderBase {
 
 class CustomToolFactory : public ToolFactory {
     public:
+    static const int _factoryTypeId = 201;
     bool isWeapon = false;
-    std::vector<std::string> blockMaterials;
+    std::set<std::string> blockMaterials;
     int baseAttackDamage = 0;
     virtual void registerItem();
+    virtual int getType() {
+        return _factoryTypeId;
+    }
 };
 class CustomToolProvider : public LegacyItemRegistry::LegacyItemProviderBase {
     public:

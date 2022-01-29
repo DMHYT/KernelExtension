@@ -1,14 +1,12 @@
 package vsdum.kex.util;
 
-import java.lang.reflect.Field;
-
 import com.zhekasmirnov.apparatus.adapter.innercore.game.item.ItemStack;
 import com.zhekasmirnov.innercore.api.constants.Enchantment;
-import com.zhekasmirnov.innercore.api.mod.API;
 import com.zhekasmirnov.innercore.api.mod.ScriptableObjectHelper;
 
 import org.json.JSONObject;
 import org.mozilla.javascript.Context;
+import org.mozilla.javascript.Function;
 import org.mozilla.javascript.NativeJSON;
 import org.mozilla.javascript.ScriptableObject;
 
@@ -16,19 +14,6 @@ import android.support.annotation.Nullable;
 import android.util.Pair;
 
 public final class CommonTypes {
-
-    @Nullable private static final ScriptableObject currentScope = getCurrentScope();
-
-    @Nullable private static final ScriptableObject getCurrentScope()
-    {
-        ScriptableObject result = null;
-        try {
-            Field scopeField = API.class.getDeclaredField("currentScopeToInject");
-            scopeField.setAccessible(true);
-            result = (ScriptableObject) scopeField.get(null);
-        } catch(Exception ex) {}
-        return result;
-    }
     
     public static final Pair<Integer, Integer> deserializeMinMaxScriptable(ScriptableObject scr)
     {
@@ -46,7 +31,7 @@ public final class CommonTypes {
     @Nullable public static final JSONObject scriptableToJson(ScriptableObject scr)
     {
         try {
-            return new JSONObject((String) NativeJSON.stringify(Context.enter(), currentScope, scr, null, null));
+            return new JSONObject((String) NativeJSON.stringify(Context.enter(), scr.getParentScope(), scr, null, null));
         } catch(Exception ex) {}
         return null;
     }
@@ -60,19 +45,29 @@ public final class CommonTypes {
         return result;
     }
 
+    private static final ScriptableObject createEmptyEnchantDataScriptable()
+    {
+        ScriptableObject result = ScriptableObjectHelper.createEmpty();
+        result.put("experience", result, 0);
+        result.put("silk", result, false);
+        result.put("fortune", result, 0);
+        result.put("efficiency", result, 0);
+        result.put("unbreaking", result, 0);
+        return result;
+    }
+
     @Nullable public static final ScriptableObject createEnchantDataScriptable(ItemStack stack)
     {
+        ScriptableObject result = createEmptyEnchantDataScriptable();
         if(stack.extra != null && stack.extra.isEnchanted())
         {
-            ScriptableObject result = ScriptableObjectHelper.createEmpty();
             result.put("experience", result, 0);
             result.put("silk", result, stack.extra.getEnchantLevel(Enchantment.SILK_TOUCH) > 0);
             result.put("fortune", result, stack.extra.getEnchantLevel(Enchantment.FORTUNE));
             result.put("efficiency", result, stack.extra.getEnchantLevel(Enchantment.EFFICIENCY));
             result.put("unbreaking", result, stack.extra.getEnchantLevel(Enchantment.UNBREAKING));
-            return result;
         }
-        return null;
+        return result;
     }
 
     public static final short[] enchantDataScriptableToArray(ScriptableObject scr)
@@ -87,6 +82,57 @@ public final class CommonTypes {
         obj = scr.get("unbreaking", scr);
         if(obj instanceof Number) result[3] = ((Number) obj).shortValue();
         return result;
+    }
+
+    @Nullable private static Function getFunctionFromScriptable(ScriptableObject scr, String functionName)
+    {
+        Function result = null;
+        if(ScriptableObject.hasProperty(scr, functionName))
+        {
+            Object val = ScriptableObject.getProperty(scr, functionName);
+            if(val instanceof Function)
+            {
+                result = (Function) val;
+            }
+        }
+        return result;
+    }
+
+    public static void callVoidJSFunction(ScriptableObject scr, String functionName, Object[] args)
+    {
+        Function func = getFunctionFromScriptable(scr, functionName);
+        if(func != null)
+        {
+            func.call(Context.enter(), scr.getParentScope(), scr, args);
+        }
+    }
+
+    public static float callFloatJSFunction(ScriptableObject scr, String functionName, Object[] args, float defaultValue)
+    {
+        Function func = getFunctionFromScriptable(scr, functionName);
+        if(func != null)
+        {
+            Object result = func.call(Context.enter(), scr.getParentScope(), scr, args);
+            if(result instanceof Number)
+            {
+                return ((Number) result).floatValue();
+            }
+        }
+        return defaultValue;
+    }
+
+    public static boolean callBooleanJSFunction(ScriptableObject scr, String functionName, Object[] args, boolean defaultValue)
+    {
+        Function func = getFunctionFromScriptable(scr, functionName);
+        if(func != null)
+        {
+            Object result = func.call(Context.enter(), scr.getParentScope(), scr, args);
+            if(result instanceof Boolean)
+            {
+                return ((Boolean) result).booleanValue();
+            }
+        }
+        return defaultValue;
     }
 
 }

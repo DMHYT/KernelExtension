@@ -17,9 +17,9 @@ class CompoundTag;
 
 class ItemStackBase {
     public:
-    virtual void setNull(); // pure virtual
-    virtual std::__ndk1::string const& toString(); // pure virtual
-    virtual std::__ndk1::string const& toDebugString(); // pure virtual
+    // virtual void setNull(); // pure virtual
+    // virtual std::__ndk1::string const& toString(); // pure virtual
+    // virtual std::__ndk1::string const& toDebugString(); // pure virtual
     ItemStackBase(Block const&, int, CompoundTag const*);
     ItemStackBase(BlockLegacy const&, int, short);
     ItemStackBase(ItemStackBase const&);
@@ -31,9 +31,11 @@ class ItemStackBase {
     short getMaxDamage() const;
     bool isBlock() const;
     Item* getItem() const;
+    bool isNull() const;
     int getId() const;
     short getDamageValue() const;
     ItemStackBase& operator=(ItemStackBase const&);
+    ~ItemStackBase();
 };
 
 

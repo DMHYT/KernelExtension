@@ -1,5 +1,5 @@
 #include <string>
-#include <vector>
+#include <set>
 #include <jni.h>
 #include <innercore/id_conversion_map.h>
 #include <innercore/legacy_item_registry.h>
@@ -132,7 +132,7 @@ extern "C" {
         int dynamicId = IdConversion::staticToDynamic(id, IdConversion::BLOCK);
         BlockLegacy* block = BlockRegistry::getBlockById(dynamicId);
         if(block != nullptr) {
-            return block->destroyTime;
+            return block->getDestroySpeed();
         }
         return 0.0f;
     }
@@ -197,9 +197,11 @@ extern "C" {
     (JNIEnv*, jclass, jint id) {
         LegacyItemRegistry::LegacyItemFactoryBase* factory = LegacyItemRegistry::findFactoryById(id);
         if(factory == nullptr) return 0;
-        ToolFactory* toolFactory = dynamic_cast<ToolFactory*>(factory);
-        if(toolFactory == nullptr) return 0;
-        return toolFactory->tier->getLevel();
+        if(factory->getType() == ToolFactory::_factoryTypeId) {
+            ToolFactory* toolFactory = (ToolFactory*) factory;
+            return toolFactory->tier->getLevel();
+        }
+        return 0;
     }
     JNIEXPORT jint JNICALL Java_vsdum_kex_modules_ToolsModule_getToolLevelViaBlock
     (JNIEnv*, jclass, jint itemID, jint blockID) {
@@ -208,29 +210,32 @@ extern "C" {
         BlockDataInterface* iface = find->second;
         LegacyItemRegistry::LegacyItemFactoryBase* factory = LegacyItemRegistry::findFactoryById(itemID);
         if(factory == nullptr) return 0;
-        ToolFactory* toolFactory = dynamic_cast<ToolFactory*>(factory);
-        if(toolFactory == nullptr) return 0;
-        int toolLevel = toolFactory->tier->getLevel();
-        return toolLevel >= iface->destroyLevel ? toolLevel : 0;
+        if(factory->getType() == ToolFactory::_factoryTypeId) {
+            ToolFactory* toolFactory = (ToolFactory*) factory;
+            int toolLevel = toolFactory->tier->getLevel();
+            return toolLevel >= iface->destroyLevel ? toolLevel : 0;
+        }
+        return 0;
     }
     JNIEXPORT jfloat JNICALL Java_vsdum_kex_modules_ToolsModule_nativeGetDestroyTimeViaTool
     (JNIEnv* env, jclass, jint id, jint data, jlong stackptr, jint x, jint y, jint z, jint side) {
         ItemStackBase* stack = ((ItemStackBase*) stackptr);
         BlockLegacy* block = BlockRegistry::getBlockById(IdConversion::staticToDynamic(id, IdConversion::BLOCK));
         if(block != nullptr) {
-            float baseDestroyTime = block->destroyTime;
+            float baseDestroyTime = block->getDestroySpeed();
             Item* item = stack->getItem();
             if(item != nullptr) {
                 VTABLE_FIND_OFFSET(Item_getDestroySpeed, _ZTV4Item, _ZNK4Item15getDestroySpeedERK13ItemStackBaseRK5Block);
                 float speed = VTABLE_CALL<float>(Item_getDestroySpeed, item, stack, *(BlockRegistry::getBlockStateForIdData(id, data)));
                 float result = baseDestroyTime / speed;
                 float materialDivider = 1.0f;
-                STATIC_VTABLE_SYMBOL(DiggerItem_vtable, "_ZTV10DiggerItem");
-                if((*(void***) item) == DiggerItem_vtable) {
+                STATIC_VTABLE_SYMBOL(DiggerItem_table, "_ZTV10DiggerItem");
+                if((*(void***) item) == DiggerItem_table) {
                     materialDivider = ((DiggerItem*) item)->tier->getSpeed();
                 }
                 float bonus = item->destroySpeedBonus(*stack);
-                KEXJavaBridge::ToolsModule::calcDestroyTime(stackptr, id, data, x, y, z, (char) side, baseDestroyTime, materialDivider, bonus, baseDestroyTime / speed);
+                result = KEXJavaBridge::ToolsModule::calcDestroyTime(stackptr, id, data, x, y, z, (char) side, baseDestroyTime, materialDivider, bonus, baseDestroyTime / speed);
+                return result;
             }
             return baseDestroyTime;
         }
@@ -250,7 +255,7 @@ extern "C" {
         factory->tier = (Item::Tier*) tierPtr;
         if(brokenId != 0) KEXToolsModule::toolsToBrokenIds.emplace(id, brokenId);
         if(blockMaterials != NULL && !isWeapon) {
-            std::vector<std::string> materials;
+            std::set<std::string> materials;
             jsize l = env->GetArrayLength(blockMaterials);
             if(l > 0) {
                 for(int i = 0; i < l; ++i) {
@@ -258,7 +263,9 @@ extern "C" {
                     if(el != NULL) {
                         jstring sEl = (jstring) el;
                         const char* cEl = env->GetStringUTFChars(sEl, 0);
-                        materials.push_back(std::string(cEl));
+                        if(materials.find(cEl) == materials.end()) {
+                            materials.emplace(std::string(cEl));
+                        }
                         env->ReleaseStringUTFChars(sEl, cEl);
                     }
                 }

@@ -7,8 +7,9 @@
 #include <items/PickaxeItem.hpp>
 #include <items/ShovelItem.hpp>
 #include <items/WeaponItem.hpp>
-#include "classes.hpp"
+#include "module.hpp"
 #include "patches.hpp"
+#include "classes.hpp"
 
 
 void ToolFactory::registerItem() {
@@ -77,16 +78,22 @@ void CustomToolProvider::setupVtable(void* table) {
     if(factory->isWeapon) {
         VTABLE_FIND_OFFSET(WeaponItem_getDestroySpeed, _ZTV10WeaponItem, _ZNK10WeaponItem15getDestroySpeedERK13ItemStackBaseRK5Block);
         VTABLE_FIND_OFFSET(WeaponItem_hurtActor, _ZTV10WeaponItem, _ZNK10WeaponItem9hurtActorER9ItemStackR5ActorR3Mob);
-        VTABLE_FIND_OFFSET(Item_mineBlock, _ZTV4Item, _ZNK4Item9mineBlockER9ItemStackRK5BlockiiiP5Actor);
+        VTABLE_FIND_OFFSET(Item_mineBlock__instance, _ZTV4Item, _ZNK4Item9mineBlockER12ItemInstanceRK5BlockiiiP5Actor);
+        VTABLE_FIND_OFFSET(Item_mineBlock__stack, _ZTV4Item, _ZNK4Item9mineBlockER9ItemStackRK5BlockiiiP5Actor);
         vtable[WeaponItem_getDestroySpeed] = ADDRESS(CustomToolPatches::Weapon::getDestroySpeed);
         vtable[WeaponItem_hurtActor] = ADDRESS(CustomToolPatches::Weapon::hurtActor);
-        vtable[Item_mineBlock] = ADDRESS(CustomToolPatches::Weapon::mineBlock);
+        vtable[Item_mineBlock__instance] = ADDRESS(CustomToolPatches::Weapon::mineBlock__instance);
+        vtable[Item_mineBlock__stack] = ADDRESS(CustomToolPatches::Weapon::mineBlock__stack);
     } else {
         VTABLE_FIND_OFFSET(DiggerItem_getDestroySpeed, _ZTV10DiggerItem, _ZNK10DiggerItem15getDestroySpeedERK13ItemStackBaseRK5Block);
         VTABLE_FIND_OFFSET(Item_hurtActor, _ZTV4Item, _ZNK4Item9hurtActorER9ItemStackR5ActorR3Mob);
-        VTABLE_FIND_OFFSET(DiggerItem_mineBlock, _ZTV10DiggerItem, _ZNK10DiggerItem9mineBlockER9ItemStackRK5BlockiiiP5Actor);
+        VTABLE_FIND_OFFSET(Item_mineBlock__instance, _ZTV4Item, _ZNK4Item9mineBlockER12ItemInstanceRK5BlockiiiP5Actor);
+        VTABLE_FIND_OFFSET(DiggerItem_mineBlock__stack, _ZTV10DiggerItem, _ZNK10DiggerItem9mineBlockER9ItemStackRK5BlockiiiP5Actor);
+        VTABLE_FIND_OFFSET(Item_canDestroySpecial, _ZTV4Item, _ZNK4Item17canDestroySpecialERK5Block);
         vtable[DiggerItem_getDestroySpeed] = ADDRESS(CustomToolPatches::Digger::getDestroySpeed);
         vtable[Item_hurtActor] = ADDRESS(CustomToolPatches::Digger::hurtActor);
-        vtable[DiggerItem_mineBlock] = ADDRESS(CustomToolPatches::Digger::mineBlock);
+        vtable[Item_mineBlock__instance] = ADDRESS(CustomToolPatches::Digger::mineBlock__instance);
+        vtable[DiggerItem_mineBlock__stack] = ADDRESS(CustomToolPatches::Digger::mineBlock__stack);
+        vtable[Item_canDestroySpecial] = ADDRESS(KEXToolsModule::patchedCanDestroySpecial);
     }
 }

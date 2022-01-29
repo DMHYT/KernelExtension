@@ -6,9 +6,8 @@
 
 class WeaponItem : public Item {
     public:
-    char filler1[300]; // 300
+    char filler2[208]; // 300
     int attackDamage; // 304
-    char filler2[920]; // 1024
     // virtual bool canDestroySpecial(Block const&) const;
     // virtual int getAttackDamage() const;
     // virtual bool isHandEquipped() const;
