@@ -25,3 +25,10 @@ extern "C" JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *) {
 	Module* items = new KEXItemsModule(main);
 	Module* tools = new KEXToolsModule(main);
 }
+
+
+extern "C" JNIEXPORT void JNICALL Java_vsdum_kex_KernelExtension_defineCallbackClasses
+(JNIEnv* env, jclass) {
+	KEXJavaBridge::Cache::ToolsModule(env);
+	KEXJavaBridge::Cache::LootModule(env);
+}

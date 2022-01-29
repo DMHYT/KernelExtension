@@ -1,32 +1,18 @@
 #include <cstdlib>
+#include <logger.h>
 #include "java_utils.hpp"
 
-
-namespace KEXJavaUtils {
-    JavaVM* jvm = nullptr;
-    JNIEnv* attach() {
-        JNIEnv* env = nullptr;
-        int attachStatus = jvm->GetEnv((void**) &env, JNI_VERSION_1_4);
-        if(attachStatus == JNI_EDETACHED) {
-            jvm->AttachCurrentThread(&env, nullptr);
-        }
-        return env;
-    }
-    void init(JavaVM* vm) {
-        jvm = vm;
-    }
-}
 
 namespace KEXJavaBridge {
 #define JAVA_CLASS(name, signature) \
     jclass _##name = nullptr; \
     jclass name() { \
-        if(_##name == nullptr) { \
-            JNIEnv* env = KEXJavaUtils::attach(); \
-            jclass tempRef = env->FindClass(signature); \
-            _##name = static_cast<jclass>(env->NewGlobalRef(tempRef)); \
-            env->DeleteLocalRef(tempRef); \
-        } \
+        return _##name; \
+    } \
+    jclass name(JNIEnv* env) { \
+        jclass tempRef = env->FindClass(signature); \
+        _##name = static_cast<jclass>(env->NewGlobalRef(tempRef)); \
+        env->DeleteLocalRef(tempRef); \
         return _##name; \
     }
 #define JAVA_METHOD(clazz, name, signature) \
@@ -80,5 +66,21 @@ namespace KEXJavaBridge {
             env->DeleteLocalRef(jJson);
             return result;
         }
+    }
+}
+
+
+namespace KEXJavaUtils {
+    JavaVM* jvm = nullptr;
+    JNIEnv* attach() {
+        JNIEnv* env = nullptr;
+        int attachStatus = jvm->GetEnv((void**) &env, JNI_VERSION_1_4);
+        if(attachStatus == JNI_EDETACHED) {
+            jvm->AttachCurrentThread(&env, nullptr);
+        }
+        return env;
+    }
+    void init(JavaVM* vm) {
+        jvm = vm;
     }
 }

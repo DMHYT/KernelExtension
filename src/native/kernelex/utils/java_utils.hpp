@@ -10,6 +10,10 @@ namespace KEXJavaUtils {
 }
 
 namespace KEXJavaBridge {
+    namespace Cache {
+        jclass ToolsModule(JNIEnv* env);
+        jclass LootModule(JNIEnv* env);
+    }
     namespace ToolsModule {
         bool onBroke(jlong stack);
         void modifyEnchant(jlong stack, int x, int y, int z, char side, int id, int data);
