@@ -40,3 +40,6 @@ namespace Item {
         return result;
     }
 }
+
+
+const ItemsModule = WRAP_JAVA("vsdum.kex.modules.ItemsModule");
