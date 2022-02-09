@@ -135,4 +135,18 @@ public final class CommonTypes {
         return defaultValue;
     }
 
+    public static int callIntJSFunction(ScriptableObject scr, String functionName, Object[] args, int defaultValue)
+    {
+        Function func = getFunctionFromScriptable(scr, functionName);
+        if(func != null)
+        {
+            Object result = func.call(Context.enter(), scr.getParentScope(), scr, args);
+            if(result instanceof Number)
+            {
+                return ((Number) result).intValue();
+            }
+        }
+        return defaultValue;
+    }
+
 }

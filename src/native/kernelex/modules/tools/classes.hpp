@@ -9,6 +9,16 @@
 
 class ToolFactory : public LegacyItemRegistry::LegacyItemFactoryBase {
     public:
+    enum ToolType {
+        UNSPECIFIED,
+        SWORD,
+        AXE,
+        PICKAXE,
+        SHOVEL,
+        HOE,
+        CUSTOM_DIGGER,
+        CUSTOM_WEAPON
+    };
     static const int _factoryTypeId = 200;
     Item::Tier* tier;
     int enchantType;
@@ -16,6 +26,17 @@ class ToolFactory : public LegacyItemRegistry::LegacyItemFactoryBase {
     virtual int getType() {
         return _factoryTypeId;
     }
+    virtual ToolType getToolType() {
+        return UNSPECIFIED;
+    }
+};
+class DiggerProvider : public LegacyItemRegistry::LegacyItemProviderBase {
+    public:
+    virtual void setupVtable(void*);
+};
+class WeaponProvider : public LegacyItemRegistry::LegacyItemProviderBase {
+    public:
+    virtual void setupVtable(void*);
 };
 
 
@@ -25,8 +46,11 @@ class SwordFactory : public ToolFactory {
     SwordFactory(): ToolFactory() {
         enchantType = 16;
     }
+    virtual ToolType getToolType() {
+        return SWORD;
+    }
 };
-class SwordProvider : public LegacyItemRegistry::LegacyItemProviderBase {
+class SwordProvider : public WeaponProvider {
     public:
     SwordFactory* factory;
     SwordProvider(SwordFactory* swordFactory): factory(swordFactory) {};
@@ -43,8 +67,11 @@ class AxeFactory : public ToolFactory {
     AxeFactory(): ToolFactory() {
         enchantType = 512;
     }
+    virtual ToolType getToolType() {
+        return AXE;
+    }
 };
-class AxeProvider : public LegacyItemRegistry::LegacyItemProviderBase {
+class AxeProvider : public DiggerProvider {
     public:
     AxeFactory* factory;
     AxeProvider(AxeFactory* axeFactory): factory(axeFactory) {};
@@ -61,8 +88,11 @@ class PickaxeFactory : public ToolFactory {
     PickaxeFactory(): ToolFactory() {
         enchantType = 1024;
     }
+    virtual ToolType getToolType() {
+        return PICKAXE;
+    }
 };
-class PickaxeProvider : public LegacyItemRegistry::LegacyItemProviderBase {
+class PickaxeProvider : public DiggerProvider {
     public:
     PickaxeFactory* factory;
     PickaxeProvider(PickaxeFactory* pickaxeFactory): factory(pickaxeFactory) {};
@@ -79,8 +109,11 @@ class ShovelFactory : public ToolFactory {
     ShovelFactory(): ToolFactory() {
         enchantType = 2048;
     }
+    virtual ToolType getToolType() {
+        return SHOVEL;
+    }
 };
-class ShovelProvider : public LegacyItemRegistry::LegacyItemProviderBase {
+class ShovelProvider : public DiggerProvider {
     public:
     ShovelFactory* factory;
     ShovelProvider(ShovelFactory* shovelFactory): factory(shovelFactory) {};
@@ -97,8 +130,11 @@ class HoeFactory : public ToolFactory {
     HoeFactory(): ToolFactory() {
         enchantType = 64;
     }
+    virtual ToolType getToolType() {
+        return HOE;
+    }
 };
-class HoeProvider : public LegacyItemRegistry::LegacyItemProviderBase {
+class HoeProvider : public DiggerProvider {
     public:
     HoeFactory* factory;
     HoeProvider(HoeFactory* hoeFactory): factory(hoeFactory) {};
@@ -111,13 +147,13 @@ class HoeProvider : public LegacyItemRegistry::LegacyItemProviderBase {
 
 class CustomToolFactory : public ToolFactory {
     public:
-    static const int _factoryTypeId = 201;
     bool isWeapon = false;
     std::set<std::string> blockMaterials;
     int baseAttackDamage = 0;
+    bool dynamicDamageEnabled = false;
     virtual void registerItem();
-    virtual int getType() {
-        return _factoryTypeId;
+    virtual ToolType getToolType() {
+        return isWeapon ? CUSTOM_WEAPON : CUSTOM_DIGGER;
     }
 };
 class CustomToolProvider : public LegacyItemRegistry::LegacyItemProviderBase {

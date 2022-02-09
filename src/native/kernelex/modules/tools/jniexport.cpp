@@ -7,7 +7,6 @@
 #include <innercore/vtable.h>
 #include <BlockLegacy.hpp>
 #include <Item.hpp>
-#include <static_symbol.hpp>
 #include "../../utils/java_utils.hpp"
 #include "classes.hpp"
 #include "module.hpp"
@@ -229,12 +228,10 @@ extern "C" {
                 float speed = VTABLE_CALL<float>(Item_getDestroySpeed, item, stack, *(BlockRegistry::getBlockStateForIdData(id, data)));
                 float result = baseDestroyTime / speed;
                 float materialDivider = 1.0f;
-                STATIC_VTABLE_SYMBOL(DiggerItem_table, "_ZTV10DiggerItem");
-                if((*(void***) item) == DiggerItem_table) {
-                    materialDivider = ((DiggerItem*) item)->tier->getSpeed();
-                }
+                Item::Tier* itemTier = KEXToolsModule::getItemTier((DiggerItem*) item);
+                if(itemTier != nullptr) materialDivider = itemTier->getSpeed();
                 float bonus = item->destroySpeedBonus(*stack);
-                result = KEXJavaBridge::ToolsModule::calcDestroyTime(stackptr, id, data, x, y, z, (char) side, baseDestroyTime, materialDivider, bonus, baseDestroyTime / speed);
+                result = KEXJavaBridge::ToolsModule::calcDestroyTime(id, data, x, y, z, (char) side, baseDestroyTime, materialDivider, bonus, baseDestroyTime / speed);
                 return result;
             }
             return baseDestroyTime;
@@ -273,10 +270,24 @@ extern "C" {
             }
         }
         LegacyItemRegistry::registerItemFactory(factory);
-        if(!isTech) LegacyItemRegistry::addItemToCreative(id, 1, 0, nullptr);
+        // if(!isTech) LegacyItemRegistry::addItemToCreative(id, 1, 0, nullptr);
         env->ReleaseStringUTFChars(nameId, cNameId);
         env->ReleaseStringUTFChars(name, cName);
         env->ReleaseStringUTFChars(textureName, cTextureName);
         KEXToolsModule::customTools.emplace(id);
+    }
+    JNIEXPORT void JNICALL Java_vsdum_kex_modules_ToolsModule_enableDynamicDamageFor
+    (JNIEnv*, jclass, jint id) {
+        LegacyItemRegistry::LegacyItemFactoryBase* factory = LegacyItemRegistry::findFactoryById(id);
+        if(factory != nullptr) {
+            if(factory->getType() == ToolFactory::_factoryTypeId) {
+                ToolFactory* toolFactory = (ToolFactory*) factory;
+                ToolFactory::ToolType tt = toolFactory->getToolType();
+                if(tt == ToolFactory::CUSTOM_DIGGER || tt == ToolFactory::CUSTOM_WEAPON) {
+                    CustomToolFactory* customToolFactory = (CustomToolFactory*) toolFactory;
+                    customToolFactory->dynamicDamageEnabled =  true;
+                }
+            }
+        }
     }
 }

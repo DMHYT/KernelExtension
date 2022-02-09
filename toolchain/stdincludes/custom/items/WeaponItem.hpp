@@ -6,7 +6,6 @@
 
 class WeaponItem : public Item {
     public:
-    char filler2[208]; // 300
     int attackDamage; // 304
     // virtual bool canDestroySpecial(Block const&) const;
     // virtual int getAttackDamage() const;

@@ -8,6 +8,9 @@
 
 class ItemInstance : public ItemStackBase {
     public:
+    char filler[88];
+    ItemInstance(ItemStackBase const&);
+    ItemInstance& operator=(ItemInstance const&);
 };
 
 

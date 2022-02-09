@@ -26,6 +26,9 @@ declare namespace ToolAPI {
     export function startDestroyHook(coords: Callback.ItemUseCoordinates, block: Tile, carried: ItemInstance): void;
     export function destroyBlockHook(coords: Callback.ItemUseCoordinates, block: Tile, item: ItemInstance, player: number): void;
     export function playerAttackHook(attacker: number, victim: number, item: ItemInstance): void;
+    export interface ExtendedToolParams extends ToolParams {
+        getAttackDamageBonus?: (stack: ItemInstance) => number;
+    }
 }
 
 
@@ -121,7 +124,7 @@ namespace Item {
         );
         if(typeof params.stack === "number" && params.stack > 1) Item.getItemById(id).setMaxStackSize(params.stack);
     }
-    export function createCustomTool(id: string, name: string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: string | ToolAPI.ToolMaterial }, toolParams?: ToolAPI.ToolParams, numericId?: number): void {
+    export function createCustomTool(id: string, name: string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: string | ToolAPI.ToolMaterial }, toolParams?: ToolAPI.ExtendedToolParams, numericId?: number): void {
         let materialName: string = "";
         if(typeof params.tier === "object") {
             materialName = `__unnamedToolMaterial${ToolAPI.unnamedMaterialNum++}`;
@@ -148,6 +151,7 @@ namespace Item {
             typeof toolParams === "object" ? toolParams : {}
         );
         if(typeof params.stack === "number" && params.stack > 1) Item.getItemById(id).setMaxStackSize(params.stack);
+        if(typeof toolParams === "object" && typeof toolParams.getAttackDamageBonus === "function") ToolsModule.enableDynamicDamageFor(numericId);
     }
 }
 

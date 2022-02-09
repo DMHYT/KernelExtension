@@ -780,6 +780,7 @@ declare module vsdum {
                 static getBlockDestroyTime(blockID: number): number;
                 static getToolLevel(itemID: number): number;
                 static getToolLevelViaBlock(itemID: number, blockID: number): number;
+                static enableDynamicDamageFor(itemID: number): void;
                 static getTierByName(tierName: string): Nullable<ToolsModule.ItemTier>;
                 static registerSword(id: number, nameId: string, name: string, textureName: string, textureMeta: number, tier: ToolsModule.ItemTier, isTech?: boolean): void;
                 static registerAxe(id: number, nameId: string, name: string, textureName: string, textureMeta: number, tier: ToolsModule.ItemTier, isTech?: boolean): void;

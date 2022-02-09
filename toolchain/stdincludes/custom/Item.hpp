@@ -67,6 +67,7 @@ class Item {
     public:
     char filler1[86]; // 90
     short id; // 92
+    char filler2[208]; // 300
     virtual void initServer(Json::Value&);
     // virtual void tearDown();
     // virtual int getMaxUseDuration(ItemStack const*) const;

@@ -38,11 +38,11 @@ class LastDestroyedBlock {
 
 class KEXToolsModule : public Module {
     public:
-    static LastDestroyedBlock* lastDestroyed;
+    static LastDestroyedBlock* lastDestroyedClient;
+    static std::unordered_map<long long, LastDestroyedBlock*> lastDestroyed;
     static std::unordered_map<int, BlockDataInterface*> blockData;
     static std::unordered_map<int, int> toolsToBrokenIds;
     static std::unordered_set<int> customTools;
-    static ItemStack* itemStackBaseToItemStack(ItemStackBase const&);
     static bool isCustomTool(int id);
     static const char* getBlockMaterialName(int id);
     static int getBlockDestroyLevel(int id);
@@ -50,6 +50,7 @@ class KEXToolsModule : public Module {
     static void setBlockMaterialName(int id, const char* materialName);
     static void setBlockDestroyLevel(int id, int destroyLevel);
     static void setBlockIsNative(int id, bool isNative);
+    static Item::Tier* getItemTier(DiggerItem*);
     static bool patchedCanDestroySpecial(DiggerItem*, Block const&);
     static bool patchedHasBlock(DiggerItem*, Block const&);
     static unsigned char modifiedItemStackHurtAndBreak(ItemStackBase*, int);

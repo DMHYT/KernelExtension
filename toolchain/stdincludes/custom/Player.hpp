@@ -10,5 +10,12 @@ class Player : public Mob {
     public:
 };
 
+class LocalPlayer : public Player {
+    public:
+};
+class ServerPlayer : public Player {
+    public:
+};
+
 
 #endif //KEX_PLAYER_HPP

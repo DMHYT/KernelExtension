@@ -23,6 +23,7 @@ class CompoundTag;
 
 class ItemStack : public ItemStackBase {
     public:
+    char filler[128];
     // virtual void reinit(Item const&, int, int);
     // virtual void reinit(BlockLegacy const&, int);
     // here these three pure virtual methods are overloaded
@@ -36,6 +37,7 @@ class ItemStack : public ItemStackBase {
     ItemStack(Item const&, int, int);
     ItemStack(BlockLegacy const&, int);
     ItemStack();
+    ItemStack& operator=(ItemStack const&);
 };
 
 

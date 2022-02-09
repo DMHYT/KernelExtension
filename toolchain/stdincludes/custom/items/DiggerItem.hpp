@@ -7,7 +7,6 @@
 
 class DiggerItem : public Item {
     public:
-    char filler2[208]; // 300
     float speed; // 304
     Item::Tier* tier; // 308
     int attackDamage; // 312

@@ -17,6 +17,26 @@ void ToolFactory::registerItem() {
     props.enchantValue = tier->getEnchantmentValue();
     props.enchantType = enchantType;
 }
+void DiggerProvider::setupVtable(void* table) {
+    LegacyItemProviderBase::setupVtable(table);
+    void** vtable = (void**) table;
+    VTABLE_FIND_OFFSET(Item_hurtActor, _ZTV4Item, _ZNK4Item9hurtActorER9ItemStackR5ActorR3Mob);
+    VTABLE_FIND_OFFSET(Item_mineBlock__instance, _ZTV4Item, _ZNK4Item9mineBlockER12ItemInstanceRK5BlockiiiP5Actor);
+    VTABLE_FIND_OFFSET(Item_mineBlock__stack, _ZTV4Item, _ZNK4Item9mineBlockER9ItemStackRK5BlockiiiP5Actor);
+    vtable[Item_hurtActor] = SYMBOL("mcpe", "_ZNK4Item9hurtActorER9ItemStackR5ActorR3Mob");
+    vtable[Item_mineBlock__instance] = SYMBOL("mcpe", "_ZNK4Item9mineBlockER12ItemInstanceRK5BlockiiiP5Actor");
+    vtable[Item_mineBlock__stack] = SYMBOL("mcpe", "_ZNK10DiggerItem9mineBlockER9ItemStackRK5BlockiiiP5Actor");
+}
+void WeaponProvider::setupVtable(void* table) {
+    LegacyItemProviderBase::setupVtable(table);
+    void** vtable = (void**) table;
+    VTABLE_FIND_OFFSET(Item_hurtActor, _ZTV4Item, _ZNK4Item9hurtActorER9ItemStackR5ActorR3Mob);
+    VTABLE_FIND_OFFSET(Item_mineBlock__instance, _ZTV4Item, _ZNK4Item9mineBlockER12ItemInstanceRK5BlockiiiP5Actor);
+    VTABLE_FIND_OFFSET(Item_mineBlock__stack, _ZTV4Item, _ZNK4Item9mineBlockER9ItemStackRK5BlockiiiP5Actor);
+    vtable[Item_hurtActor] = SYMBOL("mcpe", "_ZNK10WeaponItem9hurtActorER9ItemStackR5ActorR3Mob");
+    vtable[Item_mineBlock__instance] = SYMBOL("mcpe", "_ZNK4Item9mineBlockER12ItemInstanceRK5BlockiiiP5Actor");
+    vtable[Item_mineBlock__stack] = SYMBOL("mcpe", "_ZNK4Item9mineBlockER9ItemStackRK5BlockiiiP5Actor");
+}
 
 
 void SwordFactory::registerItem() {
@@ -84,6 +104,10 @@ void CustomToolProvider::setupVtable(void* table) {
         vtable[WeaponItem_hurtActor] = ADDRESS(CustomToolPatches::Weapon::hurtActor);
         vtable[Item_mineBlock__instance] = ADDRESS(CustomToolPatches::Weapon::mineBlock__instance);
         vtable[Item_mineBlock__stack] = ADDRESS(CustomToolPatches::Weapon::mineBlock__stack);
+        if(factory->dynamicDamageEnabled) {
+            VTABLE_FIND_OFFSET(Item_appendFormattedHovertext, _ZTV4Item, _ZNK4Item24appendFormattedHovertextERK13ItemStackBaseR5LevelRNSt6__ndk112basic_stringIcNS5_11char_traitsIcEENS5_9allocatorIcEEEEb);
+            vtable[Item_appendFormattedHovertext] = ADDRESS(CustomToolPatches::Weapon::appendFormattedHovertext);
+        }
     } else {
         VTABLE_FIND_OFFSET(DiggerItem_getDestroySpeed, _ZTV10DiggerItem, _ZNK10DiggerItem15getDestroySpeedERK13ItemStackBaseRK5Block);
         VTABLE_FIND_OFFSET(Item_hurtActor, _ZTV4Item, _ZNK4Item9hurtActorER9ItemStackR5ActorR3Mob);
@@ -95,5 +119,9 @@ void CustomToolProvider::setupVtable(void* table) {
         vtable[Item_mineBlock__instance] = ADDRESS(CustomToolPatches::Digger::mineBlock__instance);
         vtable[DiggerItem_mineBlock__stack] = ADDRESS(CustomToolPatches::Digger::mineBlock__stack);
         vtable[Item_canDestroySpecial] = ADDRESS(KEXToolsModule::patchedCanDestroySpecial);
+        if(factory->dynamicDamageEnabled) {
+            VTABLE_FIND_OFFSET(Item_appendFormattedHovertext, _ZTV4Item, _ZNK4Item24appendFormattedHovertextERK13ItemStackBaseR5LevelRNSt6__ndk112basic_stringIcNS5_11char_traitsIcEENS5_9allocatorIcEEEEb);
+            vtable[Item_appendFormattedHovertext] = ADDRESS(CustomToolPatches::Digger::appendFormattedHovertext);
+        }
     }
 }

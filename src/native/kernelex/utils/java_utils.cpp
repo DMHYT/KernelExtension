@@ -27,33 +27,37 @@ namespace KEXJavaBridge {
     }
     namespace Cache {
         JAVA_CLASS(ToolsModule, "vsdum/kex/modules/ToolsModule")
-        JAVA_METHOD(ToolsModule, onBroke, "(J)Z")
-        JAVA_METHOD(ToolsModule, modifyEnchant, "(JIIIBII)V")
-        JAVA_METHOD(ToolsModule, onAttack, "(JJJ)Z")
-        JAVA_METHOD(ToolsModule, onMineBlock, "(JIIIBII)V")
-        JAVA_METHOD(ToolsModule, onDestroy, "(JIIIBIIJ)Z")
-        JAVA_METHOD(ToolsModule, calcDestroyTime, "(JIIIIIBFFFF)F")
+        JAVA_METHOD(ToolsModule, onBroke, "()Z")
+        JAVA_METHOD(ToolsModule, modifyEnchant, "(IIIBIIJ)V")
+        JAVA_METHOD(ToolsModule, onAttack, "(JJ)Z")
+        JAVA_METHOD(ToolsModule, onMineBlock, "(IIIBIIJ)V")
+        JAVA_METHOD(ToolsModule, onDestroy, "(IIIBIIJ)Z")
+        JAVA_METHOD(ToolsModule, calcDestroyTime, "(IIIIIBFFFF)F")
+        JAVA_METHOD(ToolsModule, getAttackDamageBonus, "(IIIJI)I")
         JAVA_CLASS(LootModule, "vsdum/kex/modules/LootModule")
         JAVA_METHOD(LootModule, modify, "(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;")
     }
     namespace ToolsModule {
-        bool onBroke(jlong stack) {
-            return KEXJavaUtils::attach()->CallStaticBooleanMethod(Cache::ToolsModule(), Cache::ToolsModule_onBroke(), stack);
+        bool onBroke() {
+            return KEXJavaUtils::attach()->CallStaticBooleanMethod(Cache::ToolsModule(), Cache::ToolsModule_onBroke());
         }
-        void modifyEnchant(jlong stack, int x, int y, int z, char side, int id, int data) {
-            KEXJavaUtils::attach()->CallStaticVoidMethod(Cache::ToolsModule(), Cache::ToolsModule_modifyEnchant(), stack, x, y, z, (jbyte) side, id, data);
+        void modifyEnchant(int x, int y, int z, char side, int id, int data, jlong actor) {
+            KEXJavaUtils::attach()->CallStaticVoidMethod(Cache::ToolsModule(), Cache::ToolsModule_modifyEnchant(), x, y, z, (jbyte) side, id, data, actor);
         }
-        bool onAttack(jlong stack, jlong victim, jlong attacker) {
-            return KEXJavaUtils::attach()->CallStaticBooleanMethod(Cache::ToolsModule(), Cache::ToolsModule_onAttack(), stack, victim, attacker);
+        bool onAttack(jlong victim, jlong attacker) {
+            return KEXJavaUtils::attach()->CallStaticBooleanMethod(Cache::ToolsModule(), Cache::ToolsModule_onAttack(), victim, attacker);
         }
-        void onMineBlock(jlong stack, int x, int y, int z, char side, int id, int data) {
-            KEXJavaUtils::attach()->CallStaticVoidMethod(Cache::ToolsModule(), Cache::ToolsModule_onMineBlock(), stack, x, y, z, (jbyte) side, id, data);
+        void onMineBlock(int x, int y, int z, char side, int id, int data, jlong actor) {
+            KEXJavaUtils::attach()->CallStaticVoidMethod(Cache::ToolsModule(), Cache::ToolsModule_onMineBlock(), x, y, z, (jbyte) side, id, data, actor);
         }
-        bool onDestroy(jlong stack, int x, int y, int z, char side, int id, int data, jlong actor) {
-            return KEXJavaUtils::attach()->CallStaticBooleanMethod(Cache::ToolsModule(), Cache::ToolsModule_onDestroy(), stack, x, y, z, (jbyte) side, id, data, actor);
+        bool onDestroy(int x, int y, int z, char side, int id, int data, jlong actor) {
+            return KEXJavaUtils::attach()->CallStaticBooleanMethod(Cache::ToolsModule(), Cache::ToolsModule_onDestroy(), x, y, z, (jbyte) side, id, data, actor);
         }
-        float calcDestroyTime(jlong stack, int id, int data, int x, int y, int z, char side, float baseDestroyTime, float divider, float modifier, float defaultTime) {
-            return KEXJavaUtils::attach()->CallStaticFloatMethod(Cache::ToolsModule(), Cache::ToolsModule_calcDestroyTime(), stack, id, data, x, y, z, (jbyte) side, baseDestroyTime, divider, modifier, defaultTime);
+        float calcDestroyTime(int id, int data, int x, int y, int z, char side, float baseDestroyTime, float divider, float modifier, float defaultTime) {
+            return KEXJavaUtils::attach()->CallStaticFloatMethod(Cache::ToolsModule(), Cache::ToolsModule_calcDestroyTime(), id, data, x, y, z, (jbyte) side, baseDestroyTime, divider, modifier, defaultTime);
+        }
+        int getAttackDamageBonus(int id, int count, int data, jlong extra, int defaultValue) {
+            return KEXJavaUtils::attach()->CallStaticIntMethod(Cache::ToolsModule(), Cache::ToolsModule_getAttackDamageBonus(), id, count, data, extra, defaultValue);
         }
     }
     namespace LootModule {
