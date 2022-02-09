@@ -2,7 +2,6 @@
 #include <hook.h>
 #include <symbol.h>
 #include <innercore_callbacks.h>
-#include <logger.h>
 #include "../../../../../../DMH/cppheaders/json/value.h"
 #include "../../../../../../DMH/cppheaders/json/reader.h"
 #include "../utils/java_utils.hpp"

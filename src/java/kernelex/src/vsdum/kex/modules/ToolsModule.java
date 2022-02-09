@@ -259,151 +259,127 @@ public class ToolsModule {
 
     public static float calcDestroyTime(int id, int data, int x, int y, int z, byte side, float baseDestroyTime, float divider, float modifier, float defaultTime)
     {
-        try {
-            ItemInstance stack = Entity.getCarriedItem(NativeAPI.getLocalPlayer());
-            Integer idO = Integer.valueOf(stack.getId());
-            if(toolData.containsKey(idO))
+        ItemInstance stack = Entity.getCarriedItem(NativeAPI.getLocalPlayer());
+        Integer idO = Integer.valueOf(stack.getId());
+        if(toolData.containsKey(idO))
+        {
+            ScriptableObject obj = toolData.get(idO);
+            if(ScriptableObject.hasProperty(obj, "calcDestroyTime"))
             {
-                ScriptableObject obj = toolData.get(idO);
-                if(ScriptableObject.hasProperty(obj, "calcDestroyTime"))
-                {
-                    return CommonTypes.callFloatJSFunction(obj, "calcDestroyTime", new Object[]{
-                        new Coords(x, y, z, side),
-                        new FullBlock(id, data),
-                        CommonTypes.createTimeDataScriptable(baseDestroyTime, divider, modifier),
-                        Float.valueOf(defaultTime),
-                        CommonTypes.createEnchantDataScriptable(new ItemStack(stack))
-                    }, defaultTime);
-                }
+                return CommonTypes.callFloatJSFunction(obj, "calcDestroyTime", new Object[]{
+                    new Coords(x, y, z, side),
+                    new FullBlock(id, data),
+                    CommonTypes.createTimeDataScriptable(baseDestroyTime, divider, modifier),
+                    Float.valueOf(defaultTime),
+                    CommonTypes.createEnchantDataScriptable(new ItemStack(stack))
+                }, defaultTime);
             }
-        } catch(Throwable ex) {
-            ex.printStackTrace();
         }
         return defaultTime;
     }
 
     public static boolean onDestroy(int x, int y, int z, byte side, int id, int data, long player)
     {
-        try {
-            ItemInstance stack = Entity.getCarriedItem(player);
-            Integer idO = Integer.valueOf(stack.getId());
-            if(toolData.containsKey(idO))
+        ItemInstance stack = Entity.getCarriedItem(player);
+        Integer idO = Integer.valueOf(stack.getId());
+        if(toolData.containsKey(idO))
+        {
+            ScriptableObject obj = toolData.get(idO);
+            if(ScriptableObject.hasProperty(obj, "onDestroy"))
             {
-                ScriptableObject obj = toolData.get(idO);
-                if(ScriptableObject.hasProperty(obj, "onDestroy"))
-                {
-                    boolean result = CommonTypes.callBooleanJSFunction(obj, "onDestroy", new Object[]{
-                        stack,
-                        new Coords(x, y, z, side),
-                        new FullBlock(id, data),
-                        Long.valueOf(player)
-                    }, false);
-                    Entity.setCarriedItem(player, stack.getId(), stack.getCount(), stack.getData(), NativeItemInstanceExtra.unwrapObject(ScriptableObjectHelper.getProperty(stack, "extra", null)));
-                    return result;
-                }
+                boolean result = CommonTypes.callBooleanJSFunction(obj, "onDestroy", new Object[]{
+                    stack,
+                    new Coords(x, y, z, side),
+                    new FullBlock(id, data),
+                    Long.valueOf(player)
+                }, false);
+                Entity.setCarriedItem(player, stack.getId(), stack.getCount(), stack.getData(), NativeItemInstanceExtra.unwrapObject(ScriptableObjectHelper.getProperty(stack, "extra", null)));
+                return result;
             }
-        } catch(Throwable ex) {
-            ex.printStackTrace();
         }
         return false;
     }
 
     public static boolean onAttack(long victim, long attacker)
     {
-        try {
-            ItemInstance stack = Entity.getCarriedItem(attacker);
-            Integer idO = Integer.valueOf(stack.getId());
-            if(toolData.containsKey(idO))
+        ItemInstance stack = Entity.getCarriedItem(attacker);
+        Integer idO = Integer.valueOf(stack.getId());
+        if(toolData.containsKey(idO))
+        {
+            ScriptableObject obj = toolData.get(idO);
+            if(ScriptableObject.hasProperty(obj, "onAttack"))
             {
-                ScriptableObject obj = toolData.get(idO);
-                if(ScriptableObject.hasProperty(obj, "onAttack"))
-                {
-                    boolean result = CommonTypes.callBooleanJSFunction(obj, "onAttack", new Object[]{
-                        stack, Long.valueOf(victim), Long.valueOf(attacker)
-                    }, false);
-                    Entity.setCarriedItem(attacker, stack.getId(), stack.getCount(), stack.getData(), NativeItemInstanceExtra.unwrapObject(ScriptableObjectHelper.getProperty(stack, "extra", null)));
-                    return result;
-                }
+                boolean result = CommonTypes.callBooleanJSFunction(obj, "onAttack", new Object[]{
+                    stack, Long.valueOf(victim), Long.valueOf(attacker)
+                }, false);
+                Entity.setCarriedItem(attacker, stack.getId(), stack.getCount(), stack.getData(), NativeItemInstanceExtra.unwrapObject(ScriptableObjectHelper.getProperty(stack, "extra", null)));
+                return result;
             }
-        } catch(Throwable ex) {
-            ex.printStackTrace();
         }
         return false;
     }
 
     public static boolean onBroke()
     {
-        try {
-            ItemInstance stack = Entity.getCarriedItem(NativeAPI.getLocalPlayer());
-            Integer idO = Integer.valueOf(stack.getId());
-            if(toolData.containsKey(idO))
+        ItemInstance stack = Entity.getCarriedItem(NativeAPI.getLocalPlayer());
+        Integer idO = Integer.valueOf(stack.getId());
+        if(toolData.containsKey(idO))
+        {
+            ScriptableObject obj = toolData.get(idO);
+            if(ScriptableObject.hasProperty(obj, "onBroke"))
             {
-                ScriptableObject obj = toolData.get(idO);
-                if(ScriptableObject.hasProperty(obj, "onBroke"))
-                {
-                    return CommonTypes.callBooleanJSFunction(obj, "onBroke", new Object[]{ stack }, false);
-                }
+                return CommonTypes.callBooleanJSFunction(obj, "onBroke", new Object[]{ stack }, false);
             }
-        } catch(Throwable ex) {
-            ex.printStackTrace();
         }
         return false;
     }
 
     public static void modifyEnchant(int x, int y, int z, byte side, int id, int data, long player)
     {
-        try {
-            ItemInstance stack = Entity.getCarriedItem(player);
-            if(stack != null)
+        ItemInstance stack = Entity.getCarriedItem(player);
+        if(stack != null)
+        {
+            int idO = Integer.valueOf(stack.getId());
+            if(toolData.containsKey(idO))
             {
-                int idO = Integer.valueOf(stack.getId());
-                if(toolData.containsKey(idO))
+                ScriptableObject obj = toolData.get(idO);
+                if(ScriptableObject.hasProperty(obj, "modifyEnchant"))
                 {
-                    ScriptableObject obj = toolData.get(idO);
-                    if(ScriptableObject.hasProperty(obj, "modifyEnchant"))
-                    {
-                        NativeItemInstanceExtra.unwrapObject(ScriptableObjectHelper.getProperty(stack, "extra", null)).removeAllEnchants();
-                        ScriptableObject enchantData = CommonTypes.createEnchantDataScriptable(new ItemStack(stack));
-                        CommonTypes.callVoidJSFunction(obj, "modifyEnchant", new Object[]{
-                            enchantData, stack,
-                            new Coords(x, y, z, side),
-                            new FullBlock(id, data)
-                        });
-                        short[] modified = CommonTypes.enchantDataScriptableToArray(enchantData);
-                        NativeItemInstanceExtra extra = NativeItemInstanceExtra.unwrapObject(ScriptableObjectHelper.getProperty(stack, "extra", null));
-                        if(modified[0] > 0) extra.addEnchant(Enchantment.SILK_TOUCH, modified[0]); else extra.removeEnchant(Enchantment.SILK_TOUCH);
-                        if(modified[1] > 0) extra.addEnchant(Enchantment.FORTUNE, modified[1]); else extra.removeEnchant(Enchantment.FORTUNE);
-                        if(modified[2] > 0) extra.addEnchant(Enchantment.EFFICIENCY, modified[2]); else extra.removeEnchant(Enchantment.EFFICIENCY);
-                        if(modified[3] > 0) extra.addEnchant(Enchantment.UNBREAKING, modified[3]); else extra.removeEnchant(Enchantment.UNBREAKING);
-                        Entity.setCarriedItem(player, stack.getId(), stack.getCount(), stack.getData(), extra);
-                    }
+                    NativeItemInstanceExtra.unwrapObject(ScriptableObjectHelper.getProperty(stack, "extra", null)).removeAllEnchants();
+                    ScriptableObject enchantData = CommonTypes.createEnchantDataScriptable(new ItemStack(stack));
+                    CommonTypes.callVoidJSFunction(obj, "modifyEnchant", new Object[]{
+                        enchantData, stack,
+                        new Coords(x, y, z, side),
+                        new FullBlock(id, data)
+                    });
+                    short[] modified = CommonTypes.enchantDataScriptableToArray(enchantData);
+                    NativeItemInstanceExtra extra = NativeItemInstanceExtra.unwrapObject(ScriptableObjectHelper.getProperty(stack, "extra", null));
+                    if(modified[0] > 0) extra.addEnchant(Enchantment.SILK_TOUCH, modified[0]); else extra.removeEnchant(Enchantment.SILK_TOUCH);
+                    if(modified[1] > 0) extra.addEnchant(Enchantment.FORTUNE, modified[1]); else extra.removeEnchant(Enchantment.FORTUNE);
+                    if(modified[2] > 0) extra.addEnchant(Enchantment.EFFICIENCY, modified[2]); else extra.removeEnchant(Enchantment.EFFICIENCY);
+                    if(modified[3] > 0) extra.addEnchant(Enchantment.UNBREAKING, modified[3]); else extra.removeEnchant(Enchantment.UNBREAKING);
+                    Entity.setCarriedItem(player, stack.getId(), stack.getCount(), stack.getData(), extra);
                 }
             }
-        } catch(Throwable ex) {
-            ex.printStackTrace();
         }
     }
 
     public static void onMineBlock(int x, int y, int z, byte side, int id, int data, long player)
     {
-        try {
-            ItemInstance stack = Entity.getCarriedItem(player);
-            int idO = Integer.valueOf(stack.getId());
-            if(toolData.containsKey(idO))
+        ItemInstance stack = Entity.getCarriedItem(player);
+        int idO = Integer.valueOf(stack.getId());
+        if(toolData.containsKey(idO))
+        {
+            ScriptableObject obj = toolData.get(idO);
+            if(ScriptableObject.hasProperty(obj, "onMineBlock"))
             {
-                ScriptableObject obj = toolData.get(idO);
-                if(ScriptableObject.hasProperty(obj, "onMineBlock"))
-                {
-                    CommonTypes.callVoidJSFunction(obj, "onMineBlock", new Object[]{
-                        new Coords(x, y, z, side),
-                        stack,
-                        new FullBlock(id, data)
-                    });
-                    Entity.setCarriedItem(player, stack.getId(), stack.getCount(), stack.getData(), NativeItemInstanceExtra.unwrapObject(ScriptableObjectHelper.getProperty(stack, "extra", null)));
-                }
+                CommonTypes.callVoidJSFunction(obj, "onMineBlock", new Object[]{
+                    new Coords(x, y, z, side),
+                    stack,
+                    new FullBlock(id, data)
+                });
+                Entity.setCarriedItem(player, stack.getId(), stack.getCount(), stack.getData(), NativeItemInstanceExtra.unwrapObject(ScriptableObjectHelper.getProperty(stack, "extra", null)));
             }
-        } catch(Throwable ex) {
-            ex.printStackTrace();
         }
     }
 
