@@ -517,21 +517,39 @@ declare module vsdum {
             export class MobEffect extends common.INativeInterface {
                 static class: java.lang.Class<MobEffect>;
                 constructor(pointer: number);
+                static getById(id: number): Nullable<MobEffect>;
+                isVisible(): boolean;
+                getId(): number;
+                isHarmful(): boolean;
             }
         }
     }
 }
+declare function WRAP_JAVA(clazz: "vsdum.kex.natives.MobEffect"): typeof vsdum.kex.natives.MobEffect;
 
 declare module vsdum {
     export module kex {
         export module natives {
             export class MobEffectInstance extends common.INativeInterface {
                 static class: java.lang.Class<MobEffectInstance>;
-                constructor(pointer: number);
+                constructor(pointer: number, flagForPointerOverload: boolean);
+                constructor(id: number);
+                constructor(id: number, duration: number);
+                constructor(id: number, duration: number, amplifier: number);
+                constructor(id: number, duration: number, amplifier: number, isAmbient: boolean, isVisible: boolean, displaysOnScreenTextureAnimation: boolean);
+                getId(): number;
+                getEffect(): Nullable<MobEffect>;
+                getAmplifier(): number;
+                isAmbient(): boolean;
+                isVisible(): boolean;
+                displaysOnScreenTextureAnimation(): boolean;
+                isNoCounter(): boolean;
+                getDuration(): number;
             }
         }
     }
 }
+declare function WRAP_JAVA(clazz: "vsdum.kex.natives.MobEffectInstance"): typeof vsdum.kex.natives.MobEffectInstance;
 
 declare module vsdum {
     export module kex {
@@ -753,14 +771,14 @@ declare module vsdum {
         export module modules {
             export class ItemsModule extends java.lang.Object {
                 static class: java.lang.Class<ItemsModule>;
-                setRequiresWorldBuilder(id: number, requiresWorldBuilder: boolean): void;
-                setExplodable(id: number, explodable: boolean): void;
-                setFireResistant(id: number, fireResistant: boolean): void;
-                setShouldDespawn(id: number, shouldDespawn: boolean): void;
-                setIsMirroredArt(id: number, isMirroredArt: boolean): void;
-                setFurnaceBurnIntervalMultiplier(id: number, multiplier: number): void;
-                setFurnaceXPMultiplier(id: number, multiplier: number): void;
-                setCannotBeRepairedInAnvil(id: number): void;
+                static setRequiresWorldBuilder(id: number, requiresWorldBuilder: boolean): void;
+                static setExplodable(id: number, explodable: boolean): void;
+                static setFireResistant(id: number, fireResistant: boolean): void;
+                static setShouldDespawn(id: number, shouldDespawn: boolean): void;
+                static setIsMirroredArt(id: number, isMirroredArt: boolean): void;
+                static setFurnaceBurnIntervalMultiplier(id: number, multiplier: number): void;
+                static setFurnaceXPMultiplier(id: number, multiplier: number): void;
+                static setCannotBeRepairedInAnvil(id: number): void;
             }
         }
     }
