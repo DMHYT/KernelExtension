@@ -514,14 +514,14 @@ public class Actor implements INativeInterface {
     {
         long instancePtr = nativeGetEffect(this.pointer, effect.getPointer());
         if(instancePtr == 0L) return null;
-        return new MobEffectInstance(instancePtr);
+        return new MobEffectInstance(instancePtr, true);
     }
 
     @Nullable public MobEffectInstance getEffect(int effectId)
     {
         long instancePtr = nativeGetEffect(this.pointer, effectId);
         if(instancePtr == 0L) return null;
-        return new MobEffectInstance(instancePtr);
+        return new MobEffectInstance(instancePtr, true);
     }
 
     public int getActiveEffectCount()
