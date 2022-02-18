@@ -31,11 +31,11 @@ namespace Item {
             commonParamsObj.isTech = params.isTech;
             delete params.isTech;
         }
-        const result = createItem(nameID, name, texture, params);
-        if(typeof params.food === "number" && params.food > 0) {
-            params.nutrition = params.food;
+        const result = createItem(nameID, name, texture, commonParamsObj);
+        if(typeof params.food === "number") {
+            params.nutrition = Math.max(params.food, 1);
             delete params.food;
-        } else params.food = 1;
+        }
         result.setProperties(JSON.stringify(params));
         return result;
     }
