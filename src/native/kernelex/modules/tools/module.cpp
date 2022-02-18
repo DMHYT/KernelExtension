@@ -292,7 +292,6 @@ float LastDestroyedBlock::getOrCalculateSpeed(ItemStackBase const& stack, Block 
         void* output = DiggerItem_getDestroySpeed(item, stack, block);
         float result = *(float*)&output;
         int staticId = IdConversion::dynamicToStatic(block.legacy->id, IdConversion::BLOCK);
-        KEXJavaBridge::ToolsModule::modifyEnchant(x, y, z, side, staticId, block.data, GlobalContext::getLocalPlayer()->getUniqueID()->id);
         float blockDestroyTime = block.legacy->getDestroySpeed();
         float materialDivider = item->speed;
         materialDivider = materialDivider == 0.0f ? 1.0f : materialDivider;

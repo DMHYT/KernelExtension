@@ -233,9 +233,12 @@ declare class ToolsModule extends java.lang.Object {
     static setBlockDestroyLevel(id: number, destroyLevel: number): void;
     static setBlockIsNative(id: number, isNative: boolean): void;
     static getDestroyTimeViaTool(block: Tile, x: number, y: number, z: number, side: number, item: ItemInstance): number;
-    static registerCustomTool(id: number, nameId: string, name: string, textureName: string, textureMeta: number, tier: ToolsModule.ItemTier, isTech: boolean, isWeapon: boolean, blockMaterials: Nullable<string[]>, brokenId: number, baseAttackDamage: number, enchantType: number, toolData: ToolAPI.ToolParams): void;
+    static registerCustomTool(id: number, nameId: string, name: string, textureName: string, textureMeta: number, tier: ToolsModule.ItemTier, isTech: boolean, isWeapon: boolean, blockMaterials: Nullable<string[]>, brokenId: number, baseAttackDamage: number, enchantType: number, toolData: ToolsModule.ExtendedToolParams): void;
 }
 declare namespace ToolsModule {
+    export interface ExtendedToolParams extends ToolAPI.ToolParams {
+        getAttackDamageBonus?: (item: ItemInstance) => number;
+    }
     export interface BlockData {
         readonly materialName: Nullable<string>;
         readonly destroyLevel: number;
@@ -250,6 +253,36 @@ declare namespace ToolsModule {
         getAttackDamageBonus(): number;
         getEnchantmentValue(): number;
     }
+}
+
+declare namespace Item {
+    interface FoodParamsDescription {
+        stack?: number,
+        isTech?: boolean,
+        food?: number,
+        nutrition?: number,
+        saturation_modifier?: "poor" | "low" | "normal" | "good" | "max" | "supernatural",
+        is_meat?: boolean,
+        can_always_eat?: boolean,
+        cooldown_time?: number,
+        cooldown_type?: "chorusfruit" | "none",
+        on_use_range?: [ number, number, number ],
+        on_use_action?: "chorus_teleport" | "suspicious_stew_effect" | "none",
+        using_converts_to?: string,
+        effects?: {
+            name?: Lowercase<keyof typeof EPotionEffect> | string,
+            duration?: number,
+            amplifier?: number,
+            chance?: number
+        }[]
+    }
+    function createFoodItem(nameID: string, name: string, texture: TextureData, params: FoodParamsDescription): NativeItem;
+    function createSwordItem(id: string, name: string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: string | ToolAPI.ToolMaterial }): void;
+    function createAxeItem(id: string, name: string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: string | ToolAPI.ToolMaterial }): void;
+    function createPickaxeItem(id: string, name: string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: string | ToolAPI.ToolMaterial }): void;
+    function createShovelItem(id: string, name: string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: string | ToolAPI.ToolMaterial }): void;
+    function createHoeItem(id: string, name: string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: string | ToolAPI.ToolMaterial }): void;
+    function createCustomTool(id: string, name: string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: string | ToolAPI.ToolMaterial }, toolParams?: ToolsModule.ExtendedToolParams, numericId?: number): void;
 }
 
 declare interface INativeInterface {

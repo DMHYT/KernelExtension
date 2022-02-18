@@ -817,6 +817,8 @@ declare module vsdum {
                 static setBlockIsNative(id: number, isNative: boolean): void;
                 static getDestroyTimeViaTool(block: Tile, x: number, y: number, z: number, side: number, item: ItemInstance): number;
                 static registerCustomTool(id: number, nameId: string, name: string, textureName: string, textureMeta: number, tier: ToolsModule.ItemTier, isTech: boolean, isWeapon: boolean, blockMaterials: Nullable<string[]>, brokenId: number, baseAttackDamage: number, enchantType: number, toolData: ToolAPI.ToolParams): void;
+                static destroyBlockHook(coords: Callback.ItemUseCoordinates, block: Tile, item: ItemInstance, player: number): void;
+                static playerAttackHook(attacker: number, victim: number, item: ItemInstance): void;
             }
             export module ToolsModule {
                 export class ItemTier extends java.lang.Object {

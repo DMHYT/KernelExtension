@@ -4,6 +4,9 @@
 #define KEX_ITEMSTACKBASE_HPP
 
 
+#ifndef KEX_ACTOR_HPP
+    class Actor;
+#endif
 #ifndef KEX_BLOCK_HPP
     class Block;
 #endif
@@ -36,6 +39,7 @@ class ItemStackBase {
     short getDamageValue() const;
     ItemStackBase& operator=(ItemStackBase const&);
     ~ItemStackBase();
+    void hurtAndBreak(int, Actor*);
 };
 
 

@@ -16,10 +16,6 @@ namespace KEXJavaBridge {
     }
     namespace ToolsModule {
         bool onBroke();
-        void modifyEnchant(int x, int y, int z, char side, int id, int data, jlong actor);
-        bool onAttack(jlong victim, jlong attacker);
-        void onMineBlock(int x, int y, int z, char side, int id, int data, jlong actor);
-        bool onDestroy(int x, int y, int z, char side, int id, int data, jlong actor);
         float calcDestroyTime(int id, int data, int x, int y, int z, char side, float baseDestroyTime, float divider, float modifier, float defaultTime);
         int getAttackDamageBonus(int id, int count, int data, jlong extra, int defaultValue);
     }

@@ -235,13 +235,12 @@ ToolAPI.registerSword = (id, toolMaterial, params) => {
     } else ToolsModule.registerSword(id, factory.nameId, factory.nameToDisplay, factory.iconName, factory.iconIndex, tier);
 }
 ToolAPI.startDestroyHook = () => {}
-ToolAPI.destroyBlockHook = () => {}
-ToolAPI.playerAttackHook = () => {}
+ToolAPI.destroyBlockHook = (c, b, i, p) => ToolsModule.destroyBlockHook(c, b, i, p);
+ToolAPI.playerAttackHook = (a, v, i) => ToolsModule.playerAttackHook(a, v, i);
 ToolAPI.getToolData = itemID => typeof ToolAPI.toolData[itemID] !== "undefined" ? ToolAPI.toolData[itemID] : null;
 ToolAPI.getToolLevel = itemID => ToolsModule.getToolLevel(itemID);
 ToolAPI.getToolLevelViaBlock = (itemID, blockID) => ToolsModule.getToolLevelViaBlock(itemID, blockID);
 ToolAPI.getDestroyTimeViaTool = (fullBlock, toolItem, coords) => ToolsModule.getDestroyTimeViaTool(fullBlock, coords.x, coords.y, coords.z, coords.side, toolItem);
-Block.isNativeTile = blockID => ToolsModule.getBlockIsNative(blockID);
 Block.setDestroyLevelForID = (blockID, level) => ToolAPI.registerBlockDiggingLevel(blockID, level);
 
 

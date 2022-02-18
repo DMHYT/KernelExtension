@@ -2,6 +2,7 @@ package vsdum.kex.modules;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 import com.zhekasmirnov.apparatus.adapter.innercore.game.item.ItemStack;
 import com.zhekasmirnov.innercore.api.NativeAPI;
@@ -11,7 +12,6 @@ import com.zhekasmirnov.innercore.api.commontypes.Coords;
 import com.zhekasmirnov.innercore.api.commontypes.FullBlock;
 import com.zhekasmirnov.innercore.api.commontypes.ItemInstance;
 import com.zhekasmirnov.innercore.api.constants.Enchantment;
-import com.zhekasmirnov.innercore.api.mod.ScriptableObjectHelper;
 import com.zhekasmirnov.innercore.api.mod.adaptedscript.AdaptedScriptAPI.Entity;
 
 import org.mozilla.javascript.ScriptableObject;
@@ -48,6 +48,7 @@ public class ToolsModule {
     protected static native void nativeRegisterCustomTool(int id, String nameId, String name, String textureName, int textureMeta, long tierPtr, boolean isTech, boolean isWeapon, String[] blockMaterials, int brokenId, int baseAttackDamage, int enchantType);
     protected static native float nativeGetDestroyTimeViaTool(int id, int data, long stackptr, int x, int y, int z, int side);
     public static native void enableDynamicDamageFor(int id);
+    protected static native void nativeDamageToolInHand(long player, int damage);
 
     private static final Map<String, ItemTier> tiersByName = new HashMap<>();
 
@@ -117,6 +118,8 @@ public class ToolsModule {
         }
 
     }
+
+    private static Random rand = new Random();
 
     public static void registerSword(int id, String nameId, String name, String textureName, int textureMeta, ItemTier tier)
     {
@@ -257,6 +260,19 @@ public class ToolsModule {
 
     private static final Map<Integer, ScriptableObject> toolData = new HashMap<>();
 
+    private static boolean isWeapon(int id) {
+        ScriptableObject obj = toolData.get(Integer.valueOf(id));
+        if(ScriptableObject.hasProperty(obj, "isWeapon"))
+        {
+            Object isWeapon = ScriptableObject.getProperty(obj, "isWeapon");
+            if(isWeapon instanceof Boolean)
+            {
+                return ((Boolean) isWeapon).booleanValue();
+            }
+        }
+        return false;
+    }
+
     public static float calcDestroyTime(int id, int data, int x, int y, int z, byte side, float baseDestroyTime, float divider, float modifier, float defaultTime)
     {
         ItemInstance stack = Entity.getCarriedItem(NativeAPI.getLocalPlayer());
@@ -278,41 +294,36 @@ public class ToolsModule {
         return defaultTime;
     }
 
-    public static boolean onDestroy(int x, int y, int z, byte side, int id, int data, long player)
+    public static boolean onDestroy(Coords coords, ItemInstance item, FullBlock block, long player)
     {
-        ItemInstance stack = Entity.getCarriedItem(player);
-        Integer idO = Integer.valueOf(stack.getId());
+        Integer idO = Integer.valueOf(item.getId());
         if(toolData.containsKey(idO))
         {
             ScriptableObject obj = toolData.get(idO);
             if(ScriptableObject.hasProperty(obj, "onDestroy"))
             {
                 boolean result = CommonTypes.callBooleanJSFunction(obj, "onDestroy", new Object[]{
-                    stack,
-                    new Coords(x, y, z, side),
-                    new FullBlock(id, data),
-                    Long.valueOf(player)
+                    item, coords, block, Long.valueOf(player)
                 }, false);
-                Entity.setCarriedItem(player, stack.getId(), stack.getCount(), stack.getData(), NativeItemInstanceExtra.unwrapObject(ScriptableObjectHelper.getProperty(stack, "extra", null)));
+                Entity.setCarriedItem(player, item.getId(), item.getCount(), item.getData(), CommonTypes.getExtraFromInstance(item));
                 return result;
             }
         }
         return false;
     }
 
-    public static boolean onAttack(long victim, long attacker)
+    public static boolean onAttack(long victim, long attacker, ItemInstance item)
     {
-        ItemInstance stack = Entity.getCarriedItem(attacker);
-        Integer idO = Integer.valueOf(stack.getId());
+        Integer idO = Integer.valueOf(item.getId());
         if(toolData.containsKey(idO))
         {
             ScriptableObject obj = toolData.get(idO);
             if(ScriptableObject.hasProperty(obj, "onAttack"))
             {
                 boolean result = CommonTypes.callBooleanJSFunction(obj, "onAttack", new Object[]{
-                    stack, Long.valueOf(victim), Long.valueOf(attacker)
+                    item, Long.valueOf(victim), Long.valueOf(attacker)
                 }, false);
-                Entity.setCarriedItem(attacker, stack.getId(), stack.getCount(), stack.getData(), NativeItemInstanceExtra.unwrapObject(ScriptableObjectHelper.getProperty(stack, "extra", null)));
+                Entity.setCarriedItem(attacker, item.getId(), item.getCount(), item.getData(), CommonTypes.getExtraFromInstance(item));
                 return result;
             }
         }
@@ -334,32 +345,25 @@ public class ToolsModule {
         return false;
     }
 
-    public static void modifyEnchant(int x, int y, int z, byte side, int id, int data, long player)
+    public static void modifyEnchant(Coords coords, ItemInstance item, FullBlock block, long player)
     {
-        ItemInstance stack = Entity.getCarriedItem(player);
-        if(stack != null)
+        Integer idO = Integer.valueOf(item.getId());
+        if(toolData.containsKey(idO))
         {
-            int idO = Integer.valueOf(stack.getId());
-            if(toolData.containsKey(idO))
+            ScriptableObject obj = toolData.get(idO);
+            if(ScriptableObject.hasProperty(obj, "modifyEnchant"))
             {
-                ScriptableObject obj = toolData.get(idO);
-                if(ScriptableObject.hasProperty(obj, "modifyEnchant"))
-                {
-                    NativeItemInstanceExtra.unwrapObject(ScriptableObjectHelper.getProperty(stack, "extra", null)).removeAllEnchants();
-                    ScriptableObject enchantData = CommonTypes.createEnchantDataScriptable(new ItemStack(stack));
-                    CommonTypes.callVoidJSFunction(obj, "modifyEnchant", new Object[]{
-                        enchantData, stack,
-                        new Coords(x, y, z, side),
-                        new FullBlock(id, data)
-                    });
-                    short[] modified = CommonTypes.enchantDataScriptableToArray(enchantData);
-                    NativeItemInstanceExtra extra = NativeItemInstanceExtra.unwrapObject(ScriptableObjectHelper.getProperty(stack, "extra", null));
-                    if(modified[0] > 0) extra.addEnchant(Enchantment.SILK_TOUCH, modified[0]); else extra.removeEnchant(Enchantment.SILK_TOUCH);
-                    if(modified[1] > 0) extra.addEnchant(Enchantment.FORTUNE, modified[1]); else extra.removeEnchant(Enchantment.FORTUNE);
-                    if(modified[2] > 0) extra.addEnchant(Enchantment.EFFICIENCY, modified[2]); else extra.removeEnchant(Enchantment.EFFICIENCY);
-                    if(modified[3] > 0) extra.addEnchant(Enchantment.UNBREAKING, modified[3]); else extra.removeEnchant(Enchantment.UNBREAKING);
-                    Entity.setCarriedItem(player, stack.getId(), stack.getCount(), stack.getData(), extra);
-                }
+                NativeItemInstanceExtra extra = CommonTypes.getExtraFromInstance(item);
+                if(extra == null) extra = new NativeItemInstanceExtra();
+                extra.removeAllEnchants();
+                ScriptableObject enchantData = CommonTypes.createEnchantDataScriptable(new ItemStack(item));
+                CommonTypes.callVoidJSFunction(obj, "modifyEnchant", new Object[]{ enchantData, item, coords, block });
+                short[] modified = CommonTypes.enchantDataScriptableToArray(enchantData);
+                if(modified[0] > 0) extra.addEnchant(Enchantment.SILK_TOUCH, modified[0]); else extra.removeEnchant(Enchantment.SILK_TOUCH);
+                if(modified[1] > 0) extra.addEnchant(Enchantment.FORTUNE, modified[1]); else extra.removeEnchant(Enchantment.FORTUNE);
+                if(modified[2] > 0) extra.addEnchant(Enchantment.EFFICIENCY, modified[2]); else extra.removeEnchant(Enchantment.EFFICIENCY);
+                if(modified[3] > 0) extra.addEnchant(Enchantment.UNBREAKING, modified[3]); else extra.removeEnchant(Enchantment.UNBREAKING);
+                Entity.setCarriedItem(player, item.getId(), item.getCount(), item.getData(), extra);
             }
         }
     }
@@ -378,7 +382,7 @@ public class ToolsModule {
                     stack,
                     new FullBlock(id, data)
                 });
-                Entity.setCarriedItem(player, stack.getId(), stack.getCount(), stack.getData(), NativeItemInstanceExtra.unwrapObject(ScriptableObjectHelper.getProperty(stack, "extra", null)));
+                Entity.setCarriedItem(player, stack.getId(), stack.getCount(), stack.getData(), CommonTypes.getExtraFromInstance(stack));
             }
         }
     }
@@ -402,6 +406,42 @@ public class ToolsModule {
     {
         nativeRegisterCustomTool(id, NativeAPI.convertNameId(nameId), name, textureName, textureMeta, tier.getPointer(), isTech, isWeapon, blockMaterials, brokenId, baseAttackDamage, enchantType);
         toolData.put(Integer.valueOf(id), data);
+    }
+
+    public static void destroyBlockHook(Coords coords, FullBlock block, ItemInstance item, long player)
+    {
+        if(toolData.containsKey(Integer.valueOf(item.getId())))
+        {
+            if(onDestroy(coords, item, block, player))
+            {
+                modifyEnchant(coords, item, block, player);
+                NativeItemInstanceExtra extra = CommonTypes.getExtraFromInstance(item);
+                if(extra == null) extra = new NativeItemInstanceExtra();
+                int unbreaking = extra.getEnchantLevel(Enchantment.UNBREAKING);
+                if((getBlockDestroyTime(block.id) > 0 || getToolLevelViaBlock(item.getId(), block.id) > 0) && rand.nextFloat() < 1.0f / (unbreaking + 1))
+                {
+                    nativeDamageToolInHand(player, isWeapon(item.getId()) ? 2 : 1);
+                }
+            }
+        }
+    }
+
+    public static void playerAttackHook(long attacker, long victim, ItemInstance item)
+    {
+        if(toolData.containsKey(Integer.valueOf(item.getId())))
+        {
+            if(onAttack(victim, attacker, item))
+            {
+                modifyEnchant(null, item, null, attacker);
+                NativeItemInstanceExtra extra = CommonTypes.getExtraFromInstance(item);
+                if(extra == null) extra = new NativeItemInstanceExtra();
+                int unbreaking = extra.getEnchantLevel(Enchantment.UNBREAKING);
+                if(rand.nextFloat() < 1.0f / (unbreaking + 1))
+                {
+                    nativeDamageToolInHand(attacker, isWeapon(item.getId()) ? 1 : 2);
+                }
+            }
+        }
     }
 
 }

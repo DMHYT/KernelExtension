@@ -5,8 +5,11 @@
 #include <innercore/legacy_item_registry.h>
 #include <innercore/block_registry.h>
 #include <innercore/vtable.h>
+#include <Actor.hpp>
 #include <BlockLegacy.hpp>
 #include <Item.hpp>
+#include <ItemStackBase.hpp>
+#include <ItemStack.hpp>
 #include "../../utils/java_utils.hpp"
 #include "classes.hpp"
 #include "module.hpp"
@@ -287,6 +290,17 @@ extern "C" {
                     CustomToolFactory* customToolFactory = (CustomToolFactory*) toolFactory;
                     customToolFactory->dynamicDamageEnabled =  true;
                 }
+            }
+        }
+    }
+    JNIEXPORT void JNICALL Java_vsdum_kex_modules_ToolsModule_nativeDamageToolInHand
+    (JNIEnv*, jclass, jlong player, jint damage) {
+        Actor* actor = Actor::wrap(player);
+        if(actor != nullptr) {
+            VTABLE_FIND_OFFSET(Actor_getCarriedItem, _ZTV5Actor, _ZNK5Actor14getCarriedItemEv);
+            ItemStack* stack = VTABLE_CALL<ItemStack*>(Actor_getCarriedItem, actor);
+            if(stack != nullptr) {
+                stack->hurtAndBreak(damage, actor);
             }
         }
     }
