@@ -1,0 +1,14 @@
+CHANGELOG
+
+RELEASE 1.0 (EARLY ALPHA)
+- Item.createFoodItem method patch to specify lots of new params (all listed in declarations)
+- ToolAPI module fully rewritten to native code and vanilla tool classes. You can still use ToolAPI to register tools, but in order not to make KEX use a little crutch many times, consider using ToolsModule.register[Sword/Axe/Pickaxe/Shovel/Hoe/CustomTool] or Item.create[([Sword/Axe/Pickaxe/Shovel/Hoe]Item)/CustomTool] (instead of normal Item.createItem).
+    - ToolAPI.ToolParams interface now has new method int getAttackDamageBonus(ItemInstance item), to override default damage to be applied to item depending on the stack contents (example of use: Nano Saber from IC2)
+- ItemsModule with 8 new methods for items (will increase in future updates)
+- LootModule to modify vanilla loot tables (dungeon chests, entities drops and fishing loot, NOT trading)
+- Actor, Mob, Slime, MobEffect, MobEffectInstance API (experimental, not tested)
+
+BETA 1.1
+- Small fix in Item.createFoodItem patch
+- Fixed all errors called by tools logics
+- Restructured and refactored LootModule
