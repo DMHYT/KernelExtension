@@ -3,7 +3,7 @@
         "info": {
             "name": "Kernel Extension",
             "author": "vsdum",
-            "version": "1.0",
+            "version": "1.1",
             "description": "A library mod that adds small, but useful features, not exported by InnerCore itself.",
             "clientside": false,
             "icon": "src/icon.png"
