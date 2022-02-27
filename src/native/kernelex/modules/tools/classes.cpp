@@ -6,6 +6,7 @@
 #include <items/HoeItem.hpp>
 #include <items/PickaxeItem.hpp>
 #include <items/ShovelItem.hpp>
+#include <items/ShearsItem.hpp>
 #include <items/WeaponItem.hpp>
 #include "module.hpp"
 #include "patches.hpp"

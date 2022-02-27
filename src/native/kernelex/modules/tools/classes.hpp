@@ -168,4 +168,25 @@ class CustomToolProvider : public LegacyItemRegistry::LegacyItemProviderBase {
 };
 
 
+class ShearsFactory : public LegacyItemRegistry::LegacyItemFactoryBase {
+    public:
+    static const int _factoryTypeId = 201;
+    float speed = 1.0f;
+    virtual void registerItem();
+    virtual int getType() {
+        return _factoryTypeId;
+    }
+};
+class ShearsProvider : public LegacyItemRegistry::LegacyItemProviderBase {
+    public:
+    ShearsFactory* factory;
+    ShearsProvider(ShearsFactory* shearsFactory): factory(shearsFactory) {};
+    ~ShearsProvider();
+    virtual void setupVtable(void*);
+    virtual ShearsFactory* getFactory() {
+        return factory;
+    }
+};
+
+
 #endif //KEX_MODULES_TOOLS_CLASSES_HPP
