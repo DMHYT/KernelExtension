@@ -28,6 +28,9 @@
 #ifndef KEX_ITEMS_WEAPONITEM_HPP
     class WeaponItem;
 #endif
+#ifndef KEX_ITEMS_SHEARSITEM_HPP
+    class ShearsItem;
+#endif
 
 namespace CustomToolPatches {
     namespace Digger {
@@ -45,6 +48,7 @@ namespace CustomToolPatches {
         void appendFormattedHovertext(WeaponItem*, ItemStackBase const&, Level&, std::__ndk1::string&, bool);
     }
     void _appendFormattedHovertext(Item*, ItemStackBase const&, Level&, std::__ndk1::string&, bool);
+    float _shearsTieredGetDestroySpeed(ShearsItem*, ItemStackBase const&, Block const&);
 }
 
 

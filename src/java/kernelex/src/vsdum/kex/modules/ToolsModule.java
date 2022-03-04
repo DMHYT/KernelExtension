@@ -49,6 +49,7 @@ public class ToolsModule {
     protected static native float nativeGetDestroyTimeViaTool(int id, int data, long stackptr, int x, int y, int z, int side);
     public static native void enableDynamicDamageFor(int id);
     protected static native void nativeDamageToolInHand(long player, int damage);
+    protected static native void nativeRegisterShears(int id, String nameId, String name, String textureName, int textureMeta, long tierPtr, boolean isTech, int durabilityIfWithoutTier);
 
     private static final Map<String, ItemTier> tiersByName = new HashMap<>();
 
@@ -123,7 +124,7 @@ public class ToolsModule {
 
     public static void registerSword(int id, String nameId, String name, String textureName, int textureMeta, ItemTier tier)
     {
-        registerSword(id, NativeAPI.convertNameId(nameId), name, textureName, textureMeta, tier, true);
+        registerSword(id, nameId, name, textureName, textureMeta, tier, true);
     }
 
     public static void registerSword(int id, String nameId, String name, String textureName, int textureMeta, ItemTier tier, boolean isTech)
@@ -133,7 +134,7 @@ public class ToolsModule {
 
     public static void registerAxe(int id, String nameId, String name, String textureName, int textureMeta, ItemTier tier)
     {
-        registerAxe(id, NativeAPI.convertNameId(nameId), name, textureName, textureMeta, tier, true);
+        registerAxe(id, nameId, name, textureName, textureMeta, tier, true);
     }
 
     public static void registerAxe(int id, String nameId, String name, String textureName, int textureMeta, ItemTier tier, boolean isTech)
@@ -143,7 +144,7 @@ public class ToolsModule {
 
     public static void registerPickaxe(int id, String nameId, String name, String textureName, int textureMeta, ItemTier tier)
     {
-        registerPickaxe(id, NativeAPI.convertNameId(nameId), name, textureName, textureMeta, tier, true);
+        registerPickaxe(id, nameId, name, textureName, textureMeta, tier, true);
     }
 
     public static void registerPickaxe(int id, String nameId, String name, String textureName, int textureMeta, ItemTier tier, boolean isTech)
@@ -153,7 +154,7 @@ public class ToolsModule {
 
     public static void registerShovel(int id, String nameId, String name, String textureName, int textureMeta, ItemTier tier)
     {
-        registerShovel(id, NativeAPI.convertNameId(nameId), name, textureName, textureMeta, tier, true);
+        registerShovel(id, nameId, name, textureName, textureMeta, tier, true);
     }
 
     public static void registerShovel(int id, String nameId, String name, String textureName, int textureMeta, ItemTier tier, boolean isTech)
@@ -163,12 +164,32 @@ public class ToolsModule {
 
     public static void registerHoe(int id, String nameId, String name, String textureName, int textureMeta, ItemTier tier)
     {
-        registerHoe(id, NativeAPI.convertNameId(nameId), name, textureName, textureMeta, tier, true);
+        registerHoe(id, nameId, name, textureName, textureMeta, tier, true);
     }
 
     public static void registerHoe(int id, String nameId, String name, String textureName, int textureMeta, ItemTier tier, boolean isTech)
     {
         nativeRegisterHoe(id, NativeAPI.convertNameId(nameId), name, textureName, textureMeta, tier.getPointer(), isTech);
+    }
+
+    public static void registerShears(int id, String nameId, String name, String textureName, int textureMeta, ItemTier tier)
+    {
+        registerShears(id, nameId, name, textureName, textureMeta, tier, true);
+    }
+
+    public static void registerShears(int id, String nameId, String name, String textureName, int textureMeta, ItemTier tier, boolean isTech)
+    {
+        nativeRegisterShears(id, NativeAPI.convertNameId(nameId), name, textureName, textureMeta, tier.getPointer(), isTech, 0);
+    }
+
+    public static void registerShears(int id, String nameId, String name, String textureName, int textureMeta, int durability)
+    {
+        registerShears(id, nameId, name, textureName, textureMeta, durability, true);
+    }
+
+    public static void registerShears(int id, String nameId, String name, String textureName, int textureMeta, int durability, boolean isTech)
+    {
+        nativeRegisterShears(id, NativeAPI.convertNameId(nameId), name, textureName, textureMeta, 0L, isTech, durability);
     }
 
     private static final Map<String, Float> materialNameToBreakingMultiplier = new HashMap<>();

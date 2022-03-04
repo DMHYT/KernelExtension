@@ -805,6 +805,7 @@ declare module vsdum {
                 static registerPickaxe(id: number, nameId: string, name: string, textureName: string, textureMeta: number, tier: ToolsModule.ItemTier, isTech?: boolean): void;
                 static registerShovel(id: number, nameId: string, name: string, textureName: string, textureMeta: number, tier: ToolsModule.ItemTier, isTech?: boolean): void;
                 static registerHoe(id: number, nameId: string, name: string, textureName: string, textureMeta: number, tier: ToolsModule.ItemTier, isTech?: boolean): void;
+                static registerShears(id: number, nameId: string, name: string, textureName: string, textureMeta: number, tierOrDurability: ToolsModule.ItemTier | number, isTech?: boolean): void;
                 static addBlockMaterial(name: string, breakingMultiplier: number): void;
                 static getBlockMaterialBreakingMultiplier(name: string): number;
                 static getBlockData(id: number): BlockData;

@@ -6,6 +6,8 @@ const Actor = WRAP_JAVA("vsdum.kex.natives.Actor");
 const Mob = WRAP_JAVA("vsdum.kex.natives.Mob");
 const Slime = WRAP_JAVA("vsdum.kex.natives.Slime");
 
+IDRegistry.genItemID("shearsDiamond");
+Item.createShearsItem("shearsDiamond", "Diamond Shears", { name: "missing_item" }, { tier: "diamond" });
 
 ModAPI.registerAPI("KernelExtension", {
     ItemsModule,

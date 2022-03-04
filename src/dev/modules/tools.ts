@@ -124,6 +124,24 @@ namespace Item {
         );
         if(typeof params.stack === "number" && params.stack > 1) Item.getItemById(id).setMaxStackSize(params.stack);
     }
+    export function createShearsItem(id: string, name: string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: string | ToolAPI.ToolMaterial, durability?: number }): void {
+        let materialName: string = "";
+        if(typeof params.tier !== "undefined") {
+            if(typeof params.tier === "object") {
+                materialName = `__unnamedToolMaterial${ToolAPI.unnamedMaterialNum++}`;
+                ToolAPI.addToolMaterial(materialName, params.tier);
+            } else materialName = params.tier;
+        }
+        ToolsModule.registerShears(
+            ItemID[id], id,
+            typeof name === "string" ? name: "<unnamed shears>",
+            typeof texture.name === "string" ? texture.name : "missing_item",
+            typeof texture.meta === "number" && texture.meta > 0 ? texture.meta : typeof texture.data === "number" && texture.data > 0 ? texture.data : 0,
+            typeof params.tier !== "undefined" ? (ToolsModule.getTierByName(materialName) ?? ToolsModule.getTierByName("iron")) : typeof params.durability === "number" && params.durability > 0 ? params.durability : 238,
+            typeof params.isTech === "boolean" ? params.isTech : false
+        );
+        if(typeof params.stack === "number" && params.stack > 1) Item.getItemById(id).setMaxStackSize(params.stack);
+    }
     export function createCustomTool(id: string, name: string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: string | ToolAPI.ToolMaterial }, toolParams?: ToolAPI.ExtendedToolParams, numericId?: number): void {
         let materialName: string = "";
         if(typeof params.tier === "object") {
@@ -212,6 +230,7 @@ ToolAPI.registerTool = (id, toolMaterial, blockMaterials, params) => {
             case "__pickaxe": ToolsModule.registerPickaxe(id, factory.nameId, factory.nameToDisplay, factory.iconName, factory.iconIndex, tier); break;
             case "__shovel": ToolsModule.registerShovel(id, factory.nameId, factory.nameToDisplay, factory.iconName, factory.iconIndex, tier); break;
             case "__hoe": ToolsModule.registerHoe(id, factory.nameId, factory.nameToDisplay, factory.iconName, factory.iconIndex, tier); break;
+            case "__shears": ToolsModule.registerShears(id, factory.nameId, factory.nameToDisplay, factory.iconName, factory.iconIndex, tier); break;
             default:
                 if(typeof params.blockMaterials === "undefined" && Array.isArray(blockMaterials)) {
                     params.blockMaterials = {};

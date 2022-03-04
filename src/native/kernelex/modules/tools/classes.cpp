@@ -8,15 +8,18 @@
 #include <items/ShovelItem.hpp>
 #include <items/ShearsItem.hpp>
 #include <items/WeaponItem.hpp>
+#include <static_symbol.hpp>
 #include "module.hpp"
 #include "patches.hpp"
 #include "classes.hpp"
 
 
 void ToolFactory::registerItem() {
-    props.durability = tier->getUses();
-    props.enchantValue = tier->getEnchantmentValue();
-    props.enchantType = enchantType;
+    if(tier != nullptr) {
+        props.durability = tier->getUses();
+        props.enchantValue = tier->getEnchantmentValue();
+        props.enchantType = enchantType;
+    }
 }
 void DiggerProvider::setupVtable(void* table) {
     LegacyItemProviderBase::setupVtable(table);
@@ -124,5 +127,37 @@ void CustomToolProvider::setupVtable(void* table) {
             VTABLE_FIND_OFFSET(Item_appendFormattedHovertext, _ZTV4Item, _ZNK4Item24appendFormattedHovertextERK13ItemStackBaseR5LevelRNSt6__ndk112basic_stringIcNS5_11char_traitsIcEENS5_9allocatorIcEEEEb);
             vtable[Item_appendFormattedHovertext] = ADDRESS(CustomToolPatches::Digger::appendFormattedHovertext);
         }
+    }
+}
+
+
+void ShearsFactory::registerItem() {
+    ToolFactory::registerItem();
+    if(id != 0) {
+        IdPool* pool = ItemRegistry::getItemIdPool();
+        id = pool->allocateId(nameId, id, IdPool::FLAG_ID_USED);
+        if(id != INVALID_ID) {
+            void* alloc = operator new(300);
+            STATIC_SYMBOL(ShearsConstructor, "_ZN10ShearsItemC2ERKNSt6__ndk112basic_stringIcNS0_11char_traitsIcEENS0_9allocatorIcEEEEi", (ShearsItem*, stl_string const&, int));
+            ShearsConstructor((ShearsItem*) alloc, to_stl(nameId), id);
+            ItemRegistry::registerItem((Item*) alloc, new ShearsProvider(this));
+        } else {
+            Logger::error("InnerCore-ItemRegistry", "failed to register item for id '%s': cannot allocate id for some reason", nameId.data());
+        }
+    }
+}
+
+void ShearsProvider::setupVtable(void* table) {
+    LegacyItemProviderBase::setupVtable(table);
+    void** vtable = (void**) table;
+    VTABLE_FIND_OFFSET(Item_hurtActor, _ZTV4Item, _ZNK4Item9hurtActorER9ItemStackR5ActorR3Mob);
+    VTABLE_FIND_OFFSET(Item_mineBlock__instance, _ZTV4Item, _ZNK4Item9mineBlockER12ItemInstanceRK5BlockiiiP5Actor);
+    VTABLE_FIND_OFFSET(Item_mineBlock__stack, _ZTV4Item, _ZNK4Item9mineBlockER9ItemStackRK5BlockiiiP5Actor);
+    vtable[Item_hurtActor] = SYMBOL("mcpe", "_ZNK10ShearsItem9hurtActorER9ItemStackR5ActorR3Mob");
+    vtable[Item_mineBlock__instance] = SYMBOL("mcpe", "_ZNK4Item9mineBlockER12ItemInstanceRK5BlockiiiP5Actor");
+    vtable[Item_mineBlock__stack] = SYMBOL("mcpe", "_ZNK10ShearsItem9mineBlockER9ItemStackRK5BlockiiiP5Actor");
+    if(factory->tier != nullptr) {
+        VTABLE_FIND_OFFSET(ShearsItem_getDestroySpeed, _ZTV10ShearsItem, _ZNK10ShearsItem15getDestroySpeedERK13ItemStackBaseRK5Block);
+        vtable[ShearsItem_getDestroySpeed] = ADDRESS(CustomToolPatches::_shearsTieredGetDestroySpeed);
     }
 }

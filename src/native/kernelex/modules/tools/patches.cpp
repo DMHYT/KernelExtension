@@ -3,6 +3,7 @@
 #include <I18n.hpp>
 #include <Level.hpp>
 #include <Item.hpp>
+#include <items/ShearsItem.hpp>
 #include <innercore/id_conversion_map.h>
 #include <innercore/item_registry.h>
 #include <static_symbol.hpp>
@@ -63,4 +64,18 @@ bool CustomToolPatches::Weapon::mineBlock__stack(WeaponItem* _this, ItemStack& s
 }
 void CustomToolPatches::Weapon::appendFormattedHovertext(WeaponItem* _this, ItemStackBase const& stack, Level& level, std::__ndk1::string& text, bool someBool) {
     _appendFormattedHovertext((Item*) _this, stack, level, text, someBool);
+}
+
+
+float CustomToolPatches::_shearsTieredGetDestroySpeed(ShearsItem* shears, ItemStackBase const& stack, Block const& block) {
+    STATIC_SYMBOL(ShearsItem_getDestroySpeed, "_ZNK10ShearsItem15getDestroySpeedERK13ItemStackBaseRK5Block", (ShearsItem*, ItemStackBase const&, Block const&));
+    void* output = ShearsItem_getDestroySpeed(shears, stack, block);
+    float result = *(float*)&output;
+    int staticId = IdConversion::dynamicToStatic(shears->id, IdConversion::ITEM);
+    ShearsFactory* factory = (ShearsFactory*) LegacyItemRegistry::findFactoryById(staticId);
+    if(factory != nullptr) {
+        result /= VanillaItemTiers::IRON.getSpeed();
+        result *= factory->tier->getSpeed();
+    }
+    return result;
 }

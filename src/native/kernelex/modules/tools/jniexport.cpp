@@ -304,4 +304,20 @@ extern "C" {
             }
         }
     }
+    JNIEXPORT void JNICALL Java_vsdum_kex_modules_ToolsModule_nativeRegisterShears
+    (JNIEnv* env, jclass, jint id, jstring nameId, jstring name, jstring textureName, jint textureMeta, jlong tierPtr, jboolean isTech, jint durabilityIfWithoutTier) {
+        const char* cNameId = env->GetStringUTFChars(nameId, 0);
+        const char* cName = env->GetStringUTFChars(name, 0);
+        const char* cTextureName = env->GetStringUTFChars(textureName, 0);
+        ShearsFactory* factory = new ShearsFactory();
+        factory->initParameters(id, std::string(cNameId), std::string(cName), std::string(cTextureName), textureMeta);
+        factory->props.stack = 1;
+        if(tierPtr != 0) factory->tier = (Item::Tier*) tierPtr;
+        else factory->props.durability = durabilityIfWithoutTier;
+        LegacyItemRegistry::registerItemFactory(factory);
+        if(!isTech) LegacyItemRegistry::addItemToCreative(id, 1, 0, nullptr);
+        env->ReleaseStringUTFChars(nameId, cNameId);
+        env->ReleaseStringUTFChars(name, cName);
+        env->ReleaseStringUTFChars(textureName, cTextureName);
+    }
 }

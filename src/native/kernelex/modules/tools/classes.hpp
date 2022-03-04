@@ -17,10 +17,11 @@ class ToolFactory : public LegacyItemRegistry::LegacyItemFactoryBase {
         SHOVEL,
         HOE,
         CUSTOM_DIGGER,
-        CUSTOM_WEAPON
+        CUSTOM_WEAPON,
+        SHEARS
     };
     static const int _factoryTypeId = 200;
-    Item::Tier* tier;
+    Item::Tier* tier = nullptr;
     int enchantType;
     virtual void registerItem();
     virtual int getType() {
@@ -168,13 +169,14 @@ class CustomToolProvider : public LegacyItemRegistry::LegacyItemProviderBase {
 };
 
 
-class ShearsFactory : public LegacyItemRegistry::LegacyItemFactoryBase {
+class ShearsFactory : public ToolFactory {
     public:
-    static const int _factoryTypeId = 201;
-    float speed = 1.0f;
     virtual void registerItem();
-    virtual int getType() {
-        return _factoryTypeId;
+    ShearsFactory(): ToolFactory() {
+        enchantType = 128;
+    }
+    virtual ToolType getToolType() {
+        return SHEARS;
     }
 };
 class ShearsProvider : public LegacyItemRegistry::LegacyItemProviderBase {
