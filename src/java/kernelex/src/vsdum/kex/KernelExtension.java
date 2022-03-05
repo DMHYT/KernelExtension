@@ -14,4 +14,9 @@ public class KernelExtension {
         defineCallbackClasses();
     }
 
+    public static final int[] getVersion()
+    {
+        return new int[]{ 1, 2, 0 };
+    }
+
 }
