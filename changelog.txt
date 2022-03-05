@@ -12,3 +12,10 @@ BETA 1.1
 - Small fix in Item.createFoodItem patch
 - Fixed all errors called by tools logics
 - Restructured and refactored LootModule
+
+BETA 1.2
+- Added methods to the LootModifier class: addJSModifyCallback, addJSONModifyCallback, addJSPostModifyCallback, addJSONPostModifyCallback.
+    - The first pair is used to change the JSON object of the loot table directly after all programmatical modifications.
+    - The other pair is used to work with the JSON object of the loot table after all types of modifications. In these callbacks all the provided objects are copies and shouldn't be modified.
+- Added method LootModule.addPiglinBarteringItem to add new items to the piglin bartering list. This method takes no parameters and returns LootEntry interface.
+- Added function getKEXVersion(), returns array containing three integers of the current mod version (now it's [1, 2, 0]).

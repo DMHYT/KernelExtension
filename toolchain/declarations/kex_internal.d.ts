@@ -688,6 +688,7 @@ declare module vsdum {
                 static class: java.lang.Class<LootModule>;
                 static createLootTableModifier(tableName: string): LootModifier;
                 static createConditionsList(): LootConditions;
+                static addPiglinBarteringItem(): LootEntry;
             }
             export interface LootModifier {
                 createNewPool(): LootPool;
@@ -697,6 +698,16 @@ declare module vsdum {
                 modifyWithJSON(json: LootTableTypes.JsonFormat): LootModifier;
                 addItem(id: number, count: number | MinMax, data: number, chance: number, rolls?: number | MinMax): LootModifier;
                 addAddonItem(namespace: string, identifier: string, count: number | MinMax, data: number, chance: number, rolls?: number | MinMax): LootModifier;
+                addJSModifyCallback(cb: JSModifyCallback): LootModifier;
+                addJSONModifyCallback(cb: JSONModifyCallback): LootModifier;
+                addJSPostModifyCallback(cb: JSModifyCallback): LootModifier;
+                addJSONPostModifyCallback(cb: JSONModifyCallback): LootModifier;
+            }
+            export interface JSModifyCallback {
+                (obj: LootTableTypes.JsonFormat): void;
+            }
+            export interface JSONModifyCallback {
+                (obj: org.json.JSONObject): void;
             }
             export interface LootPool {
                 beginConditions(): LootConditions;
@@ -836,3 +847,13 @@ declare module vsdum {
     }
 }
 declare function WRAP_JAVA(clazz: "vsdum.kex.modules.ToolsModule"): typeof vsdum.kex.modules.ToolsModule;
+
+declare module vsdum {
+    export module kex {
+        export class KernelExtension extends java.lang.Object {
+            static class: java.lang.Class<KernelExtension>;
+            static getVersion(): [number, number, number];
+        }
+    }
+}
+declare function WRAP_JAVA(clazz: "vsdum.kex.KernelExtension"): typeof vsdum.kex.KernelExtension;

@@ -6,8 +6,7 @@ const Actor = WRAP_JAVA("vsdum.kex.natives.Actor");
 const Mob = WRAP_JAVA("vsdum.kex.natives.Mob");
 const Slime = WRAP_JAVA("vsdum.kex.natives.Slime");
 
-IDRegistry.genItemID("shearsDiamond");
-Item.createShearsItem("shearsDiamond", "Diamond Shears", { name: "missing_item" }, { tier: "diamond" });
+const MAIN = WRAP_JAVA("vsdum.kex.KernelExtension");
 
 ModAPI.registerAPI("KernelExtension", {
     ItemsModule,
@@ -18,5 +17,7 @@ ModAPI.registerAPI("KernelExtension", {
     MobEffectInstance,
     Actor,
     Mob,
-    Slime
+    Slime,
+
+    getKEXVersion: () => MAIN.getVersion()
 });

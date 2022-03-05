@@ -127,6 +127,18 @@ declare interface LootModifier extends java.lang.Object {
     modifyWithJSON(json: LootTableTypes.JsonFormat): LootModifier;
     addItem(id: number, count: number | MinMax, data: number, chance: number, rolls?: number | MinMax): LootModifier;
     addAddonItem(namespace: string, identifier: string, count: number | MinMax, data: number, chance: number, rolls?: number | MinMax): LootModifier;
+    addJSModifyCallback(callback: LootModifier.JSModifyCallback): LootModifier;
+    addJSONModifyCallback(callback: LootModifier.JSONModifyCallback): LootModifier;
+    addJSPostModifyCallback(callback: LootModifier.JSModifyCallback): LootModifier;
+    addJSONPostModifyCallback(callback: LootModifier.JSONModifyCallback): LootModifier;
+}
+declare namespace LootModifier {
+    export interface JSModifyCallback {
+        (obj: LootTableTypes.JsonFormat): void;
+    }
+    export interface JSONModifyCallback {
+        (obj: org.json.JSONObject): void;
+    }
 }
 declare interface LootPool extends java.lang.Object {
     beginConditions(): LootConditions;
@@ -196,6 +208,7 @@ declare class LootModule extends java.lang.Object {
     static class: java.lang.Class<LootModule>;
     static createLootTableModifier(tableName: string): LootModifier;
     static createConditionsList(): LootConditions;
+    static addPiglinBarteringItem(): LootEntry;
 }
 
 declare class ItemsModule extends java.lang.Object {
@@ -222,6 +235,8 @@ declare class ToolsModule extends java.lang.Object {
     static registerPickaxe(id: number, nameId: string, name: string, textureName: string, textureMeta: number, tier: ToolsModule.ItemTier, isTech?: boolean): void;
     static registerShovel(id: number, nameId: string, name: string, textureName: string, textureMeta: number, tier: ToolsModule.ItemTier, isTech?: boolean): void;
     static registerHoe(id: number, nameId: string, name: string, textureName: string, textureMeta: number, tier: ToolsModule.ItemTier, isTech?: boolean): void;
+    static registerShears(id: number, nameId: string, name: string, textureName: string, textureMeta: number, tier: ToolsModule.ItemTier, isTech?: boolean): void;
+    static registerShears(id: number, nameId: string, name: string, textureName: string, textureMeta: number, durability: number, isTech?: boolean): void;
     static addBlockMaterial(name: string, breakingMultiplier: number): void;
     static getBlockMaterialBreakingMultiplier(name: string): number;
     static getBlockData(id: number): ToolsModule.BlockData;
@@ -282,6 +297,7 @@ declare namespace Item {
     function createPickaxeItem(id: string, name: string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: string | ToolAPI.ToolMaterial }): void;
     function createShovelItem(id: string, name: string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: string | ToolAPI.ToolMaterial }): void;
     function createHoeItem(id: string, name: string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: string | ToolAPI.ToolMaterial }): void;
+    function createShearsItem(id: string, name: string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: string | ToolAPI.ToolMaterial, durability?: number }): void;
     function createCustomTool(id: string, name: string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: string | ToolAPI.ToolMaterial }, toolParams?: ToolsModule.ExtendedToolParams, numericId?: number): void;
 }
 
@@ -731,4 +747,33 @@ declare class Slime extends Mob {
     getTargetSquish(): number;
     getSlimeSize(): number;
     setSlimeSize(size: number): void;
+}
+
+declare function getKEXVersion(): [ number, number, number ];
+
+/**
+ * Interface you can use in case you inject KEX API
+ * into some variable and not into the global mod scope.
+ * For example, if you inject API like this:
+ * ```js
+ * ModAPI.addAPICallback("KernelExtension", api => {
+ *     Launch({ KEX: api });
+ * });
+ * ```
+ * You can then write this at the top of the code:
+ * ```ts
+ * declare var KEX: KEXAPI;
+ * // and then access like `KEX.LootModule.createLootTableModifier(...)`
+ * ```
+ */
+declare interface KEXAPI {
+    ItemsModule: typeof ItemsModule,
+    LootModule: typeof LootModule,
+    ToolsModule: typeof ToolsModule,
+    MobEffect: typeof MobEffect,
+    MobEffectInstance: typeof MobEffectInstance,
+    Actor: typeof Actor,
+    Mob: typeof Mob,
+    Slime: typeof Slime,
+    getKEXVersion: () => [ number, number, number ]
 }
