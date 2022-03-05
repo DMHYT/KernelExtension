@@ -153,9 +153,13 @@ void ShearsProvider::setupVtable(void* table) {
     VTABLE_FIND_OFFSET(Item_hurtActor, _ZTV4Item, _ZNK4Item9hurtActorER9ItemStackR5ActorR3Mob);
     VTABLE_FIND_OFFSET(Item_mineBlock__instance, _ZTV4Item, _ZNK4Item9mineBlockER12ItemInstanceRK5BlockiiiP5Actor);
     VTABLE_FIND_OFFSET(Item_mineBlock__stack, _ZTV4Item, _ZNK4Item9mineBlockER9ItemStackRK5BlockiiiP5Actor);
+    VTABLE_FIND_OFFSET(Item__useOn, _ZTV4Item, _ZNK4Item6_useOnER9ItemStackR5Actor8BlockPoshfff);
+    VTABLE_FIND_OFFSET(Item_dispense, _ZTV4Item, _ZNK4Item8dispenseER11BlockSourceR9ContaineriRK4Vec3h);
     vtable[Item_hurtActor] = SYMBOL("mcpe", "_ZNK10ShearsItem9hurtActorER9ItemStackR5ActorR3Mob");
     vtable[Item_mineBlock__instance] = SYMBOL("mcpe", "_ZNK4Item9mineBlockER12ItemInstanceRK5BlockiiiP5Actor");
     vtable[Item_mineBlock__stack] = SYMBOL("mcpe", "_ZNK10ShearsItem9mineBlockER9ItemStackRK5BlockiiiP5Actor");
+    vtable[Item__useOn] = SYMBOL("mcpe", "_ZNK10ShearsItem6_useOnER9ItemStackR5Actor8BlockPoshfff");
+    vtable[Item_dispense] = SYMBOL("mcpe", "_ZNK10ShearsItem8dispenseER11BlockSourceR9ContaineriRK4Vec3h");
     if(factory->tier != nullptr) {
         VTABLE_FIND_OFFSET(ShearsItem_getDestroySpeed, _ZTV10ShearsItem, _ZNK10ShearsItem15getDestroySpeedERK13ItemStackBaseRK5Block);
         vtable[ShearsItem_getDestroySpeed] = ADDRESS(CustomToolPatches::_shearsTieredGetDestroySpeed);
