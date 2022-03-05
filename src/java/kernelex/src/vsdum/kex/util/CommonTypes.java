@@ -38,6 +38,14 @@ public final class CommonTypes {
         return null;
     }
 
+    @Nullable public static final ScriptableObject jsonToScriptable(JSONObject obj)
+    {
+        try {
+            return (ScriptableObject) NativeJSON.parse(Context.enter(), Context.enter().initStandardObjects(), obj.toString(), null);
+        } catch(Exception ex) {}
+        return null;
+    }
+
     public static final ScriptableObject createTimeDataScriptable(float baseDestroyTime, float divider, float modifier)
     {
         ScriptableObject result = ScriptableObjectHelper.createEmpty();

@@ -17,8 +17,20 @@ import vsdum.kex.util.CommonTypes;
 import vsdum.kex.util.JsonUtils;
 
 public class LootModifier implements IJSONSerializable {
+
+    public static interface JSModifyCallback {
+        public void onModify(ScriptableObject obj);
+    }
+
+    public static interface JSONModifyCallback {
+        public void onModify(JSONObject obj);
+    }
     
     public final List<LootPool> pools = new ArrayList<>();
+    public final List<JSModifyCallback> jsCallbacks = new ArrayList<>();
+    public final List<JSONModifyCallback> jsonCallbacks = new ArrayList<>();
+    public final List<JSModifyCallback> jsPostCallbacks = new ArrayList<>();
+    public final List<JSONModifyCallback> jsonPostCallbacks = new ArrayList<>();
 
     public LootModifier() {}
 
@@ -272,6 +284,30 @@ public class LootModifier implements IJSONSerializable {
         return this;
     }
 
+    public LootModifier addJSModifyCallback(JSModifyCallback cb)
+    {
+        this.jsCallbacks.add(cb);
+        return this;
+    }
+
+    public LootModifier addJSONModifyCallback(JSONModifyCallback cb)
+    {
+        this.jsonCallbacks.add(cb);
+        return this;
+    }
+
+    public LootModifier addJSPostModifyCallback(JSModifyCallback cb)
+    {
+        this.jsPostCallbacks.add(cb);
+        return this;
+    }
+
+    public LootModifier addJSONPostModifyCallback(JSONModifyCallback cb)
+    {
+        this.jsonPostCallbacks.add(cb);
+        return this;
+    }
+
     public void serialize(JSONObject obj)
     {
         try {
@@ -283,6 +319,38 @@ public class LootModifier implements IJSONSerializable {
                 poolsArray.put(pool.obj);
             }
         } catch(JSONException ex) {}
+        if(this.jsonCallbacks.size() > 0)
+        {
+            for(int i = 0; i < this.jsonCallbacks.size(); ++i)
+            {
+                this.jsonCallbacks.get(i).onModify(obj);
+            }
+        }
+        if(this.jsCallbacks.size() > 0)
+        {
+            ScriptableObject scr = CommonTypes.jsonToScriptable(obj);
+            for(int i = 0; i < this.jsCallbacks.size(); ++i)
+            {
+                this.jsCallbacks.get(i).onModify(scr);
+            }
+            obj = CommonTypes.scriptableToJson(scr);
+        }
+        if(this.jsonPostCallbacks.size() > 0)
+        {
+            for(int i = 0; i < this.jsonPostCallbacks.size(); ++i)
+            {
+                try {
+                    this.jsonPostCallbacks.get(i).onModify(new JSONObject(obj.toString()));
+                } catch(JSONException ex) {}
+            }
+        }
+        if(this.jsPostCallbacks.size() > 0)
+        {
+            for(int i = 0; i < this.jsPostCallbacks.size(); ++i)
+            {
+                this.jsPostCallbacks.get(i).onModify(CommonTypes.jsonToScriptable(obj));
+            }
+        }
     }
 
 }
