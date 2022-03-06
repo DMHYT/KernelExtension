@@ -19,5 +19,8 @@ ModAPI.registerAPI("KernelExtension", {
     Mob,
     Slime,
 
-    getKEXVersion: () => MAIN.getVersion()
+    AddonUtils,
+
+    getKEXVersion: () => MAIN.getVersion(),
+    getKEXVersionCode: () => MAIN.getVersionCode()
 });

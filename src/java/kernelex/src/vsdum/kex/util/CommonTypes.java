@@ -5,6 +5,7 @@ import com.zhekasmirnov.innercore.api.NativeItemInstanceExtra;
 import com.zhekasmirnov.innercore.api.commontypes.ItemInstance;
 import com.zhekasmirnov.innercore.api.constants.Enchantment;
 import com.zhekasmirnov.innercore.api.mod.ScriptableObjectHelper;
+import com.zhekasmirnov.innercore.api.runtime.saver.serializer.ScriptableSerializer;
 
 import org.json.JSONObject;
 import org.mozilla.javascript.Context;
@@ -40,10 +41,7 @@ public final class CommonTypes {
 
     @Nullable public static final ScriptableObject jsonToScriptable(JSONObject obj)
     {
-        try {
-            return (ScriptableObject) NativeJSON.parse(Context.enter(), Context.enter().initStandardObjects(), obj.toString(), null);
-        } catch(Exception ex) {}
-        return null;
+        return (ScriptableObject) ScriptableSerializer.scriptableFromJson(obj);
     }
 
     public static final ScriptableObject createTimeDataScriptable(float baseDestroyTime, float divider, float modifier)

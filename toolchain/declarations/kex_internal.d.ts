@@ -853,7 +853,28 @@ declare module vsdum {
         export class KernelExtension extends java.lang.Object {
             static class: java.lang.Class<KernelExtension>;
             static getVersion(): [number, number, number];
+            static getVersionCode(): number;
         }
     }
 }
 declare function WRAP_JAVA(clazz: "vsdum.kex.KernelExtension"): typeof vsdum.kex.KernelExtension;
+
+declare module vsdum {
+    export module kex {
+        export module util {
+            export class AddonUtils extends java.lang.Object {
+                static class: java.lang.Class<AddonUtils>;
+                static getAddonItemIdentifier(id: number): string;
+                static getAddonItemIdentifier(namespace: string, identifier: string): string;
+                static getBlockNameId(id: number): Nullable<string>;
+                static getNumericIdFromIdentifier(identifier: string): number;
+            }
+        }
+    }
+}
+declare function WRAP_JAVA(clazz: "vsdum.kex.util.AddonUtils"): typeof vsdum.kex.util.AddonUtils;
+
+
+declare namespace Callback {
+    export function addCallback(name: "KEX-InnerCoreIdsCached", func: () => void): void;
+}

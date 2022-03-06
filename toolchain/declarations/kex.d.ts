@@ -749,7 +749,20 @@ declare class Slime extends Mob {
     setSlimeSize(size: number): void;
 }
 
+declare class AddonUtils extends java.lang.Object {
+    static class: java.lang.Class<AddonUtils>;
+    static getAddonItemIdentifier(id: number): string;
+    static getAddonItemIdentifier(namespace: string, identifier: string): string;
+    static getBlockNameId(id: number): Nullable<string>;
+    static getNumericIdFromIdentifier(identifier: string): number;
+}
+
 declare function getKEXVersion(): [ number, number, number ];
+declare function getKEXVersionCode(): number;
+
+declare namespace Callback {
+    export function addCallback(name: "KEX-InnerCoreIdsCached", func: () => void): void;
+}
 
 /**
  * Interface you can use in case you inject KEX API
@@ -775,5 +788,7 @@ declare interface KEXAPI {
     Actor: typeof Actor,
     Mob: typeof Mob,
     Slime: typeof Slime,
+    AddonUtils: typeof AddonUtils,
     getKEXVersion: () => [ number, number, number ]
+    getKEXVersionCode: () => number;
 }

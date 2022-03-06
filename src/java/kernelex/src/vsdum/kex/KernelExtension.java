@@ -14,9 +14,14 @@ public class KernelExtension {
         defineCallbackClasses();
     }
 
-    public static final int[] getVersion()
+    public static final byte[] getVersion()
     {
-        return new int[]{ 1, 2, 0 };
+        return new byte[]{ 1, 3, 0 };
+    }
+
+    public static final short getVersionCode()
+    {
+        return 130;
     }
 
 }

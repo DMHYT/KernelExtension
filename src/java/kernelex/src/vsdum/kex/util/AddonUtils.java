@@ -1,11 +1,13 @@
 package vsdum.kex.util;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 import com.zhekasmirnov.innercore.api.NativeAPI;
 import com.zhekasmirnov.innercore.api.mod.adaptedscript.AdaptedScriptAPI.IDRegistry;
+import com.zhekasmirnov.innercore.api.runtime.Callback;
 import com.zhekasmirnov.innercore.utils.FileTools;
 
 import org.json.JSONObject;
@@ -79,6 +81,50 @@ public final class AddonUtils {
             if(!vanillaNumericToStringIdMap.containsKey(idO)) return null;
             return vanillaNumericToStringIdMap.get(idO);
         } else return NativeAPI.convertNameId(IDRegistry.getNameByID(id));
+    }
+
+    private static final HashMap<String, Integer> vanillaIdShortcut = getVanillaIdShortcut();
+
+    @SuppressWarnings("unchecked")
+    private static final HashMap<String, Integer> getVanillaIdShortcut()
+    {
+        try {
+            Field field = com.zhekasmirnov.innercore.api.unlimited.IDRegistry.class.getDeclaredField("vanillaIdShortcut");
+            field.setAccessible(true);
+            return (HashMap<String, Integer>) field.get(null);
+        } catch(Throwable ex) {}
+        return null;
+    }
+
+    private static final Map<String, Integer> innercoreIdentifierToNumeric = new HashMap<>();
+
+    public static void onLevelDisplayed()
+    {
+        try {
+            JSONObject json = FileTools.readJSON(FileTools.DIR_PACK + "/innercore/mods/.staticids").getJSONObject("id");
+            JSONObject blocks = json.getJSONObject("blocks");
+            JSONObject items = json.getJSONObject("items");
+            Iterator<String> blocksIter = blocks.keys();
+            Iterator<String> itemsIter = items.keys();
+            while(blocksIter.hasNext())
+            {
+                String k = blocksIter.next();
+                innercoreIdentifierToNumeric.put("block_" + NativeAPI.convertNameId(k), blocks.getInt(k));
+            }
+            while(itemsIter.hasNext())
+            {
+                String k = itemsIter.next();
+                innercoreIdentifierToNumeric.put("item_" + NativeAPI.convertNameId(k), items.getInt(k));
+            }
+            Callback.invokeAPICallback("KEX-InnerCoreIdsCached", new Object[]{});
+        } catch(Throwable ex) {}
+    }
+
+    public static int getNumericIdFromIdentifier(String identifier)
+    {
+        if(vanillaIdShortcut.containsKey(identifier)) return vanillaIdShortcut.get(identifier);
+        if(innercoreIdentifierToNumeric.containsKey(identifier)) return innercoreIdentifierToNumeric.get(identifier);
+        return -1;
     }
 
 }
