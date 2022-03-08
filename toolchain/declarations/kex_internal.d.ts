@@ -562,6 +562,39 @@ declare module vsdum {
     }
 }
 
+declare module vsdum {
+    export module kex {
+        export module natives {
+            export class FoodItemComponent extends java.lang.Object {
+                static class: java.lang.Class<FoodItemComponent>;
+                getItem(): number;
+                getNutrition(): number;
+                getSaturationModifier(): number;
+                getSaturation(): number;
+                getUsingConvertsTo(): Nullable<string>;
+                getOnUseAction(): number;
+                getOnUseRange(): Vector;
+                getCooldownType(): Nullable<string>;
+                getCooldownTime(): number;
+                canAlwaysEat(): boolean;
+                getEffects(): java.util.List<FoodItemComponent.Effect>;
+                getRemoveEffects(): java.util.List<number>;
+            }
+            export module FoodItemComponent {
+                export class Effect extends java.lang.Object {
+                    static class: java.lang.Class<Effect>;
+                    getDescriptionId(): Nullable<string>;
+                    getId(): number;
+                    getEffect(): Nullable<MobEffect>;
+                    getDuration(): number;
+                    getAmplifier(): number;
+                    getChance(): number;
+                }
+            }
+        }
+    }
+}
+
 type MinMax = { min: number, max: number }
 type FeatureTypes = "buriedtreasure" | "endcity" | "fortress" | "mansion" | "mineshaft" | "monument" | "pillageroutpost" | "ruins" | "shipwreck" | "stronghold" | "temple" | "village";
 type EnchantTypes = Lowercase<keyof typeof EEnchantment>;
@@ -790,6 +823,10 @@ declare module vsdum {
                 static setFurnaceBurnIntervalMultiplier(id: number, multiplier: number): void;
                 static setFurnaceXPMultiplier(id: number, multiplier: number): void;
                 static setCannotBeRepairedInAnvil(id: number): void;
+                static isFood(id: number): boolean;
+                static getFood(id: number): Nullable<natives.FoodItemComponent>;
+                static newFoodSaturationModifier(name: string, value: number): void;
+                static saturationModifierFromString(name: string): number;
             }
         }
     }

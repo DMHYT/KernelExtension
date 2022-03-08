@@ -1,11 +1,15 @@
 #include <unordered_map>
+#include <math.h>
 #include <jni.h>
+#include <hook.h>
+#include <logger.h>
 #include <symbol.h>
 #include <innercore_callbacks.h>
 #include <innercore/id_conversion_map.h>
 #include <innercore/item_registry.h>
 #include <innercore/vtable.h>
 #include <Item.hpp>
+#include <FoodItemComponentLegacy.hpp>
 #include "items.hpp"
 
 
@@ -36,6 +40,9 @@ void ItemParamsModifier::applyTo(int id) {
 
 
 std::unordered_map<int, ItemParamsModifier*> KEXItemsModule::itemParamsModifiers;
+std::unordered_map<std::string, float> KEXItemsModule::customFoodSaturationModifiers;
+
+
 ItemParamsModifier* KEXItemsModule::getOrCreateModifier(int id) {
     auto found = itemParamsModifiers.find(id);
     if(found != itemParamsModifiers.end()) {
@@ -47,6 +54,18 @@ ItemParamsModifier* KEXItemsModule::getOrCreateModifier(int id) {
 }
 
 void KEXItemsModule::initialize() {
+    DLHandleManager::initializeHandle("libminecraftpe.so", "mcpe");
+    HookManager::addCallback(SYMBOL("mcpe", "_Z24FoodSaturationFromStringRKNSt6__ndk112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEE"), LAMBDA((HookManager::CallbackController* controller, std::__ndk1::string const& str), {
+        controller->replace();
+        float defaultResult = controller->call<float>(str);
+        if(roundf(defaultResult * 100) / 100 == 0.6f && str != "normal") {
+            auto found = customFoodSaturationModifiers.find(std::string(str.c_str()));
+            if(found != customFoodSaturationModifiers.end()) {
+                return found->second;
+            }
+        }
+        return defaultResult;
+    }, ), HookManager::CALL | HookManager::LISTENER | HookManager::CONTROLLER | HookManager::RESULT);
     Callbacks::addCallback("postModItemsInit", CALLBACK([], (), {
         for(std::unordered_map<int, ItemParamsModifier*>::iterator iter = itemParamsModifiers.begin(); iter != itemParamsModifiers.end(); iter++) {
             iter->second->applyTo(iter->first);
@@ -107,5 +126,30 @@ extern "C" {
             ItemParamsModifier* mod = KEXItemsModule::getOrCreateModifier(id);
             mod->cooldownTime = cooldownTime;
         }
+    }
+    JNIEXPORT jboolean JNICALL Java_vsdum_kex_modules_ItemsModule_isFood
+    (JNIEnv*, jclass, jint id) {
+        Item* item = ItemRegistry::getItemById(IdConversion::staticToDynamic(id, IdConversion::ITEM));
+        if(item == nullptr) return false;
+        VTABLE_FIND_OFFSET(Item_isFood, _ZTV4Item, _ZNK4Item6isFoodEv);
+        return VTABLE_CALL<bool>(Item_isFood, item);
+    }
+    JNIEXPORT jlong JNICALL Java_vsdum_kex_modules_ItemsModule_nativeGetFood
+    (JNIEnv*, jclass, jint id) {
+        Item* item = ItemRegistry::getItemById(IdConversion::staticToDynamic(id, IdConversion::ITEM));
+        if(item == nullptr) return 0;
+        VTABLE_FIND_OFFSET(Item_isFood, _ZTV4Item, _ZNK4Item6isFoodEv);
+        if(!VTABLE_CALL<bool>(Item_isFood, item)) return 0;
+        VTABLE_FIND_OFFSET(Item_getFood, _ZTV4Item, _ZNK4Item7getFoodEv);
+        return (jlong) VTABLE_CALL<FoodItemComponentLegacy*>(Item_getFood, item);
+    }
+    JNIEXPORT void JNICALL Java_vsdum_kex_modules_ItemsModule_nativeNewFoodSaturationModifier
+    (JNIEnv* env, jclass, jstring name, jfloat value) {
+        const char* cName = env->GetStringUTFChars(name, 0);
+        if(KEXItemsModule::customFoodSaturationModifiers.find(std::string(cName)) != KEXItemsModule::customFoodSaturationModifiers.end()) {
+            Logger::debug("KEX-WARNING", "Custom food saturation modifier %s has already been registered before!", cName);
+        }
+        KEXItemsModule::customFoodSaturationModifiers.emplace(std::string(cName), value);
+        env->ReleaseStringUTFChars(name, cName);
     }
 }

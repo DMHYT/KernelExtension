@@ -29,6 +29,7 @@ class ItemParamsModifier {
 class KEXItemsModule : public Module {
     public:
     static std::unordered_map<int, ItemParamsModifier*> itemParamsModifiers;
+    static std::unordered_map<std::string, float> customFoodSaturationModifiers;
     static ItemParamsModifier* getOrCreateModifier(int);
     KEXItemsModule(Module* parent): Module(parent, "kex.items") {}
     virtual void initialize();
