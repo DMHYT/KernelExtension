@@ -17,6 +17,7 @@ import com.zhekasmirnov.innercore.api.mod.adaptedscript.AdaptedScriptAPI.Entity;
 import org.mozilla.javascript.ScriptableObject;
 
 import android.support.annotation.Nullable;
+import android.util.Pair;
 import vsdum.kex.common.INativeInterface;
 import vsdum.kex.util.CommonTypes;
 
@@ -274,9 +275,11 @@ public class ToolsModule {
         nativeSetBlockIsNative(blockID, isNative);
     }
 
-    public static float getDestroyTimeViaTool(FullBlock block, int x, int y, int z, int side, NativeItemInstance stack)
+    public static float getDestroyTimeViaTool(Object tile, int x, int y, int z, int side, NativeItemInstance stack)
     {
-        return nativeGetDestroyTimeViaTool(block.id, block.data, stack.getPointer(), x, y, z, side);
+        Pair<Integer, Integer> block = CommonTypes.deserializeFullBlockOrBlockState(tile);
+        if(block == null) return 0.0f;
+        return nativeGetDestroyTimeViaTool(block.first.intValue(), block.second.intValue(), stack.getPointer(), x, y, z, side);
     }
 
     private static final Map<Integer, ScriptableObject> toolData = new HashMap<>();
@@ -315,8 +318,10 @@ public class ToolsModule {
         return defaultTime;
     }
 
-    public static boolean onDestroy(Coords coords, ItemInstance item, FullBlock block, long player)
+    public static boolean onDestroy(Coords coords, ItemInstance item, Object tile, long player)
     {
+        Pair<Integer, Integer> block = CommonTypes.deserializeFullBlockOrBlockState(tile);
+        if(block == null) return false;
         Integer idO = Integer.valueOf(item.getId());
         if(toolData.containsKey(idO))
         {
@@ -324,7 +329,7 @@ public class ToolsModule {
             if(ScriptableObject.hasProperty(obj, "onDestroy"))
             {
                 boolean result = CommonTypes.callBooleanJSFunction(obj, "onDestroy", new Object[]{
-                    item, coords, block, Long.valueOf(player)
+                    item, coords, new FullBlock(block.first.intValue(), block.second.intValue()), Long.valueOf(player)
                 }, false);
                 Entity.setCarriedItem(player, item.getId(), item.getCount(), item.getData(), CommonTypes.getExtraFromInstance(item));
                 return result;
@@ -366,25 +371,29 @@ public class ToolsModule {
         return false;
     }
 
-    public static void modifyEnchant(Coords coords, ItemInstance item, FullBlock block, long player)
+    public static void modifyEnchant(Coords coords, ItemInstance item, Object tile, long player)
     {
-        Integer idO = Integer.valueOf(item.getId());
-        if(toolData.containsKey(idO))
+        Pair<Integer, Integer> block = CommonTypes.deserializeFullBlockOrBlockState(tile);
+        if(block != null)
         {
-            ScriptableObject obj = toolData.get(idO);
-            if(ScriptableObject.hasProperty(obj, "modifyEnchant"))
+            Integer idO = Integer.valueOf(item.getId());
+            if(toolData.containsKey(idO))
             {
-                NativeItemInstanceExtra extra = CommonTypes.getExtraFromInstance(item);
-                if(extra == null) extra = new NativeItemInstanceExtra();
-                extra.removeAllEnchants();
-                ScriptableObject enchantData = CommonTypes.createEnchantDataScriptable(new ItemStack(item));
-                CommonTypes.callVoidJSFunction(obj, "modifyEnchant", new Object[]{ enchantData, item, coords, block });
-                short[] modified = CommonTypes.enchantDataScriptableToArray(enchantData);
-                if(modified[0] > 0) extra.addEnchant(Enchantment.SILK_TOUCH, modified[0]); else extra.removeEnchant(Enchantment.SILK_TOUCH);
-                if(modified[1] > 0) extra.addEnchant(Enchantment.FORTUNE, modified[1]); else extra.removeEnchant(Enchantment.FORTUNE);
-                if(modified[2] > 0) extra.addEnchant(Enchantment.EFFICIENCY, modified[2]); else extra.removeEnchant(Enchantment.EFFICIENCY);
-                if(modified[3] > 0) extra.addEnchant(Enchantment.UNBREAKING, modified[3]); else extra.removeEnchant(Enchantment.UNBREAKING);
-                Entity.setCarriedItem(player, item.getId(), item.getCount(), item.getData(), extra);
+                ScriptableObject obj = toolData.get(idO);
+                if(ScriptableObject.hasProperty(obj, "modifyEnchant"))
+                {
+                    NativeItemInstanceExtra extra = CommonTypes.getExtraFromInstance(item);
+                    if(extra == null) extra = new NativeItemInstanceExtra();
+                    extra.removeAllEnchants();
+                    ScriptableObject enchantData = CommonTypes.createEnchantDataScriptable(new ItemStack(item));
+                    CommonTypes.callVoidJSFunction(obj, "modifyEnchant", new Object[]{ enchantData, item, coords, new FullBlock(block.first.intValue(), block.second.intValue()) });
+                    short[] modified = CommonTypes.enchantDataScriptableToArray(enchantData);
+                    if(modified[0] > 0) extra.addEnchant(Enchantment.SILK_TOUCH, modified[0]); else extra.removeEnchant(Enchantment.SILK_TOUCH);
+                    if(modified[1] > 0) extra.addEnchant(Enchantment.FORTUNE, modified[1]); else extra.removeEnchant(Enchantment.FORTUNE);
+                    if(modified[2] > 0) extra.addEnchant(Enchantment.EFFICIENCY, modified[2]); else extra.removeEnchant(Enchantment.EFFICIENCY);
+                    if(modified[3] > 0) extra.addEnchant(Enchantment.UNBREAKING, modified[3]); else extra.removeEnchant(Enchantment.UNBREAKING);
+                    Entity.setCarriedItem(player, item.getId(), item.getCount(), item.getData(), extra);
+                }
             }
         }
     }
@@ -429,19 +438,23 @@ public class ToolsModule {
         toolData.put(Integer.valueOf(id), data);
     }
 
-    public static void destroyBlockHook(Coords coords, FullBlock block, ItemInstance item, long player)
+    public static void destroyBlockHook(Coords coords, Object tile, ItemInstance item, long player)
     {
-        if(toolData.containsKey(Integer.valueOf(item.getId())))
+        Pair<Integer, Integer> block = CommonTypes.deserializeFullBlockOrBlockState(tile);
+        if(block != null)
         {
-            if(onDestroy(coords, item, block, player))
+            if(toolData.containsKey(Integer.valueOf(item.getId())))
             {
-                modifyEnchant(coords, item, block, player);
-                NativeItemInstanceExtra extra = CommonTypes.getExtraFromInstance(item);
-                if(extra == null) extra = new NativeItemInstanceExtra();
-                int unbreaking = extra.getEnchantLevel(Enchantment.UNBREAKING);
-                if((getBlockDestroyTime(block.id) > 0 || getToolLevelViaBlock(item.getId(), block.id) > 0) && rand.nextFloat() < 1.0f / (unbreaking + 1))
+                if(onDestroy(coords, item, tile, player))
                 {
-                    nativeDamageToolInHand(player, isWeapon(item.getId()) ? 2 : 1);
+                    modifyEnchant(coords, item, tile, player);
+                    NativeItemInstanceExtra extra = CommonTypes.getExtraFromInstance(item);
+                    if(extra == null) extra = new NativeItemInstanceExtra();
+                    int unbreaking = extra.getEnchantLevel(Enchantment.UNBREAKING);
+                    if((getBlockDestroyTime(block.first.intValue()) > 0 || getToolLevelViaBlock(item.getId(), block.first.intValue()) > 0) && rand.nextFloat() < 1.0f / (unbreaking + 1))
+                    {
+                        nativeDamageToolInHand(player, isWeapon(item.getId()) ? 2 : 1);
+                    }
                 }
             }
         }

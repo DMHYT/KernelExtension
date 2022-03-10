@@ -1,7 +1,9 @@
 package vsdum.kex.util;
 
+import com.zhekasmirnov.apparatus.adapter.innercore.game.block.BlockState;
 import com.zhekasmirnov.apparatus.adapter.innercore.game.item.ItemStack;
 import com.zhekasmirnov.innercore.api.NativeItemInstanceExtra;
+import com.zhekasmirnov.innercore.api.commontypes.FullBlock;
 import com.zhekasmirnov.innercore.api.commontypes.ItemInstance;
 import com.zhekasmirnov.innercore.api.constants.Enchantment;
 import com.zhekasmirnov.innercore.api.mod.ScriptableObjectHelper;
@@ -160,6 +162,21 @@ public final class CommonTypes {
     @Nullable public static NativeItemInstanceExtra getExtraFromInstance(ItemInstance item)
     {
         return NativeItemInstanceExtra.unwrapObject(ScriptableObjectHelper.getProperty(item, "extra", null));
+    }
+
+    @Nullable public static final Pair<Integer, Integer> deserializeFullBlockOrBlockState(Object block)
+    {
+        if(block instanceof FullBlock)
+        {
+            FullBlock full = (FullBlock) block;
+            return new Pair<>(full.id, full.data);
+        }
+        if(block instanceof BlockState)
+        {
+            BlockState state = (BlockState) block;
+            return new Pair<>(state.id, state.data);
+        }
+        return null;
     }
 
 }
