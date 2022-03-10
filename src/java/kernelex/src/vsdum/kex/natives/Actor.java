@@ -1773,6 +1773,11 @@ public class Actor implements INativeInterface {
         return nativeIsMob(this.pointer);
     }
 
+    public boolean isElytraFlying()
+    {
+        return getStatusFlag(32);
+    }
+
     @Nullable public Mob asMob()
     {
         if(!this.isMob()) return null;
