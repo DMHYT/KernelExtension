@@ -348,6 +348,7 @@ declare module vsdum {
                 pushOutOfBlocks(x: number, y: number, z: number): void;
                 doWaterSplashEffect(): void;
                 spawnTrailBubbles(): void;
+                isElytraFlying(): boolean;
                 isMob(): boolean;
                 asMob(): Nullable<Mob>;
             }

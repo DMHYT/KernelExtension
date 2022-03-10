@@ -25,3 +25,13 @@ BETA 1.3
 - Added function getKEXVersionCode(), which can be used for more convenient version checks.
 - Added callback "KEX-InnerCoreIdsCached", provides no parameters.
 - Fixed LootModifier methods addJSModifyCallback, addJSPostModifyCallback crashing.
+
+BETA 1.4
+- Fixed food creation method patch
+- Food parameters API.
+    - Food parameters object can be accessed by ItemsModule.getFood(id), returns null if given item is not a food.
+    - There is also ItemsModule.isFood(id) method, to check if the item is edible or not.
+    - Added method ItemsModule.newFoodSaturationModifier(name, value), to register custom string food saturation modifiers, that are specified in JSON components. Vanilla has only 6 pre-defined modifiers: poor, low, normal, good, max and supernatural.
+    - Added method ItemsModule.saturationModifierFromString(name), which returns the numeric saturation modifier value defined by the given name, or 0.6 if the saturation modifier with given name does not exist (0.6 is the value for normal modifier).
+- Added method Actor.isElytraFlying().
+- Fixed destroyBlockHook function in ToolsModule not taking BlockState as a block object. Now this function and other ones using the block objects are universal for both FullBlock and BlockState objects.

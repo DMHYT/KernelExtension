@@ -16,12 +16,12 @@ public class KernelExtension {
 
     public static final byte[] getVersion()
     {
-        return new byte[]{ 1, 3, 0 };
+        return new byte[]{ 1, 4, 0 };
     }
 
     public static final short getVersionCode()
     {
-        return 130;
+        return 140;
     }
 
 }

@@ -211,6 +211,31 @@ declare class LootModule extends java.lang.Object {
     static addPiglinBarteringItem(): LootEntry;
 }
 
+declare interface FoodItemComponent extends java.lang.Object {
+    getItem(): number;
+    getNutrition(): number;
+    getSaturationModifier(): number;
+    getSaturation(): number;
+    getUsingConvertsTo(): Nullable<string>;
+    getOnUseAction(): number;
+    getOnUseRange(): Vector;
+    getCooldownType(): Nullable<string>;
+    getCooldownTime(): number;
+    canAlwaysEat(): boolean;
+    getEffects(): java.util.List<FoodItemComponent.Effect>;
+    getRemoveEffects(): java.util.List<number>;
+}
+declare module FoodItemComponent {
+    export interface Effect extends java.lang.Object {
+        getDescriptionId(): Nullable<string>;
+        getId(): number;
+        getEffect(): Nullable<MobEffect>;
+        getDuration(): number;
+        getAmplifier(): number;
+        getChance(): number;
+    }
+}
+
 declare class ItemsModule extends java.lang.Object {
     static class: java.lang.Class<ItemsModule>;
     static setRequiresWorldBuilder(id: number, requiresWorldBuilder: boolean): void;
@@ -221,6 +246,10 @@ declare class ItemsModule extends java.lang.Object {
     static setFurnaceBurnIntervalMultiplier(id: number, multiplier: number): void;
     static setFurnaceXPMultiplier(id: number, multiplier: number): void;
     static setCannotBeRepairedInAnvil(id: number): void;
+    static isFood(id: number): boolean;
+    static getFood(id: number): Nullable<FoodItemComponent>;
+    static newFoodSaturationModifier(name: string, value: number): void;
+    static saturationModifierFromString(name: string): number;
 }
 
 declare class ToolsModule extends java.lang.Object {
@@ -627,6 +656,7 @@ declare class Actor extends java.lang.Object implements INativeInterface {
     pushOutOfBlocks(x: number, y: number, z: number): void;
     doWaterSplashEffect(): void;
     spawnTrailBubbles(): void;
+    isElytraFlying(): boolean;
     isMob(): boolean;
     asMob(): Nullable<Mob>;
 }

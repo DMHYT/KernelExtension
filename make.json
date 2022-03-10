@@ -2,8 +2,8 @@
     "global": {
         "info": {
             "name": "Kernel Extension",
-            "author": "vsdum",
-            "version": "1.3",
+            "author": "dsdekhm",
+            "version": "1.4",
             "description": "A library mod that adds small, but useful features, not exported by InnerCore itself.",
             "clientside": false,
             "icon": "src/icon.png"
