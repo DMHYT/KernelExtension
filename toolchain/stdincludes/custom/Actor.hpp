@@ -1,3 +1,5 @@
+#include <stl/vector>
+
 #ifndef KEX_ACTOR_HPP
 #define KEX_ACTOR_HPP
 
@@ -6,6 +8,7 @@
     class AABB;
 #endif
 enum ActorCategory: int {};
+enum ActorEvent: int {};
 class ActorDamageSource;
 // enum ActorEvent: int {};
 enum ActorFlags: int {};
@@ -64,6 +67,8 @@ class TickingArea;
 
 class Actor {
     public:
+    char filler[376]; // 376
+    bool onGround; // 377 (+3?)
     static Actor* wrap(long long);
     // enum InitializationMethod: int {};
     // virtual bool hasComponent(HashedString const&) const;
@@ -439,7 +444,7 @@ class Actor {
     void* getSwimAmount(float) const;
     void setCanFly(bool);
     int getSkinID() const;
-    //getAllEffects
+    std::__ndk1::vector<MobEffectInstance>& getAllEffects() const;
     bool hasRider() const;
     void setJumpDuration(int);
     bool isSwimming() const;
@@ -455,6 +460,7 @@ class Actor {
     float getRadius() const;
     bool isResting() const;
     void setSaddle(bool);
+    template<typename Component> Component* tryGetComponent();
 };
 
 

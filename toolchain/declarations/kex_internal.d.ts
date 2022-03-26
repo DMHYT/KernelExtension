@@ -111,6 +111,7 @@ declare module vsdum {
                 hasAnyEffects(): boolean;
                 removeAllEffects(): void;
                 addEffect(effectInstance: MobEffectInstance): void;
+                removeEffects(harmful: boolean, harmless: boolean): void;
                 isInSnow(): boolean;
                 canMate(mate: Actor): boolean;
                 hasTickingArea(): boolean;
@@ -348,6 +349,18 @@ declare module vsdum {
                 pushOutOfBlocks(x: number, y: number, z: number): void;
                 doWaterSplashEffect(): void;
                 spawnTrailBubbles(): void;
+                isOnGround(): boolean;
+                canBreatheAir(): boolean;
+                canBreatheWater(): boolean;
+                canBreatheLava(): boolean;
+                canBreatheSolids(): boolean;
+                generatesBubbles(): boolean;
+                getInhaleTime(): number;
+                getSuffocateTime(): number;
+                setAirSupply(supply: number): void;
+                getMaxAirSupply(): number;
+                setMaxAirSupply(supply: number): void;
+                getAirRegenPerTick(): number;
                 isElytraFlying(): boolean;
                 isMob(): boolean;
                 asMob(): Nullable<Mob>;
@@ -489,6 +502,148 @@ declare module vsdum {
 }
 declare function WRAP_JAVA(clazz: "vsdum.kex.natives.Slime"): typeof vsdum.kex.natives.Slime;
 
+declare module vsdum {
+    export module kex {
+        export module natives {
+            export class Player extends Mob {
+                static class: java.lang.Class<Player>;
+                constructor(entity: number);
+                constructor(mob: Mob);
+                constructor(actor: Actor);
+                addExperience(exp: number): void;
+                addItemToInventory(id: number, count: number, data: number, extra?: com.zhekasmirnov.innercore.api.NativeItemInstanceExtra, dropRemaining?: boolean): void;
+                getExhaustion(): number;
+                getExperience(): number;
+                getGameMode(): number;
+                getHunger(): number;
+                getInventorySlot(slot: number): ItemInstance;
+                getExpLevel(): number;
+                getSaturation(): number;
+                getScore(): number;
+                getSelectedSlot(): number;
+                invokeUseItemNoTarget(id: number, count: number, data: number, extra: Nullable<com.zhekasmirnov.innercore.api.NativeItemInstanceExtra>): void;
+                setExhaustion(value: number): void;
+                setExperience(value: number): void;
+                setHunger(value: number): void;
+                setInventorySlot(slot: number, id: number, count: number, data: number, extra: Nullable<com.zhekasmirnov.innercore.api.NativeItemInstanceExtra>): void;
+                setExpLevel(level: number): void;
+                setRespawnCoords(x: number, y: number, z: number): void;
+                setSaturation(value: number): void;
+                setSelectedSlot(slot: number): void;
+                spawnExpOrbs(x: number, y: number, z: number, value: number): void;
+                isAutoJumpEnabled(): boolean;
+                getCommandPermissionLevel(): number;
+                setPermissions(level: number): void;
+                getPlayerPermissionLevel(): number;
+                displayChatMessage(prefix: string, message: string): void;
+                displayClientMessage(message: string): void;
+                displayWhisperMessage(s1: string, s2: string, s3: string, s4: string): void;
+                startSleepInBed(x: number, y: number, z: number): void;
+                stopSleepInBed(b1: boolean, b2: boolean): void;
+                canStartSleepInBed(): boolean;
+                getSleepTimer(): number;
+                getPreviousTickSleepTimer(): number;
+                openSign(x: number, y: number, z: number): void;
+                playEmote(emote: string): void;
+                isHostingPlayer(): boolean;
+                setGameMode(mode: number): void;
+                addLevels(levels: number): void;
+                setFieldOfViewModifier(modifier: number): void;
+                startCooldown(id: number): void;
+                startGliding(): void;
+                stopGliding(): void;
+                isChatAllowed(): boolean;
+                getHasSeenCredits(): boolean;
+                setHasSeenCredits(seen: boolean): void;
+                shouldShowCredits(): boolean;
+                getLuck(): number;
+                forceAllowEating(): boolean;
+                eat(nutrition: number, saturation: number): void;
+                eat2(nutrition: number, saturationModifier: number): void;
+                causeFoodExhaustion(exhaustion: number): void;
+                isBouncing(): boolean;
+                isForcedRespawn(): boolean;
+                getEnchantmentSeed(): number;
+                setEnchantmentSeed(seed: number): void;
+                getNewEnchantmentSeed(): number;
+                getTicksUsingItem(): number;
+                canUseOperatorBlocks(): boolean;
+                isOperator(): boolean;
+                isViewer(): boolean;
+                getXpNeededForNextLevel(): number;
+                getXpNeededForLevelRange(min: number, max: number): number;
+                isEmoting(): boolean;
+                getLevelProgress(): number;
+                getMapIndex(): number;
+                setMapIndex(index: number): void;
+                getAttackDamage(): number;
+                isHungry(): boolean;
+                isInRaid(): boolean;
+                hasOpenContainer(): boolean;
+                isUsingItem(): boolean;
+                getUnderwaterLightLevel(): number;
+                setUnderwaterLightLevel(level: number): void;
+                canBeSeenOnMap(): boolean;
+            }
+        }
+    }
+}
+declare function WRAP_JAVA(clazz: "vsdum.kex.natives.Player"): typeof vsdum.kex.natives.Player;
+
+declare module vsdum {
+    export module kex {
+        export module natives {
+            export class LocalPlayer extends Player {
+                static class: java.lang.Class<LocalPlayer>;
+                constructor(entity: number);
+                constructor(player: Player);
+                constructor(mob: Mob);
+                constructor(actor: Actor);
+                getMoveInputHandler(): Nullable<MoveInputHandler>;
+                isFlying(): boolean;
+            }
+        }
+    }
+}
+declare function WRAP_JAVA(clazz: "vsdum.kex.natives.LocalPlayer"): typeof vsdum.kex.natives.LocalPlayer;
+
+declare module vsdum {
+    export module kex {
+        export module natives {
+            export class MoveInputHandler extends common.INativeInterface {
+                static class: java.lang.Class<MoveInputHandler>;
+                constructor(ptr: number);
+                clearInputState(): void;
+                isChangeHeight(): boolean;
+                isPlayerMoving(): boolean;
+                isJumpDown(): boolean;
+                wantsMoveForward(): boolean;
+                setSneakPersistence(persistence: boolean): void;
+                setGazeDirection(x: number, y: number, z: number): void;
+                isMovingForward(): boolean;
+                isMovingBackward(): boolean;
+                isMovingLeft(): boolean;
+                isMovingRight(): boolean;
+                getMovingForward(): number;
+                getMovingBackward(): number;
+                getMovingLeft(): number;
+                getMovingRight(): number;
+            }
+        }
+    }
+}
+
+declare module vsdum {
+    export module kex {
+        export module natives {
+            export class GlobalContext extends java.lang.Object {
+                static class: java.lang.Class<GlobalContext>;
+                static getLocalPlayer(): Nullable<LocalPlayer>;
+            }
+        }
+    }
+}
+declare function WRAP_JAVA(clazz: "vsdum.kex.natives.GlobalContext"): typeof vsdum.kex.natives.GlobalContext;
 
 declare module vsdum {
     export module kex {
@@ -837,6 +992,9 @@ declare function WRAP_JAVA(clazz: "vsdum.kex.modules.ItemsModule"): typeof vsdum
 declare module vsdum {
     export module kex {
         export module modules {
+            interface ExtendedToolParams extends ToolAPI.ToolParams {
+                getAttackDamageBonus?: (item: ItemInstance) => number;
+            }
             interface BlockData {
                 readonly materialName: Nullable<string>;
                 readonly destroyLevel: number;
@@ -866,7 +1024,7 @@ declare module vsdum {
                 static setBlockDestroyLevel(id: number, destroyLevel: number): void;
                 static setBlockIsNative(id: number, isNative: boolean): void;
                 static getDestroyTimeViaTool(block: Tile, x: number, y: number, z: number, side: number, item: ItemInstance): number;
-                static registerCustomTool(id: number, nameId: string, name: string, textureName: string, textureMeta: number, tier: ToolsModule.ItemTier, isTech: boolean, isWeapon: boolean, blockMaterials: Nullable<string[]>, brokenId: number, baseAttackDamage: number, enchantType: number, toolData: ToolAPI.ToolParams): void;
+                static registerCustomTool(id: number, nameId: string, name: string, textureName: string, textureMeta: number, tier: ToolsModule.ItemTier, isTech: boolean, isWeapon: boolean, blockMaterials: Nullable<string[]>, brokenId: number, baseAttackDamage: number, enchantType: number, toolData: ExtendedToolParams): void;
                 static destroyBlockHook(coords: Callback.ItemUseCoordinates, block: Tile, item: ItemInstance, player: number): void;
                 static playerAttackHook(attacker: number, victim: number, item: ItemInstance): void;
             }
@@ -913,6 +1071,81 @@ declare module vsdum {
 declare function WRAP_JAVA(clazz: "vsdum.kex.util.AddonUtils"): typeof vsdum.kex.util.AddonUtils;
 
 
+declare namespace Item {
+    interface FoodParamsDescription {
+        stack?: number,
+        isTech?: boolean,
+        food?: number,
+        nutrition?: number,
+        saturation_modifier?: "poor" | "low" | "normal" | "good" | "max" | "supernatural",
+        is_meat?: boolean,
+        can_always_eat?: boolean,
+        cooldown_time?: number,
+        cooldown_type?: "chorusfruit" | "none",
+        on_use_range?: [ number, number, number ],
+        on_use_action?: "chorus_teleport" | "suspicious_stew_effect" | "none",
+        using_converts_to?: string,
+        effects?: {
+            name?: Lowercase<keyof typeof EPotionEffect> | string,
+            duration?: number,
+            amplifier?: number,
+            chance?: number
+        }[]
+    }
+    function createFoodItem(nameID: string, name: string, texture: TextureData, params: FoodParamsDescription): NativeItem;
+    function createSwordItem(id: string, name: string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: string | ToolAPI.ToolMaterial }): void;
+    function createAxeItem(id: string, name: string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: string | ToolAPI.ToolMaterial }): void;
+    function createPickaxeItem(id: string, name: string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: string | ToolAPI.ToolMaterial }): void;
+    function createShovelItem(id: string, name: string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: string | ToolAPI.ToolMaterial }): void;
+    function createHoeItem(id: string, name: string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: string | ToolAPI.ToolMaterial }): void;
+    function createShearsItem(id: string, name: string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: string | ToolAPI.ToolMaterial, durability?: number }): void;
+    function createCustomTool(id: string, name: string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: string | ToolAPI.ToolMaterial }, toolParams?: vsdum.kex.modules.ExtendedToolParams, numericId?: number): void;
+}
+
+
 declare namespace Callback {
     export function addCallback(name: "KEX-InnerCoreIdsCached", func: () => void): void;
+    export function addCallback(name: "PlayerJump", func: (player: number) => void): void;
+    export function addCallback(name: "GameModeChanged", func: (mode: number) => void): void;
+}
+
+
+/**
+ * Interface you can use in case you inject KEX API
+ * into some variable and not into the global mod scope.
+ * For example, if you inject API like this:
+ * ```js
+ * ModAPI.addAPICallback("KernelExtension", api => {
+ *     Launch({ KEX: api });
+ * });
+ * ```
+ * You can then write this at the top of the code:
+ * ```ts
+ * declare var KEX: KEXAPI;
+ * // and then access like `KEX.LootModule.createLootTableModifier(...)`
+ * ```
+ */
+ declare interface KEXAPI {
+    ItemsModule: typeof vsdum.kex.modules.ItemsModule,
+    LootModule: typeof vsdum.kex.modules.LootModule,
+    ToolsModule: typeof vsdum.kex.modules.ToolsModule,
+    MobEffect: typeof vsdum.kex.natives.MobEffect,
+    MobEffectInstance: typeof vsdum.kex.natives.MobEffectInstance,
+    Actor: typeof vsdum.kex.natives.Actor,
+    Mob: typeof vsdum.kex.natives.Mob,
+    Player: typeof vsdum.kex.natives.Player,
+    LocalPlayer: typeof vsdum.kex.natives.LocalPlayer,
+    Slime: typeof vsdum.kex.natives.Slime,
+    GlobalContext: typeof vsdum.kex.natives.GlobalContext,
+    AddonUtils: typeof vsdum.kex.util.AddonUtils,
+    ESaturationModifier: {
+        readonly POOR: 0.2,
+        readonly LOW: 0.6,
+        readonly NORMAL: 1.2,
+        readonly GOOD: 1.6,
+        readonly MAX: 2.0,
+        readonly SUPERNATURAL: 2.4
+    },
+    getKEXVersion: () => [ number, number, number ],
+    getKEXVersionCode: () => number;
 }

@@ -3,10 +3,12 @@
 #include <commontypes.hpp>
 #include <ActorUniqueID.hpp>
 #include <Actor.hpp>
+#include <BreathableComponent.hpp>
 #include <MobEffect.hpp>
+#include <MobEffectInstance.hpp>
 
 
-#define __EXPORT__(RET, NAME, ...) JNIEXPORT RET JNICALL Java_vsdum_kex_natives_Actor_native##NAME(JNIEnv* env, jclass clazz, jlong ptr, ##__VA_ARGS__)
+#define __EXPORT__(RET, NAME, ...) JNIEXPORT RET JNICALL Java_vsdum_kex_natives_Actor_native##NAME (JNIEnv* env, jclass clazz, jlong ptr, ##__VA_ARGS__)
 
 
 extern "C" {
@@ -145,7 +147,7 @@ extern "C" {
         ((Actor*) ptr)->removeEffectNoUpdate(effectId);
     }
     __EXPORT__(jlong, GetEffect__JJ, jlong mobEffect) {
-        MobEffectInstance* effect = ((Actor*) ptr)->getEffect(*((MobEffect*) mobEffect));
+        MobEffectInstance* effect = ((Actor*) ptr)->getEffect(*(MobEffect*) mobEffect);
         if(effect == nullptr) return 0;
         return (jlong) effect;
     }
@@ -161,7 +163,7 @@ extern "C" {
         return ((Actor*) ptr)->getActiveEffectCount();
     }
     __EXPORT__(jboolean, HasEffect__JJ, jlong mobEffect) {
-        return ((Actor*) ptr)->hasEffect(*((MobEffect*) mobEffect));
+        return ((Actor*) ptr)->hasEffect(*(MobEffect*) mobEffect);
     }
     __EXPORT__(jboolean, HasEffect__JI, jint id) {
         MobEffect* effect = MobEffect::getById(id);
@@ -183,13 +185,29 @@ extern "C" {
         ((Actor*) ptr)->removeAllEffects();
     }
     __EXPORT__(void, AddEffect, jlong instancePtr) {
-        ((Actor*) ptr)->addEffect(*((MobEffectInstance*) instancePtr));
+        ((Actor*) ptr)->addEffect(*(MobEffectInstance*) instancePtr);
+    }
+    __EXPORT__(void, RemoveEffects, jboolean harmful, jboolean harmless) {
+        Actor* actor = (Actor*) ptr;
+        if(actor != nullptr) {
+            std::__ndk1::vector<MobEffectInstance>& effects = actor->getAllEffects();
+            for(MobEffectInstance& ieffect : effects) {
+                int id = ieffect.getId();
+                MobEffect* effect = MobEffect::getById(id);
+                if(effect != nullptr) {
+                    bool eharmful = effect->isHarmful();
+                    if((eharmful && harmful) || (!eharmful && harmless)) {
+                        actor->removeEffect(id);
+                    }
+                }
+            }
+        }
     }
     __EXPORT__(jboolean, IsInSnow) {
         return ((Actor*) ptr)->isInSnow();
     }
     __EXPORT__(jboolean, CanMate, jlong mate) {
-        return ((Actor*) ptr)->canMate(*((Actor*) mate));
+        return ((Actor*) ptr)->canMate(*(Actor*) mate);
     }
     __EXPORT__(jboolean, HasTickingArea) {
         return ((Actor*) ptr)->hasTickingArea();
@@ -212,7 +230,7 @@ extern "C" {
         return ((Actor*) ptr)->isInScaffolding();
     }
     __EXPORT__(jboolean, ShouldOrphan, jlong bsptr) {
-        return ((Actor*) ptr)->shouldOrphan(*((BlockSource*) bsptr));
+        return ((Actor*) ptr)->shouldOrphan(*(BlockSource*) bsptr);
     }
     __EXPORT__(jboolean, IsOrphan) {
         return ((Actor*) ptr)->isOrphan();
@@ -245,7 +263,7 @@ extern "C" {
         return ((Actor*) ptr)->isRiding((Actor*) ridden);
     }
     __EXPORT__(jboolean, IsRider, jlong rider) {
-        return ((Actor*) ptr)->isRider(*((Actor*) rider));
+        return ((Actor*) ptr)->isRider(*(Actor*) rider);
     }
     __EXPORT__(void, RemoveAllRiders, jboolean b1, jboolean b2) {
         ((Actor*) ptr)->removeAllRiders(b1, b2);
@@ -279,983 +297,811 @@ extern "C" {
     __EXPORT__(void, SetResting, jboolean resting) {
         ((Actor*) ptr)->setResting(resting);
     }
+    __EXPORT__(jfloat, GetHealth) {
+        return ((Actor*) ptr)->getHealth();
+    }
+    __EXPORT__(jfloat, GetMaxHealth) {
+        return ((Actor*) ptr)->getMaxHealth();
+    }
+    __EXPORT__(jint, GetControllingSeat) {
+        return ((Actor*) ptr)->getControllingSeat();
+    }
+    __EXPORT__(void, SetControllingSeat, jint seat) {
+        ((Actor*) ptr)->setControllingSeat(seat);
+    }
+    __EXPORT__(jboolean, IsInsidePortal) {
+        return ((Actor*) ptr)->isInsidePortal();
+    }
+    __EXPORT__(jboolean, HasTeleported) {
+        return ((Actor*) ptr)->hasTeleported();
+    }
+    __EXPORT__(void, MoveRelative, jfloat strafe, jfloat up, jfloat forward, jfloat friction) {
+        ((Actor*) ptr)->moveRelative(strafe, up, forward, friction);
+    }
+    __EXPORT__(jlong, GetRegion) {
+        BlockSource* region = ((Actor*) ptr)->getRegion();
+        if(region == nullptr) return 0;
+        return (jlong) region;
+    }
+    __EXPORT__(jboolean, IsTame) {
+        return ((Actor*) ptr)->isTame();
+    }
+    __EXPORT__(jboolean, IsLeashed) {
+        return ((Actor*) ptr)->isLeashed();
+    }
+    __EXPORT__(jboolean, IsLeashableType) {
+        VTABLE_FIND_OFFSET(Actor_isLeashableType, _ZTV5Actor, _ZNK5Actor15isLeashableTypeEv);
+        return VTABLE_CALL<bool>(Actor_isLeashableType, (Actor*) ptr);
+    }
+    __EXPORT__(jboolean, IsMoving) {
+        return ((Actor*) ptr)->isMoving();
+    }
+    __EXPORT__(void, SetMoving, jboolean moving) {
+        ((Actor*) ptr)->setMoving(moving);
+    }
+    __EXPORT__(jboolean, HasTotemEquipped) {
+        return ((Actor*) ptr)->hasTotemEquipped();
+    }
+    __EXPORT__(jboolean, IsAutonomous) {
+        return ((Actor*) ptr)->isAutonomous();
+    }
+    __EXPORT__(void, SetAutonomous, jboolean autonomous) {
+        ((Actor*) ptr)->setAutonomous(autonomous);
+    }
+    __EXPORT__(jboolean, IsPersistent) {
+        return ((Actor*) ptr)->isPersistent();
+    }
+    __EXPORT__(void, RemoveEntity) {
+        ((Actor*) ptr)->removeEntity();
+    }
+    __EXPORT__(void, SetCollidableMob, jboolean collidable) {
+        ((Actor*) ptr)->setCollidableMob(collidable);
+    }
+    __EXPORT__(jboolean, GetCollidableMobNear) {
+        return ((Actor*) ptr)->getCollidableMobNear();
+    }
+    __EXPORT__(void, SetCollidableMobNear, jboolean collidable) {
+        ((Actor*) ptr)->setCollidableMobNear(collidable);
+    }
+    __EXPORT__(jboolean, HasFishingHook) {
+        return ((Actor*) ptr)->hasFishingHook();
+    }
+    __EXPORT__(jboolean, GetChainedDamageEffects) {
+        return ((Actor*) ptr)->getChainedDamageEffects();
+    }
+    __EXPORT__(void, SetChainedDamageEffects, jboolean chained) {
+        ((Actor*) ptr)->setChainedDamageEffects(chained);
+    }
+    __EXPORT__(jboolean, IsPacified) {
+        return ((Actor*) ptr)->isPacified();
+    }
+    __EXPORT__(jfloat, DistanceTo__JJ, jlong actor) {
+        return ((Actor*) ptr)->distanceTo(*(Actor*) actor);
+    }
+    __EXPORT__(jfloat, DistanceTo_JFFF, jfloat x, jfloat y, jfloat z) {
+        return ((Actor*) ptr)->distanceTo(Vec3(x, y, z));
+    }
+    __EXPORT__(jboolean, CanCurrentlySwim) {
+        return ((Actor*) ptr)->canCurrentlySwim();
+    }
+    __EXPORT__(jboolean, IsSwimming) {
+        return ((Actor*) ptr)->isSwimming();
+    }
+    __EXPORT__(jboolean, IsSwimmer) {
+        return ((Actor*) ptr)->isSwimmer();
+    }
+    __EXPORT__(void, SetSwimmer, jboolean swimmer) {
+        ((Actor*) ptr)->setSwimmer(swimmer);
+    }
+    __EXPORT__(jboolean, HasFamily, jstring family) {
+        const char* cfamily = env->GetStringUTFChars(family, 0);
+        HashedString hfamily(cfamily);
+        env->ReleaseStringUTFChars(family, cfamily);
+        return ((Actor*) ptr)->hasFamily(hfamily);
+    }
+    __EXPORT__(jboolean, HasAttributeBuff, jint buffType) {
+        return ((Actor*) ptr)->hasAttributeBuff((AttributeBuffType) buffType);
+    }
+    __EXPORT__(jboolean, IsClientSide) {
+        return ((Actor*) ptr)->isClientSide();
+    }
+    __EXPORT__(jboolean, IsControlledByLocalInstance) {
+        return ((Actor*) ptr)->isControlledByLocalInstance();
+    }
+    __EXPORT__(jboolean, IsClimbing) {
+        return ((Actor*) ptr)->isClimbing();
+    }
+    __EXPORT__(void, SetClimbing, jboolean climbing) {
+        ((Actor*) ptr)->setClimbing(climbing);
+    }
+    __EXPORT__(jboolean, CanClimb) {
+        return ((Actor*) ptr)->canClimb();
+    }
+    __EXPORT__(void, SetCanClimb, jboolean canClimb) {
+        ((Actor*) ptr)->setCanClimb(canClimb);
+    }
+    __EXPORT__(jint, GetSkinID) {
+        return ((Actor*) ptr)->getSkinID();
+    }
+    __EXPORT__(void, SetSkinID, jint skinID) {
+        ((Actor*) ptr)->setSkinID(skinID);
+    }
+    __EXPORT__(jfloat, GetSpeedInMetersPerSecond) {
+        return ((Actor*) ptr)->getSpeedInMetersPerSecond();
+    }
+    __EXPORT__(jint, GetStrength) {
+        return ((Actor*) ptr)->getStrength();
+    }
+    __EXPORT__(void, SetStrength, jint strength) {
+        ((Actor*) ptr)->setStrength(strength);
+    }
+    __EXPORT__(jint, GetStrengthMax) {
+        return ((Actor*) ptr)->getStrengthMax();
+    }
+    __EXPORT__(void, SetStrengthMax, jint strength) {
+        ((Actor*) ptr)->setStrengthMax(strength);
+    }
+    __EXPORT__(jboolean, GetDamageNearbyMobs) {
+        return ((Actor*) ptr)->getDamageNearbyMobs();
+    }
+    __EXPORT__(void, SetDamageNearbyMobs, jboolean damage) {
+        VTABLE_FIND_OFFSET(Actor_setDamageNearbyMobs, _ZTV5Actor, _ZN5Actor19setDamageNearbyMobsEb);
+        VTABLE_CALL<void>(Actor_setDamageNearbyMobs, (Actor*) ptr, damage);
+    }
+    __EXPORT__(jboolean, IsLayingDown) {
+        return ((Actor*) ptr)->isLayingDown();
+    }
+    __EXPORT__(void, SetLayingDown, jboolean laying) {
+        ((Actor*) ptr)->setLayingDown(laying);
+    }
+    __EXPORT__(jboolean, GetTempted) {
+        return ((Actor*) ptr)->getTempted();
+    }
+    __EXPORT__(void, SetTempted, jboolean tempted) {
+        ((Actor*) ptr)->setTempted(tempted);
+    }
+    __EXPORT__(void, DropTowards, jlong stackptr, jfloat x, jfloat y, jfloat z) {
+        ((Actor*) ptr)->dropTowards(*(ItemStack*) stackptr, Vec3(x, y, z));
+    }
+    __EXPORT__(jboolean, IsTrading) {
+        return ((Actor*) ptr)->isTrading();
+    }
+    __EXPORT__(jboolean, InDownwardFlowingLiquid) {
+        return ((Actor*) ptr)->inDownwardFlowingLiquid();
+    }
+    __EXPORT__(jint, GetJumpDuration) {
+        return ((Actor*) ptr)->getJumpDuration();
+    }
+    __EXPORT__(void, SetJumpDuration, jint dur) {
+        ((Actor*) ptr)->setJumpDuration(dur);
+    }
+    __EXPORT__(jboolean, IsScared) {
+        return ((Actor*) ptr)->isScared();
+    }
+    __EXPORT__(void, SetScared, jboolean scared) {
+        ((Actor*) ptr)->setScared(scared);
+    }
+    __EXPORT__(jboolean, IsSitting) {
+        return ((Actor*) ptr)->isSitting();
+    }
+    __EXPORT__(void, SetSitting, jboolean sitting) {
+        VTABLE_FIND_OFFSET(Actor_setSitting, _ZTV5Actor, _ZN5Actor10setSittingEb);
+        VTABLE_CALL<void>(Actor_setSitting, (Actor*) ptr, sitting);
+    }
+    __EXPORT__(jboolean, IsBaby) {
+        return ((Actor*) ptr)->isBaby();
+    }
+    __EXPORT__(jboolean, IsIgnited) {
+        return ((Actor*) ptr)->isIgnited();
+    }
+    __EXPORT__(jint, GetLifeSpan) {
+        VTABLE_FIND_OFFSET(Actor_getLifeSpan, _ZTV5Actor, _ZNK5Actor11getLifeSpanEv);
+        return VTABLE_CALL<int>(Actor_getLifeSpan, (Actor*) ptr);
+    }
+    __EXPORT__(void, SetLimitedLife, jint life) {
+        ((Actor*) ptr)->setLimitedLife(life);
+    }
+    __EXPORT__(jboolean, IsInvisible) {
+        VTABLE_FIND_OFFSET(Actor_isInvisible, _ZTV5Actor, _ZNK5Actor11isInvisibleEv);
+        return VTABLE_CALL<bool>(Actor_isInvisible, (Actor*) ptr);
+    }
+    __EXPORT__(void, SetInvisible, jboolean invisible) {
+        ((Actor*) ptr)->setInvisible(invisible);
+    }
+    __EXPORT__(jboolean, IsInWorld) {
+        return ((Actor*) ptr)->isInWorld();
+    }
+    __EXPORT__(jboolean, IsInLove) {
+        return ((Actor*) ptr)->isInLove();
+    }
+    __EXPORT__(void, SetInLove, jlong loverptr) {
+        ((Actor*) ptr)->setInLove((Actor*) loverptr);
+    }
+    __EXPORT__(jboolean, IsDoorBreaker) {
+        return ((Actor*) ptr)->isDoorBreaker();
+    }
+    __EXPORT__(void, SetDoorBreaker, jboolean breaker) {
+        ((Actor*) ptr)->setDoorBreaker(breaker);
+    }
+    __EXPORT__(jboolean, IsWalker) {
+        return ((Actor*) ptr)->isWalker();
+    }
+    __EXPORT__(void, SetWalker, jboolean walker) {
+        ((Actor*) ptr)->setWalker(walker);
+    }
+    __EXPORT__(jboolean, IsCharged) {
+        return ((Actor*) ptr)->isCharged();
+    }
+    __EXPORT__(void, SetCharged, jboolean charged) {
+        ((Actor*) ptr)->setCharged(charged);
+    }
+    __EXPORT__(jboolean, CanFly) {
+        return ((Actor*) ptr)->canFly();
+    }
+    __EXPORT__(void, SetCanFly, jboolean canFly) {
+        ((Actor*) ptr)->setCanFly(canFly);
+    }
+    __EXPORT__(jboolean, IsInPrecipitation) {
+        return ((Actor*) ptr)->isInPrecipitation();
+    }
+    __EXPORT__(void, SetAABB, jfloat x1, jfloat y1, jfloat z1, jfloat x2, jfloat y2, jfloat z2) {
+        ((Actor*) ptr)->setAABB(AABB(x1, y1, z1, x2, y2, z2));
+    }
+    __EXPORT__(jboolean, IsSafeToSleepNear) {
+        return ((Actor*) ptr)->isSafeToSleepNear();
+    }
+    __EXPORT__(void, SetBlockTarget, jint x, jint y, jint z) {
+        return ((Actor*) ptr)->setBlockTarget(BlockPos(x, y, z));
+    }
+    __EXPORT__(jboolean, IsAngry) {
+        return ((Actor*) ptr)->isAngry();
+    }
+    __EXPORT__(jboolean, IsPowered) {
+        return ((Actor*) ptr)->isPowered();
+    }
+    __EXPORT__(void, SetPowered, jboolean powered) {
+        ((Actor*) ptr)->setPowered(powered);
+    }
+    __EXPORT__(jboolean, IsSheared) {
+        return ((Actor*) ptr)->isSheared();
+    }
+    __EXPORT__(jboolean, IsOutOfControl) {
+        return ((Actor*) ptr)->isOutOfControl();
+    }
+    __EXPORT__(jboolean, IsSneaking) {
+        return ((Actor*) ptr)->isSneaking();
+    }
+    __EXPORT__(void, SetSneaking, jboolean sneaking) {
+        VTABLE_FIND_OFFSET(Actor_setSneaking, _ZTV5Actor, _ZNK5Actor11setSneakingEb);
+        VTABLE_CALL<void>(Actor_setSneaking, (Actor*) ptr, sneaking);
+    }
+    __EXPORT__(jlong, GetTarget) {
+        Actor* target = ((Actor*) ptr)->getTarget();
+        if(target == nullptr) return 0;
+        return (jlong) target;
+    }
+    __EXPORT__(void, SetTarget, jlong targetptr) {
+        VTABLE_FIND_OFFSET(Actor_setTarget, _ZTV5Actor, _ZN5Actor9setTargetEP5Actor);
+        VTABLE_CALL<void>(Actor_setTarget, (Actor*) ptr, (Actor*) targetptr);
+    }
+    __EXPORT__(void, SetStunned, jboolean stunned) {
+        ((Actor*) ptr)->setStunned(stunned);
+    }
+    __EXPORT__(jshort, GetTotalAirSupply) {
+        return ((Actor*) ptr)->getTotalAirSupply();
+    }
+    __EXPORT__(jshort, GetAirSupply) {
+        return ((Actor*) ptr)->getAirSupply();
+    }
+    __EXPORT__(jboolean, IsInThunderstorm) {
+        return ((Actor*) ptr)->isInThunderstorm();
+    }
+    __EXPORT__(jboolean, IsBribed) {
+        return ((Actor*) ptr)->isBribed();
+    }
+    __EXPORT__(jboolean, IsStanding) {
+        return ((Actor*) ptr)->isStanding();
+    }
+    __EXPORT__(void, SetStanding, jboolean standing) {
+        VTABLE_FIND_OFFSET(Actor_setStanding, _ZTV5Actor, _ZN5Actor11setStandingEb);
+        VTABLE_CALL<void>(Actor_setStanding, (Actor*) ptr, standing);
+    }
+    __EXPORT__(jint, GetShakeTime) {
+        return ((Actor*) ptr)->getShakeTime();
+    }
+    __EXPORT__(void, SetShakeTime, jint time) {
+        ((Actor*) ptr)->setShakeTime(time);
+    }
+    __EXPORT__(jboolean, HasCategory, jint category) {
+        return ((Actor*) ptr)->hasCategory((ActorCategory) category);
+    }
+    __EXPORT__(jfloat, GetVerticalSpeedInMetersPerSecond) {
+        return ((Actor*) ptr)->getVerticalSpeedInMetersPerSecond();
+    }
+    __EXPORT__(jboolean, IsTrusting) {
+        return ((Actor*) ptr)->isTrusting();
+    }
+    __EXPORT__(jfloat, GetRadius) {
+        return ((Actor*) ptr)->getRadius();
+    }
+    __EXPORT__(jboolean, HasComponent, jstring component) {
+        const char* ccomponent = env->GetStringUTFChars(component, 0);
+        HashedString hcomponent(ccomponent);
+        env->ReleaseStringUTFChars(component, ccomponent);
+        VTABLE_FIND_OFFSET(Actor_hasComponent, _ZTV5Actor, _ZNK5Actor12hasComponentERK12HashedString);
+        return VTABLE_CALL<bool>(Actor_hasComponent, (Actor*) ptr, hcomponent);
+    }
+    __EXPORT__(jint, GetOnDeathExperience) {
+        VTABLE_FIND_OFFSET(Actor_getOnDeathExperience, _ZTV5Actor, _ZN5Actor20getOnDeathExperienceEv);
+        return VTABLE_CALL<int>(Actor_getOnDeathExperience, (Actor*) ptr);
+    }
+    // TODO getInterpolatedRidingPosition, getInterpolatedBodyRot, getInterpolatedHeadRot
+    __EXPORT__(jfloat, GetInterpolatedBodyYaw, jfloat partialTicks) {
+        VTABLE_FIND_OFFSET(Actor_getInterpolatedBodyYaw, _ZTV5Actor, _ZNK5Actor22getInterpolatedBodyYawEf);
+        return VTABLE_CALL<float>(Actor_getInterpolatedBodyYaw, (Actor*) ptr, partialTicks);
+    }
+    __EXPORT__(jfloat, GetYawSpeedInDegreesPerSecond) {
+        VTABLE_FIND_OFFSET(Actor_getYawSpeedInDegreesPerSecond, _ZTV5Actor, _ZNK5Actor29getYawSpeedInDegreesPerSecondEv);
+        return VTABLE_CALL<float>(Actor_getYawSpeedInDegreesPerSecond, (Actor*) ptr);
+    }
+    __EXPORT__(jfloat, GetInterpolatedWalkAnimSpeed, jfloat partialTicks) {
+        VTABLE_FIND_OFFSET(Actor_getInterpolatedWalkAnimSpeed, _ZTV5Actor, _ZNK5Actor28getInterpolatedWalkAnimSpeedEf);
+        return VTABLE_CALL<float>(Actor_getInterpolatedWalkAnimSpeed, (Actor*) ptr, partialTicks);
+    }
+    // TODO getInterpolatedRidingOffset
+    __EXPORT__(jboolean, IsFireImmune) {
+        VTABLE_FIND_OFFSET(Actor_isFireImmune, _ZTV5Actor, _ZNK5Actor12isFireImmuneEv);
+        return VTABLE_CALL<bool>(Actor_isFireImmune, (Actor*) ptr);
+    }
+    __EXPORT__(jboolean, BreaksFallingBlocks) {
+        VTABLE_FIND_OFFSET(Actor_breaksFallingBlocks, _ZTV5Actor, _ZNK5Actor19breaksFallingBlocksEv);
+        return VTABLE_CALL<bool>(Actor_breaksFallingBlocks, (Actor*) ptr);
+    }
+    // TODO blockedByShield, teleportTo
+    __EXPORT__(void, ChorusFruitTeleport, jfloat x, jfloat y, jfloat z) {
+        VTABLE_FIND_OFFSET(Actor_chorusFruitTeleport, _ZTV5Actor, _ZN5Actor19chorusFruitTeleportER4Vec3);
+        VTABLE_CALL<void>(Actor_chorusFruitTeleport, (Actor*) ptr, Vec3(x, y, z));
+    }
+    __EXPORT__(void, LerpTo, jdouble x, jdouble y, jdouble z, jfloat rotX, jfloat rotY) {
+        VTABLE_FIND_OFFSET(Actor_lerpTo, _ZTV5Actor, _ZN5Actor6lerpToERK4Vec3RK4Vec2i);
+        VTABLE_CALL<void>(Actor_lerpTo, (Actor*) ptr, Vec3(x, y, z), Vec2(rotX, rotY), 0);
+    }
+    __EXPORT__(void, LerpMotion, jdouble x, jdouble y, jdouble z) {
+        VTABLE_FIND_OFFSET(Actor_lerpMotion, _ZTV5Actor, _ZN5Actor10lerpMotionERK4Vec3);
+        VTABLE_CALL<void>(Actor_lerpMotion, (Actor*) ptr, Vec3(x, y, z));
+    }
+    __EXPORT__(jfloat, GetRidingHeight) {
+        VTABLE_FIND_OFFSET(Actor_getRidingHeight, _ZTV5Actor, _ZN5Actor15getRidingHeightEv);
+        return VTABLE_CALL<float>(Actor_getRidingHeight, (Actor*) ptr);
+    }
+    __EXPORT__(void, StartRiding, jlong riddenPtr) {
+        VTABLE_FIND_OFFSET(Actor_startRiding, _ZTV5Actor, _ZN5Actor11startRidingER5Actor);
+        VTABLE_CALL<void>(Actor_startRiding, (Actor*) ptr, (int) riddenPtr);
+    }
+    __EXPORT__(void, AddRider, jlong riderPtr) {
+        VTABLE_FIND_OFFSET(Actor_addRider, _ZTV5Actor, _ZN5Actor8addRiderER5Actor);
+        VTABLE_CALL<void>(Actor_addRider, (Actor*) ptr, (int) riderPtr);
+    }
+    __EXPORT__(jboolean, Intersects, jfloat x1, jfloat y1, jfloat z1, jfloat x2, jfloat y2, jfloat z2) {
+        VTABLE_FIND_OFFSET(Actor_intersects, _ZTV5Actor, _ZNK5Actor10intersectsERK4Vec3S2_);
+        return VTABLE_CALL<bool>(Actor_intersects, (Actor*) ptr, Vec3(x1, y1, z1), Vec3(x2, y2, z2));
+    }
+    __EXPORT__(jboolean, IsFree__JFFF, jfloat x, jfloat y, jfloat z) {
+        VTABLE_FIND_OFFSET(Actor_isFree, _ZTV5Actor, _ZN5Actor6isFreeERK4Vec3);
+        return VTABLE_CALL<bool>(Actor_isFree, (Actor*) ptr, Vec3(x, y, z));
+    }
+    __EXPORT__(jboolean, IsFree_JFFFF, jfloat x, jfloat y, jfloat z, jfloat someFloat) {
+        VTABLE_FIND_OFFSET(Actor_isFreeConst, _ZTV5Actor, _ZNK5Actor6isFreeERK4Vec3f);
+        return VTABLE_CALL<bool>(Actor_isFreeConst, (Actor*) ptr, Vec3(x, y, z), someFloat);
+    }
+    __EXPORT__(jboolean, IsInWall) {
+        VTABLE_FIND_OFFSET(Actor_isInWall, _ZTV5Actor, _ZNK5Actor8isInWallEv);
+        return VTABLE_CALL<bool>(Actor_isInWall, (Actor*) ptr);
+    }
+    __EXPORT__(jboolean, CanShowNameTag) {
+        VTABLE_FIND_OFFSET(Actor_canShowNameTag, _ZTV5Actor, _ZNK5Actor14canShowNameTagEv);
+        return VTABLE_CALL<bool>(Actor_canShowNameTag, (Actor*) ptr);
+    }
+    __EXPORT__(jboolean, CanExistInPeaceful) {
+        VTABLE_FIND_OFFSET(Actor_canExistInPeaceful, _ZTV5Actor, _ZNK5Actor18canExistInPeacefulEv);
+        return VTABLE_CALL<bool>(Actor_canExistInPeaceful, (Actor*) ptr);
+    }
+    __EXPORT__(void, SetNameTagVisible, jboolean visible) {
+        VTABLE_FIND_OFFSET(Actor_setNameTagVisible, _ZTV5Actor, _ZN5Actor17setNameTagVisibleEb);
+        VTABLE_CALL<void>(Actor_setNameTagVisible, (Actor*) ptr, visible);
+    }
+    __EXPORT__(jboolean, GetAlwaysShowNameTag) {
+        VTABLE_FIND_OFFSET(Actor_getAlwaysShowNameTag, _ZTV5Actor, _ZNK5Actor20getAlwaysShowNameTagEv);
+        return VTABLE_CALL<bool>(Actor_getAlwaysShowNameTag, (Actor*) ptr);
+    }
+    __EXPORT__(jboolean, IsInWater) {
+        VTABLE_FIND_OFFSET(Actor_isInWater, _ZTV5Actor, _ZNK5Actor9isInWaterEv);
+        return VTABLE_CALL<bool>(Actor_isInWater, (Actor*) ptr);
+    }
+    __EXPORT__(jboolean, HasEnteredWater) {
+        VTABLE_FIND_OFFSET(Actor_hasEnteredWater, _ZTV5Actor, _ZNK5Actor15hasEnteredWaterEv);
+        return VTABLE_CALL<bool>(Actor_hasEnteredWater, (Actor*) ptr);
+    }
+    __EXPORT__(jboolean, IsImmersedInWater) {
+        VTABLE_FIND_OFFSET(Actor_isImmersedInWater, _ZTV5Actor, _ZNK5Actor17isImmersedInWaterEv);
+        return VTABLE_CALL<bool>(Actor_isImmersedInWater, (Actor*) ptr);
+    }
+    __EXPORT__(jboolean, IsInWaterOrRain) {
+        VTABLE_FIND_OFFSET(Actor_isInWaterOrRain, _ZTV5Actor, _ZNK5Actor15isInWaterOrRainEv);
+        return VTABLE_CALL<bool>(Actor_isInWaterOrRain, (Actor*) ptr);
+    }
+    __EXPORT__(jboolean, IsInLava) {
+        VTABLE_FIND_OFFSET(Actor_isInLava, _ZTV5Actor, _ZNK5Actor8isInLavaEv);
+        return VTABLE_CALL<bool>(Actor_isInLava, (Actor*) ptr);
+    }
+    __EXPORT__(jboolean, IsUnderLiquid, jint materialType) {
+        VTABLE_FIND_OFFSET(Actor_isUnderLiquid, _ZTV5Actor, _ZNK5Actor13isUnderLiquidE12MaterialType);
+        return VTABLE_CALL<bool>(Actor_isUnderLiquid, (Actor*) ptr, (MaterialType) materialType);
+    }
+    __EXPORT__(jboolean, IsOverWater) {
+        VTABLE_FIND_OFFSET(Actor_isOverWater, _ZTV5Actor, _ZNK5Actor11isOverWaterEv);
+        return VTABLE_CALL<bool>(Actor_isOverWater, (Actor*) ptr);
+    }
+    __EXPORT__(jfloat, GetShadowRadius) {
+        VTABLE_FIND_OFFSET(Actor_getShadowRadius, _ZTV5Actor, _ZNK5Actor15getShadowRadiusEv);
+        return VTABLE_CALL<float>(Actor_getShadowRadius, (Actor*) ptr);
+    }
+    __EXPORT__(jboolean, CanSeeInvisible) {
+        VTABLE_FIND_OFFSET(Actor_canSeeInvisible, _ZTV5Actor, _ZNK5Actor15canSeeInvisibleEv);
+        return VTABLE_CALL<bool>(Actor_canSeeInvisible, (Actor*) ptr);
+    }
+    __EXPORT__(jboolean, CanSee__JJ, jlong actorptr) {
+        VTABLE_FIND_OFFSET(Actor_canSeeActor, _ZTV5Actor, _ZNK5Actor6canSeeERK5Actor);
+        return VTABLE_CALL<bool>(Actor_canSeeActor, (Actor*) ptr, (Actor*) actorptr);
+    }
+    __EXPORT__(jboolean, CanSee__JFFF, jfloat x, jfloat y, jfloat z) {
+        VTABLE_FIND_OFFSET(Actor_canSeeVec, _ZTV5Actor, _ZNK5Actor6canSeeERK4Vec3);
+        return VTABLE_CALL<bool>(Actor_canSeeVec, (Actor*) ptr, Vec3(x, y, z));
+    }
+    __EXPORT__(jboolean, IsImmobile) {
+        VTABLE_FIND_OFFSET(Actor_isImmobile, _ZTV5Actor, _ZNK5Actor10isImmobileEv);
+        return VTABLE_CALL<bool>(Actor_isImmobile, (Actor*) ptr);
+    }
+    __EXPORT__(jboolean, IsSilent) {
+        VTABLE_FIND_OFFSET(Actor_isSilent, _ZTV5Actor, _ZNK5Actor8isSilentEv);
+        return VTABLE_CALL<bool>(Actor_isSilent, (Actor*) ptr);
+    }
+    __EXPORT__(jboolean, IsPickable) {
+        VTABLE_FIND_OFFSET(Actor_isPickable, _ZTV5Actor, _ZNK5Actor10isPickableEv);
+        return VTABLE_CALL<bool>(Actor_isPickable, (Actor*) ptr);
+    }
+    __EXPORT__(jboolean, IsFishable) {
+        VTABLE_FIND_OFFSET(Actor_isFishable, _ZTV5Actor, _ZNK5Actor10isFishableEv);
+        return VTABLE_CALL<bool>(Actor_isFishable, (Actor*) ptr);
+    }
+    __EXPORT__(jboolean, IsSleeping) {
+        VTABLE_FIND_OFFSET(Actor_isSleeping, _ZTV5Actor, _ZNK5Actor10isSleepingEv);
+        return VTABLE_CALL<bool>(Actor_isSleeping, (Actor*) ptr);
+    }
+    __EXPORT__(jboolean, IsShootable) {
+        VTABLE_FIND_OFFSET(Actor_isShootable, _ZTV5Actor, _ZNK5Actor11isShootableEv);
+        return VTABLE_CALL<bool>(Actor_isShootable, (Actor*) ptr);
+    }
+    __EXPORT__(jboolean, IsBlocking) {
+        VTABLE_FIND_OFFSET(Actor_isBlocking, _ZTV5Actor, _ZNK5Actor10isBlockingEv);
+        return VTABLE_CALL<bool>(Actor_isBlocking, (Actor*) ptr);
+    }
+    __EXPORT__(jboolean, IsAlive) {
+        VTABLE_FIND_OFFSET(Actor_isAlive, _ZTV5Actor, _ZNK5Actor7isAliveEv);
+        return VTABLE_CALL<bool>(Actor_isAlive, (Actor*) ptr);
+    }
+    __EXPORT__(jboolean, IsOnFire) {
+        VTABLE_FIND_OFFSET(Actor_isOnFire, _ZTV5Actor, _ZNK5Actor8isOnFireEv);
+        return VTABLE_CALL<bool>(Actor_isOnFire, (Actor*) ptr);
+    }
+    __EXPORT__(void, SetOnFire, jint fireTicks) {
+        VTABLE_FIND_OFFSET(Actor_setOnFire, _ZTV5Actor, _ZN5Actor9setOnFireEi);
+        VTABLE_CALL<void>(Actor_setOnFire, (Actor*) ptr, fireTicks);
+    }
+    __EXPORT__(jboolean, IsOnHotBlock) {
+        VTABLE_FIND_OFFSET(Actor_isOnHotBlock, _ZTV5Actor, _ZNK5Actor12isOnHotBlockEv);
+        return VTABLE_CALL<bool>(Actor_isOnHotBlock, (Actor*) ptr);
+    }
+    __EXPORT__(jboolean, IsCreativeModeAllowed) {
+        VTABLE_FIND_OFFSET(Actor_isCreativeModeAllowed, _ZTV5Actor, _ZNK5Actor21isCreativeModeAllowedEv);
+        return VTABLE_CALL<bool>(Actor_isCreativeModeAllowed, (Actor*) ptr);
+    }
+    __EXPORT__(jboolean, IsSurfaceMob) {
+        VTABLE_FIND_OFFSET(Actor_isSurfaceMob, _ZTV5Actor, _ZNK5Actor12isSurfaceMobEv);
+        return VTABLE_CALL<bool>(Actor_isSurfaceMob, (Actor*) ptr);
+    }
+    __EXPORT__(jboolean, IsTargetable) {
+        VTABLE_FIND_OFFSET(Actor_isTargetable, _ZTV5Actor, _ZNK5Actor12isTargetableEv);
+        return VTABLE_CALL<bool>(Actor_isTargetable, (Actor*) ptr);
+    }
+    __EXPORT__(jboolean, IsLocalPlayer) {
+        VTABLE_FIND_OFFSET(Actor_isLocalPlayer, _ZTV5Actor, _ZNK5Actor13isLocalPlayerEv);
+        return VTABLE_CALL<bool>(Actor_isLocalPlayer, (Actor*) ptr);
+    }
+    __EXPORT__(jboolean, IsPlayer) {
+        VTABLE_FIND_OFFSET(Actor_isPlayer, _ZTV5Actor, _ZNK5Actor8isPlayerEv);
+        return VTABLE_CALL<bool>(Actor_isPlayer, (Actor*) ptr);
+    }
+    __EXPORT__(jboolean, CanAttack, jlong victim, jboolean someBool) {
+        VTABLE_FIND_OFFSET(Actor_canAttack, _ZTV5Actor, _ZNK5Actor9canAttackEP5Actorb);
+        return VTABLE_CALL<bool>(Actor_canAttack, (Actor*) ptr, (Actor*) victim, someBool);
+    }
+    __EXPORT__(jboolean, IsValidTarget, jlong potentialTarget) {
+        VTABLE_FIND_OFFSET(Actor_isValidTarget, _ZTV5Actor, _ZNK5Actor13isValidTargetEP5Actor);
+        return VTABLE_CALL<bool>(Actor_isValidTarget, (Actor*) ptr, (Actor*) potentialTarget);
+    }
+    __EXPORT__(void, Attack, jlong victim) {
+        VTABLE_FIND_OFFSET(Actor_attack, _ZTV5Actor, _ZN5Actor6attackER5Actor);
+        VTABLE_CALL<void>(Actor_attack, (Actor*) ptr, (int) victim);
+    }
+    __EXPORT__(void, PerformRangedAttack, jlong victim, jfloat distanceFactor) {
+        VTABLE_FIND_OFFSET(Actor_performRangedAttack, _ZTV5Actor, _ZN5Actor19performRangedAttackER5Actorf);
+        VTABLE_CALL<void>(Actor_performRangedAttack, (Actor*) ptr, (int) victim, distanceFactor);
+    }
+    __EXPORT__(jint, GetEquipmentCount) {
+        VTABLE_FIND_OFFSET(Actor_getEquipmentCount, _ZTV5Actor, _ZNK5Actor17getEquipmentCountEv);
+        return VTABLE_CALL<int>(Actor_getEquipmentCount, (Actor*) ptr);
+    }
+    __EXPORT__(jint, GetInventorySize) {
+        VTABLE_FIND_OFFSET(Actor_getInventorySize, _ZTV5Actor, _ZN5Actor16getInventorySizeEv);
+        return VTABLE_CALL<int>(Actor_getInventorySize, (Actor*) ptr);
+    }
+    __EXPORT__(jint, GetEquipSlots) {
+        VTABLE_FIND_OFFSET(Actor_getEquipSlots, _ZTV5Actor, _ZNK5Actor13getEquipSlotsEv);
+        return VTABLE_CALL<int>(Actor_getEquipSlots, (Actor*) ptr);
+    }
+    __EXPORT__(jint, GetChestSlots) {
+        VTABLE_FIND_OFFSET(Actor_getChestSlots, _ZTV5Actor, _ZNK5Actor13getChestSlotsEv);
+        return VTABLE_CALL<int>(Actor_getChestSlots, (Actor*) ptr);
+    }
+    __EXPORT__(jboolean, CanPowerJump) {
+        VTABLE_FIND_OFFSET(Actor_canPowerJump, _ZTV5Actor, _ZNK5Actor12canPowerJumpEv);
+        return VTABLE_CALL<bool>(Actor_canPowerJump, (Actor*) ptr);
+    }
+    __EXPORT__(void, SetCanPowerJump, jboolean canPowerJump) {
+        VTABLE_FIND_OFFSET(Actor_setCanPowerJump, _ZTV5Actor, _ZNK5Actor15setCanPowerJumpEb);
+        VTABLE_CALL<void>(Actor_setCanPowerJump, (Actor*) ptr, canPowerJump);
+    }
+    __EXPORT__(jboolean, IsJumping) {
+        VTABLE_FIND_OFFSET(Actor_isJumping, _ZTV5Actor, _ZNK5Actor9isJumpingEv);
+        return VTABLE_CALL<bool>(Actor_isJumping, (Actor*) ptr);
+    }
+    __EXPORT__(void, DoFireHurt, jint amount) {
+        VTABLE_FIND_OFFSET(Actor_doFireHurt, _ZTV5Actor, _ZN5Actor10doFireHurtEi);
+        VTABLE_CALL<void>(Actor_doFireHurt, (Actor*) ptr, amount);
+    }
+    __EXPORT__(void, OnLightningHit) {
+        VTABLE_FIND_OFFSET(Actor_onLightningHit, _ZTV5Actor, _ZN5Actor14onLightningHitEv);
+        VTABLE_CALL<void>(Actor_onLightningHit, (Actor*) ptr);
+    }
+    __EXPORT__(void, Feed, jint amount) {
+        VTABLE_FIND_OFFSET(Actor_feed, _ZTV5Actor, _ZN5Actor4feedEi);
+        VTABLE_CALL<void>(Actor_feed, (Actor*) ptr, amount);
+    }
+    __EXPORT__(jfloat, GetPickRadius) {
+        VTABLE_FIND_OFFSET(Actor_getPickRadius, _ZTV5Actor, _ZNK5Actor13getPickRadiusEv);
+        return VTABLE_CALL<float>(Actor_getPickRadius, (Actor*) ptr);
+    }
+    __EXPORT__(jlong, GetArmor, jint slot) {
+        VTABLE_FIND_OFFSET(Actor_getArmor, _ZTV5Actor, _ZNK5Actor8getArmorE9ArmorSlot);
+        ItemStack* stack = VTABLE_CALL<ItemStack*>(Actor_getArmor, (Actor*) ptr, (ArmorSlot) slot);
+        if(stack == nullptr) return 0;
+        return (jlong) stack;
+    }
+    __EXPORT__(void, SetArmor, jint slot, jlong stack) {
+        VTABLE_FIND_OFFSET(Actor_setArmor, _ZTV5Actor, _ZN5Actor8setArmorE9ArmorSlotRK9ItemStack);
+        VTABLE_CALL<void>(Actor_setArmor, (Actor*) ptr, (ArmorSlot) slot, (int) stack);
+    }
+    __EXPORT__(jint, GetArmorMaterialTypeInSlot, jint slot) {
+        VTABLE_FIND_OFFSET(Actor_getArmorMaterialTypeInSlot, _ZTV5Actor, _ZNK5Actor26getArmorMaterialTypeInSlotE9ArmorSlot);
+        return VTABLE_CALL<int>(Actor_getArmorMaterialTypeInSlot, (Actor*) ptr, (ArmorSlot) slot);
+    }
+    __EXPORT__(jint, GetArmorMaterialTextureTypeInSlot, jint slot) {
+        VTABLE_FIND_OFFSET(Actor_getArmorMaterialTextureTypeInSlot, _ZTV5Actor, _ZNK5Actor33getArmorMaterialTextureTypeInSlotE9ArmorSlot);
+        return VTABLE_CALL<int>(Actor_getArmorMaterialTextureTypeInSlot, (Actor*) ptr, (ArmorSlot) slot);
+    }
+    __EXPORT__(jlong, GetEquippedSlot, jint slot) {
+        VTABLE_FIND_OFFSET(Actor_getEquippedSlot, _ZTV5Actor, _ZNK5Actor15getEquippedSlotE13EquipmentSlot);
+        ItemStack* stack = VTABLE_CALL<ItemStack*>(Actor_getEquippedSlot, (Actor*) ptr, (EquipmentSlot) slot);
+        if(stack == nullptr) return 0;
+        return (jlong) stack;
+    }
+    __EXPORT__(void, SetEquippedSlot, jint slot, jlong stack) {
+        VTABLE_FIND_OFFSET(Actor_setEquippedSlot, _ZTV5Actor, _ZN5Actor15setEquippedSlotE13EquipmentSlotRK9ItemStack);
+        VTABLE_CALL<void>(Actor_setEquippedSlot, (Actor*) ptr, (EquipmentSlot) slot, (int) stack);
+    }
+    __EXPORT__(jlong, GetCarriedItem) {
+        VTABLE_FIND_OFFSET(Actor_getCarriedItem, _ZTV5Actor, _ZNK5Actor14getCarriedItemEv);
+        ItemStack* stack = VTABLE_CALL<ItemStack*>(Actor_getCarriedItem, (Actor*) ptr);
+        if(stack == nullptr) return 0;
+        return (jlong) stack;
+    }
+    __EXPORT__(void, SetCarriedItem, jlong stackptr) {
+        VTABLE_FIND_OFFSET(Actor_setCarriedItem, _ZTV5Actor, _ZN5Actor14setCarriedItemERK9ItemStack);
+        VTABLE_CALL<void>(Actor_setCarriedItem, (Actor*) ptr, (int) stackptr);
+    }
+    __EXPORT__(void, SetOffhandSlot, jlong stackptr) {
+        VTABLE_FIND_OFFSET(Actor_setOffhandSlot, _ZTV5Actor, _ZN5Actor14setOffhandSlotERK9ItemStack);
+        VTABLE_CALL<void>(Actor_setOffhandSlot, (Actor*) ptr, (int) stackptr);
+    }
+    __EXPORT__(void, ConsumeTotem) {
+        VTABLE_FIND_OFFSET(Actor_consumeTotem, _ZTV5Actor, _ZN5Actor12consumeTotemEv);
+        VTABLE_CALL<void>(Actor_consumeTotem, (Actor*) ptr);
+    }
+    __EXPORT__(jint, GetEntityTypeId) {
+        VTABLE_FIND_OFFSET(Actor_getEntityTypeId, _ZTV5Actor, _ZNK5Actor15getEntityTypeIdEv);
+        return (int) VTABLE_CALL<int>(Actor_getEntityTypeId, (Actor*) ptr);
+    }
+    __EXPORT__(jint, GetPortalCooldown) {
+        VTABLE_FIND_OFFSET(Actor_getPortalCooldown, _ZTV5Actor, _ZNK5Actor17getPortalCooldownEv);
+        return VTABLE_CALL<int>(Actor_getPortalCooldown, (Actor*) ptr);
+    }
+    __EXPORT__(jint, GetPortalWaitTime) {
+        VTABLE_FIND_OFFSET(Actor_getPortalWaitTime, _ZTV5Actor, _ZNK5Actor17getPortalWaitTimeEv);
+        return VTABLE_CALL<int>(Actor_getPortalWaitTime, (Actor*) ptr);
+    }
+    __EXPORT__(jboolean, CanBePulledIntoVehicle) {
+        VTABLE_FIND_OFFSET(Actor_canBePulledIntoVehicle, _ZTV5Actor, _ZNK5Actor22canBePulledIntoVehicleEv);
+        return VTABLE_CALL<bool>(Actor_canBePulledIntoVehicle, (Actor*) ptr);
+    }
+    __EXPORT__(jboolean, InCaravan) {
+        VTABLE_FIND_OFFSET(Actor_inCaravan, _ZTV5Actor, _ZNK5Actor9inCaravanEv);
+        return VTABLE_CALL<bool>(Actor_inCaravan, (Actor*) ptr);
+    }
+    __EXPORT__(void, Heal, jint amount) {
+        VTABLE_FIND_OFFSET(Actor_heal, _ZTV5Actor, _ZN5Actor4healEi);
+        VTABLE_CALL<void>(Actor_heal, (Actor*) ptr, amount);
+    }
+    __EXPORT__(jboolean, IsInvertedHealAndHarm) {
+        VTABLE_FIND_OFFSET(Actor_isInvertedHealAndHarm, _ZTV5Actor, _ZNK5Actor21isInvertedHealAndHarmEv);
+        return VTABLE_CALL<bool>(Actor_isInvertedHealAndHarm, (Actor*) ptr);
+    }
+    __EXPORT__(jboolean, CanBeAffected__JI, jint effectId) {
+        VTABLE_FIND_OFFSET(Actor_canBeAffectedI, _ZTV5Actor, _ZNK5Actor13canBeAffectedEi);
+        return VTABLE_CALL<bool>(Actor_canBeAffectedI, (Actor*) ptr, effectId);
+    }
+    __EXPORT__(jboolean, CanBeAffected__JJ, jlong mei) {
+        VTABLE_FIND_OFFSET(Actor_canBeAffectedMEI, _ZTV5Actor, _ZNK5Actor13canBeAffectedERK17MobEffectInstance);
+        return VTABLE_CALL<bool>(Actor_canBeAffectedMEI, (Actor*) ptr, (int) mei);
+    }
+    __EXPORT__(jboolean, CanBeAffectedByArrow, jlong mei) {
+        VTABLE_FIND_OFFSET(Actor_canBeAffectedByArrow, _ZTV5Actor, _ZNK5Actor20canBeAffectedByArrowERK17MobEffectInstance);
+        return VTABLE_CALL<bool>(Actor_canBeAffectedByArrow, (Actor*) ptr, (int) mei);
+    }
+    __EXPORT__(void, Swing) {
+        VTABLE_FIND_OFFSET(Actor_swing, _ZTV5Actor, _ZN5Actor5swingEv);
+        VTABLE_CALL<void>(Actor_swing, (Actor*) ptr);
+    }
+    __EXPORT__(jboolean, HasOutputSignal, jshort sig) {
+        VTABLE_FIND_OFFSET(Actor_hasOutputSignal, _ZTV5Actor, _ZNK5ActorhasOutputSignalEh);
+        return VTABLE_CALL<bool>(Actor_hasOutputSignal, (Actor*) ptr, (unsigned char) sig);
+    }
+    __EXPORT__(jshort, GetOutputSignal) {
+        VTABLE_FIND_OFFSET(Actor_getOutputSignal, _ZTV5Actor, _ZNK5Actor15getOutputSignalEv);
+        return (jshort) VTABLE_CALL<unsigned char>(Actor_getOutputSignal, (Actor*) ptr);
+    }
+    __EXPORT__(jfloat, GetRiderYRotation, jlong rider) {
+        VTABLE_FIND_OFFSET(Actor_getRiderYRotation, _ZTV5Actor, _ZNK5Actor17getRiderYRotationERK5Actor);
+        return VTABLE_CALL<float>(Actor_getRiderYRotation, (Actor*) ptr, (int) rider);
+    }
+    __EXPORT__(jboolean, IsWorldBuilder) {
+        VTABLE_FIND_OFFSET(Actor_isWorldBuilder, _ZTV5Actor, _ZNK5Actor14isWorldBuilderEv);
+        return VTABLE_CALL<bool>(Actor_isWorldBuilder, (Actor*) ptr);
+    }
+    __EXPORT__(jboolean, IsCreative) {
+        VTABLE_FIND_OFFSET(Actor_isCreative, _ZTV5Actor, _ZNK5Actor10isCreativeEv);
+        return VTABLE_CALL<bool>(Actor_isCreative, (Actor*) ptr);
+    }
+    __EXPORT__(jboolean, IsAdventure) {
+        VTABLE_FIND_OFFSET(Actor_isAdventure, _ZTV5Actor, _ZNK5Actor11isAdventureEv);
+        return VTABLE_CALL<bool>(Actor_isAdventure, (Actor*) ptr);
+    }
+    __EXPORT__(void, Add, jlong stackptr) {
+        VTABLE_FIND_OFFSET(Actor_add, _ZTV5Actor, _ZN5Actor3addER9ItemStack);
+        VTABLE_CALL<void>(Actor_add, (Actor*) ptr, (int) stackptr);
+    }
+    __EXPORT__(void, Drop, jlong stackptr, jboolean someBool) {
+        VTABLE_FIND_OFFSET(Actor_drop, _ZTV5Actor, _ZN5Actor4dropERK9ItemStackb);
+        VTABLE_CALL<void>(Actor_drop, (Actor*) ptr, (int) stackptr, someBool);
+    }
+    __EXPORT__(void, SetAuxValue, jint value) {
+        VTABLE_FIND_OFFSET(Actor_setAuxValue, _ZTV5Actor, _ZN5Actor11setAuxValueEi);
+        VTABLE_CALL<void>(Actor_setAuxValue, (Actor*) ptr, value);
+    }
+    __EXPORT__(void, Wobble) {
+        VTABLE_FIND_OFFSET(Actor_wobble, _ZTV5Actor, _ZN5Actor6wobbleEv);
+        VTABLE_CALL<void>(Actor_wobble, (Actor*) ptr);
+    }
+    __EXPORT__(jboolean, HasHurt) {
+        VTABLE_FIND_OFFSET(Actor_wasHurt, _ZTV5Actor, _ZN5Actor7wasHurtEv);
+        return VTABLE_CALL<bool>(Actor_wasHurt, (Actor*) ptr);
+    }
+    __EXPORT__(void, StartSpinAttack) {
+        VTABLE_FIND_OFFSET(Actor_startSpinAttack, _ZTV5Actor, _ZN5Actor15startSpinAttackEv);
+        VTABLE_CALL<void>(Actor_startSpinAttack, (Actor*) ptr);
+    }
+    __EXPORT__(void, StopSpinAttack) {
+        VTABLE_FIND_OFFSET(Actor_stopSpinAttack, _ZTV5Actor, _ZN5Actor14stopSpinAttackEv);
+        VTABLE_CALL<void>(Actor_stopSpinAttack, (Actor*) ptr);
+    }
+    __EXPORT__(void, Kill) {
+        VTABLE_FIND_OFFSET(Actor_kill, _ZTV5Actor, _ZN5Actor4killEv);
+        VTABLE_CALL<void>(Actor_kill, (Actor*) ptr);
+    }
+    __EXPORT__(jboolean, ShouldTryMakeStepSound) {
+        VTABLE_FIND_OFFSET(Actor_shouldTryMakeStepSound, _ZTV5Actor, _ZN5Actor22shouldTryMakeStepSoundEv);
+        return VTABLE_CALL<bool>(Actor_shouldTryMakeStepSound, (Actor*) ptr);
+    }
+    __EXPORT__(jboolean, CanMakeStepSound) {
+        VTABLE_FIND_OFFSET(Actor_canMakeStepSound, _ZTV5Actor, _ZNK5Actor16canMakeStepSoundEv);
+        return VTABLE_CALL<bool>(Actor_canMakeStepSound, (Actor*) ptr);
+    }
+    __EXPORT__(jboolean, OutOfWorld) {
+        VTABLE_FIND_OFFSET(Actor_outOfWorld, _ZTV5Actor, _ZN5Actor10outOfWorldEv);
+        return VTABLE_CALL<bool>(Actor_outOfWorld, (Actor*) ptr);
+    }
+    __EXPORT__(void, PushOutOfBlocks, jfloat x, jfloat y, jfloat z) {
+        VTABLE_FIND_OFFSET(Actor_pushOutOfBlocks, _ZTV5Actor, _ZN5Actor15pushOutOfBlocksERK4Vec3);
+        VTABLE_CALL<void>(Actor_pushOutOfBlocks, (Actor*) ptr, Vec3(x, y, z));
+    }
+    __EXPORT__(void, DoWaterSplashEffect) {
+        VTABLE_FIND_OFFSET(Actor_doWaterSplashEffect, _ZTV5Actor, _ZN5Actor19doWaterSplashEffectEv);
+        VTABLE_CALL<void>(Actor_doWaterSplashEffect, (Actor*) ptr);
+    }
+    __EXPORT__(void, SpawnTrailBubbles) {
+        VTABLE_FIND_OFFSET(Actor_spawnTrailBubbles, _ZTV5Actor, _ZN5Actor17spawnTrailBubblesEv);
+        VTABLE_CALL<void>(Actor_spawnTrailBubbles, (Actor*) ptr);
+    }
+    __EXPORT__(jboolean, IsOnGround) {
+        return ((Actor*) ptr)->onGround;
+    }
 
+    #define GET_BREATHABLE BreathableComponent* b = ((Actor*) ptr)->tryGetComponent<BreathableComponent>();
+    #define RET_DEFAULT(RET) if(b == nullptr) return RET;
 
+    __EXPORT__(jboolean, CanBreatheAir) {
+        GET_BREATHABLE RET_DEFAULT(false) return b->canBreatheAir();
+    }
+    __EXPORT__(jboolean, CanBreatheWater) {
+        GET_BREATHABLE RET_DEFAULT(false) return b->canBreatheWater();
+    }
+    __EXPORT__(jboolean, CanBreatheLava) {
+        GET_BREATHABLE RET_DEFAULT(false) return b->canBreatheLava();
+    }
+    __EXPORT__(jboolean, CanBreatheSolids) {
+        GET_BREATHABLE RET_DEFAULT(false) return b->canBreathSolids();
+    }
+    __EXPORT__(jboolean, GeneratesBubbles) {
+        GET_BREATHABLE RET_DEFAULT(false) return b->generatesBubbles();
+    }
+    __EXPORT__(jint, GetInhaleTime) {
+        GET_BREATHABLE RET_DEFAULT(0) return b->getInhaleTime();
+    }
+    __EXPORT__(jint, GetSuffocateTime) {
+        GET_BREATHABLE RET_DEFAULT(0) return b->getSuffocateTime();
+    }
+    __EXPORT__(void, SetAirSupply, jshort supply) {
+        GET_BREATHABLE if(b != nullptr) b->setAirSupply(supply);
+    }
+    __EXPORT__(jshort, GetMaxAirSupply) {
+        GET_BREATHABLE RET_DEFAULT(0) return b->getMaxAirSupply();
+    }
+    __EXPORT__(void, SetMaxAirSupply, jshort supply) {
+        GET_BREATHABLE if(b != nullptr) b->setMaxAirSupply(supply);
+    }
+    __EXPORT__(jshort, GetAirRegenPerTick) {
+        GET_BREATHABLE RET_DEFAULT(0) return b->getAirRegenPerTick();
+    }
 
+    #undef GET_BREATHABLE
+    #undef RET_DEFAULT
 
-JNIEXPORT jfloat JNICALL Java_vsdum_kex_natives_Actor_nativeGetHealth
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->getHealth();
-}
-JNIEXPORT jfloat JNICALL Java_vsdum_kex_natives_Actor_nativeGetMaxHealth
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->getMaxHealth();
-}
-JNIEXPORT jint JNICALL Java_vsdum_kex_natives_Actor_nativeGetControllingSeat
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->getControllingSeat();
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeSetControllingSeat
-(JNIEnv*, jclass, jlong ptr, jint seat) {
-    ((Actor*) ptr)->setControllingSeat(seat);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsInsidePortal
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->isInsidePortal();
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeHasTeleported
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->hasTeleported();
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeMoveRelative
-(JNIEnv*, jclass, jlong ptr, jfloat strafe, jfloat up, jfloat forward, jfloat friction) {
-    ((Actor*) ptr)->moveRelative(strafe, up, forward, friction);
-}
-JNIEXPORT jlong JNICALL Java_vsdum_kex_natives_Actor_nativeGetRegion
-(JNIEnv*, jclass, jlong ptr) {
-    BlockSource* region = ((Actor*) ptr)->getRegion();
-    if(region == nullptr) return 0;
-    return (jlong) region;
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsTame
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->isTame();
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsLeashed
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->isLeashed();
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsLeashableType
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_isLeashableType, _ZTV5Actor, _ZNK5Actor15isLeashableTypeEv);
-    return VTABLE_CALL<bool>(Actor_isLeashableType, (Actor*) ptr);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsMoving
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->isMoving();
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeSetMoving
-(JNIEnv*, jclass, jlong ptr, jboolean moving) {
-    ((Actor*) ptr)->setMoving(moving);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeHasTotemEquipped
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->hasTotemEquipped();
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsAutonomous
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->isAutonomous();
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeSetAutonomous
-(JNIEnv*, jclass, jlong ptr, jboolean autonomous) {
-    ((Actor*) ptr)->setAutonomous(autonomous);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsPersistent
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->isPersistent();
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeRemoveEntity
-(JNIEnv*, jclass, jlong ptr) {
-    ((Actor*) ptr)->removeEntity();
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeSetCollidableMob
-(JNIEnv*, jclass, jlong ptr, jboolean collidable) {
-    ((Actor*) ptr)->setCollidableMob(collidable);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeGetCollidableMobNear
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->getCollidableMobNear();
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeSetCollidableMobNear
-(JNIEnv*, jclass, jlong ptr, jboolean collidable) {
-    ((Actor*) ptr)->setCollidableMobNear(collidable);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeHasFishingHook
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->hasFishingHook();
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeGetChainedDamageEffects
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->getChainedDamageEffects();
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeSetChainedDamageEffects
-(JNIEnv*, jclass, jlong ptr, jboolean chained) {
-    ((Actor*) ptr)->setChainedDamageEffects(chained);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsPacified
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->isPacified();
-}
-JNIEXPORT jfloat JNICALL Java_vsdum_kex_natives_Actor_nativeDistanceTo__JJ
-(JNIEnv*, jclass, jlong ptr, jlong actor) {
-    return ((Actor*) ptr)->distanceTo(*((Actor*) actor));
-}
-JNIEXPORT jfloat JNICALL Java_vsdum_kex_natives_Actor_nativeDistanceTo__JFFF
-(JNIEnv*, jclass, jlong ptr, jfloat x, jfloat y, jfloat z) {
-    return ((Actor*) ptr)->distanceTo(Vec3(x, y, z));
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeCanCurrentlySwim
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->canCurrentlySwim();
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsSwimming
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->isSwimming();
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsSwimmer
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->isSwimmer();
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeSetSwimmer
-(JNIEnv*, jclass, jlong ptr, jboolean swimmer) {
-    ((Actor*) ptr)->setSwimmer(swimmer);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeHasFamily
-(JNIEnv* env, jclass, jlong ptr, jstring family) {
-    const char* cfamily = env->GetStringUTFChars(family, 0);
-    HashedString hfamily(cfamily);
-    env->ReleaseStringUTFChars(family, cfamily);
-    return ((Actor*) ptr)->hasFamily(hfamily);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeHasAttributeBuff
-(JNIEnv*, jclass, jlong ptr, jint buffType) {
-    return ((Actor*) ptr)->hasAttributeBuff((AttributeBuffType) buffType);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsClientSide
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->isClientSide();
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsControlledByLocalInstance
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->isControlledByLocalInstance();
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsClimbing
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->isClimbing();
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeSetClimbing
-(JNIEnv*, jclass, jlong ptr, jboolean climbing) {
-    ((Actor*) ptr)->setClimbing(climbing);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeCanClimb
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->canClimb();
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeSetCanClimb
-(JNIEnv*, jclass, jlong ptr, jboolean canClimb) {
-    ((Actor*) ptr)->setCanClimb(canClimb);
-}
-JNIEXPORT jint JNICALL Java_vsdum_kex_natives_Actor_nativeGetSkinID
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->getSkinID();
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeSetSkinID
-(JNIEnv*, jclass, jlong ptr, jint skinID) {
-    ((Actor*) ptr)->setSkinID(skinID);
-}
-JNIEXPORT jfloat JNICALL Java_vsdum_kex_natives_Actor_nativeGetSpeedInMetersPerSecond
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->getSpeedInMetersPerSecond();
-}
-JNIEXPORT jint JNICALL Java_vsdum_kex_natives_Actor_nativeGetStrength
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->getStrength();
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeSetStrength
-(JNIEnv*, jclass, jlong ptr, jint strength) {
-    ((Actor*) ptr)->setStrength(strength);
-}
-JNIEXPORT jint JNICALL Java_vsdum_kex_natives_Actor_nativeGetStrengthMax
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->getStrengthMax();
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeSetStrengthMax
-(JNIEnv*, jclass, jlong ptr, jint strength) {
-    ((Actor*) ptr)->setStrengthMax(strength);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeGetDamageNearbyMobs
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->getDamageNearbyMobs();
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeSetDamageNearbyMobs
-(JNIEnv*, jclass, jlong ptr, jboolean damage) {
-    VTABLE_FIND_OFFSET(Actor_setDamageNearbyMobs, _ZTV5Actor, _ZN5Actor19setDamageNearbyMobsEb);
-    VTABLE_CALL<void>(Actor_setDamageNearbyMobs, (Actor*) ptr, damage);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsLayingDown
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->isLayingDown();
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeSetLayingDown
-(JNIEnv*, jclass, jlong ptr, jboolean laying) {
-    ((Actor*) ptr)->setLayingDown(laying);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeGetTempted
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->getTempted();
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeSetTempted
-(JNIEnv*, jclass, jlong ptr, jboolean tempted) {
-    ((Actor*) ptr)->setTempted(tempted);
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeDropTowards
-(JNIEnv*, jclass, jlong ptr, jlong stackptr, jfloat x, jfloat y, jfloat z) {
-    ((Actor*) ptr)->dropTowards(*((ItemStack*) stackptr), Vec3(x, y, z));
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsTrading
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->isTrading();
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeInDownwardFlowingLiquid
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->inDownwardFlowingLiquid();
-}
-JNIEXPORT jint JNICALL Java_vsdum_kex_natives_Actor_nativeGetJumpDuration
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->getJumpDuration();
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeSetJumpDuration
-(JNIEnv*, jclass, jlong ptr, jint dur) {
-    ((Actor*) ptr)->setJumpDuration(dur);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsScared
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->isScared();
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeSetScared
-(JNIEnv*, jclass, jlong ptr, jboolean scared) {
-    ((Actor*) ptr)->setScared(scared);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsSitting
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->isSitting();
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeSetSitting
-(JNIEnv*, jclass, jlong ptr, jboolean sitting) {
-    VTABLE_FIND_OFFSET(Actor_setSitting, _ZTV5Actor, _ZN5Actor10setSittingEb);
-    VTABLE_CALL<void>(Actor_setSitting, (Actor*) ptr, sitting);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsBaby
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->isBaby();
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsIgnited
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->isIgnited();
-}
-JNIEXPORT jint JNICALL Java_vsdum_kex_natives_Actor_nativeGetLifeSpan
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_getLifeSpan, _ZTV5Actor, _ZNK5Actor11getLifeSpanEv);
-    return VTABLE_CALL<int>(Actor_getLifeSpan, (Actor*) ptr);
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeSetLimitedLife
-(JNIEnv*, jclass, jlong ptr, jint life) {
-    ((Actor*) ptr)->setLimitedLife(life);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsInvisible
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_isInvisible, _ZTV5Actor, _ZNK5Actor11isInvisibleEv);
-    return VTABLE_CALL<bool>(Actor_isInvisible, (Actor*) ptr);
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeSetInvisible
-(JNIEnv*, jclass, jlong ptr, jboolean invisible) {
-    ((Actor*) ptr)->setInvisible(invisible);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsInWorld
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->isInWorld();
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsInLove
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->isInLove();
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeSetInLove
-(JNIEnv*, jclass, jlong ptr, jlong loverptr) {
-    ((Actor*) ptr)->setInLove((Actor*) loverptr);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsDoorBreaker
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->isDoorBreaker();
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeSetDoorBreaker
-(JNIEnv*, jclass, jlong ptr, jboolean breaker) {
-    ((Actor*) ptr)->setDoorBreaker(breaker);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsWalker
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->isWalker();
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeSetWalker
-(JNIEnv*, jclass, jlong ptr, jboolean walker) {
-    ((Actor*) ptr)->setWalker(walker);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsCharged
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->isCharged();
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeSetCharged
-(JNIEnv*, jclass, jlong ptr, jboolean charged) {
-    ((Actor*) ptr)->setCharged(charged);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeCanFly
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->canFly();
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeSetCanFly
-(JNIEnv*, jclass, jlong ptr, jboolean canFly) {
-    ((Actor*) ptr)->setCanFly(canFly);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsInPrecipitation
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->isInPrecipitation();
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeSetAABB
-(JNIEnv*, jclass, jlong ptr, jfloat x1, jfloat y1, jfloat z1, jfloat x2, jfloat y2, jfloat z2) {
-    ((Actor*) ptr)->setAABB(AABB(x1, y1, z1, x2, y2, z2));
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsSafeToSleepNear
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->isSafeToSleepNear();
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeSetBlockTarget
-(JNIEnv*, jclass, jlong ptr, jint x, jint y, jint z) {
-    return ((Actor*) ptr)->setBlockTarget(BlockPos(x, y, z));
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsAngry
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->isAngry();
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsPowered
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->isPowered();
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeSetPowered
-(JNIEnv*, jclass, jlong ptr, jboolean powered) {
-    ((Actor*) ptr)->setPowered(powered);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsSheared
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->isSheared();
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsOutOfControl
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->isOutOfControl();
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsSneaking
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->isSneaking();
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeSetSneaking
-(JNIEnv*, jclass, jlong ptr, jboolean sneaking) {
-    VTABLE_FIND_OFFSET(Actor_setSneaking, _ZTV5Actor, _ZNK5Actor11setSneakingEb);
-    VTABLE_CALL<void>(Actor_setSneaking, (Actor*) ptr, sneaking);
-}
-JNIEXPORT jlong JNICALL Java_vsdum_kex_natives_Actor_nativeGetTarget
-(JNIEnv*, jclass, jlong ptr) {
-    Actor* target = ((Actor*) ptr)->getTarget();
-    if(target == nullptr) return 0;
-    return (jlong) target;
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeSetTarget
-(JNIEnv*, jclass, jlong ptr, jlong targetptr) {
-    VTABLE_FIND_OFFSET(Actor_setTarget, _ZTV5Actor, _ZN5Actor9setTargetEP5Actor);
-    VTABLE_CALL<void>(Actor_setTarget, (Actor*) ptr, (Actor*) targetptr);
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeSetStunned
-(JNIEnv*, jclass, jlong ptr, jboolean stunned) {
-    ((Actor*) ptr)->setStunned(stunned);
-}
-JNIEXPORT jshort JNICALL Java_vsdum_kex_natives_Actor_nativeGetTotalAirSupply
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->getTotalAirSupply();
-}
-JNIEXPORT jshort JNICALL Java_vsdum_kex_natives_Actor_nativeGetAirSupply
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->getAirSupply();
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsInThunderstorm
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->isInThunderstorm();
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsBribed
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->isBribed();
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsStanding
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->isStanding();
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeSetStanding
-(JNIEnv*, jclass, jlong ptr, jboolean standing) {
-    VTABLE_FIND_OFFSET(Actor_setStanding, _ZTV5Actor, _ZN5Actor11setStandingEb);
-    VTABLE_CALL<void>(Actor_setStanding, (Actor*) ptr, standing);
-}
-JNIEXPORT jint JNICALL Java_vsdum_kex_natives_Actor_nativeGetShakeTime
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->getShakeTime();
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeSetShakeTime
-(JNIEnv*, jclass, jlong ptr, jint time) {
-    ((Actor*) ptr)->setShakeTime(time);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeHasCategory
-(JNIEnv*, jclass, jlong ptr, jint category) {
-    return ((Actor*) ptr)->hasCategory((ActorCategory) category);
-}
-JNIEXPORT jfloat JNICALL Java_vsdum_kex_natives_Actor_nativeGetVerticalSpeedInMetersPerSecond
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->getVerticalSpeedInMetersPerSecond();
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsTrusting
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->isTrusting();
-}
-JNIEXPORT jfloat JNICALL Java_vsdum_kex_natives_Actor_nativeGetRadius
-(JNIEnv*, jclass, jlong ptr) {
-    return ((Actor*) ptr)->getRadius();
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeHasComponent
-(JNIEnv* env, jclass, jlong ptr, jstring component) {
-    const char* ccomponent = env->GetStringUTFChars(component, 0);
-    HashedString hcomponent(ccomponent);
-    env->ReleaseStringUTFChars(component, ccomponent);
-    VTABLE_FIND_OFFSET(Actor_hasComponent, _ZTV5Actor, _ZNK5Actor12hasComponentERK12HashedString);
-    return VTABLE_CALL<bool>(Actor_hasComponent, (Actor*) ptr, hcomponent);
-}
-JNIEXPORT jint JNICALL Java_vsdum_kex_natives_Actor_nativeGetOnDeathExperience
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_getOnDeathExperience, _ZTV5Actor, _ZN5Actor20getOnDeathExperienceEv);
-    return VTABLE_CALL<int>(Actor_getOnDeathExperience, (Actor*) ptr);
-}
-// TODO getInterpolatedRidingPosition, getInterpolatedBodyRot, getInterpolatedHeadRot
-JNIEXPORT jfloat JNICALL Java_vsdum_kex_natives_Actor_nativeGetInterpolatedBodyYaw
-(JNIEnv*, jclass, jlong ptr, jfloat partialTicks) {
-    VTABLE_FIND_OFFSET(Actor_getInterpolatedBodyYaw, _ZTV5Actor, _ZNK5Actor22getInterpolatedBodyYawEf);
-    return VTABLE_CALL<float>(Actor_getInterpolatedBodyYaw, (Actor*) ptr, partialTicks);
-}
-JNIEXPORT jfloat JNICALL Java_vsdum_kex_natives_Actor_nativeGetYawSpeedInDegreesPerSecond
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_getYawSpeedInDegreesPerSecond, _ZTV5Actor, _ZNK5Actor29getYawSpeedInDegreesPerSecondEv);
-    return VTABLE_CALL<float>(Actor_getYawSpeedInDegreesPerSecond, (Actor*) ptr);
-}
-JNIEXPORT jfloat JNICALL Java_vsdum_kex_natives_Actor_nativeGetInterpolatedWalkAnimSpeed
-(JNIEnv*, jclass, jlong ptr, jfloat partialTicks) {
-    VTABLE_FIND_OFFSET(Actor_getInterpolatedWalkAnimSpeed, _ZTV5Actor, _ZNK5Actor28getInterpolatedWalkAnimSpeedEf);
-    return VTABLE_CALL<float>(Actor_getInterpolatedWalkAnimSpeed, (Actor*) ptr, partialTicks);
-}
-// TODO getInterpolatedRidingOffset
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsFireImmune
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_isFireImmune, _ZTV5Actor, _ZNK5Actor12isFireImmuneEv);
-    return VTABLE_CALL<bool>(Actor_isFireImmune, (Actor*) ptr);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeBreaksFallingBlocks
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_breaksFallingBlocks, _ZTV5Actor, _ZNK5Actor19breaksFallingBlocksEv);
-    return VTABLE_CALL<bool>(Actor_breaksFallingBlocks, (Actor*) ptr);
-}
-// TODO blockedByShield, teleportTo
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeChorusFruitTeleport
-(JNIEnv*, jclass, jlong ptr, jfloat x, jfloat y, jfloat z) {
-    VTABLE_FIND_OFFSET(Actor_chorusFruitTeleport, _ZTV5Actor, _ZN5Actor19chorusFruitTeleportER4Vec3);
-    VTABLE_CALL<void>(Actor_chorusFruitTeleport, (Actor*) ptr, Vec3(x, y, z));
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeLerpTo
-(JNIEnv*, jclass, jlong ptr, jdouble x, jdouble y, jdouble z, jfloat rotX, jfloat rotY) {
-    VTABLE_FIND_OFFSET(Actor_lerpTo, _ZTV5Actor, _ZN5Actor6lerpToERK4Vec3RK4Vec2i);
-    VTABLE_CALL<void>(Actor_lerpTo, (Actor*) ptr, Vec3(x, y, z), Vec2(rotX, rotY), 0);
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeLerpMotion
-(JNIEnv*, jclass, jlong ptr, jdouble x, jdouble y, jdouble z) {
-    VTABLE_FIND_OFFSET(Actor_lerpMotion, _ZTV5Actor, _ZN5Actor10lerpMotionERK4Vec3);
-    VTABLE_CALL<void>(Actor_lerpMotion, (Actor*) ptr, Vec3(x, y, z));
-}
-JNIEXPORT jfloat JNICALL Java_vsdum_kex_natives_Actor_nativeGetRidingHeight
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_getRidingHeight, _ZTV5Actor, _ZN5Actor15getRidingHeightEv);
-    return VTABLE_CALL<float>(Actor_getRidingHeight, (Actor*) ptr);
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeStartRiding
-(JNIEnv*, jclass, jlong ptr, jlong riddenPtr) {
-    VTABLE_FIND_OFFSET(Actor_startRiding, _ZTV5Actor, _ZN5Actor11startRidingER5Actor);
-    VTABLE_CALL<void>(Actor_startRiding, (Actor*) ptr, *((Actor*) riddenPtr));
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeAddRider
-(JNIEnv*, jclass, jlong ptr, jlong riderPtr) {
-    VTABLE_FIND_OFFSET(Actor_addRider, _ZTV5Actor, _ZN5Actor8addRiderER5Actor);
-    VTABLE_CALL<void>(Actor_addRider, (Actor*) ptr, *((Actor*) riderPtr));
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIntersects
-(JNIEnv*, jclass, jlong ptr, jfloat x1, jfloat y1, jfloat z1, jfloat x2, jfloat y2, jfloat z2) {
-    VTABLE_FIND_OFFSET(Actor_intersects, _ZTV5Actor, _ZNK5Actor10intersectsERK4Vec3S2_);
-    return VTABLE_CALL<bool>(Actor_intersects, (Actor*) ptr, Vec3(x1, y1, z1), Vec3(x2, y2, z2));
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsFree__JFFF
-(JNIEnv*, jclass, jlong ptr, jfloat x, jfloat y, jfloat z) {
-    VTABLE_FIND_OFFSET(Actor_isFree, _ZTV5Actor, _ZN5Actor6isFreeERK4Vec3);
-    return VTABLE_CALL<bool>(Actor_isFree, (Actor*) ptr, Vec3(x, y, z));
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsFree_JFFFF
-(JNIEnv*, jclass, jlong ptr, jfloat x, jfloat y, jfloat z, jfloat someFloat) {
-    VTABLE_FIND_OFFSET(Actor_isFreeConst, _ZTV5Actor, _ZNK5Actor6isFreeERK4Vec3f);
-    return VTABLE_CALL<bool>(Actor_isFreeConst, (Actor*) ptr, Vec3(x, y, z), someFloat);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsInWall
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_isInWall, _ZTV5Actor, _ZNK5Actor8isInWallEv);
-    return VTABLE_CALL<bool>(Actor_isInWall, (Actor*) ptr);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeCanShowNameTag
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_canShowNameTag, _ZTV5Actor, _ZNK5Actor14canShowNameTagEv);
-    return VTABLE_CALL<bool>(Actor_canShowNameTag, (Actor*) ptr);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeCanExistInPeaceful
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_canExistInPeaceful, _ZTV5Actor, _ZNK5Actor18canExistInPeacefulEv);
-    return VTABLE_CALL<bool>(Actor_canExistInPeaceful, (Actor*) ptr);
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeSetNameTagVisible
-(JNIEnv*, jclass, jlong ptr, jboolean visible) {
-    VTABLE_FIND_OFFSET(Actor_setNameTagVisible, _ZTV5Actor, _ZN5Actor17setNameTagVisibleEb);
-    VTABLE_CALL<void>(Actor_setNameTagVisible, (Actor*) ptr, visible);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeGetAlwaysShowNameTag
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_getAlwaysShowNameTag, _ZTV5Actor, _ZNK5Actor20getAlwaysShowNameTagEv);
-    return VTABLE_CALL<bool>(Actor_getAlwaysShowNameTag, (Actor*) ptr);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsInWater
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_isInWater, _ZTV5Actor, _ZNK5Actor9isInWaterEv);
-    return VTABLE_CALL<bool>(Actor_isInWater, (Actor*) ptr);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeHasEnteredWater
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_hasEnteredWater, _ZTV5Actor, _ZNK5Actor15hasEnteredWaterEv);
-    return VTABLE_CALL<bool>(Actor_hasEnteredWater, (Actor*) ptr);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsImmersedInWater
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_isImmersedInWater, _ZTV5Actor, _ZNK5Actor17isImmersedInWaterEv);
-    return VTABLE_CALL<bool>(Actor_isImmersedInWater, (Actor*) ptr);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsInWaterOrRain
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_isInWaterOrRain, _ZTV5Actor, _ZNK5Actor15isInWaterOrRainEv);
-    return VTABLE_CALL<bool>(Actor_isInWaterOrRain, (Actor*) ptr);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsInLava
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_isInLava, _ZTV5Actor, _ZNK5Actor8isInLavaEv);
-    return VTABLE_CALL<bool>(Actor_isInLava, (Actor*) ptr);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsUnderLiquid
-(JNIEnv*, jclass, jlong ptr, jint materialType) {
-    VTABLE_FIND_OFFSET(Actor_isUnderLiquid, _ZTV5Actor, _ZNK5Actor13isUnderLiquidE12MaterialType);
-    return VTABLE_CALL<bool>(Actor_isUnderLiquid, (Actor*) ptr, (MaterialType) materialType);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsOverWater
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_isOverWater, _ZTV5Actor, _ZNK5Actor11isOverWaterEv);
-    return VTABLE_CALL<bool>(Actor_isOverWater, (Actor*) ptr);
-}
-JNIEXPORT jfloat JNICALL Java_vsdum_kex_natives_Actor_nativeGetShadowRadius
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_getShadowRadius, _ZTV5Actor, _ZNK5Actor15getShadowRadiusEv);
-    return VTABLE_CALL<float>(Actor_getShadowRadius, (Actor*) ptr);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeCanSeeInvisible
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_canSeeInvisible, _ZTV5Actor, _ZNK5Actor15canSeeInvisibleEv);
-    return VTABLE_CALL<bool>(Actor_canSeeInvisible, (Actor*) ptr);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeCanSee__JJ
-(JNIEnv*, jclass, jlong ptr, jlong actorptr) {
-    VTABLE_FIND_OFFSET(Actor_canSeeActor, _ZTV5Actor, _ZNK5Actor6canSeeERK5Actor);
-    return VTABLE_CALL<bool>(Actor_canSeeActor, (Actor*) ptr, (Actor*) actorptr);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeCanSee__JFFF
-(JNIEnv*, jclass, jlong ptr, jfloat x, jfloat y, jfloat z) {
-    VTABLE_FIND_OFFSET(Actor_canSeeVec, _ZTV5Actor, _ZNK5Actor6canSeeERK4Vec3);
-    return VTABLE_CALL<bool>(Actor_canSeeVec, (Actor*) ptr, Vec3(x, y, z));
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsImmobile
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_isImmobile, _ZTV5Actor, _ZNK5Actor10isImmobileEv);
-    return VTABLE_CALL<bool>(Actor_isImmobile, (Actor*) ptr);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsSilent
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_isSilent, _ZTV5Actor, _ZNK5Actor8isSilentEv);
-    return VTABLE_CALL<bool>(Actor_isSilent, (Actor*) ptr);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsPickable
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_isPickable, _ZTV5Actor, _ZNK5Actor10isPickableEv);
-    return VTABLE_CALL<bool>(Actor_isPickable, (Actor*) ptr);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsFishable
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_isFishable, _ZTV5Actor, _ZNK5Actor10isFishableEv);
-    return VTABLE_CALL<bool>(Actor_isFishable, (Actor*) ptr);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsSleeping
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_isSleeping, _ZTV5Actor, _ZNK5Actor10isSleepingEv);
-    return VTABLE_CALL<bool>(Actor_isSleeping, (Actor*) ptr);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsShootable
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_isShootable, _ZTV5Actor, _ZNK5Actor11isShootableEv);
-    return VTABLE_CALL<bool>(Actor_isShootable, (Actor*) ptr);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsBlocking
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_isBlocking, _ZTV5Actor, _ZNK5Actor10isBlockingEv);
-    return VTABLE_CALL<bool>(Actor_isBlocking, (Actor*) ptr);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsAlive
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_isAlive, _ZTV5Actor, _ZNK5Actor7isAliveEv);
-    return VTABLE_CALL<bool>(Actor_isAlive, (Actor*) ptr);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsOnFire
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_isOnFire, _ZTV5Actor, _ZNK5Actor8isOnFireEv);
-    return VTABLE_CALL<bool>(Actor_isOnFire, (Actor*) ptr);
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeSetOnFire
-(JNIEnv*, jclass, jlong ptr, jint fireTicks) {
-    VTABLE_FIND_OFFSET(Actor_setOnFire, _ZTV5Actor, _ZN5Actor9setOnFireEi);
-    VTABLE_CALL<void>(Actor_setOnFire, (Actor*) ptr, fireTicks);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsOnHotBlock
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_isOnHotBlock, _ZTV5Actor, _ZNK5Actor12isOnHotBlockEv);
-    return VTABLE_CALL<bool>(Actor_isOnHotBlock, (Actor*) ptr);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsCreativeModeAllowed
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_isCreativeModeAllowed, _ZTV5Actor, _ZNK5Actor21isCreativeModeAllowedEv);
-    return VTABLE_CALL<bool>(Actor_isCreativeModeAllowed, (Actor*) ptr);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsSurfaceMob
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_isSurfaceMob, _ZTV5Actor, _ZNK5Actor12isSurfaceMobEv);
-    return VTABLE_CALL<bool>(Actor_isSurfaceMob, (Actor*) ptr);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsTargetable
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_isTargetable, _ZTV5Actor, _ZNK5Actor12isTargetableEv);
-    return VTABLE_CALL<bool>(Actor_isTargetable, (Actor*) ptr);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsLocalPlayer
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_isLocalPlayer, _ZTV5Actor, _ZNK5Actor13isLocalPlayerEv);
-    return VTABLE_CALL<bool>(Actor_isLocalPlayer, (Actor*) ptr);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsPlayer
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_isPlayer, _ZTV5Actor, _ZNK5Actor8isPlayerEv);
-    return VTABLE_CALL<bool>(Actor_isPlayer, (Actor*) ptr);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeCanAttack
-(JNIEnv*, jclass, jlong ptr, jlong victim, jboolean someBool) {
-    VTABLE_FIND_OFFSET(Actor_canAttack, _ZTV5Actor, _ZNK5Actor9canAttackEP5Actorb);
-    return VTABLE_CALL<bool>(Actor_canAttack, (Actor*) ptr, (Actor*) victim, someBool);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsValidTarget
-(JNIEnv*, jclass, jlong ptr, jlong potentialTarget) {
-    VTABLE_FIND_OFFSET(Actor_isValidTarget, _ZTV5Actor, _ZNK5Actor13isValidTargetEP5Actor);
-    return VTABLE_CALL<bool>(Actor_isValidTarget, (Actor*) ptr, (Actor*) potentialTarget);
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeAttack
-(JNIEnv*, jclass, jlong ptr, jlong victim) {
-    VTABLE_FIND_OFFSET(Actor_attack, _ZTV5Actor, _ZN5Actor6attackER5Actor);
-    VTABLE_CALL<void>(Actor_attack, (Actor*) ptr, *((Actor*) victim));
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativePerformRangedAttack
-(JNIEnv*, jclass, jlong ptr, jlong victim, jfloat distanceFactor) {
-    VTABLE_FIND_OFFSET(Actor_performRangedAttack, _ZTV5Actor, _ZN5Actor19performRangedAttackER5Actorf);
-    VTABLE_CALL<void>(Actor_performRangedAttack, (Actor*) ptr, *((Actor*) victim), distanceFactor);
-}
-JNIEXPORT jint JNICALL Java_vsdum_kex_natives_Actor_nativeGetEquipmentCount
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_getEquipmentCount, _ZTV5Actor, _ZNK5Actor17getEquipmentCountEv);
-    return VTABLE_CALL<int>(Actor_getEquipmentCount, (Actor*) ptr);
-}
-JNIEXPORT jint JNICALL Java_vsdum_kex_natives_Actor_nativeGetInventorySize
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_getInventorySize, _ZTV5Actor, _ZN5Actor16getInventorySizeEv);
-    return VTABLE_CALL<int>(Actor_getInventorySize, (Actor*) ptr);
-}
-JNIEXPORT jint JNICALL Java_vsdum_kex_natives_Actor_nativeGetEquipSlots
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_getEquipSlots, _ZTV5Actor, _ZNK5Actor13getEquipSlotsEv);
-    return VTABLE_CALL<int>(Actor_getEquipSlots, (Actor*) ptr);
-}
-JNIEXPORT jint JNICALL Java_vsdum_kex_natives_Actor_nativeGetChestSlots
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_getChestSlots, _ZTV5Actor, _ZNK5Actor13getChestSlotsEv);
-    return VTABLE_CALL<int>(Actor_getChestSlots, (Actor*) ptr);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeCanPowerJump
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_canPowerJump, _ZTV5Actor, _ZNK5Actor12canPowerJumpEv);
-    return VTABLE_CALL<bool>(Actor_canPowerJump, (Actor*) ptr);
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeSetCanPowerJump
-(JNIEnv*, jclass, jlong ptr, jboolean canPowerJump) {
-    VTABLE_FIND_OFFSET(Actor_setCanPowerJump, _ZTV5Actor, _ZNK5Actor15setCanPowerJumpEb);
-    VTABLE_CALL<void>(Actor_setCanPowerJump, (Actor*) ptr, canPowerJump);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsJumping
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_isJumping, _ZTV5Actor, _ZNK5Actor9isJumpingEv);
-    return VTABLE_CALL<bool>(Actor_isJumping, (Actor*) ptr);
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeDoFireHurt
-(JNIEnv*, jclass, jlong ptr, jint amount) {
-    VTABLE_FIND_OFFSET(Actor_doFireHurt, _ZTV5Actor, _ZN5Actor10doFireHurtEi);
-    VTABLE_CALL<void>(Actor_doFireHurt, (Actor*) ptr, amount);
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeOnLightningHit
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_onLightningHit, _ZTV5Actor, _ZN5Actor14onLightningHitEv);
-    VTABLE_CALL<void>(Actor_onLightningHit, (Actor*) ptr);
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeFeed
-(JNIEnv*, jclass, jlong ptr, jint amount) {
-    VTABLE_FIND_OFFSET(Actor_feed, _ZTV5Actor, _ZN5Actor4feedEi);
-    VTABLE_CALL<void>(Actor_feed, (Actor*) ptr, amount);
-}
-JNIEXPORT jfloat JNICALL Java_vsdum_kex_natives_Actor_nativeGetPickRadius
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_getPickRadius, _ZTV5Actor, _ZNK5Actor13getPickRadiusEv);
-    return VTABLE_CALL<float>(Actor_getPickRadius, (Actor*) ptr);
-}
-JNIEXPORT jlong JNICALL Java_vsdum_kex_natives_Actor_nativeGetArmor
-(JNIEnv*, jclass, jlong ptr, jint slot) {
-    VTABLE_FIND_OFFSET(Actor_getArmor, _ZTV5Actor, _ZNK5Actor8getArmorE9ArmorSlot);
-    ItemStack* stack = VTABLE_CALL<ItemStack*>(Actor_getArmor, (Actor*) ptr, (ArmorSlot) slot);
-    if(stack == nullptr) return 0;
-    return (jlong) stack;
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeSetArmor
-(JNIEnv*, jclass, jlong ptr, jint slot, jlong stack) {
-    VTABLE_FIND_OFFSET(Actor_setArmor, _ZTV5Actor, _ZN5Actor8setArmorE9ArmorSlotRK9ItemStack);
-    VTABLE_CALL<void, ArmorSlot, ItemStack const&>(Actor_setArmor, (Actor*) ptr, (ArmorSlot) slot, *((ItemStack*) stack));
-}
-JNIEXPORT jint JNICALL Java_vsdum_kex_natives_Actor_nativeGetArmorMaterialTypeInSlot
-(JNIEnv*, jclass, jlong ptr, jint slot) {
-    VTABLE_FIND_OFFSET(Actor_getArmorMaterialTypeInSlot, _ZTV5Actor, _ZNK5Actor26getArmorMaterialTypeInSlotE9ArmorSlot);
-    return VTABLE_CALL<MaterialType>(Actor_getArmorMaterialTypeInSlot, (Actor*) ptr, (ArmorSlot) slot);
-}
-JNIEXPORT jint JNICALL Java_vsdum_kex_natives_Actor_nativeGetArmorMaterialTextureTypeInSlot
-(JNIEnv*, jclass, jlong ptr, jint slot) {
-    VTABLE_FIND_OFFSET(Actor_getArmorMaterialTextureTypeInSlot, _ZTV5Actor, _ZNK5Actor33getArmorMaterialTextureTypeInSlotE9ArmorSlot);
-    return VTABLE_CALL<ArmorTextureType>(Actor_getArmorMaterialTextureTypeInSlot, (Actor*) ptr, (ArmorSlot) slot);
-}
-JNIEXPORT jlong JNICALL Java_vsdum_kex_natives_Actor_nativeGetEquippedSlot
-(JNIEnv*, jclass, jlong ptr, jint slot) {
-    VTABLE_FIND_OFFSET(Actor_getEquippedSlot, _ZTV5Actor, _ZNK5Actor15getEquippedSlotE13EquipmentSlot);
-    ItemStack* stack = VTABLE_CALL<ItemStack*>(Actor_getEquippedSlot, (Actor*) ptr, (EquipmentSlot) slot);
-    if(stack == nullptr) return 0;
-    return (jlong) stack;
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeSetEquippedSlot
-(JNIEnv*, jclass, jlong ptr, jint slot, jlong stack) {
-    VTABLE_FIND_OFFSET(Actor_setEquippedSlot, _ZTV5Actor, _ZN5Actor15setEquippedSlotE13EquipmentSlotRK9ItemStack);
-    VTABLE_CALL<void, EquipmentSlot, ItemStack const&>(Actor_setEquippedSlot, (Actor*) ptr, (EquipmentSlot) slot, *((ItemStack*) stack));
-}
-JNIEXPORT jlong JNICALL Java_vsdum_kex_natives_Actor_nativeGetCarriedItem
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_getCarriedItem, _ZTV5Actor, _ZNK5Actor14getCarriedItemEv);
-    ItemStack* stack = VTABLE_CALL<ItemStack*>(Actor_getCarriedItem, (Actor*) ptr);
-    if(stack == nullptr) return 0;
-    return (jlong) stack;
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeSetCarriedItem
-(JNIEnv*, jclass, jlong ptr, jlong stackptr) {
-    VTABLE_FIND_OFFSET(Actor_setCarriedItem, _ZTV5Actor, _ZN5Actor14setCarriedItemERK9ItemStack);
-    VTABLE_CALL<void, ItemStack const&>(Actor_setCarriedItem, (Actor*) ptr, *((ItemStack*) stackptr));
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeSetOffhandSlot
-(JNIEnv*, jclass, jlong ptr, jlong stackptr) {
-    VTABLE_FIND_OFFSET(Actor_setOffhandSlot, _ZTV5Actor, _ZN5Actor14setOffhandSlotERK9ItemStack);
-    VTABLE_CALL<void, ItemStack const&>(Actor_setOffhandSlot, (Actor*) ptr, *((ItemStack*) stackptr));
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeConsumeTotem
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_consumeTotem, _ZTV5Actor, _ZN5Actor12consumeTotemEv);
-    VTABLE_CALL<void>(Actor_consumeTotem, (Actor*) ptr);
-}
-JNIEXPORT jint JNICALL Java_vsdum_kex_natives_Actor_nativeGetEntityTypeId
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_getEntityTypeId, _ZTV5Actor, _ZNK5Actor15getEntityTypeIdEv);
-    return (int) VTABLE_CALL<ActorType>(Actor_getEntityTypeId, (Actor*) ptr);
-}
-JNIEXPORT jint JNICALL Java_vsdum_kex_natives_Actor_nativeGetPortalCooldown
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_getPortalCooldown, _ZTV5Actor, _ZNK5Actor17getPortalCooldownEv);
-    return VTABLE_CALL<int>(Actor_getPortalCooldown, (Actor*) ptr);
-}
-JNIEXPORT jint JNICALL Java_vsdum_kex_natives_Actor_nativeGetPortalWaitTime
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_getPortalWaitTime, _ZTV5Actor, _ZNK5Actor17getPortalWaitTimeEv);
-    return VTABLE_CALL<int>(Actor_getPortalWaitTime, (Actor*) ptr);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeCanBePulledIntoVehicle
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_canBePulledIntoVehicle, _ZTV5Actor, _ZNK5Actor22canBePulledIntoVehicleEv);
-    return VTABLE_CALL<bool>(Actor_canBePulledIntoVehicle, (Actor*) ptr);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeInCaravan
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_inCaravan, _ZTV5Actor, _ZNK5Actor9inCaravanEv);
-    return VTABLE_CALL<bool>(Actor_inCaravan, (Actor*) ptr);
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeHeal
-(JNIEnv*, jclass, jlong ptr, jint amount) {
-    VTABLE_FIND_OFFSET(Actor_heal, _ZTV5Actor, _ZN5Actor4healEi);
-    VTABLE_CALL<void>(Actor_heal, (Actor*) ptr, amount);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsInvertedHealAndHarm
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_isInvertedHealAndHarm, _ZTV5Actor, _ZNK5Actor21isInvertedHealAndHarmEv);
-    return VTABLE_CALL<bool>(Actor_isInvertedHealAndHarm, (Actor*) ptr);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeCanBeAffected__JI
-(JNIEnv*, jclass, jlong ptr, jint effectId) {
-    VTABLE_FIND_OFFSET(Actor_canBeAffectedI, _ZTV5Actor, _ZNK5Actor13canBeAffectedEi);
-    return VTABLE_CALL<bool>(Actor_canBeAffectedI, (Actor*) ptr, effectId);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeCanBeAffected__JJ
-(JNIEnv*, jclass, jlong ptr, jlong mei) {
-    VTABLE_FIND_OFFSET(Actor_canBeAffectedMEI, _ZTV5Actor, _ZNK5Actor13canBeAffectedERK17MobEffectInstance);
-    return VTABLE_CALL<bool, MobEffectInstance const&>(Actor_canBeAffectedMEI, (Actor*) ptr, *((MobEffectInstance*) mei));
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeCanBeAffectedByArrow
-(JNIEnv*, jclass, jlong ptr, jlong mei) {
-    VTABLE_FIND_OFFSET(Actor_canBeAffectedByArrow, _ZTV5Actor, _ZNK5Actor20canBeAffectedByArrowERK17MobEffectInstance);
-    return VTABLE_CALL<bool, MobEffectInstance const&>(Actor_canBeAffectedByArrow, (Actor*) ptr, *((MobEffectInstance*) mei));
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeSwing
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_swing, _ZTV5Actor, _ZN5Actor5swingEv);
-    VTABLE_CALL<void>(Actor_swing, (Actor*) ptr);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeHasOutputSignal
-(JNIEnv*, jclass, jlong ptr, jshort signal) {
-    VTABLE_FIND_OFFSET(Actor_hasOutputSignal, _ZTV5Actor, _ZNK5ActorhasOutputSignalEh);
-    return VTABLE_CALL<bool>(Actor_hasOutputSignal, (Actor*) ptr, (unsigned char) signal);
-}
-JNIEXPORT jshort JNICALL Java_vsdum_kex_natives_Actor_nativeGetOutputSignal
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_getOutputSignal, _ZTV5Actor, _ZNK5Actor15getOutputSignalEv);
-    return (jshort) VTABLE_CALL<unsigned char>(Actor_getOutputSignal, (Actor*) ptr);
-}
-JNIEXPORT jfloat JNICALL Java_vsdum_kex_natives_Actor_nativeGetRiderYRotation
-(JNIEnv*, jclass, jlong ptr, jlong rider) {
-    VTABLE_FIND_OFFSET(Actor_getRiderYRotation, _ZTV5Actor, _ZNK5Actor17getRiderYRotationERK5Actor);
-    return VTABLE_CALL<float>(Actor_getRiderYRotation, (Actor*) ptr, *((Actor*) rider));
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsWorldBuilder
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_isWorldBuilder, _ZTV5Actor, _ZNK5Actor14isWorldBuilderEv);
-    return VTABLE_CALL<bool>(Actor_isWorldBuilder, (Actor*) ptr);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsCreative
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_isCreative, _ZTV5Actor, _ZNK5Actor10isCreativeEv);
-    return VTABLE_CALL<bool>(Actor_isCreative, (Actor*) ptr);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsAdventure
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_isAdventure, _ZTV5Actor, _ZNK5Actor11isAdventureEv);
-    return VTABLE_CALL<bool>(Actor_isAdventure, (Actor*) ptr);
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeAdd
-(JNIEnv*, jclass, jlong ptr, jlong stackptr) {
-    VTABLE_FIND_OFFSET(Actor_add, _ZTV5Actor, _ZN5Actor3addER9ItemStack);
-    VTABLE_CALL<void, ItemStack&>(Actor_add, (Actor*) ptr, *((ItemStack*) stackptr));
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeDrop
-(JNIEnv*, jclass, jlong ptr, jlong stackptr, jboolean someBool) {
-    VTABLE_FIND_OFFSET(Actor_drop, _ZTV5Actor, _ZN5Actor4dropERK9ItemStackb);
-    VTABLE_CALL<void, ItemStack const&, bool>(Actor_drop, (Actor*) ptr, *((ItemStack*) stackptr), someBool);
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeSetAuxValue
-(JNIEnv*, jclass, jlong ptr, jint value) {
-    VTABLE_FIND_OFFSET(Actor_setAuxValue, _ZTV5Actor, _ZN5Actor11setAuxValueEi);
-    VTABLE_CALL<void>(Actor_setAuxValue, (Actor*) ptr, value);
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeWobble
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_wobble, _ZTV5Actor, _ZN5Actor6wobbleEv);
-    VTABLE_CALL<void>(Actor_wobble, (Actor*) ptr);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeHasHurt
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_wasHurt, _ZTV5Actor, _ZN5Actor7wasHurtEv);
-    return VTABLE_CALL<bool>(Actor_wasHurt, (Actor*) ptr);
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeStartSpinAttack
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_startSpinAttack, _ZTV5Actor, _ZN5Actor15startSpinAttackEv);
-    VTABLE_CALL<void>(Actor_startSpinAttack, (Actor*) ptr);
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeStopSpinAttack
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_stopSpinAttack, _ZTV5Actor, _ZN5Actor14stopSpinAttackEv);
-    VTABLE_CALL<void>(Actor_stopSpinAttack, (Actor*) ptr);
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeKill
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_kill, _ZTV5Actor, _ZN5Actor4killEv);
-    VTABLE_CALL<void>(Actor_kill, (Actor*) ptr);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeShouldTryMakeStepSound
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_shouldTryMakeStepSound, _ZTV5Actor, _ZN5Actor22shouldTryMakeStepSoundEv);
-    return VTABLE_CALL<bool>(Actor_shouldTryMakeStepSound, (Actor*) ptr);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeCanMakeStepSound
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_canMakeStepSound, _ZTV5Actor, _ZNK5Actor16canMakeStepSoundEv);
-    return VTABLE_CALL<bool>(Actor_canMakeStepSound, (Actor*) ptr);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeOutOfWorld
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_outOfWorld, _ZTV5Actor, _ZN5Actor10outOfWorldEv);
-    return VTABLE_CALL<bool>(Actor_outOfWorld, (Actor*) ptr);
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativePushOutOfBlocks
-(JNIEnv*, jclass, jlong ptr, jfloat x, jfloat y, jfloat z) {
-    VTABLE_FIND_OFFSET(Actor_pushOutOfBlocks, _ZTV5Actor, _ZN5Actor15pushOutOfBlocksERK4Vec3);
-    VTABLE_CALL<void>(Actor_pushOutOfBlocks, (Actor*) ptr, Vec3(x, y, z));
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeDoWaterSplashEffect
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_doWaterSplashEffect, _ZTV5Actor, _ZN5Actor19doWaterSplashEffectEv);
-    VTABLE_CALL<void>(Actor_doWaterSplashEffect, (Actor*) ptr);
-}
-JNIEXPORT void JNICALL Java_vsdum_kex_natives_Actor_nativeSpawnTrailBubbles
-(JNIEnv*, jclass, jlong ptr) {
-    VTABLE_FIND_OFFSET(Actor_spawnTrailBubbles, _ZTV5Actor, _ZN5Actor17spawnTrailBubblesEv);
-    VTABLE_CALL<void>(Actor_spawnTrailBubbles, (Actor*) ptr);
-}
-JNIEXPORT jboolean JNICALL Java_vsdum_kex_natives_Actor_nativeIsMob
-(JNIEnv*, jclass, jlong ptr) {
-    Actor* actor = (Actor*) ptr;
-    VTABLE_FIND_OFFSET(Actor_getEntityTypeId, _ZTV5Actor, _ZNK5Actor15getEntityTypeIdEv);
-    ActorType type = VTABLE_CALL<ActorType>(Actor_getEntityTypeId, (Actor*) ptr);
-    return ActorClassTree::isMob(type);
-}
-
-
-
+    __EXPORT__(jboolean, IsMob) {
+        Actor* actor = (Actor*) ptr;
+        VTABLE_FIND_OFFSET(Actor_getEntityTypeId, _ZTV5Actor, _ZNK5Actor15getEntityTypeIdEv);
+        ActorType type = VTABLE_CALL<ActorType>(Actor_getEntityTypeId, (Actor*) ptr);
+        return ActorClassTree::isMob(type);
+    }
 }
 
 

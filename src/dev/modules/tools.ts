@@ -44,6 +44,7 @@ declare namespace Block {
 
 
 namespace Item {
+    // @ts-ignore
     export function createSwordItem(id: string, name: string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: string | ToolAPI.ToolMaterial }): void {
         let materialName: string = "";
         if(typeof params.tier === "object") {
@@ -60,6 +61,7 @@ namespace Item {
         );
         if(typeof params.stack === "number" && params.stack > 1) Item.getItemById(id).setMaxStackSize(params.stack);
     }
+    // @ts-ignore
     export function createAxeItem(id: string, name: string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: string | ToolAPI.ToolMaterial }): void {
         let materialName: string = "";
         if(typeof params.tier === "object") {
@@ -76,6 +78,7 @@ namespace Item {
         );
         if(typeof params.stack === "number" && params.stack > 1) Item.getItemById(id).setMaxStackSize(params.stack);
     }
+    // @ts-ignore
     export function createPickaxeItem(id: string, name: string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: string | ToolAPI.ToolMaterial }): void {
         let materialName: string = "";
         if(typeof params.tier === "object") {
@@ -92,6 +95,7 @@ namespace Item {
         );
         if(typeof params.stack === "number" && params.stack > 1) Item.getItemById(id).setMaxStackSize(params.stack);
     }
+    // @ts-ignore
     export function createShovelItem(id: string, name: string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: string | ToolAPI.ToolMaterial }): void {
         let materialName: string = "";
         if(typeof params.tier === "object") {
@@ -108,6 +112,7 @@ namespace Item {
         );
         if(typeof params.stack === "number" && params.stack > 1) Item.getItemById(id).setMaxStackSize(params.stack);
     }
+    // @ts-ignore
     export function createHoeItem(id: string, name: string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: string | ToolAPI.ToolMaterial }): void {
         let materialName: string = "";
         if(typeof params.tier === "object") {
@@ -124,6 +129,7 @@ namespace Item {
         );
         if(typeof params.stack === "number" && params.stack > 1) Item.getItemById(id).setMaxStackSize(params.stack);
     }
+    // @ts-ignore
     export function createShearsItem(id: string, name: string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: string | ToolAPI.ToolMaterial, durability?: number }): void {
         let materialName: string = "";
         if(typeof params.tier !== "undefined") {
@@ -142,6 +148,7 @@ namespace Item {
         );
         if(typeof params.stack === "number" && params.stack > 1) Item.getItemById(id).setMaxStackSize(params.stack);
     }
+    // @ts-ignore
     export function createCustomTool(id: string, name: string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: string | ToolAPI.ToolMaterial }, toolParams?: ToolAPI.ExtendedToolParams, numericId?: number): void {
         let materialName: string = "";
         if(typeof params.tier === "object") {

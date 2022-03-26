@@ -57,6 +57,7 @@ public class Actor implements INativeInterface {
     protected static native boolean nativeHasAnyEffects(long ptr);
     protected static native void nativeRemoveAllEffects(long ptr);
     protected static native void nativeAddEffect(long ptr, long instancePtr);
+    protected static native void nativeRemoveEffects(long ptr, boolean harmful, boolean harmless);
     protected static native boolean nativeIsInSnow(long ptr);
     protected static native boolean nativeCanMate(long ptr, long matePtr);
     protected static native boolean nativeHasTickingArea(long ptr);
@@ -295,6 +296,18 @@ public class Actor implements INativeInterface {
     protected static native void nativePushOutOfBlocks(long ptr, float x, float y, float z);
     protected static native void nativeDoWaterSplashEffect(long ptr);
     protected static native void nativeSpawnTrailBubbles(long ptr);
+    protected static native boolean nativeIsOnGround(long ptr);
+    protected static native boolean nativeCanBreatheAir(long ptr);
+    protected static native boolean nativeCanBreatheWater(long ptr);
+    protected static native boolean nativeCanBreatheLava(long ptr);
+    protected static native boolean nativeCanBreatheSolids(long ptr);
+    protected static native boolean nativeGeneratesBubbles(long ptr);
+    protected static native int nativeGetInhaleTime(long ptr);
+    protected static native int nativeGetSuffocateTime(long ptr);
+    protected static native void nativeSetAirSupply(long ptr, short supply);
+    protected static native short nativeGetMaxAirSupply(long ptr);
+    protected static native void nativeSetMaxAirSupply(long ptr, short supply);
+    protected static native short nativeGetAirRegenPerTick(long ptr);
     protected static native boolean nativeIsMob(long ptr);
 
     public static boolean isValid(long entityUID)
@@ -302,6 +315,7 @@ public class Actor implements INativeInterface {
         return wrap(entityUID) != 0L;
     }
     
+    private final long uid;
     protected final long pointer;
 
     public final long getPointer()
@@ -314,11 +328,13 @@ public class Actor implements INativeInterface {
         long ptr = wrap(entity);
         if(ptr == 0L) throw new IllegalArgumentException("There is no entity with given id!");
         this.pointer = ptr;
+        this.uid = entity;
     }
 
     protected Actor(long pointer, boolean flag)
     {
         this.pointer = pointer;
+        this.uid = nativeGetUniqueID(this.pointer);
     }
 
     public boolean isBreakingObstruction()
@@ -378,7 +394,7 @@ public class Actor implements INativeInterface {
 
     public long getUniqueID()
     {
-        return nativeGetUniqueID(this.pointer);
+        return this.uid;
     }
 
     public int getHurtDir()
@@ -562,6 +578,11 @@ public class Actor implements INativeInterface {
     public void addEffect(MobEffectInstance effectInstance)
     {
         nativeAddEffect(this.pointer, effectInstance.getPointer());
+    }
+
+    public void removeEffects(boolean harmful, boolean harmless)
+    {
+        if(harmful || harmless) nativeRemoveEffects(this.pointer, harmful, harmless);
     }
 
     public boolean isInSnow()
@@ -1187,11 +1208,6 @@ public class Actor implements INativeInterface {
         return nativeGetTotalAirSupply(this.pointer);
     }
 
-    public short getAirSupply()
-    {
-        return nativeGetAirSupply(this.pointer);
-    }
-
     public boolean isInThunderstorm()
     {
         return nativeIsInThunderstorm(this.pointer);
@@ -1768,6 +1784,66 @@ public class Actor implements INativeInterface {
         nativeSpawnTrailBubbles(this.pointer);
     }
 
+    public boolean isOnGround()
+    {
+        return nativeIsOnGround(this.pointer);
+    }
+
+    public boolean canBreatheAir()
+    {
+        return nativeCanBreatheAir(this.pointer);
+    }
+
+    public boolean canBreatheWater()
+    {
+        return nativeCanBreatheWater(this.pointer);
+    }
+
+    public boolean canBreatheLava()
+    {
+        return nativeCanBreatheLava(this.pointer);
+    }
+
+    public boolean canBreatheSolids()
+    {
+        return nativeCanBreatheSolids(this.pointer);
+    }
+
+    public boolean generatesBubbles()
+    {
+        return nativeGeneratesBubbles(this.pointer);
+    }
+
+    public int getInhaleTime()
+    {
+        return nativeGetInhaleTime(this.pointer);
+    }
+
+    public int getSuffocateTime()
+    {
+        return nativeGetSuffocateTime(this.pointer);
+    }
+
+    public void setAirSupply(short supply)
+    {
+        nativeSetAirSupply(this.pointer, supply);
+    }
+
+    public short getMaxAirSupply()
+    {
+        return nativeGetMaxAirSupply(this.pointer);
+    }
+
+    public void setMaxAirSupply(short supply)
+    {
+        nativeSetMaxAirSupply(this.pointer, supply);
+    }
+
+    public short getAirRegenPerTick()
+    {
+        return nativeGetAirRegenPerTick(this.pointer);
+    }
+
     public boolean isMob()
     {
         return nativeIsMob(this.pointer);
@@ -1782,6 +1858,18 @@ public class Actor implements INativeInterface {
     {
         if(!this.isMob()) return null;
         return new Mob(this);
+    }
+
+    @Nullable public Player asPlayer()
+    {
+        if(!this.isPlayer()) return null;
+        return new Player(this);
+    }
+
+    @Nullable public LocalPlayer asLocalPlayer()
+    {
+        if(!this.isLocalPlayer()) return null;
+        return new LocalPlayer(this);
     }
 
 }

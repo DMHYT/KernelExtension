@@ -61,3 +61,13 @@ namespace Item {
 
 
 const ItemsModule = WRAP_JAVA("vsdum.kex.modules.ItemsModule");
+
+
+enum ESaturationModifier {
+    POOR = 0.2,
+    LOW = 0.6,
+    NORMAL = 1.2,
+    GOOD = 1.6,
+    MAX = 2.0,
+    SUPERNATURAL = 2.4
+}

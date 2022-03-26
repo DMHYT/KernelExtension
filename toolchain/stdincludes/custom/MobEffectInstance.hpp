@@ -10,14 +10,6 @@ enum Difficulty: int {};
 
 class MobEffectInstance {
     public:
-    int id; // 4
-    int time; // 8
-    int level; // 12
-    bool useParticle; // 13
-    bool useColor; // 14
-    bool noCounter; // 15
-    int colorValue; // 19
-    char filler[20]; // 39
     MobEffectInstance(unsigned int, int, int);
     MobEffectInstance(unsigned int, int, int, bool, bool, bool);
     MobEffectInstance(unsigned int, int, int, int, int, int, bool, bool, bool);
@@ -52,7 +44,7 @@ class MobEffectInstance {
     void* removeEffects(Actor*) const;
     int getDuration() const;
     void load(CompoundTag const&);
-    unsigned int getId() const;
+    int getId() const;
     bool displaysOnScreenTextureAnimation() const;
 };
 

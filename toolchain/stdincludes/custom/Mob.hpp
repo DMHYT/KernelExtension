@@ -5,7 +5,9 @@
 #define KEX_MOB_HPP
 
 
-enum ActorDamageCause: int {};
+#ifndef KEX_ACTORDAMAGESOURCE_HPP
+    enum ActorDamageCause: int {};
+#endif
 class BaseAttributeMap;
 #ifndef KEX_BLOCK_HPP
     class Block;

@@ -20,6 +20,7 @@ class CompoundTag;
 
 class ItemStackBase {
     public:
+    char filler[96];
     // virtual void setNull(); // pure virtual
     // virtual std::__ndk1::string const& toString(); // pure virtual
     // virtual std::__ndk1::string const& toDebugString(); // pure virtual
