@@ -31,6 +31,9 @@ namespace KEXJavaBridge {
         JAVA_METHOD(ToolsModule, getAttackDamageBonus, "(IIIJI)I")
         JAVA_CLASS(LootModule, "vsdum/kex/modules/LootModule")
         JAVA_METHOD(LootModule, modify, "(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;")
+        JAVA_CLASS(CallbacksModule, "vsdum/kex/modules/CallbacksModule")
+        JAVA_METHOD(CallbacksModule, onPlayerJump, "(J)V")
+        JAVA_METHOD(CallbacksModule, onGameModeChanged, "(I)V")
     }
     namespace ToolsModule {
         bool onBroke() {
@@ -52,6 +55,14 @@ namespace KEXJavaBridge {
             env->DeleteLocalRef(jTableName);
             env->DeleteLocalRef(jJson);
             return result;
+        }
+    }
+    namespace CallbacksModule {
+        void onPlayerJump(long long uid) {
+            KEXJavaUtils::attach()->CallStaticVoidMethod(Cache::CallbacksModule(), Cache::CallbacksModule_onPlayerJump(), (jlong) uid);
+        }
+        void onGameModeChanged(int mode) {
+            KEXJavaUtils::attach()->CallStaticVoidMethod(Cache::CallbacksModule(), Cache::CallbacksModule_onGameModeChanged(), mode);
         }
     }
 }

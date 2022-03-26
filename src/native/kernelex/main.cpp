@@ -3,6 +3,7 @@
 #include "modules/loot.hpp"
 #include "modules/items.hpp"
 #include "modules/tools/module.hpp"
+#include "modules/callbacks.hpp"
 
 #include "utils/java_utils.hpp"
 
@@ -24,6 +25,7 @@ extern "C" JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *) {
 	Module* loot = new KEXLootModule(main);
 	Module* items = new KEXItemsModule(main);
 	Module* tools = new KEXToolsModule(main);
+	Module* callbacks = new KEXCallbacksModule(main);
 }
 
 
@@ -31,4 +33,5 @@ extern "C" JNIEXPORT void JNICALL Java_vsdum_kex_KernelExtension_defineCallbackC
 (JNIEnv* env, jclass) {
 	KEXJavaBridge::Cache::ToolsModule(env);
 	KEXJavaBridge::Cache::LootModule(env);
+	KEXJavaBridge::Cache::CallbacksModule(env);
 }

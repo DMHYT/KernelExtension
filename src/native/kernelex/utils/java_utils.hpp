@@ -13,6 +13,7 @@ namespace KEXJavaBridge {
     namespace Cache {
         jclass ToolsModule(JNIEnv* env);
         jclass LootModule(JNIEnv* env);
+        jclass CallbacksModule(JNIEnv* env);
     }
     namespace ToolsModule {
         bool onBroke();
@@ -21,6 +22,10 @@ namespace KEXJavaBridge {
     }
     namespace LootModule {
         jstring modify(const char* tableName, const char* json);
+    }
+    namespace CallbacksModule {
+        void onPlayerJump(long long uid);
+        void onGameModeChanged(int mode);
     }
 }
 
