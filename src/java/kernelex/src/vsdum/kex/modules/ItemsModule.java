@@ -40,12 +40,12 @@ public class ItemsModule {
     private static final Map<String, Float> foodSaturationModifiers = new HashMap<>();
 
     static {
-        foodSaturationModifiers.put("poor", 0.1f);
-        foodSaturationModifiers.put("low", 0.3f);
-        foodSaturationModifiers.put("normal", 0.6f);
-        foodSaturationModifiers.put("good", 0.8f);
-        foodSaturationModifiers.put("max", 1.0f);
-        foodSaturationModifiers.put("supernatural", 1.2f);
+        foodSaturationModifiers.put("poor", 0.2f);
+        foodSaturationModifiers.put("low", 0.6f);
+        foodSaturationModifiers.put("normal", 1.2f);
+        foodSaturationModifiers.put("good", 1.6f);
+        foodSaturationModifiers.put("max", 2.0f);
+        foodSaturationModifiers.put("supernatural", 2.4f);
     }
     
     public static void newFoodSaturationModifier(String name, float value)
@@ -54,7 +54,7 @@ public class ItemsModule {
         {
             Logger.debug("KEX-WARNING", String.format("Food saturation modifier %s has already been registered before!", new Object[]{ name }));
         } else {
-            nativeNewFoodSaturationModifier(name, value);
+            nativeNewFoodSaturationModifier(name, value / 2.0f);
             foodSaturationModifiers.put(name, value);
         }
     }
@@ -62,8 +62,8 @@ public class ItemsModule {
     public static float saturationModifierFromString(String name)
     {
         if(foodSaturationModifiers.containsKey(name)) return foodSaturationModifiers.get(name);
-        Logger.debug("KEX-WARNING", String.format("Food saturation modifier %s does not exist, returning default value 0.6 (as for normal modifier)", new Object[]{ name }));
-        return 0.6f;
+        Logger.debug("KEX-WARNING", String.format("Food saturation modifier %s does not exist, returning default value 1.2 (as for normal modifier)", new Object[]{ name }));
+        return 1.2f;
     }
     
 }

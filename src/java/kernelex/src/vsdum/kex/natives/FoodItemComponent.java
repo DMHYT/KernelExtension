@@ -43,7 +43,7 @@ public class FoodItemComponent {
     {
         this.id = nativeGetItem(ptr);
         this.nutrition = nativeGetNutrition(ptr);
-        this.saturationModifier = nativeGetSaturationModifier(ptr);
+        this.saturationModifier = nativeGetSaturationModifier(ptr) * 2.0f;
         this.saturation = this.nutrition * this.saturationModifier;
         this.usingConvertsTo = nativeGetUsingConvertsTo(ptr);
         this.onUseAction = nativeGetOnUseAction(ptr);
