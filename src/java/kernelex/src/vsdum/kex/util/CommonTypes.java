@@ -176,6 +176,28 @@ public final class CommonTypes {
             BlockState state = (BlockState) block;
             return new Pair<>(state.id, state.data);
         }
+        if(block instanceof ScriptableObject)
+        {
+            ScriptableObject scr = (ScriptableObject) block;
+            if(scr.has("id", scr))
+            {
+                int id, data;
+                Object o = scr.get("id", scr);
+                if(o instanceof Number)
+                {
+                    id = ((Number) o).intValue();
+                } else return null;
+                if(scr.has("data", scr))
+                {
+                    o = scr.get("data", scr);
+                    if(o instanceof Number)
+                    {
+                        data = ((Number) o).intValue();
+                    } else data = 0;
+                } else data = 0;
+                return new Pair<>(id, data);
+            }
+        }
         return null;
     }
 
