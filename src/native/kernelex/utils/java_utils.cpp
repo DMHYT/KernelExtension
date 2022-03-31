@@ -31,6 +31,7 @@ namespace KEXJavaBridge {
         JAVA_METHOD(ToolsModule, getAttackDamageBonus, "(IIIJI)I")
         JAVA_CLASS(LootModule, "vsdum/kex/modules/LootModule")
         JAVA_METHOD(LootModule, modify, "(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;")
+        JAVA_METHOD(LootModule, onDrop, "(Ljava/lang/String;JIJ)V")
         JAVA_CLASS(CallbacksModule, "vsdum/kex/modules/CallbacksModule")
         JAVA_METHOD(CallbacksModule, onPlayerJump, "(J)V")
         JAVA_METHOD(CallbacksModule, onGameModeChanged, "(I)V")
@@ -55,6 +56,12 @@ namespace KEXJavaBridge {
             env->DeleteLocalRef(jTableName);
             env->DeleteLocalRef(jJson);
             return result;
+        }
+        void onDrop(const char* tableName, jlong vectorPtr, jint vectorSize, jlong contextPtr) {
+            JNIEnv* env = KEXJavaUtils::attach();
+            jstring jTableName = env->NewStringUTF(tableName);
+            env->CallStaticVoidMethod(Cache::LootModule(), Cache::LootModule_onDrop(), jTableName, vectorPtr, vectorSize, contextPtr);
+            env->DeleteLocalRef(jTableName);
         }
     }
     namespace CallbacksModule {

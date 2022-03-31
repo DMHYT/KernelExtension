@@ -22,6 +22,7 @@ namespace KEXJavaBridge {
     }
     namespace LootModule {
         jstring modify(const char* tableName, const char* json);
+        void onDrop(const char* tableName, jlong vectorPtr, jint vectorSize, jlong contextPtr);
     }
     namespace CallbacksModule {
         void onPlayerJump(long long uid);

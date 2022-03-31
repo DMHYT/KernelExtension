@@ -1,19 +1,21 @@
-#include <stl/string>
+#include <stl/vector>
+#include <ItemStackBase.hpp>
+#include <ItemStack.hpp>
 
 #ifndef KEX_LOOTTABLE_HPP
 #define KEX_LOOTTABLE_HPP
 
 
 class Container;
-class LootTableContext;
-class Random;
+class LootTableContext {public:};
+class Random {public:};
 
 class LootTable {
     public:
     LootTable(std::__ndk1::string);
     LootTable();
     ~LootTable();
-    void* getRandomItems(Random&, LootTableContext&) const;
+    std::__ndk1::vector<ItemStack> getRandomItems(Random&, LootTableContext&) const;
     void* getAvailableSlots(Container&, Random&);
     std::__ndk1::string getDir() const;
     // void deserialize(Json::Value);

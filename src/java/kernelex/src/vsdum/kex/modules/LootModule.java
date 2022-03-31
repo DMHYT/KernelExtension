@@ -2,6 +2,7 @@ package vsdum.kex.modules;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -15,8 +16,12 @@ import android.support.annotation.Nullable;
 import vsdum.kex.modules.loot.LootConditions;
 import vsdum.kex.modules.loot.LootModifier;
 import vsdum.kex.modules.loot.LootPoolEntry;
+import vsdum.kex.modules.loot.RandomItemsList;
+import vsdum.kex.natives.LootTableContext;
 
 public class LootModule {
+
+    private static native void enableOnDropCallbackFor(String table);
     
     private static final Map<String, LootModifier> modifiers = new HashMap<>();
 
@@ -99,6 +104,31 @@ public class LootModule {
                     }
                 }
             });
+    }
+
+    public static interface OnDropCallback {
+        public void onDrop(RandomItemsList drops, LootTableContext context);
+    }
+
+    private static final Map<String, List<OnDropCallback>> onDropCallbacks = new HashMap<>();
+
+    public static void addOnDropCallbackFor(String tableName, OnDropCallback cb)
+    {
+        enableOnDropCallbackFor(tableName);
+        if(!onDropCallbacks.containsKey(tableName)) onDropCallbacks.put(tableName, new ArrayList<>());
+        onDropCallbacks.get(tableName).add(cb);
+    }
+
+    public static void onDrop(String tableName, long vectorPtr, int vectorSize, long contextPtr)
+    {
+        if(onDropCallbacks.containsKey(tableName))
+        {
+            RandomItemsList drops = new RandomItemsList(vectorPtr, vectorSize);
+            LootTableContext context = new LootTableContext(contextPtr);
+            Iterator<OnDropCallback> iter = onDropCallbacks.get(tableName).iterator();
+            while(iter.hasNext()) iter.next().onDrop(drops, context);
+            drops.modifyNative();
+        }
     }
 
 }
