@@ -24,5 +24,6 @@ void KEXCallbacksModule::initialize() {
         jlong attacker = VTABLE_CALL<bool>(ActorDamageSource_isEntitySource, (ActorDamageSource*) &source) ? ((ActorDamageByActorSource*) &source)->entityUid.id : -1ll;
         jint type = (int) source.getCause();
         JavaCallbacks::invokeControlledCallback("onEntityHurt", "(JJIIZZ)V", controller, JavaCallbacks::PREVENTABLE, victim, attacker, type, value, b1, b2);
+        return false;
     }, ), HookManager::CALL | HookManager::LISTENER | HookManager::CONTROLLER | HookManager::RESULT);
 }
