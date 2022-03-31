@@ -35,3 +35,18 @@ BETA 1.4
     - Added method ItemsModule.saturationModifierFromString(name), which returns the numeric saturation modifier value defined by the given name, or 0.6 if the saturation modifier with given name does not exist (0.6 is the value for normal modifier).
 - Added method Actor.isElytraFlying().
 - Fixed destroyBlockHook function in ToolsModule not taking BlockState as a block object. Now this function and other ones using the block objects are universal for both FullBlock and BlockState objects.
+
+RELEASE 2.0
+- Now ToolsModule.destroyBlockHook function is completely universal and can take any JS objects containing id and data fields, not only FullBlock instances.
+- Small fix in food saturation logics.
+- Added ESaturationModifier enum.
+- Added Player, LocalPlayer, MoveInputHandler and LootTableContext native classes.
+- Added GlobalContext module, currently has only one method, getLocalPlayer().
+- Added callbacks module.
+    - First new callbacks are PlayerJump and GameModeChanged.
+    - Pre-defined EntityHurt callback is now also fired at magic damage.
+- Added new methods to the Actor class:
+    - void removeEffects(boolean harmful, boolean harmless)
+    - boolean isOnGround()
+    - A bunch of methods connected with breathable component
+- Added method LootModule.addOnDropCallbackFor to modify the list of items every time they are being chosen randomly, to be dropped from the mob or to be put into the chest. Function interface for the callback provides you with the list of items itself, and the LootTableContext object, to get additional data about the entity death / chest filling moment.

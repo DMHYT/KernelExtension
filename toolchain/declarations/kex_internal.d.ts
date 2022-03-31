@@ -751,6 +751,39 @@ declare module vsdum {
     }
 }
 
+declare module vsdum {
+    export module kex {
+        export module natives {
+            export class LootTableContext extends common.INativeInterface {
+                static class: java.lang.Class<LootTableContext>;
+                constructor(ptr: number);
+                getThisEntity(): Nullable<Actor>;
+                getOriginalItemName(): Nullable<string>;
+                setOriginalItemName(name: string): void;
+                getLevel(): Nullable<Level>;
+                getExplosionRadius(): number;
+                getLuck(): number;
+                getKillerPlayer(): Nullable<Player>;
+                getKillerPet(): Nullable<Actor>;
+                getKillerEntity(): Nullable<Actor>;
+            }
+            export module LootTableContext {
+                export class Builder extends common.INativeInterface {
+                    static class: java.lang.Class<Builder>;
+                    constructor(level: Level);
+                    withExplosionRadius(radius: number): Builder;
+                    withThisEntity(entity: Actor): Builder;
+                    withLuck(luck: number): Builder;
+                    withOriginalItemName(name: string): Builder;
+                    withKillerPlayer(player: Player): Builder;
+                    create(): Nullable<LootTableContext>;
+                }
+            }
+        }
+    }
+}
+declare function WRAP_JAVA(clazz: "vsdum.kex.natives.LootTableContext"): typeof vsdum.kex.natives.LootTableContext;
+
 type MinMax = { min: number, max: number }
 type FeatureTypes = "buriedtreasure" | "endcity" | "fortress" | "mansion" | "mineshaft" | "monument" | "pillageroutpost" | "ruins" | "shipwreck" | "stronghold" | "temple" | "village";
 type EnchantTypes = Lowercase<keyof typeof EEnchantment>;
@@ -878,6 +911,15 @@ declare module vsdum {
                 static createLootTableModifier(tableName: string): LootModifier;
                 static createConditionsList(): LootConditions;
                 static addPiglinBarteringItem(): LootEntry;
+                static addOnDropCallbackFor(tableName: string, cb: OnDropCallback): void;
+            }
+            export interface OnDropCallback {
+                (drops: RandomItemsList, context: natives.LootTableContext): void;
+            }
+            export interface RandomItemsList extends java.util.ArrayList<ItemInstance> {
+                getPointer(): number;
+                markChanged(): void;
+                addItem(id: number, count: number, data: number, extra?: Nullable<ItemExtraData>): void;
             }
             export interface LootModifier {
                 createNewPool(): LootPool;
@@ -1129,6 +1171,7 @@ declare namespace Callback {
     ItemsModule: typeof vsdum.kex.modules.ItemsModule,
     LootModule: typeof vsdum.kex.modules.LootModule,
     ToolsModule: typeof vsdum.kex.modules.ToolsModule,
+    LootTableContext: typeof vsdum.kex.natives.LootTableContext,
     MobEffect: typeof vsdum.kex.natives.MobEffect,
     MobEffectInstance: typeof vsdum.kex.natives.MobEffectInstance,
     Actor: typeof vsdum.kex.natives.Actor,
