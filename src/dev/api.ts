@@ -1,5 +1,6 @@
 const LootModule = WRAP_JAVA("vsdum.kex.modules.LootModule");
 
+const LootTableContext = WRAP_JAVA("vsdum.kex.natives.LootTableContext");
 const MobEffect = WRAP_JAVA("vsdum.kex.natives.MobEffect");
 const MobEffectInstance = WRAP_JAVA("vsdum.kex.natives.MobEffectInstance");
 const Actor = WRAP_JAVA("vsdum.kex.natives.Actor");
@@ -17,6 +18,7 @@ ModAPI.registerAPI("KernelExtension", {
     LootModule,
     ToolsModule,
 
+    LootTableContext,
     MobEffect,
     MobEffectInstance,
     Actor,
