@@ -1,6 +1,9 @@
 /// <reference path="core-engine.d.ts" />
 
 
+declare type jstring = java.lang.String;
+declare type any_string = string | jstring;
+
 declare module com {
     export module zhekasmirnov {
         export module innercore {
@@ -32,9 +35,9 @@ declare module vsdum {
                 static killItem(id: number): Nullable<ItemFactoryInterface>;
             }
             interface ItemFactoryInterface {
-                readonly nameId: string;
-                readonly nameToDisplay: string;
-                readonly iconName: string;
+                readonly nameId: jstring;
+                readonly nameToDisplay: jstring;
+                readonly iconName: jstring;
                 readonly iconIndex: number;
                 readonly stack: number;
                 applyOldFactoryProperties(id: number): void;
@@ -173,7 +176,7 @@ declare module vsdum {
                 isSwimming(): boolean;
                 isSwimmer(): boolean;
                 setSwimmer(swimmer: boolean): void;
-                hasFamily(family: string): boolean;
+                hasFamily(family: any_string): boolean;
                 hasAttributeBuff(buffType: number): boolean;
                 isClientSide(): boolean;
                 isControlledByLocalInstance(): boolean;
@@ -246,7 +249,7 @@ declare module vsdum {
                 getVerticalSpeedInMetersPerSecond(): number;
                 isTrusting(): boolean;
                 getRadius(): number;
-                hasComponent(component: string): boolean;
+                hasComponent(component: any_string): boolean;
                 getOnDeathExperience(): number;
                 getInterpolatedBodyYaw(partialTicks: number): number;
                 getYawSpeedInDegreesPerSecond(): number;
@@ -535,16 +538,16 @@ declare module vsdum {
                 getCommandPermissionLevel(): number;
                 setPermissions(level: number): void;
                 getPlayerPermissionLevel(): number;
-                displayChatMessage(prefix: string, message: string): void;
-                displayClientMessage(message: string): void;
-                displayWhisperMessage(s1: string, s2: string, s3: string, s4: string): void;
+                displayChatMessage(prefix: any_string, message: any_string): void;
+                displayClientMessage(message: any_string): void;
+                displayWhisperMessage(s1: any_string, s2: any_string, s3: any_string, s4: any_string): void;
                 startSleepInBed(x: number, y: number, z: number): void;
                 stopSleepInBed(b1: boolean, b2: boolean): void;
                 canStartSleepInBed(): boolean;
                 getSleepTimer(): number;
                 getPreviousTickSleepTimer(): number;
                 openSign(x: number, y: number, z: number): void;
-                playEmote(emote: string): void;
+                playEmote(emote: any_string): void;
                 isHostingPlayer(): boolean;
                 setGameMode(mode: number): void;
                 addLevels(levels: number): void;
@@ -727,10 +730,10 @@ declare module vsdum {
                 getNutrition(): number;
                 getSaturationModifier(): number;
                 getSaturation(): number;
-                getUsingConvertsTo(): Nullable<string>;
+                getUsingConvertsTo(): Nullable<jstring>;
                 getOnUseAction(): number;
                 getOnUseRange(): Vector;
-                getCooldownType(): Nullable<string>;
+                getCooldownType(): Nullable<jstring>;
                 getCooldownTime(): number;
                 canAlwaysEat(): boolean;
                 getEffects(): java.util.List<FoodItemComponent.Effect>;
@@ -739,7 +742,7 @@ declare module vsdum {
             export module FoodItemComponent {
                 export class Effect extends java.lang.Object {
                     static class: java.lang.Class<Effect>;
-                    getDescriptionId(): Nullable<string>;
+                    getDescriptionId(): Nullable<jstring>;
                     getId(): number;
                     getEffect(): Nullable<MobEffect>;
                     getDuration(): number;
@@ -758,8 +761,8 @@ declare module vsdum {
                 static class: java.lang.Class<LootTableContext>;
                 constructor(ptr: number);
                 getThisEntity(): Nullable<Actor>;
-                getOriginalItemName(): Nullable<string>;
-                setOriginalItemName(name: string): void;
+                getOriginalItemName(): Nullable<jstring>;
+                setOriginalItemName(name: any_string): void;
                 getLevel(): Nullable<Level>;
                 getExplosionRadius(): number;
                 getLuck(): number;
@@ -774,7 +777,7 @@ declare module vsdum {
                     withExplosionRadius(radius: number): Builder;
                     withThisEntity(entity: Actor): Builder;
                     withLuck(luck: number): Builder;
-                    withOriginalItemName(name: string): Builder;
+                    withOriginalItemName(name: any_string): Builder;
                     withKillerPlayer(player: Player): Builder;
                     create(): Nullable<LootTableContext>;
                 }
@@ -810,7 +813,7 @@ declare namespace LootTableTypes {
         destination?: FeatureTypes;
     } | {
         function: "fill_container",
-        loot_table?: string;
+        loot_table?: any_string;
     } | {
         function: "furnace_smelt",
         conditions?: LootCondition[];
@@ -822,19 +825,19 @@ declare namespace LootTableTypes {
         values?: MinMax;
     } | {
         function: "random_block_state",
-        block_state?: string,
+        block_state?: any_string,
         values?: MinMax;
     } | { function: "random_dye" | "set_data_from_color_index" | "trader_material_type" } | {
         function: "set_actor_id",
-        id?: string;
+        id?: any_string;
     } | {
         function: "set_banner_details",
         type?: number;
     } | {
         function: "set_book_contents",
-        author: string,
-        title: string,
-        pages: string[];
+        author: any_string,
+        title: any_string,
+        pages: any_string[];
     } | {
         function: "set_count",
         count?: number | MinMax;
@@ -846,17 +849,17 @@ declare namespace LootTableTypes {
         data?: number | MinMax;
     } | {
         function: "set_lore",
-        lore?: string[];
+        lore?: any_string[];
     } | {
         function: "set_name",
-        name?: string;
+        name?: any_string;
     } | {
         function: "specific_enchants",
         enchants?: { id?: EnchantTypes, level?: number }[];
     }
     export type LootPoolEntry = { type: "empty" } | { type: "loot_table", pools?: LootPool[] } | {
         type: "item",
-        name?: string,
+        name?: any_string,
         count?: number,
         quality?: number,
         weight?: number,
@@ -908,10 +911,10 @@ declare module vsdum {
         export module modules {
             export class LootModule extends java.lang.Object {
                 static class: java.lang.Class<LootModule>;
-                static createLootTableModifier(tableName: string): LootModifier;
+                static createLootTableModifier(tableName: any_string): LootModifier;
                 static createConditionsList(): LootConditions;
                 static addPiglinBarteringItem(): LootEntry;
-                static addOnDropCallbackFor(tableName: string, cb: OnDropCallback): void;
+                static addOnDropCallbackFor(tableName: any_string, cb: OnDropCallback): void;
             }
             export interface OnDropCallback {
                 (drops: RandomItemsList, context: natives.LootTableContext): void;
@@ -925,10 +928,10 @@ declare module vsdum {
                 createNewPool(): LootPool;
                 createNewPool(rolls: number): LootPool;
                 createNewPool(minRolls: number, maxRolls: number): LootPool;
-                modifyWithAnotherLootTable(path: string): LootModifier;
+                modifyWithAnotherLootTable(path: any_string): LootModifier;
                 modifyWithJSON(json: LootTableTypes.JsonFormat): LootModifier;
                 addItem(id: number, count: number | MinMax, data: number, chance: number, rolls?: number | MinMax): LootModifier;
-                addAddonItem(namespace: string, identifier: string, count: number | MinMax, data: number, chance: number, rolls?: number | MinMax): LootModifier;
+                addAddonItem(namespace: any_string, identifier: any_string, count: number | MinMax, data: number, chance: number, rolls?: number | MinMax): LootModifier;
                 addJSModifyCallback(cb: JSModifyCallback): LootModifier;
                 addJSONModifyCallback(cb: JSONModifyCallback): LootModifier;
                 addJSPostModifyCallback(cb: JSModifyCallback): LootModifier;
@@ -967,14 +970,14 @@ declare module vsdum {
             }
             export interface LootEntry {
                 describeItem(numericId: number): LootEntry;
-                describeItem(namespace: string, identifier: string): LootEntry;
+                describeItem(namespace: any_string, identifier: any_string): LootEntry;
                 setCount(count: number): LootEntry;
                 setCount(min: number, max: number): LootEntry;
                 setData(data: number): LootEntry;
                 setData(minData: number, maxData: number): LootEntry;
                 setDamage(damage: number): LootEntry;
                 setDamage(minDamage: number, maxDamage: number): LootEntry;
-                setCustomName(name: string): LootEntry;
+                setCustomName(name: any_string): LootEntry;
                 setWeight(weight: number): LootEntry;
                 setQuality(quality: number): LootEntry;
                 beginFunctions(): LootEntryFunctions;
@@ -987,19 +990,19 @@ declare module vsdum {
                 addEnchantWithLevelsFunction(levels: number, treasure?: boolean): LootEntryFunctions;
                 addEnchantWithLevelsFunction(minLevels: number, maxLevels: number, treasure?: boolean): LootEntryFunctions;
                 addExplorationMapFunction(destination: FeatureTypes): LootEntryFunctions;
-                addFillContainerFunction(lootTable: string): LootEntryFunctions;
+                addFillContainerFunction(lootTable: any_string): LootEntryFunctions;
                 addFurnaceSmeltFunction(conditions?: LootConditions): LootEntryFunctions;
                 addLootingEnchantFunction(): LootEntryFunctions;
                 addLootingEnchantFunction(minCount: number, maxCount: number): LootEntryFunctions;
                 addRandomAuxValueFunction(): LootEntryFunctions;
                 addRandomAuxValueFunction(minValue: number, maxValue: number): LootEntryFunctions;
                 addRandomDyeFunction(): LootEntryFunctions;
-                addActorIdFunction(actorId: string): LootEntryFunctions;
+                addActorIdFunction(actorId: any_string): LootEntryFunctions;
                 addBannerDetailsFunction(type: number): LootEntryFunctions;
-                addBookContentsFunction(author: string, title: string, pages: string[]): LootEntryFunctions;
+                addBookContentsFunction(author: any_string, title: any_string, pages: any_string[]): LootEntryFunctions;
                 addDataFromColorIndexFunction(): LootEntryFunctions;
-                addLoreFunction(lore: string[]): LootEntryFunctions;
-                addSpecificEnchantsFunction(enchants: java.util.Map<string, number>): LootEntryFunctions;
+                addLoreFunction(lore: any_string[]): LootEntryFunctions;
+                addSpecificEnchantsFunction(enchants: java.util.Map<jstring, number>): LootEntryFunctions;
                 addTraderMaterialTypeFunction(): LootEntryFunctions;
                 endFunctions(): LootEntry;
             }
@@ -1023,8 +1026,8 @@ declare module vsdum {
                 static setCannotBeRepairedInAnvil(id: number): void;
                 static isFood(id: number): boolean;
                 static getFood(id: number): Nullable<natives.FoodItemComponent>;
-                static newFoodSaturationModifier(name: string, value: number): void;
-                static saturationModifierFromString(name: string): number;
+                static newFoodSaturationModifier(name: any_string, value: number): void;
+                static saturationModifierFromString(name: any_string): number;
             }
         }
     }
@@ -1038,7 +1041,7 @@ declare module vsdum {
                 getAttackDamageBonus?: (item: ItemInstance) => number;
             }
             interface BlockData {
-                readonly materialName: Nullable<string>;
+                readonly materialName: Nullable<jstring>;
                 readonly destroyLevel: number;
                 readonly isNative: boolean;
             }
@@ -1048,32 +1051,32 @@ declare module vsdum {
                 static getToolLevel(itemID: number): number;
                 static getToolLevelViaBlock(itemID: number, blockID: number): number;
                 static enableDynamicDamageFor(itemID: number): void;
-                static getTierByName(tierName: string): Nullable<ToolsModule.ItemTier>;
-                static registerSword(id: number, nameId: string, name: string, textureName: string, textureMeta: number, tier: ToolsModule.ItemTier, isTech?: boolean): void;
-                static registerAxe(id: number, nameId: string, name: string, textureName: string, textureMeta: number, tier: ToolsModule.ItemTier, isTech?: boolean): void;
-                static registerPickaxe(id: number, nameId: string, name: string, textureName: string, textureMeta: number, tier: ToolsModule.ItemTier, isTech?: boolean): void;
-                static registerShovel(id: number, nameId: string, name: string, textureName: string, textureMeta: number, tier: ToolsModule.ItemTier, isTech?: boolean): void;
-                static registerHoe(id: number, nameId: string, name: string, textureName: string, textureMeta: number, tier: ToolsModule.ItemTier, isTech?: boolean): void;
-                static registerShears(id: number, nameId: string, name: string, textureName: string, textureMeta: number, tierOrDurability: ToolsModule.ItemTier | number, isTech?: boolean): void;
-                static addBlockMaterial(name: string, breakingMultiplier: number): void;
-                static getBlockMaterialBreakingMultiplier(name: string): number;
+                static getTierByName(tierName: any_string): Nullable<ToolsModule.ItemTier>;
+                static registerSword(id: number, nameId: any_string, name: any_string, textureName: any_string, textureMeta: number, tier: ToolsModule.ItemTier, isTech?: boolean): void;
+                static registerAxe(id: number, nameId: any_string, name: any_string, textureName: any_string, textureMeta: number, tier: ToolsModule.ItemTier, isTech?: boolean): void;
+                static registerPickaxe(id: number, nameId: any_string, name: any_string, textureName: any_string, textureMeta: number, tier: ToolsModule.ItemTier, isTech?: boolean): void;
+                static registerShovel(id: number, nameId: any_string, name: any_string, textureName: any_string, textureMeta: number, tier: ToolsModule.ItemTier, isTech?: boolean): void;
+                static registerHoe(id: number, nameId: any_string, name: any_string, textureName: any_string, textureMeta: number, tier: ToolsModule.ItemTier, isTech?: boolean): void;
+                static registerShears(id: number, nameId: any_string, name: any_string, textureName: any_string, textureMeta: number, tierOrDurability: ToolsModule.ItemTier | number, isTech?: boolean): void;
+                static addBlockMaterial(name: any_string, breakingMultiplier: number): void;
+                static getBlockMaterialBreakingMultiplier(name: any_string): number;
                 static getBlockData(id: number): BlockData;
-                static getBlockMaterialName(id: number): Nullable<string>;
+                static getBlockMaterialName(id: number): Nullable<jstring>;
                 static getBlockDestroyLevel(id: number): number;
                 static getBlockIsNative(id: number): boolean;
-                static setBlockData(id: number, materialName: string, destroyLevel: number, isNative: boolean): void;
-                static setBlockMaterialName(id: number, materialName: string): void;
+                static setBlockData(id: number, materialName: any_string, destroyLevel: number, isNative: boolean): void;
+                static setBlockMaterialName(id: number, materialName: any_string): void;
                 static setBlockDestroyLevel(id: number, destroyLevel: number): void;
                 static setBlockIsNative(id: number, isNative: boolean): void;
                 static getDestroyTimeViaTool(block: Tile, x: number, y: number, z: number, side: number, item: ItemInstance): number;
-                static registerCustomTool(id: number, nameId: string, name: string, textureName: string, textureMeta: number, tier: ToolsModule.ItemTier, isTech: boolean, isWeapon: boolean, blockMaterials: Nullable<string[]>, brokenId: number, baseAttackDamage: number, enchantType: number, toolData: ExtendedToolParams): void;
+                static registerCustomTool(id: number, nameId: any_string, name: any_string, textureName: any_string, textureMeta: number, tier: ToolsModule.ItemTier, isTech: boolean, isWeapon: boolean, blockMaterials: Nullable<any_string[]>, brokenId: number, baseAttackDamage: number, enchantType: number, toolData: ExtendedToolParams): void;
                 static destroyBlockHook(coords: Callback.ItemUseCoordinates, block: Tile, item: ItemInstance, player: number): void;
                 static playerAttackHook(attacker: number, victim: number, item: ItemInstance): void;
             }
             export module ToolsModule {
                 export class ItemTier extends java.lang.Object {
                     static class: java.lang.Class<ItemTier>;
-                    constructor(name: string, level: number, uses: number, speed: number, attackDamageBonus: number, enchantmentValue: number);
+                    constructor(name: any_string, level: number, uses: number, speed: number, attackDamageBonus: number, enchantmentValue: number);
                     getLevel(): number;
                     getUses(): number;
                     getSpeed(): number;
@@ -1102,10 +1105,10 @@ declare module vsdum {
         export module util {
             export class AddonUtils extends java.lang.Object {
                 static class: java.lang.Class<AddonUtils>;
-                static getAddonItemIdentifier(id: number): string;
-                static getAddonItemIdentifier(namespace: string, identifier: string): string;
-                static getBlockNameId(id: number): Nullable<string>;
-                static getNumericIdFromIdentifier(identifier: string): number;
+                static getAddonItemIdentifier(id: number): jstring;
+                static getAddonItemIdentifier(namespace: any_string, identifier: any_string): jstring;
+                static getBlockNameId(id: number): Nullable<jstring>;
+                static getNumericIdFromIdentifier(identifier: any_string): number;
             }
         }
     }
@@ -1126,22 +1129,22 @@ declare namespace Item {
         cooldown_type?: "chorusfruit" | "none",
         on_use_range?: [ number, number, number ],
         on_use_action?: "chorus_teleport" | "suspicious_stew_effect" | "none",
-        using_converts_to?: string,
+        using_converts_to?: any_string,
         effects?: {
-            name?: Lowercase<keyof typeof EPotionEffect> | string,
+            name?: Lowercase<keyof typeof EPotionEffect> | any_string,
             duration?: number,
             amplifier?: number,
             chance?: number
         }[]
     }
-    function createFoodItem(nameID: string, name: string, texture: TextureData, params: FoodParamsDescription): NativeItem;
-    function createSwordItem(id: string, name: string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: string | ToolAPI.ToolMaterial }): void;
-    function createAxeItem(id: string, name: string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: string | ToolAPI.ToolMaterial }): void;
-    function createPickaxeItem(id: string, name: string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: string | ToolAPI.ToolMaterial }): void;
-    function createShovelItem(id: string, name: string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: string | ToolAPI.ToolMaterial }): void;
-    function createHoeItem(id: string, name: string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: string | ToolAPI.ToolMaterial }): void;
-    function createShearsItem(id: string, name: string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: string | ToolAPI.ToolMaterial, durability?: number }): void;
-    function createCustomTool(id: string, name: string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: string | ToolAPI.ToolMaterial }, toolParams?: vsdum.kex.modules.ExtendedToolParams, numericId?: number): void;
+    function createFoodItem(nameID: any_string, name: any_string, texture: TextureData, params: FoodParamsDescription): NativeItem;
+    function createSwordItem(id: any_string, name: any_string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: any_string | ToolAPI.ToolMaterial }): void;
+    function createAxeItem(id: any_string, name: any_string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: any_string | ToolAPI.ToolMaterial }): void;
+    function createPickaxeItem(id: any_string, name: any_string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: any_string | ToolAPI.ToolMaterial }): void;
+    function createShovelItem(id: any_string, name: any_string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: any_string | ToolAPI.ToolMaterial }): void;
+    function createHoeItem(id: any_string, name: any_string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: any_string | ToolAPI.ToolMaterial }): void;
+    function createShearsItem(id: any_string, name: any_string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: any_string | ToolAPI.ToolMaterial, durability?: number }): void;
+    function createCustomTool(id: any_string, name: any_string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: any_string | ToolAPI.ToolMaterial }, toolParams?: vsdum.kex.modules.ExtendedToolParams, numericId?: number): void;
 }
 
 

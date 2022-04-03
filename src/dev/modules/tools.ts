@@ -211,9 +211,9 @@ ToolAPI.getBlockData = blockID => {
 ToolAPI.getBlockDestroyLevel = blockID => ToolsModule.getBlockDestroyLevel(blockID);
 ToolAPI.getBlockMaterial = blockID => {
     const materialName = ToolsModule.getBlockMaterialName(blockID);
-    return materialName == null ? null : { name: materialName, multiplier: ToolsModule.getBlockMaterialBreakingMultiplier(materialName) }
+    return materialName == null ? null : { name: String(materialName), multiplier: ToolsModule.getBlockMaterialBreakingMultiplier(materialName) }
 }
-ToolAPI.getBlockMaterialName = blockID => ToolsModule.getBlockMaterialName(blockID);
+ToolAPI.getBlockMaterialName = blockID => String(ToolsModule.getBlockMaterialName(blockID));
 ToolAPI.registerBlockDiggingLevel = (blockID, level) => {
     ToolsModule.setBlockDestroyLevel(blockID, level);
 }
@@ -243,7 +243,7 @@ ToolAPI.registerTool = (id, toolMaterial, blockMaterials, params) => {
                     params.blockMaterials = {};
                     blockMaterials.forEach(material => params.blockMaterials[material] = true);
                 }
-                Item.createCustomTool(factory.nameId, factory.nameToDisplay, { name: factory.iconName, meta: factory.iconIndex }, { stack: factory.stack, tier: materialName }, params, id);
+                Item.createCustomTool(factory.nameId, factory.nameToDisplay, { name: String(factory.iconName), meta: factory.iconIndex }, { stack: factory.stack, tier: materialName }, params, id);
         }
         factory.applyOldFactoryProperties(id);
     }
@@ -257,7 +257,7 @@ ToolAPI.registerSword = (id, toolMaterial, params) => {
     const tier = ToolsModule.getTierByName(materialName) ?? ToolsModule.getTierByName("wood");
     const factory = ItemFactoryHelper.killItem(id);
     if(typeof params === "object" && Object.keys(params).length - Number(typeof params.__flag !== "undefined") > 0) {
-        Item.createCustomTool(factory.nameId, factory.nameToDisplay, { name: factory.iconName, meta: factory.iconIndex }, { stack: factory.stack, tier: materialName }, params);
+        Item.createCustomTool(factory.nameId, factory.nameToDisplay, { name: String(factory.iconName), meta: factory.iconIndex }, { stack: factory.stack, tier: materialName }, params);
     } else ToolsModule.registerSword(id, factory.nameId, factory.nameToDisplay, factory.iconName, factory.iconIndex, tier);
 }
 ToolAPI.startDestroyHook = () => {}
