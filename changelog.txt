@@ -53,3 +53,6 @@ RELEASE 2.0
 
 BETA 2.0.1
 - Fixed some of ToolAPI method patches returning Java strings instead of JS ones, improved TypeScript declarations in terms of string types.
+
+BETA 2.0.2
+- Fixed Player.openSign method crashing, and reworked it, for it to create sign GUI screen with the text that had already been written on the sign before.
