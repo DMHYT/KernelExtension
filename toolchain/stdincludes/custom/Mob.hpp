@@ -1,4 +1,3 @@
-#include <stl/vector>
 #include <Actor.hpp>
 
 #ifndef KEX_MOB_HPP

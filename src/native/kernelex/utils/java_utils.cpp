@@ -25,6 +25,8 @@ namespace KEXJavaBridge {
         return _##clazz##_##name; \
     }
     namespace Cache {
+        JAVA_CLASS(KernelExtension, "vsdum/kex/KernelExtension")
+        JAVA_METHOD(KernelExtension, setMinecraftTextboxText, "(Ljava/lang/String;)V")
         JAVA_CLASS(ToolsModule, "vsdum/kex/modules/ToolsModule")
         JAVA_METHOD(ToolsModule, onBroke, "()Z")
         JAVA_METHOD(ToolsModule, calcDestroyTime, "(IIIIIBFFFF)F")
@@ -35,6 +37,14 @@ namespace KEXJavaBridge {
         JAVA_CLASS(CallbacksModule, "vsdum/kex/modules/CallbacksModule")
         JAVA_METHOD(CallbacksModule, onPlayerJump, "(J)V")
         JAVA_METHOD(CallbacksModule, onGameModeChanged, "(I)V")
+    }
+    namespace KernelExtension {
+        void setMinecraftTextboxText(const char* text) {
+            JNIEnv* env = KEXJavaUtils::attach();
+            jstring jText = env->NewStringUTF(text);
+            env->CallStaticVoidMethod(Cache::KernelExtension(), Cache::KernelExtension_setMinecraftTextboxText(), jText);
+            env->DeleteLocalRef(jText);
+        }
     }
     namespace ToolsModule {
         bool onBroke() {

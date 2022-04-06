@@ -4,6 +4,18 @@
 #define KEX_LOCALPLAYER_HPP
 
 
+class AbstractScene {public:};
+class BaseScreen : public AbstractScene {public:};
+class UIScene : public BaseScreen {public:};
+class SceneStack {
+    public:
+    void pushScreen(std::__ndk1::shared_ptr<AbstractScene>, bool);
+};
+class SceneFactory {
+    public:
+    std::__ndk1::shared_ptr<UIScene> createSignScreen(BlockPos const&);  
+};
+
 class LocalPlayer : public Player {
     public:
     class RegionListener;

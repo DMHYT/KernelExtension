@@ -11,8 +11,6 @@ const Slime = WRAP_JAVA("vsdum.kex.natives.Slime");
 
 const GlobalContext = WRAP_JAVA("vsdum.kex.natives.GlobalContext");
 
-const MAIN = WRAP_JAVA("vsdum.kex.KernelExtension");
-
 ModAPI.registerAPI("KernelExtension", {
     ItemsModule,
     LootModule,

@@ -1,3 +1,4 @@
+#include <stl/string>
 #include <stl/vector>
 
 #ifndef KEX_ACTOR_HPP
@@ -26,7 +27,22 @@ enum ArmorTextureType: int {};
 #ifndef KEX_BLOCKPOS_HPP
     class BlockPos;
 #endif
-class BlockSource;
+enum BlockActorType {
+    SIGN = 4
+};
+class BlockActor {
+    public:
+    char filler1[72]; // 72
+    BlockActorType type; // 76
+};
+class SignBlockActor {
+    public:
+    std::__ndk1::string& getMessage();
+};
+class BlockSource {
+    public:
+    BlockActor* getBlockEntity(BlockPos const&);
+};
 class Dimension;
 enum EquipmentSlot: int {};
 #ifndef KEX_HASHEDSTRING_HPP

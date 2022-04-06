@@ -4,7 +4,8 @@
 #include <innercore/item_registry.h>
 #include <innercore/vtable.h>
 #include <commontypes.hpp>
-#include <Player.hpp>
+#include <LocalPlayer.hpp>
+#include "../utils/java_utils.hpp"
 
 
 #define __EXPORT__(RET, NAME, ...) JNIEXPORT RET JNICALL Java_vsdum_kex_natives_Player_native##NAME (JNIEnv* env, jclass clazz, jlong ptr, ##__VA_ARGS__)
@@ -73,8 +74,30 @@ extern "C" {
         return VTABLE_CALL<int>(Player_getPreviousTickSleepTimer, (Player*) ptr);
     }
     __EXPORT__(void, OpenSign, jint x, jint y, jint z) {
-        VTABLE_FIND_OFFSET(Player_openSign, _ZTV6Player, _ZN6Player8openSignERK8BlockPos);
-        VTABLE_CALL<void>(Player_openSign, (Player*) ptr, BlockPos(x, y, z));
+        VTABLE_FIND_OFFSET(Actor_isLocalPlayer, _ZTV5Actor, _ZNK5Actor13isLocalPlayerEv);
+        if(VTABLE_CALL<bool>(Actor_isLocalPlayer, (Actor*) ptr)) {
+            LocalPlayer* localPlayer = (LocalPlayer*) ptr;
+            BlockPos pos(x, y, z);
+            BlockSource* region = ((Actor*) ptr)->getRegion();
+            if(region != nullptr) {
+                BlockActor* tile = region->getBlockEntity(pos);
+                if(tile != nullptr && tile->type == BlockActorType::SIGN) {
+                    std::__ndk1::string& signMessage = ((SignBlockActor*) tile)->getMessage();
+                    ClientInstance* clientInstance = localPlayer->getClientInstance();
+                    if(clientInstance != nullptr) {
+                        VTABLE_FIND_OFFSET(ClientInstance_getClientSceneStack, _ZTV14ClientInstance, _ZNK14ClientInstance19getClientSceneStackEv);
+                        VTABLE_FIND_OFFSET(ClientInstance_getSceneFactory, _ZTV14ClientInstance, _ZNK14ClientInstance15getSceneFactoryEv);
+                        SceneStack* sceneStack = VTABLE_CALL<SceneStack*>(ClientInstance_getClientSceneStack, clientInstance);
+                        SceneFactory* sceneFactory = VTABLE_CALL<SceneFactory*>(ClientInstance_getSceneFactory, clientInstance);
+                        if(sceneStack != nullptr && sceneFactory != nullptr) {
+                            std::__ndk1::shared_ptr<UIScene> scene = sceneFactory->createSignScreen(pos);
+                            sceneStack->pushScreen(scene, false);
+                            KEXJavaBridge::KernelExtension::setMinecraftTextboxText(signMessage.c_str());
+                        }
+                    }
+                }
+            }
+        }
     }
     __EXPORT__(void, PlayEmote, jstring emote) {
         const char* cEmote = env->GetStringUTFChars(emote, 0);

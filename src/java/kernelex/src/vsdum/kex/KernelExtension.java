@@ -1,8 +1,14 @@
 package vsdum.kex;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
 
+import com.mojang.minecraftpe.MainActivity;
+import com.mojang.minecraftpe.TextInputProxyEditTextbox;
 import com.zhekasmirnov.horizon.runtime.logger.Logger;
+import com.zhekasmirnov.innercore.utils.UIUtils;
+
+import android.support.annotation.Nullable;
 
 public class KernelExtension {
 
@@ -22,6 +28,36 @@ public class KernelExtension {
     public static final short getVersionCode()
     {
         return 201;
+    }
+
+    @Nullable private static Runnable onSignOpenFunc = null;
+
+    public static void onSignOpen()
+    {
+        if(onSignOpenFunc != null)
+        {
+            UIUtils.getContext().runOnUiThread(onSignOpenFunc);
+            onSignOpenFunc = null;
+        }
+    }
+
+    public static void setMinecraftTextboxText(String text)
+    {
+        MainActivity minecraft = (MainActivity) UIUtils.getContext();
+        onSignOpenFunc = new Runnable() {
+            public void run()
+            {
+                try {
+                    Field textEditField = MainActivity.class.getDeclaredField("textInputWidget");
+                    textEditField.setAccessible(true);
+                    TextInputProxyEditTextbox textbox = (TextInputProxyEditTextbox) textEditField.get(minecraft);
+                    textbox.setText(text);
+                    textbox.setSelection(textbox.length());
+                } catch(Throwable ex) {
+                    ex.printStackTrace();
+                }
+            }
+        };
     }
 
 }

@@ -11,9 +11,13 @@ namespace KEXJavaUtils {
 
 namespace KEXJavaBridge {
     namespace Cache {
+        jclass KernelExtension(JNIEnv* env);
         jclass ToolsModule(JNIEnv* env);
         jclass LootModule(JNIEnv* env);
         jclass CallbacksModule(JNIEnv* env);
+    }
+    namespace KernelExtension {
+        void setMinecraftTextboxText(const char* text);
     }
     namespace ToolsModule {
         bool onBroke();

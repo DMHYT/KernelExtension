@@ -1,4 +1,3 @@
-#include <stl/string>
 #include <Mob.hpp>
 
 #ifndef KEX_PLAYER_HPP
