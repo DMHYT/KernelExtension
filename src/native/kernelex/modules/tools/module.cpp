@@ -136,7 +136,7 @@ Item::Tier* KEXToolsModule::getItemTier(DiggerItem* item) {
 
 bool KEXToolsModule::patchedCanDestroySpecial(DiggerItem* _this, Block const& block) {
     int blockLevel = KEXToolsModule::getBlockDestroyLevel(IdConversion::dynamicToStatic(block.legacy->id, IdConversion::BLOCK));
-    return _this->hasBlock(block) && getItemTier(_this)->getLevel() >= blockLevel;
+    return _this->hasBlock(block) && getItemTier(_this)->getLevel() + 1 >= blockLevel;
 }
 
 
