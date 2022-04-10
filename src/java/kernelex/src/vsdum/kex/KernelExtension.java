@@ -22,12 +22,12 @@ public class KernelExtension {
 
     public static final byte[] getVersion()
     {
-        return new byte[]{ 2, 0, 2 };
+        return new byte[]{ 2, 0, 3 };
     }
 
     public static final short getVersionCode()
     {
-        return 202;
+        return 203;
     }
 
     @Nullable private static Runnable onSignOpenFunc = null;
