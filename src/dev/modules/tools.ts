@@ -51,15 +51,16 @@ namespace Item {
             materialName = `__unnamedToolMaterial${ToolAPI.unnamedMaterialNum++}`;
             ToolAPI.addToolMaterial(materialName, params.tier);
         } else materialName = params.tier;
+        const tier = ToolsModule.getTierByName(materialName) ?? ToolsModule.getTierByName("wood");
         ToolsModule.registerSword(
             ItemID[id], id, 
             typeof name === "string" ? name : "<unnamed sword>", 
             typeof texture.name === "string" ? texture.name : "missing_item",
             typeof texture.meta === "number" && texture.meta > 0 ? texture.meta : typeof texture.data === "number" && texture.data > 0 ? texture.data : 0,
-            ToolsModule.getTierByName(materialName) ?? ToolsModule.getTierByName("wood"),
-            typeof params.isTech === "boolean" ? params.isTech : false
+            tier, typeof params.isTech === "boolean" ? params.isTech : false
         );
         if(typeof params.stack === "number" && params.stack > 1) Item.getItemById(id).setMaxStackSize(params.stack);
+        ToolAPI.toolData[ItemID[id]] ??= { toolMaterial: ToolAPI.objectFromTier(tier), isWeapon: true };
     }
     // @ts-ignore
     export function createAxeItem(id: string, name: string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: string | ToolAPI.ToolMaterial }): void {
@@ -68,15 +69,16 @@ namespace Item {
             materialName = `__unnamedToolMaterial${ToolAPI.unnamedMaterialNum++}`;
             ToolAPI.addToolMaterial(materialName, params.tier);
         } else materialName = params.tier;
+        const tier = ToolsModule.getTierByName(materialName) ?? ToolsModule.getTierByName("wood");
         ToolsModule.registerAxe(
             ItemID[id], id, 
             typeof name === "string" ? name : "<unnamed axe>", 
             typeof texture.name === "string" ? texture.name : "missing_item",
             typeof texture.meta === "number" && texture.meta > 0 ? texture.meta : typeof texture.data === "number" && texture.data > 0 ? texture.data : 0,
-            ToolsModule.getTierByName(materialName) ?? ToolsModule.getTierByName("wood"),
-            typeof params.isTech === "boolean" ? params.isTech : false
+            tier, typeof params.isTech === "boolean" ? params.isTech : false
         );
         if(typeof params.stack === "number" && params.stack > 1) Item.getItemById(id).setMaxStackSize(params.stack);
+        ToolAPI.toolData[ItemID[id]] ??= { toolMaterial: ToolAPI.objectFromTier(tier), isWeapon: false };
     }
     // @ts-ignore
     export function createPickaxeItem(id: string, name: string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: string | ToolAPI.ToolMaterial }): void {
@@ -85,15 +87,16 @@ namespace Item {
             materialName = `__unnamedToolMaterial${ToolAPI.unnamedMaterialNum++}`;
             ToolAPI.addToolMaterial(materialName, params.tier);
         } else materialName = params.tier;
+        const tier = ToolsModule.getTierByName(materialName) ?? ToolsModule.getTierByName("wood");
         ToolsModule.registerPickaxe(
             ItemID[id], id, 
             typeof name === "string" ? name : "<unnamed pickaxe>", 
             typeof texture.name === "string" ? texture.name : "missing_item",
             typeof texture.meta === "number" && texture.meta > 0 ? texture.meta : typeof texture.data === "number" && texture.data > 0 ? texture.data : 0,
-            ToolsModule.getTierByName(materialName) ?? ToolsModule.getTierByName("wood"),
-            typeof params.isTech === "boolean" ? params.isTech : false
+            tier, typeof params.isTech === "boolean" ? params.isTech : false
         );
         if(typeof params.stack === "number" && params.stack > 1) Item.getItemById(id).setMaxStackSize(params.stack);
+        ToolAPI.toolData[ItemID[id]] ??= { toolMaterial: ToolAPI.objectFromTier(tier), isWeapon: false };
     }
     // @ts-ignore
     export function createShovelItem(id: string, name: string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: string | ToolAPI.ToolMaterial }): void {
@@ -102,15 +105,16 @@ namespace Item {
             materialName = `__unnamedToolMaterial${ToolAPI.unnamedMaterialNum++}`;
             ToolAPI.addToolMaterial(materialName, params.tier);
         } else materialName = params.tier;
+        const tier = ToolsModule.getTierByName(materialName) ?? ToolsModule.getTierByName("wood");
         ToolsModule.registerShovel(
             ItemID[id], id, 
             typeof name === "string" ? name : "<unnamed shovel>", 
             typeof texture.name === "string" ? texture.name : "missing_item",
             typeof texture.meta === "number" && texture.meta > 0 ? texture.meta : typeof texture.data === "number" && texture.data > 0 ? texture.data : 0,
-            ToolsModule.getTierByName(materialName) ?? ToolsModule.getTierByName("wood"),
-            typeof params.isTech === "boolean" ? params.isTech : false
+            tier, typeof params.isTech === "boolean" ? params.isTech : false
         );
         if(typeof params.stack === "number" && params.stack > 1) Item.getItemById(id).setMaxStackSize(params.stack);
+        ToolAPI.toolData[ItemID[id]] ??= { toolMaterial: ToolAPI.objectFromTier(tier), isWeapon: false };
     }
     // @ts-ignore
     export function createHoeItem(id: string, name: string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: string | ToolAPI.ToolMaterial }): void {
@@ -119,15 +123,16 @@ namespace Item {
             materialName = `__unnamedToolMaterial${ToolAPI.unnamedMaterialNum++}`;
             ToolAPI.addToolMaterial(materialName, params.tier);
         } else materialName = params.tier;
+        const tier = ToolsModule.getTierByName(materialName) ?? ToolsModule.getTierByName("wood");
         ToolsModule.registerHoe(
             ItemID[id], id, 
             typeof name === "string" ? name : "<unnamed hoe>", 
             typeof texture.name === "string" ? texture.name : "missing_item",
             typeof texture.meta === "number" && texture.meta > 0 ? texture.meta : typeof texture.data === "number" && texture.data > 0 ? texture.data : 0,
-            ToolsModule.getTierByName(materialName) ?? ToolsModule.getTierByName("wood"),
-            typeof params.isTech === "boolean" ? params.isTech : false
+            tier, typeof params.isTech === "boolean" ? params.isTech : false
         );
         if(typeof params.stack === "number" && params.stack > 1) Item.getItemById(id).setMaxStackSize(params.stack);
+        ToolAPI.toolData[ItemID[id]] ??= { toolMaterial: ToolAPI.objectFromTier(tier), isWeapon: false };
     }
     // @ts-ignore
     export function createShearsItem(id: string, name: string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: string | ToolAPI.ToolMaterial, durability?: number }): void {
@@ -155,6 +160,7 @@ namespace Item {
             materialName = `__unnamedToolMaterial${ToolAPI.unnamedMaterialNum++}`;
             ToolAPI.addToolMaterial(materialName, params.tier);
         } else materialName = params.tier;
+        const tier = ToolsModule.getTierByName(materialName) ?? ToolsModule.getTierByName("wood");
         let blockMaterialsArr: Nullable<string[]> = null;
         if(typeof toolParams === "object" && typeof toolParams.blockMaterials === "object") {
             blockMaterialsArr = [];
@@ -166,8 +172,7 @@ namespace Item {
             typeof name === "string" ? name : "<unnamed custom tool>",
             typeof texture.name === "string" ? texture.name : "missing_item",
             typeof texture.meta === "number" && texture.meta > 0 ? texture.meta : typeof texture.data === "number" && texture.data > 0 ? texture.data : 0,
-            ToolsModule.getTierByName(materialName) ?? ToolsModule.getTierByName("wood"),
-            typeof params.isTech === "boolean" ? params.isTech : false,
+            tier, typeof params.isTech === "boolean" ? params.isTech : false,
             typeof toolParams === "object" && typeof toolParams.isWeapon === "boolean" ? toolParams.isWeapon : false,
             blockMaterialsArr,
             typeof toolParams === "object" && typeof toolParams.brokenId === "number" && toolParams.brokenId != 0 ? toolParams.brokenId : 0,
@@ -177,9 +182,24 @@ namespace Item {
         );
         if(typeof params.stack === "number" && params.stack > 1) Item.getItemById(id).setMaxStackSize(params.stack);
         if(typeof toolParams === "object" && typeof toolParams.getAttackDamageBonus === "function") ToolsModule.enableDynamicDamageFor(numericId);
+        toolParams ??= {};
+        toolParams.toolMaterial ??= ToolAPI.objectFromTier(tier);
+        ToolAPI.toolData[ItemID[id]] ??= toolParams;
     }
 }
 
+
+namespace ToolAPI {
+    export function objectFromTier(tier: ItemTier): ToolAPI.ToolMaterial {
+        return {
+            damage: tier.getAttackDamageBonus(),
+            durability: tier.getUses(),
+            efficiency: tier.getSpeed(),
+            enchantability: tier.getEnchantmentValue(),
+            level: tier.getLevel()
+        }
+    }
+}
 
 ToolAPI.blockData = {};
 ToolAPI.unnamedMaterialNum = 0;
@@ -229,6 +249,16 @@ ToolAPI.registerTool = (id, toolMaterial, blockMaterials, params) => {
     }
     const tier = ToolsModule.getTierByName(materialName) ?? ToolsModule.getTierByName("wood");
     if(typeof params !== "undefined") {
+        if(typeof params.toolMaterial === "undefined") {
+            params.toolMaterial = {
+                level: tier.getLevel(),
+                durability: tier.getUses(),
+                efficiency: tier.getSpeed(),
+                damage: tier.getAttackDamageBonus(),
+                enchantability: tier.getEnchantmentValue()
+            }
+        }
+        ToolAPI.toolData[id] = params;
         const factory = ItemFactoryHelper.killItem(id);
         if(factory == null) throw new java.lang.IllegalStateException("You cannot call ToolAPI.registerTool before creating the item itself!");
         switch(params.__flag) {
@@ -264,9 +294,9 @@ ToolAPI.startDestroyHook = () => {}
 ToolAPI.destroyBlockHook = (c, b, i, p) => ToolsModule.destroyBlockHook(c, b, i, p);
 ToolAPI.playerAttackHook = (a, v, i) => ToolsModule.playerAttackHook(a, v, i);
 ToolAPI.getToolData = itemID => typeof ToolAPI.toolData[itemID] !== "undefined" ? ToolAPI.toolData[itemID] : null;
-ToolAPI.getToolLevel = itemID => ToolsModule.getToolLevel(itemID);
-ToolAPI.getToolLevelViaBlock = (itemID, blockID) => ToolsModule.getToolLevelViaBlock(itemID, blockID);
-ToolAPI.getDestroyTimeViaTool = (fullBlock, toolItem, coords) => ToolsModule.getDestroyTimeViaTool(fullBlock, coords.x, coords.y, coords.z, coords.side, toolItem);
+ToolAPI.getToolLevel = itemID => typeof ToolAPI.toolData[itemID] !== "undefined" && !ToolAPI.toolData[itemID].isWeapon ? ToolsModule.getToolLevel(itemID) : 0;
+ToolAPI.getToolLevelViaBlock = (itemID, blockID) => typeof ToolAPI.toolData[itemID] !== "undefined" && !ToolAPI.toolData[itemID].isWeapon ? ToolsModule.getToolLevelViaBlock(itemID, blockID) : 0;
+ToolAPI.getDestroyTimeViaTool = (fullBlock, toolItem, coords) => typeof ToolAPI.toolData[toolItem.id] !== "undefined" && !ToolAPI.toolData[toolItem.id].isWeapon ? ToolsModule.getDestroyTimeViaTool(fullBlock, coords.x, coords.y, coords.z, coords.side, toolItem.id, toolItem.count, toolItem.data, toolItem.extra ?? null) : Block.getDestroyTime(fullBlock.id);
 Block.setDestroyLevelForID = (blockID, level) => ToolAPI.registerBlockDiggingLevel(blockID, level);
 
 
@@ -291,10 +321,12 @@ Block.setDestroyLevelForID = (blockID, level) => ToolAPI.registerBlockDiggingLev
         const numericId = parseInt(id);
         ToolAPI.registerBlockMaterial(numericId, ToolAPI.blockData[id].material, ToolAPI.blockData[id].level, typeof ToolAPI.blockData[id].isNative === "boolean" ? ToolAPI.blockData[id].isNative : false);
     }
+    VanillaItemID.netherite_axe
     ToolAPI.blockData = {};
     interface JSONToolAPIData {
         materials: { [key: string]: (number | string)[] },
-        destroy_levels: (number | string)[][];
+        destroy_levels: (number | string)[][],
+        vanilla_tools: { [key: string]: (number | string)[] };
     }
     const json = FileTools.ReadJSON(`${__dir__}/data/toolapi_data.json`) as JSONToolAPIData;
     for(let materialName in json.materials) ToolAPI.registerBlockMaterialAsArray(materialName, json.materials[materialName].map(val => typeof val === "number" ? val : VanillaTileID[val]), true);
@@ -303,4 +335,8 @@ Block.setDestroyLevelForID = (blockID, level) => ToolAPI.registerBlockDiggingLev
         typeof Block.dropFunctions[id] !== "undefined" && delete Block.dropFunctions[id];
         Block.setDestroyLevelForID(id as number, level + 1);
     }));
+    Object.keys(json.vanilla_tools).forEach(key => {
+        const tierObj = ToolAPI.objectFromTier(ToolsModule.getTierByName(key));
+        json.vanilla_tools[key].forEach(id => ToolAPI.toolData[(typeof id === "number" ? id : parseInt(id))] = { toolMaterial: tierObj, isWeapon: typeof id === "string" });
+    });
 })();

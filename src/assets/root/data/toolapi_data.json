@@ -12,5 +12,13 @@
         [ "iron_ore", "lapis_ore", "lapis_block", "iron_block", "quartz_ore", "iron_trapdoor" ],
         [ "gold_ore", "gold_block", "diamond_ore", "diamond_block", "redstone_ore", "lit_redstone_ore", "emerald_block" ],
         [ "obsidian", "ancient_debris", "crying_obsidian", "netherite_block", "respawn_anchor" ]
-    ]
+    ],
+    "vanilla_tools": {
+        "wood": [ "268", 269, 270, 271, 290 ],
+        "stone": [ "272", 273, 274, 275, 291 ],
+        "iron": [ 256, 257, 258, "267", 292 ],
+        "diamond": [ "276", 277, 278, 279, 293 ],
+        "golden": [ "283", 284, 285, 286, 294 ],
+        "netherite": [ 726, "727", 804, 835, 880 ]
+    }
 }

@@ -6,7 +6,6 @@ import java.util.Random;
 
 import com.zhekasmirnov.apparatus.adapter.innercore.game.item.ItemStack;
 import com.zhekasmirnov.innercore.api.NativeAPI;
-import com.zhekasmirnov.innercore.api.NativeItemInstance;
 import com.zhekasmirnov.innercore.api.NativeItemInstanceExtra;
 import com.zhekasmirnov.innercore.api.commontypes.Coords;
 import com.zhekasmirnov.innercore.api.commontypes.FullBlock;
@@ -47,7 +46,7 @@ public class ToolsModule {
     public static native int getToolLevel(int id);
     public static native int getToolLevelViaBlock(int itemID, int blockID);
     protected static native void nativeRegisterCustomTool(int id, String nameId, String name, String textureName, int textureMeta, long tierPtr, boolean isTech, boolean isWeapon, String[] blockMaterials, int brokenId, int baseAttackDamage, int enchantType);
-    protected static native float nativeGetDestroyTimeViaTool(int id, int data, long stackptr, int x, int y, int z, int side);
+    protected static native float nativeGetDestroyTimeViaTool(int id, int data, int itemID, int itemCount, int itemData, long itemExtra, int x, int y, int z, int side);
     public static native void enableDynamicDamageFor(int id);
     protected static native void nativeDamageToolInHand(long player, int damage);
     protected static native void nativeRegisterShears(int id, String nameId, String name, String textureName, int textureMeta, long tierPtr, boolean isTech, int durabilityIfWithoutTier);
@@ -275,11 +274,11 @@ public class ToolsModule {
         nativeSetBlockIsNative(blockID, isNative);
     }
 
-    public static float getDestroyTimeViaTool(Object tile, int x, int y, int z, int side, NativeItemInstance stack)
+    public static float getDestroyTimeViaTool(Object tile, int x, int y, int z, int side, int id, int count, int data, NativeItemInstanceExtra extra)
     {
         Pair<Integer, Integer> block = CommonTypes.deserializeFullBlockOrBlockState(tile);
         if(block == null) return 0.0f;
-        return nativeGetDestroyTimeViaTool(block.first.intValue(), block.second.intValue(), stack.getPointer(), x, y, z, side);
+        return nativeGetDestroyTimeViaTool(block.first.intValue(), block.second.intValue(), id, count, data, extra != null ? extra.getValue() : 0L, x, y, z, side);
     }
 
     private static final Map<Integer, ScriptableObject> toolData = new HashMap<>();

@@ -197,43 +197,36 @@ extern "C" {
     }
     JNIEXPORT jint JNICALL Java_vsdum_kex_modules_ToolsModule_getToolLevel
     (JNIEnv*, jclass, jint id) {
-        LegacyItemRegistry::LegacyItemFactoryBase* factory = LegacyItemRegistry::findFactoryById(id);
-        if(factory == nullptr) return 0;
-        if(factory->getType() == ToolFactory::_factoryTypeId) {
-            ToolFactory* toolFactory = (ToolFactory*) factory;
-            return toolFactory->tier->getLevel();
-        }
-        return 0;
+        Item::Tier* tier = KEXToolsModule::getItemTier((DiggerItem*) ItemRegistry::getItemById(IdConversion::staticToDynamic(id, IdConversion::ITEM)));
+        if(tier == nullptr) return 0;
+        return tier->getLevel() + 1;
     }
     JNIEXPORT jint JNICALL Java_vsdum_kex_modules_ToolsModule_getToolLevelViaBlock
     (JNIEnv*, jclass, jint itemID, jint blockID) {
         auto find = KEXToolsModule::blockData.find(blockID);
         if(find == KEXToolsModule::blockData.end()) return 0;
         BlockDataInterface* iface = find->second;
-        LegacyItemRegistry::LegacyItemFactoryBase* factory = LegacyItemRegistry::findFactoryById(itemID);
-        if(factory == nullptr) return 0;
-        if(factory->getType() == ToolFactory::_factoryTypeId) {
-            ToolFactory* toolFactory = (ToolFactory*) factory;
-            int toolLevel = toolFactory->tier->getLevel();
-            return toolLevel >= iface->destroyLevel ? toolLevel : 0;
-        }
-        return 0;
+        Item::Tier* tier = KEXToolsModule::getItemTier((DiggerItem*) ItemRegistry::getItemById(IdConversion::staticToDynamic(itemID, IdConversion::ITEM)));
+        if(tier == nullptr) return 0;
+        int toolLevel = tier->getLevel() + 1;
+        return toolLevel >= iface->destroyLevel ? toolLevel : 0;
     }
     JNIEXPORT jfloat JNICALL Java_vsdum_kex_modules_ToolsModule_nativeGetDestroyTimeViaTool
-    (JNIEnv* env, jclass, jint id, jint data, jlong stackptr, jint x, jint y, jint z, jint side) {
-        ItemStackBase* stack = ((ItemStackBase*) stackptr);
+    (JNIEnv* env, jclass, jint id, jint data, jint itemID, jint itemCount, jint itemData, jlong itemExtra, jint x, jint y, jint z, jint side) {
         BlockLegacy* block = BlockRegistry::getBlockById(IdConversion::staticToDynamic(id, IdConversion::BLOCK));
         if(block != nullptr) {
             float baseDestroyTime = block->getDestroySpeed();
-            Item* item = stack->getItem();
+            Item* item = ItemRegistry::getItemById(IdConversion::staticToDynamic(itemID, IdConversion::ITEM));
             if(item != nullptr) {
                 VTABLE_FIND_OFFSET(Item_getDestroySpeed, _ZTV4Item, _ZNK4Item15getDestroySpeedERK13ItemStackBaseRK5Block);
+                ItemStack stack(*item, itemCount, itemData);
+                if(itemExtra != 0L) ((ItemInstanceExtra*) itemExtra)->apply(&stack);
                 float speed = VTABLE_CALL<float>(Item_getDestroySpeed, item, stack, *(BlockRegistry::getBlockStateForIdData(id, data)));
                 float result = baseDestroyTime / speed;
                 float materialDivider = 1.0f;
                 Item::Tier* itemTier = KEXToolsModule::getItemTier((DiggerItem*) item);
                 if(itemTier != nullptr) materialDivider = itemTier->getSpeed();
-                float bonus = item->destroySpeedBonus(*stack);
+                float bonus = item->destroySpeedBonus(stack);
                 result = KEXJavaBridge::ToolsModule::calcDestroyTime(id, data, x, y, z, (char) side, baseDestroyTime, materialDivider, bonus, baseDestroyTime / speed);
                 return result;
             }
