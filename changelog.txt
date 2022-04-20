@@ -62,3 +62,9 @@ BETA 2.0.3
 
 BETA 2.0.4
 - Some important fixes in tools logics
+
+BETA 2.1
+- Useful additions to the Callback module (by 80LK)
+    - Callback.on(name, handler, priority?) - analogue of Callback.addCallback
+    - Callback.once(name, handler, priority?) - same as on, but the event handler will be called only once
+    - Callback.off(name, handler) - removes the given event handler
