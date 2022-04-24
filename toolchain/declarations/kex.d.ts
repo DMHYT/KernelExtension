@@ -1014,6 +1014,9 @@ declare function WRAP_JAVA(clazz: "vsdum.kex.modules.LootModule"): typeof vsdum.
 declare module vsdum {
     export module kex {
         export module modules {
+            interface UseDurationCallback {
+                (stack: ItemInstance): number;
+            }
             export class ItemsModule extends java.lang.Object {
                 static class: java.lang.Class<ItemsModule>;
                 static setRequiresWorldBuilder(id: number, requiresWorldBuilder: boolean): void;
@@ -1028,6 +1031,7 @@ declare module vsdum {
                 static getFood(id: number): Nullable<natives.FoodItemComponent>;
                 static newFoodSaturationModifier(name: any_string, value: number): void;
                 static saturationModifierFromString(name: any_string): number;
+                static setMaxUseDurationDynamic(id: number, callback: UseDurationCallback): void;
             }
         }
     }

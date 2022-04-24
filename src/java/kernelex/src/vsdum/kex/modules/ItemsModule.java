@@ -3,6 +3,7 @@ package vsdum.kex.modules;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.zhekasmirnov.apparatus.adapter.innercore.game.item.ItemStack;
 import com.zhekasmirnov.horizon.runtime.logger.Logger;
 
 import android.support.annotation.Nullable;
@@ -12,6 +13,7 @@ public class ItemsModule {
 
     protected static native long nativeGetFood(int id);
     protected static native void nativeNewFoodSaturationModifier(String name, float value);
+    protected static native void nativeEnableDynamicUseDuration(int id);
     
     public static native void setRequiresWorldBuilder(int id, boolean requiresWorldBuilder);
     public static native void setExplodable(int id, boolean explodable);
@@ -64,6 +66,26 @@ public class ItemsModule {
         if(foodSaturationModifiers.containsKey(name)) return foodSaturationModifiers.get(name);
         Logger.debug("KEX-WARNING", String.format("Food saturation modifier %s does not exist, returning default value 1.2 (as for normal modifier)", new Object[]{ name }));
         return 1.2f;
+    }
+
+    public static interface UseDurationCallback {
+        public int getUseDuration(ItemStack stack);
+    }
+
+    private static final Map<Integer, UseDurationCallback> itemUseDurationCallbacks = new HashMap<>();
+
+    public static void setMaxUseDurationDynamic(int id, UseDurationCallback callback)
+    {
+        nativeEnableDynamicUseDuration(id);
+        itemUseDurationCallbacks.put(Integer.valueOf(id), callback);
+    }
+
+    public static int getUseDurationDynamic(long stackPtr)
+    {
+        ItemStack stack = ItemStack.fromPtr(stackPtr);
+        if(stack == null) return 0;
+        if(!itemUseDurationCallbacks.containsKey(stack.id)) return 0;
+        return itemUseDurationCallbacks.get(stack.id).getUseDuration(stack);
     }
     
 }

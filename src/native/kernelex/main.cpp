@@ -35,4 +35,5 @@ extern "C" JNIEXPORT void JNICALL Java_vsdum_kex_KernelExtension_defineCallbackC
 	KEXJavaBridge::Cache::ToolsModule(env);
 	KEXJavaBridge::Cache::LootModule(env);
 	KEXJavaBridge::Cache::CallbacksModule(env);
+	KEXJavaBridge::Cache::ItemsModule(env);
 }

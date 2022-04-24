@@ -10,6 +10,7 @@
 #include <innercore/vtable.h>
 #include <Item.hpp>
 #include <FoodItemComponentLegacy.hpp>
+#include "../utils/java_utils.hpp"
 #include "items.hpp"
 
 
@@ -26,15 +27,20 @@ void ItemParamsModifier::applyTo(int id) {
     if(mirroredArt) item->setIsMirroredArt(mirroredArt);
     if(furnaceBurnIntervalMultiplier > 0) item->setFurnaceBurnIntervalMultiplier(furnaceBurnIntervalMultiplier);
     if(furnaceXPMultiplier > 0) item->setFurnaceXPmultiplier(furnaceXPMultiplier);
+    void** vtable = *(void***) item;
     if(cannotBeRepairedInAnvil) {
-        void** vtable = *(void***) item;
         VTABLE_FIND_OFFSET(Item_isValidRepairItem, _ZTV4Item, _ZNK5Item17isValidRepairItemERK13ItemStackBaseRK13ItemStackBase);
         vtable[Item_isValidRepairItem] = ADDRESS(_anvilRepairDisable);
     }
     if(cooldownTime > 0) {
-        void** vtable = *(void***) item;
         VTABLE_FIND_OFFSET(Item_getCooldownTime, _ZTV4Item, _ZNK4Item15getCooldownTimeEv);
         vtable[Item_getCooldownTime] = ADDRESS(_getCooldownTimePatch);
+    }
+    if(dynamicUseDuration) {
+        VTABLE_FIND_OFFSET(Item_getMaxUseDuration__instance, _ZTV4Item, _ZNK4Item17getMaxUseDurationEPK12ItemInstance);
+        VTABLE_FIND_OFFSET(Item_getMaxUseDuration__stack, _ZTV4Item, _ZNK4Item17getMaxUseDurationEPK9ItemStack);
+        vtable[Item_getMaxUseDuration__instance] = ADDRESS(_getMaxUseDurationPatch);
+        vtable[Item_getMaxUseDuration__stack] = ADDRESS(_getMaxUseDurationPatch);
     }
 }
 
@@ -53,6 +59,8 @@ ItemParamsModifier* KEXItemsModule::getOrCreateModifier(int id) {
     }
 }
 
+#include <Player.hpp>
+
 void KEXItemsModule::initialize() {
     DLHandleManager::initializeHandle("libminecraftpe.so", "mcpe");
     HookManager::addCallback(SYMBOL("mcpe", "_Z24FoodSaturationFromStringRKNSt6__ndk112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEE"), LAMBDA((HookManager::CallbackController* controller, std::__ndk1::string const& str), {
@@ -66,6 +74,15 @@ void KEXItemsModule::initialize() {
         }
         return defaultResult;
     }, ), HookManager::CALL | HookManager::LISTENER | HookManager::CONTROLLER | HookManager::RESULT);
+    HookManager::addCallback(SYMBOL("mcpe", "_ZN6Player14startUsingItemERK9ItemStacki"), LAMBDA((HookManager::CallbackController* controller, Player* player, ItemStack const& stack, int time), {
+        Item* item = stack.getItem();
+        if(item != nullptr) {
+            ItemParamsModifier* mod = getModifierOrNull(IdConversion::dynamicToStatic(item->id, IdConversion::ITEM));
+            if(mod != nullptr && mod->dynamicUseDuration) {
+                return controller->callAndReplace<void*>(player, stack, ItemParamsModifier::_getMaxUseDurationPatch(item, &stack));
+            }
+        }
+    }, ), HookManager::CALL | HookManager::LISTENER | HookManager::CONTROLLER | HookManager::RESULT);
     Callbacks::addCallback("postModItemsInit", CALLBACK([], (), {
         for(std::unordered_map<int, ItemParamsModifier*>::iterator iter = itemParamsModifiers.begin(); iter != itemParamsModifiers.end(); iter++) {
             iter->second->applyTo(iter->first);
@@ -78,55 +95,56 @@ int ItemParamsModifier::_getCooldownTimePatch(Item* item) {
     return KEXItemsModule::itemParamsModifiers.at(IdConversion::dynamicToStatic(item->id, IdConversion::ITEM))->cooldownTime;
 }
 
+int ItemParamsModifier::_getMaxUseDurationPatch(Item* item, ItemStackBase const* stack) {
+    return KEXJavaBridge::ItemsModule::getUseDurationDynamic((jlong) stack);
+}
+
 
 extern "C" {
+    #define GET_MOD ItemParamsModifier* mod = KEXItemsModule::getOrCreateModifier(id);
     JNIEXPORT void JNICALL Java_vsdum_kex_modules_ItemsModule_setRequiresWorldBuilder
     (JNIEnv*, jclass, jint id, jboolean requiresWorldBuilder) {
-        ItemParamsModifier* mod = KEXItemsModule::getOrCreateModifier(id);
-        mod->requiresWorldBuilder = requiresWorldBuilder;
+        GET_MOD mod->requiresWorldBuilder = requiresWorldBuilder;
     }
     JNIEXPORT void JNICALL Java_vsdum_kex_modules_ItemsModule_setExplodable
     (JNIEnv*, jclass, jint id, jboolean explodable) {
-        ItemParamsModifier* mod = KEXItemsModule::getOrCreateModifier(id);
-        mod->explodable = explodable;
+        GET_MOD mod->explodable = explodable;
     }
     JNIEXPORT void JNICALL Java_vsdum_kex_modules_ItemsModule_setFireResistant
     (JNIEnv*, jclass, jint id, jboolean fireResistant) {
-        ItemParamsModifier* mod = KEXItemsModule::getOrCreateModifier(id);
-        mod->fireResistant = fireResistant;
+        GET_MOD mod->fireResistant = fireResistant;
     }
     JNIEXPORT void JNICALL Java_vsdum_kex_modules_ItemsModule_setShouldDespawn
     (JNIEnv*, jclass, jint id, jboolean shouldDespawn) {
-        ItemParamsModifier* mod = KEXItemsModule::getOrCreateModifier(id);
-        mod->shouldDespawn = shouldDespawn;
+        GET_MOD mod->shouldDespawn = shouldDespawn;
     }
     JNIEXPORT void JNICALL Java_vsdum_kex_modules_ItemsModule_setIsMirroredArt
     (JNIEnv*, jclass, jint id, jboolean mirroredArt) {
-        ItemParamsModifier* mod = KEXItemsModule::getOrCreateModifier(id);
-        mod->mirroredArt = mirroredArt;
+        GET_MOD mod->mirroredArt = mirroredArt;
     }
     JNIEXPORT void JNICALL Java_vsdum_kex_modules_ItemsModule_setFurnaceBurnIntervalMultiplier
     (JNIEnv*, jclass, jint id, jfloat multiplier) {
-        ItemParamsModifier* mod = KEXItemsModule::getOrCreateModifier(id);
-        mod->furnaceBurnIntervalMultiplier = multiplier;
+        GET_MOD mod->furnaceBurnIntervalMultiplier = multiplier;
     }
     JNIEXPORT void JNICALL Java_vsdum_kex_modules_ItemsModule_setFurnaceXPMultiplier
     (JNIEnv*, jclass, jint id, jfloat multiplier) {
-        ItemParamsModifier* mod = KEXItemsModule::getOrCreateModifier(id);
-        mod->furnaceXPMultiplier = multiplier;
+        GET_MOD mod->furnaceXPMultiplier = multiplier;
     }
     JNIEXPORT void JNICALL Java_vsdum_kex_modules_ItemsModule_setCannotBeRepairedInAnvil
     (JNIEnv*, jclass, jint id) {
-        ItemParamsModifier* mod = KEXItemsModule::getOrCreateModifier(id);
-        mod->cannotBeRepairedInAnvil = true;
+        GET_MOD mod->cannotBeRepairedInAnvil = true;
     }
     JNIEXPORT void JNICALL Java_vsdum_kex_modules_ItemsModule_setCooldownTime
     (JNIEnv*, jclass, jint id, jint cooldownTime) {
         if(cooldownTime > 0) {
-            ItemParamsModifier* mod = KEXItemsModule::getOrCreateModifier(id);
-            mod->cooldownTime = cooldownTime;
+            GET_MOD mod->cooldownTime = cooldownTime;
         }
     }
+    JNIEXPORT void JNICALL Java_vsdum_kex_modules_ItemsModule_nativeEnableDynamicUseDuration
+    (JNIEnv*, jclass, jint id) {
+        GET_MOD mod->dynamicUseDuration = true;
+    }
+    #undef GET_MOD
     JNIEXPORT jboolean JNICALL Java_vsdum_kex_modules_ItemsModule_isFood
     (JNIEnv*, jclass, jint id) {
         Item* item = ItemRegistry::getItemById(IdConversion::staticToDynamic(id, IdConversion::ITEM));

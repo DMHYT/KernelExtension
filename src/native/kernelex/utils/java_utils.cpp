@@ -37,6 +37,8 @@ namespace KEXJavaBridge {
         JAVA_CLASS(CallbacksModule, "vsdum/kex/modules/CallbacksModule")
         JAVA_METHOD(CallbacksModule, onPlayerJump, "(J)V")
         JAVA_METHOD(CallbacksModule, onGameModeChanged, "(I)V")
+        JAVA_CLASS(ItemsModule, "vsdum/kex/modules/ItemsModule")
+        JAVA_METHOD(ItemsModule, getUseDurationDynamic, "(J)I")
     }
     namespace KernelExtension {
         void setMinecraftTextboxText(const char* text) {
@@ -80,6 +82,11 @@ namespace KEXJavaBridge {
         }
         void onGameModeChanged(int mode) {
             KEXJavaUtils::attach()->CallStaticVoidMethod(Cache::CallbacksModule(), Cache::CallbacksModule_onGameModeChanged(), mode);
+        }
+    }
+    namespace ItemsModule {
+        int getUseDurationDynamic(jlong stackPtr) {
+            return KEXJavaUtils::attach()->CallStaticIntMethod(Cache::ItemsModule(), Cache::ItemsModule_getUseDurationDynamic(), stackPtr);
         }
     }
 }

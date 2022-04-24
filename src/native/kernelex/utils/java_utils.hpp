@@ -15,6 +15,7 @@ namespace KEXJavaBridge {
         jclass ToolsModule(JNIEnv* env);
         jclass LootModule(JNIEnv* env);
         jclass CallbacksModule(JNIEnv* env);
+        jclass ItemsModule(JNIEnv* env);
     }
     namespace KernelExtension {
         void setMinecraftTextboxText(const char* text);
@@ -31,6 +32,9 @@ namespace KEXJavaBridge {
     namespace CallbacksModule {
         void onPlayerJump(long long uid);
         void onGameModeChanged(int mode);
+    }
+    namespace ItemsModule {
+        int getUseDurationDynamic(jlong stackPtr);
     }
 }
 

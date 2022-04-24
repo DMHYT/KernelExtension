@@ -20,20 +20,15 @@
     class Block;
 #endif
 
-class CommandFilePath {
-    public:
-    std::__ndk1::string text;
-};
-
 class ActorDamageSource {
     public:
-    char vtable[4]; // 4
+    void** vtable; // 4
     ActorDamageCause cause; // 8
     // virtual bool isEntitySource() const;
     // virtual bool isChildEntitySource() const;
     // virtual bool isBlockSource() const;
     // virtual bool isFire() const;
-    // virtual std::__ndk1::string getDeathMessage(std::__ndk1::string, Actor*) const;
+    // virtual std::__ndk1::pair<std::__ndk1::string, std::__ndk1::vector<std::__ndk1::string>> getDeathMessage(std::__ndk1::string, Actor*) const;
     // virtual bool getIsCreative() const;
     // virtual bool getIsWorldBuilder() const;
     // virtual ActorUniqueID* getEntityUniqueID() const;
@@ -61,9 +56,9 @@ class ActorDamageByActorSource : public ActorDamageSource {
     ActorUniqueID entityUid; // 24
     ActorType entityType; // 28
     ActorCategory entityCategory; // 32
-    CommandFilePath someStringFromEntity; // 44
+    std::__ndk1::string someStringFromEntity; // 44
     // virtual bool isEntitySource() const;
-    // virtual std::__ndk1::string getDeathMessage(std::__ndk1::string, Actor*) const;
+    // virtual std::__ndk1::pair<std::__ndk1::string, std::__ndk1::vector<std::__ndk1::string>> getDeathMessage(std::__ndk1::string, Actor*) const;
     // virtual bool getIsCreative() const;
     // virtual bool getIsWorldBuilder() const;
     // virtual ActorUniqueID* getEntityUniqueID() const;
@@ -83,9 +78,9 @@ class ActorDamageByChildActorSource : public ActorDamageByActorSource {
     ActorUniqueID damagingEntityUid; // 56
     ActorType damagingEntityType; // 60
     ActorCategory damagingEntityCategory; // 64
-    CommandFilePath someStringFromDamagingEntity; // 76
+    std::__ndk1::string someStringFromDamagingEntity; // 76
     // virtual bool isChildEntitySource() const;
-    // virtual std::__ndk1::string getDeathMessage(std::__ndk1::string, Actor*) const;
+    // virtual std::__ndk1::pair<std::__ndk1::string, std::__ndk1::vector<std::__ndk1::string>> getDeathMessage(std::__ndk1::string, Actor*) const;
     // virtual bool getDamagingEntityIsCreative() const;
     // virtual bool getDamagingEntityIsWorldBuilder() const;
     // virtual ActorUniqueID* getDamagingEntityUniqueID() const;
@@ -100,11 +95,20 @@ class ActorDamageByBlockSource : public ActorDamageSource {
     public:
     Block* block; // 12
     // virtual bool isBlockSource() const;
-    // virtual std::__ndk1::string getDeathMessage(std::__ndk1::string, Actor*) const;
+    // virtual std::__ndk1::pair<std::__ndk1::string, std::__ndk1::vector<std::__ndk1::string>> getDeathMessage(std::__ndk1::string, Actor*) const;
     // virtual ActorDamageByBlockSource* clone() const;
     ActorDamageByBlockSource(ActorDamageCause);
     ActorDamageByBlockSource(Block const&, ActorDamageCause);
     Block* getBlock() const;
+};
+
+class RemovedActorDamageByType : public ActorDamageSource {
+    public:
+    ActorType actorType; // 12
+    // virtual std::__ndk1::pair<std::__ndk1::string, std::__ndk1::vector<std::__ndk1::string>> getDeathMessage(std::__ndk1::string, Actor*) const;
+    // virtual ActorType getEntityType() const;
+    // virtual RemovedActorDamageByType* clone() const;
+    RemovedActorDamageByType(ActorDamageCause, ActorType);
 };
 
 
