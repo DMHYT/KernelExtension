@@ -9,6 +9,7 @@
 #include <innercore/item_registry.h>
 #include <innercore/vtable.h>
 #include <Actor.hpp>
+#include <ActorTests.hpp>
 #include <ActorUniqueID.hpp>
 #include <Block.hpp>
 #include <BlockLegacy.hpp>
@@ -255,6 +256,30 @@ void KEXToolsModule::initialize() {
                     int result = factory->baseAttackDamage + KEXJavaBridge::ToolsModule::getAttackDamageBonus(id, 1, stack->getDamageValue(), (jlong) extra, factory->tier->getAttackDamageBonus());
                     delete extra;
                     return result;
+                }
+            }
+        }
+    }, ), HookManager::CALL | HookManager::LISTENER | HookManager::CONTROLLER | HookManager::RESULT);
+    HookManager::addCallback(SYMBOL("mcpe", "_ZNK21ActorHasEquipmentTest8evaluateERK13FilterContext"), LAMBDA((HookManager::CallbackController* controller, ActorHasEquipmentTest* test, FilterContext const& ctx), {
+        int dynamicTestId = test->id;
+        int testId = IdConversion::dynamicToStatic(dynamicTestId, IdConversion::ITEM);
+        if(testId == 359) {
+            VTABLE_FIND_OFFSET(Actor_getCarriedItem, _ZTV5Actor, _ZNK5Actor14getCarriedItemEv);
+            ItemStack* stack = VTABLE_CALL<ItemStack*>(Actor_getCarriedItem, ctx.actor);
+            if(stack != nullptr) {
+                int dynamicStackId = stack->getId();
+                int stackId = IdConversion::dynamicToStatic(dynamicStackId, IdConversion::ITEM);
+                if(stackId != 359) {
+                    LegacyItemRegistry::LegacyItemFactoryBase* factory = LegacyItemRegistry::findFactoryById(stackId);
+                    if(factory != nullptr && factory->getType() == ToolFactory::_factoryTypeId) {
+                        ToolFactory* toolFactory = (ToolFactory*) factory;
+                        if(toolFactory->getToolType() == ToolFactory::SHEARS) {
+                            test->id = dynamicStackId;
+                            bool result = controller->callAndReplace<bool>(test, &ctx);
+                            test->id = dynamicTestId;
+                            return result;
+                        }
+                    }
                 }
             }
         }
