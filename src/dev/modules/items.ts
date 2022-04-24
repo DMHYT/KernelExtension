@@ -71,3 +71,19 @@ enum ESaturationModifier {
     MAX = 2.0,
     SUPERNATURAL = 2.4
 }
+
+
+// @ts-ignore
+EItemAnimation.NONE = 0;
+// @ts-ignore
+EItemAnimation.EAT = 1;
+// @ts-ignore
+EItemAnimation.DRINK = 2;
+// @ts-ignore
+EItemAnimation.BLOCK = 3;
+// @ts-ignore
+EItemAnimation.CAMERA = 5;
+// @ts-ignore
+EItemAnimation.SPEAR = 6;
+// @ts-ignore
+EItemAnimation.CROSSBOW = 9;

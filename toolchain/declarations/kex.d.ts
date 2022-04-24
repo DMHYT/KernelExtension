@@ -1162,6 +1162,17 @@ declare namespace Callback {
 }
 
 
+declare enum EItemAnimation {
+    NONE = 0,
+    EAT = 1,
+    DRINK = 2,
+    BLOCK = 3,
+    CAMERA = 5,
+    SPEAR = 6,
+    CROSSBOW = 9
+}
+
+
 /**
  * Interface you can use in case you inject KEX API
  * into some variable and not into the global mod scope.
