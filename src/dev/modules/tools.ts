@@ -302,7 +302,6 @@ Block.setDestroyLevelForID = (blockID, level) => ToolAPI.registerBlockDiggingLev
 
 (() => {
     for(let k in ToolAPI.blockMaterials) ToolAPI.addBlockMaterial(k, ToolAPI.blockMaterials[k].multiplier);
-    ToolAPI.blockMaterials = null;
     const materialsToDelete = [ "wood", "stone", "iron", "diamond", "golden", "netherite" ];
     for(let materialName in ToolAPI.toolMaterials) {
         const copy = { ...ToolAPI.toolMaterials[materialName] };
@@ -321,7 +320,6 @@ Block.setDestroyLevelForID = (blockID, level) => ToolAPI.registerBlockDiggingLev
         const numericId = parseInt(id);
         ToolAPI.registerBlockMaterial(numericId, ToolAPI.blockData[id].material, ToolAPI.blockData[id].level, typeof ToolAPI.blockData[id].isNative === "boolean" ? ToolAPI.blockData[id].isNative : false);
     }
-    VanillaItemID.netherite_axe
     ToolAPI.blockData = {};
     interface JSONToolAPIData {
         materials: { [key: string]: (number | string)[] },
