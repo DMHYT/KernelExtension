@@ -23,6 +23,7 @@ namespace Item {
     // @ts-ignore
     export function createFoodItem(nameID: string, name: string, texture: TextureData, params: FoodParamsDescription): NativeItem {
         const commonParamsObj: { stack?: number, isTech?: boolean } = { stack: 64 };
+        params ??= {};
         if(typeof params.stack === "number" && params.stack > 0) {
             commonParamsObj.stack = params.stack;
             delete params.stack;
