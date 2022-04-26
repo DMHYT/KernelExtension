@@ -48,12 +48,17 @@ class AABB {
 #endif //KEX_AABB_HPP
 
 
+#include <stl/string>
+
 #ifndef KEX_HASHEDSTRING_HPP
 #define KEX_HASHEDSTRING_HPP
 
 class HashedString {
     public:
+    char filler[20];
     HashedString(const char*);
+    std::__ndk1::string const& getString() const;
+    bool operator==(HashedString const&) const;
 };
 
 #endif //KEX_HASHEDSTRING_HPP

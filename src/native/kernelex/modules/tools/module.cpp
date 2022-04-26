@@ -284,6 +284,22 @@ void KEXToolsModule::initialize() {
             }
         }
     }, ), HookManager::CALL | HookManager::LISTENER | HookManager::CONTROLLER | HookManager::RESULT);
+    HookManager::addCallback(SYMBOL("mcpe", "_ZNK13ItemStackBase10isInstanceERK12HashedStringb"), LAMBDA((HookManager::CallbackController* controller, ItemStackBase* stack, HashedString const& str), {
+        std::__ndk1::string const& cppstr = str.getString();
+        if(cppstr == "shears") {
+            int id = IdConversion::dynamicToStatic(stack->getId(), IdConversion::ITEM);
+            if(id != 359) {
+                LegacyItemRegistry::LegacyItemFactoryBase* factory = LegacyItemRegistry::findFactoryById(id);
+                if(factory != nullptr && factory->getType() == ToolFactory::_factoryTypeId) {
+                    ToolFactory* toolFactory = (ToolFactory*) factory;
+                    if(toolFactory->getToolType() == ToolFactory::SHEARS) {
+                        controller->replace();
+                        return true;
+                    }
+                }
+            }
+        }
+    }, ), HookManager::CALL | HookManager::LISTENER | HookManager::CONTROLLER | HookManager::RESULT);
 }
 
 
