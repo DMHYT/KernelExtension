@@ -18,7 +18,8 @@ class ToolFactory : public LegacyItemRegistry::LegacyItemFactoryBase {
         HOE,
         CUSTOM_DIGGER,
         CUSTOM_WEAPON,
-        SHEARS
+        SHEARS,
+        FLINT_AND_STEEL
     };
     static const int _factoryTypeId = 200;
     Item::Tier* tier = nullptr;
@@ -186,6 +187,28 @@ class ShearsProvider : public LegacyItemRegistry::LegacyItemProviderBase {
     ~ShearsProvider();
     virtual void setupVtable(void*);
     virtual ShearsFactory* getFactory() {
+        return factory;
+    }
+};
+
+
+class FlintAndSteelFactory : public ToolFactory {
+    public:
+    virtual void registerItem();
+    FlintAndSteelFactory(): ToolFactory() {
+        enchantType = 256;
+    }
+    virtual ToolType getToolType() {
+        return FLINT_AND_STEEL;
+    }
+};
+class FlintAndSteelProvider : public LegacyItemRegistry::LegacyItemProviderBase {
+    public:
+    FlintAndSteelFactory* factory;
+    FlintAndSteelProvider(FlintAndSteelFactory* flintAndSteelFactory): factory(flintAndSteelFactory) {};
+    ~FlintAndSteelProvider();
+    virtual void setupVtable(void*);
+    virtual FlintAndSteelFactory* getFactory() {
         return factory;
     }
 };

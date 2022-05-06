@@ -5,11 +5,13 @@
 #include <innercore/legacy_item_registry.h>
 #include <innercore/block_registry.h>
 #include <innercore/vtable.h>
+#include <commontypes.hpp>
 #include <Actor.hpp>
 #include <BlockLegacy.hpp>
 #include <Item.hpp>
 #include <ItemStackBase.hpp>
 #include <ItemStack.hpp>
+#include <static_symbol.hpp>
 #include "../../utils/java_utils.hpp"
 #include "classes.hpp"
 #include "module.hpp"
@@ -312,5 +314,58 @@ extern "C" {
         env->ReleaseStringUTFChars(nameId, cNameId);
         env->ReleaseStringUTFChars(name, cName);
         env->ReleaseStringUTFChars(textureName, cTextureName);
+    }
+    JNIEXPORT void JNICALL Java_vsdum_kex_modules_ToolsModule_nativeRegisterFlintAndSteel
+    (JNIEnv* env, jclass, jint id, jstring nameId, jstring name, jstring textureName, jint textureMeta, jboolean isTech, jint durability) {
+        const char* cNameId = env->GetStringUTFChars(nameId, 0);
+        const char* cName = env->GetStringUTFChars(name, 0);
+        const char* cTextureName = env->GetStringUTFChars(textureName, 0);
+        FlintAndSteelFactory* factory = new FlintAndSteelFactory();
+        factory->initParameters(id, "item_" + std::string(cNameId), std::string(cName), std::string(cTextureName), textureMeta);
+        factory->props.stack = 1;
+        factory->props.durability = durability;
+        LegacyItemRegistry::registerItemFactory(factory);
+        if(!isTech) LegacyItemRegistry::addItemToCreative(id, 1, 0, nullptr);
+        env->ReleaseStringUTFChars(nameId, cNameId);
+        env->ReleaseStringUTFChars(name, cName);
+        env->ReleaseStringUTFChars(textureName, cTextureName);
+    }
+    JNIEXPORT void JNICALL Java_vsdum_kex_modules_ToolsModule_useCustomShearsOn
+    (JNIEnv*, jclass, jint x, jint y, jint z, jbyte side, jfloat relX, jfloat relY, jfloat relZ, jlong actorUID) {
+        Actor* actor = Actor::wrap(actorUID);
+        if(actor != nullptr) {
+            VTABLE_FIND_OFFSET(Actor_getCarriedItem, _ZTV5Actor, _ZNK5Actor14getCarriedItemEv);
+            ItemStack* stack = VTABLE_CALL<ItemStack*>(Actor_getCarriedItem, actor);
+            if(stack != nullptr) {
+                Item* item = stack->getItem();
+                if(item != nullptr) {
+                    VTABLE_FIND_OFFSET(_checkUseOnPermissions, _ZTV4Item, _ZNK4Item22_checkUseOnPermissionsER5ActorR13ItemStackBaseRKhRK8BlockPos);
+                    STATIC_SYMBOL(_useOn, "_ZNK10ShearsItem6_useOnER9ItemStackR5Actor8BlockPoshfff", (Item*, ItemStack*, Actor*, BlockPos*, unsigned char, float, float, float));
+                    BlockPos pos(x, y, z);
+                    if(VTABLE_CALL<bool>(_checkUseOnPermissions, item, actor, stack, &side, &pos)) {
+                        _useOn(item, stack, actor, &pos, side, relX, relY, relZ);
+                    }
+                }
+            }
+        }
+    }
+    JNIEXPORT void JNICALL Java_vsdum_kex_modules_ToolsModule_useCustomFlintAndSteelOn
+    (JNIEnv*, jclass, jint x, jint y, jint z, jbyte side, jfloat relX, jfloat relY, jfloat relZ, jlong actorUID) {
+        Actor* actor = Actor::wrap(actorUID);
+        if(actor != nullptr) {
+            VTABLE_FIND_OFFSET(Actor_getCarriedItem, _ZTV5Actor, _ZNK5Actor14getCarriedItemEv);
+            ItemStack* stack = VTABLE_CALL<ItemStack*>(Actor_getCarriedItem, actor);
+            if(stack != nullptr) {
+                Item* item = stack->getItem();
+                if(item != nullptr) {
+                    VTABLE_FIND_OFFSET(_checkUseOnPermissions, _ZTV4Item, _ZNK4Item22_checkUseOnPermissionsER5ActorR13ItemStackBaseRKhRK8BlockPos);
+                    STATIC_SYMBOL(_useOn, "_ZNK17FlintAndSteelItem6_useOnER9ItemStackR5Actor8BlockPoshfff", (Item*, ItemStack*, Actor*, BlockPos*, unsigned char, float, float, float));
+                    BlockPos pos(x, y, z);
+                    if(VTABLE_CALL<bool>(_checkUseOnPermissions, item, actor, stack, &side, &pos)) {
+                        _useOn(item, stack, actor, &pos, side, relX, relY, relZ);
+                    }
+                }
+            }
+        }
     }
 }

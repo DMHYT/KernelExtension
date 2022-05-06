@@ -152,6 +152,22 @@ namespace Item {
             typeof params.isTech === "boolean" ? params.isTech : false
         );
         if(typeof params.stack === "number" && params.stack > 1) Item.getItemById(id).setMaxStackSize(params.stack);
+        Item.registerUseFunctionForID(ItemID[id], (coords, item, block, player) => ToolsModule.useCustomShearsOn(coords.x, coords.y, coords.z, coords.side, coords.relative.x, coords.relative.y, coords.relative.z, player));
+    }
+    // @ts-ignore
+    export function createFlintAndSteelItem(id: string, name: string, texture: TextureData, params: { stack?: number, isTech?: boolean, durability?: number }): void {
+        params ??= {};
+        params.stack ??= 1;
+        params.durability ??= 64;
+        ToolsModule.registerFlintAndSteel(
+            ItemID[id], id,
+            typeof name === "string" ? name: "<unnamed flint and steel>",
+            typeof texture.name === "string" ? texture.name : "missing_item",
+            typeof texture.meta === "number" && texture.meta > 0 ? texture.meta : typeof texture.data === "number" && texture.data > 0 ? texture.data : 0,
+            params.durability, typeof params.isTech === "boolean" ? params.isTech : false
+        );
+        if(typeof params.stack === "number" && params.stack > 1) Item.getItemById(id).setMaxStackSize(params.stack);
+        Item.registerUseFunctionForID(ItemID[id], (coords, item, block, player) => ToolsModule.useCustomFlintAndSteelOn(coords.relative.x, coords.relative.y, coords.relative.z, coords.side, coords.relative.x, coords.relative.y, coords.relative.z, player));
     }
     // @ts-ignore
     export function createCustomTool(id: string, name: string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: string | ToolAPI.ToolMaterial }, toolParams?: ToolAPI.ExtendedToolParams, numericId?: number): void {
@@ -338,3 +354,9 @@ Block.setDestroyLevelForID = (blockID, level) => ToolAPI.registerBlockDiggingLev
         json.vanilla_tools[key].forEach(id => ToolAPI.toolData[(typeof id === "number" ? id : parseInt(id))] = { toolMaterial: tierObj, isWeapon: typeof id === "string" });
     });
 })();
+
+
+IDRegistry.genItemID("testShears");
+Item.createShearsItem("testShears", "Test Shears", { name: "missing_item" }, {});
+IDRegistry.genItemID("testFlint");
+Item.createFlintAndSteelItem("testFlint", "Test Flint and Steel", { name: "missing_item" }, {});

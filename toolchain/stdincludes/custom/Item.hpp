@@ -65,9 +65,11 @@ enum UseAnimation : int {};
 
 class Item {
     public:
-    char filler1[86]; // 90
+    char filler1[84]; // 88
+    short maxStack; // 90
     short id; // 92
-    char filler2[88]; // 180
+    char filler2[84]; // 176
+    int maxDamage; // 180
     int maxUseDuration; // 184
     char filler3[116]; // 300
     virtual void initServer(Json::Value&);

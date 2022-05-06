@@ -50,6 +50,9 @@ public class ToolsModule {
     public static native void enableDynamicDamageFor(int id);
     protected static native void nativeDamageToolInHand(long player, int damage);
     protected static native void nativeRegisterShears(int id, String nameId, String name, String textureName, int textureMeta, long tierPtr, boolean isTech, int durabilityIfWithoutTier);
+    protected static native void nativeRegisterFlintAndSteel(int id, String nameId, String name, String textureName, int textureMeta, boolean isTech, int durability);
+    public static native void useCustomShearsOn(int x, int y, int z, byte side, float relX, float relY, float relZ, long actorUID);
+    public static native void useCustomFlintAndSteelOn(int x, int y, int z, byte side, float relX, float relY, float relZ, long actorUID);
 
     private static final Map<String, ItemTier> tiersByName = new HashMap<>();
 
@@ -190,6 +193,16 @@ public class ToolsModule {
     public static void registerShears(int id, String nameId, String name, String textureName, int textureMeta, int durability, boolean isTech)
     {
         nativeRegisterShears(id, NativeAPI.convertNameId(nameId), name, textureName, textureMeta, 0L, isTech, durability);
+    }
+
+    public static void registerFlintAndSteel(int id, String nameId, String name, String textureName, int textureMeta, int durability)
+    {
+        registerFlintAndSteel(id, nameId, name, textureName, textureMeta, durability, true);
+    }
+
+    public static void registerFlintAndSteel(int id, String nameId, String name, String textureName, int textureMeta, int durability, boolean isTech)
+    {
+        nativeRegisterFlintAndSteel(id, nameId, name, textureName, textureMeta, isTech, durability);
     }
 
     private static final Map<String, Float> materialNameToBreakingMultiplier = new HashMap<>();

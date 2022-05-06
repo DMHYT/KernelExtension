@@ -2,6 +2,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <mod.h>
+#include <innercore/legacy_item_registry.h>
 #include <Block.hpp>
 #include <items/DiggerItem.hpp>
 #include <items/WeaponItem.hpp>
@@ -38,6 +39,18 @@ class LastDestroyedBlock {
 
 class KEXToolsModule : public Module {
     public:
+    class SimpleTests {
+        public:
+        static bool isTool(int id);
+        static bool isTool(LegacyItemRegistry::LegacyItemFactoryBase* factory);
+        static bool isSword(int id);
+        static bool isAxe(int id);
+        static bool isPickaxe(int id);
+        static bool isShovel(int id);
+        static bool isHoe(int id);
+        static bool isShears(int id);
+        static bool isFlintAndSteel(int id);
+    };
     static LastDestroyedBlock* lastDestroyedClient;
     static std::unordered_map<long long, LastDestroyedBlock*> lastDestroyed;
     static std::unordered_map<int, BlockDataInterface*> blockData;

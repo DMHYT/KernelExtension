@@ -1062,6 +1062,7 @@ declare module vsdum {
                 static registerShovel(id: number, nameId: any_string, name: any_string, textureName: any_string, textureMeta: number, tier: ToolsModule.ItemTier, isTech?: boolean): void;
                 static registerHoe(id: number, nameId: any_string, name: any_string, textureName: any_string, textureMeta: number, tier: ToolsModule.ItemTier, isTech?: boolean): void;
                 static registerShears(id: number, nameId: any_string, name: any_string, textureName: any_string, textureMeta: number, tierOrDurability: ToolsModule.ItemTier | number, isTech?: boolean): void;
+                static registerFlintAndSteel(id: number, nameId: any_string, name: any_string, textureName: any_string, textureMeta: number, durability: number, isTech?: boolean): void;
                 static addBlockMaterial(name: any_string, breakingMultiplier: number): void;
                 static getBlockMaterialBreakingMultiplier(name: any_string): number;
                 static getBlockData(id: number): BlockData;
@@ -1076,6 +1077,8 @@ declare module vsdum {
                 static registerCustomTool(id: number, nameId: any_string, name: any_string, textureName: any_string, textureMeta: number, tier: ToolsModule.ItemTier, isTech: boolean, isWeapon: boolean, blockMaterials: Nullable<any_string[]>, brokenId: number, baseAttackDamage: number, enchantType: number, toolData: ExtendedToolParams): void;
                 static destroyBlockHook(coords: Callback.ItemUseCoordinates, block: Tile, item: ItemInstance, player: number): void;
                 static playerAttackHook(attacker: number, victim: number, item: ItemInstance): void;
+                static useCustomShearsOn(x: number, y: number, z: number, side: number, rx: number, ry: number, rz: number, actorUID: number): void;
+                static useCustomFlintAndSteelOn(x: number, y: number, z: number, side: number, rx: number, ry: number, rz: number, actorUID: number): void;
             }
             export module ToolsModule {
                 export class ItemTier extends java.lang.Object {
@@ -1148,6 +1151,7 @@ declare namespace Item {
     function createShovelItem(id: any_string, name: any_string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: any_string | ToolAPI.ToolMaterial }): void;
     function createHoeItem(id: any_string, name: any_string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: any_string | ToolAPI.ToolMaterial }): void;
     function createShearsItem(id: any_string, name: any_string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: any_string | ToolAPI.ToolMaterial, durability?: number }): void;
+    function createFlintAndSteelItem(id: any_string, name: any_string, texture: TextureData, params: { stack?: number, isTech?: boolean, durability?: number }): void;
     function createCustomTool(id: any_string, name: any_string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: any_string | ToolAPI.ToolMaterial }, toolParams?: vsdum.kex.modules.ExtendedToolParams, numericId?: number): void;
 }
 

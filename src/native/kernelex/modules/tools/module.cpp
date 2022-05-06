@@ -260,46 +260,45 @@ void KEXToolsModule::initialize() {
             }
         }
     }, ), HookManager::CALL | HookManager::LISTENER | HookManager::CONTROLLER | HookManager::RESULT);
+    #define __REPLACER__(ID, PREDICATE) \
+        VTABLE_FIND_OFFSET(Actor_getCarriedItem, _ZTV5Actor, _ZNK5Actor14getCarriedItemEv); \
+        ItemStack* stack = VTABLE_CALL<ItemStack*>(Actor_getCarriedItem, ctx.actor); \
+        if(stack != nullptr) { \
+            int dynamicStackId = stack->getId(); \
+            int stackId = IdConversion::dynamicToStatic(dynamicStackId, IdConversion::ITEM); \
+            if(stackId != ID && SimpleTests::PREDICATE(stackId)) { \
+                test->id = dynamicStackId; \
+                bool result = controller->callAndReplace<bool>(test, &ctx); \
+                test->id = dynamicTestId; \
+                return result; \
+            } \
+        }
     HookManager::addCallback(SYMBOL("mcpe", "_ZNK21ActorHasEquipmentTest8evaluateERK13FilterContext"), LAMBDA((HookManager::CallbackController* controller, ActorHasEquipmentTest* test, FilterContext const& ctx), {
         int dynamicTestId = test->id;
         int testId = IdConversion::dynamicToStatic(dynamicTestId, IdConversion::ITEM);
         if(testId == 359) {
-            VTABLE_FIND_OFFSET(Actor_getCarriedItem, _ZTV5Actor, _ZNK5Actor14getCarriedItemEv);
-            ItemStack* stack = VTABLE_CALL<ItemStack*>(Actor_getCarriedItem, ctx.actor);
-            if(stack != nullptr) {
-                int dynamicStackId = stack->getId();
-                int stackId = IdConversion::dynamicToStatic(dynamicStackId, IdConversion::ITEM);
-                if(stackId != 359) {
-                    LegacyItemRegistry::LegacyItemFactoryBase* factory = LegacyItemRegistry::findFactoryById(stackId);
-                    if(factory != nullptr && factory->getType() == ToolFactory::_factoryTypeId) {
-                        ToolFactory* toolFactory = (ToolFactory*) factory;
-                        if(toolFactory->getToolType() == ToolFactory::SHEARS) {
-                            test->id = dynamicStackId;
-                            bool result = controller->callAndReplace<bool>(test, &ctx);
-                            test->id = dynamicTestId;
-                            return result;
-                        }
-                    }
-                }
-            }
+            __REPLACER__(359, isShears)
+        } else if(testId == 259) {
+            __REPLACER__(259, isFlintAndSteel)
         }
     }, ), HookManager::CALL | HookManager::LISTENER | HookManager::CONTROLLER | HookManager::RESULT);
+    #undef __REPLACER__
+    #define __REPLACER__(ID, PREDICATE) \
+        int id = IdConversion::dynamicToStatic(stack->getId(), IdConversion::ITEM); \
+        if(id != ID && SimpleTests::PREDICATE(id)) { \
+            controller->replace(); \
+            return true; \
+        }
     HookManager::addCallback(SYMBOL("mcpe", "_ZNK13ItemStackBase10isInstanceERK12HashedStringb"), LAMBDA((HookManager::CallbackController* controller, ItemStackBase* stack, HashedString const& str), {
         std::__ndk1::string const& cppstr = str.getString();
         if(cppstr == "shears") {
-            int id = IdConversion::dynamicToStatic(stack->getId(), IdConversion::ITEM);
-            if(id != 359) {
-                LegacyItemRegistry::LegacyItemFactoryBase* factory = LegacyItemRegistry::findFactoryById(id);
-                if(factory != nullptr && factory->getType() == ToolFactory::_factoryTypeId) {
-                    ToolFactory* toolFactory = (ToolFactory*) factory;
-                    if(toolFactory->getToolType() == ToolFactory::SHEARS) {
-                        controller->replace();
-                        return true;
-                    }
-                }
-            }
+            __REPLACER__(359, isShears)
+        } else if(cppstr == "flint_and_steel") {
+            Logger::debug("KEX", "FLINT AND STEEL ISINSTANCE");
+            __REPLACER__(259, isFlintAndSteel)
         }
     }, ), HookManager::CALL | HookManager::LISTENER | HookManager::CONTROLLER | HookManager::RESULT);
+    #undef __REPLACER__
 }
 
 
