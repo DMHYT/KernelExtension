@@ -299,6 +299,12 @@ void KEXToolsModule::initialize() {
         }
     }, ), HookManager::CALL | HookManager::LISTENER | HookManager::CONTROLLER | HookManager::RESULT);
     #undef __REPLACER__
+    HookManager::addCallback(SYMBOL("mcpe", "_ZNK13CampfireBlock13canUseToDouseER9ItemStack"), LAMBDA((HookManager::CallbackController* controller, void* campfire, ItemStack& stack), {
+        if(SimpleTests::isShovel(IdConversion::dynamicToStatic(stack.getId(), IdConversion::ITEM))) {
+            controller->replace();
+            return true;
+        }
+    }, ), HookManager::CALL | HookManager::LISTENER | HookManager::CONTROLLER | HookManager::RESULT);
 }
 
 
