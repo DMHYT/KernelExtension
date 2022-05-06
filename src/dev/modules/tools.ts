@@ -354,9 +354,3 @@ Block.setDestroyLevelForID = (blockID, level) => ToolAPI.registerBlockDiggingLev
         json.vanilla_tools[key].forEach(id => ToolAPI.toolData[(typeof id === "number" ? id : parseInt(id))] = { toolMaterial: tierObj, isWeapon: typeof id === "string" });
     });
 })();
-
-
-IDRegistry.genItemID("testShears");
-Item.createShearsItem("testShears", "Test Shears", { name: "missing_item" }, {});
-IDRegistry.genItemID("testFlint");
-Item.createFlintAndSteelItem("testFlint", "Test Flint and Steel", { name: "missing_item" }, {});
