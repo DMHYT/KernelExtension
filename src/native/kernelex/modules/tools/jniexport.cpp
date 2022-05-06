@@ -62,7 +62,9 @@ extern "C" {
         const char* cName = env->GetStringUTFChars(name, 0);
         const char* cTextureName = env->GetStringUTFChars(textureName, 0);
         SwordFactory* factory = new SwordFactory();
-        factory->initParameters(id, "item_" + std::string(cNameId), std::string(cName), std::string(cTextureName), textureMeta);
+        std::string itemNameId(cNameId);
+        if(itemNameId.rfind("item_", 0) != 0) itemNameId = "item_" + itemNameId;
+        factory->initParameters(id, itemNameId, std::string(cName), std::string(cTextureName), textureMeta);
         factory->props.stack = 1;
         factory->tier = (Item::Tier*) tierPtr;
         LegacyItemRegistry::registerItemFactory(factory);
@@ -77,7 +79,9 @@ extern "C" {
         const char* cName = env->GetStringUTFChars(name, 0);
         const char* cTextureName = env->GetStringUTFChars(textureName, 0);
         AxeFactory* factory = new AxeFactory();
-        factory->initParameters(id, "item_" + std::string(cNameId), std::string(cName), std::string(cTextureName), textureMeta);
+        std::string itemNameId(cNameId);
+        if(itemNameId.rfind("item_", 0) != 0) itemNameId = "item_" + itemNameId;
+        factory->initParameters(id, itemNameId, std::string(cName), std::string(cTextureName), textureMeta);
         factory->props.stack = 1;
         factory->tier = (Item::Tier*) tierPtr;
         LegacyItemRegistry::registerItemFactory(factory);
@@ -92,7 +96,9 @@ extern "C" {
         const char* cName = env->GetStringUTFChars(name, 0);
         const char* cTextureName = env->GetStringUTFChars(textureName, 0);
         PickaxeFactory* factory = new PickaxeFactory();
-        factory->initParameters(id, "item_" + std::string(cNameId), std::string(cName), std::string(cTextureName), textureMeta);
+        std::string itemNameId(cNameId);
+        if(itemNameId.rfind("item_", 0) != 0) itemNameId = "item_" + itemNameId;
+        factory->initParameters(id, itemNameId, std::string(cName), std::string(cTextureName), textureMeta);
         factory->props.stack = 1;
         factory->tier = (Item::Tier*) tierPtr;
         LegacyItemRegistry::registerItemFactory(factory);
@@ -107,7 +113,9 @@ extern "C" {
         const char* cName = env->GetStringUTFChars(name, 0);
         const char* cTextureName = env->GetStringUTFChars(textureName, 0);
         ShovelFactory* factory = new ShovelFactory();
-        factory->initParameters(id, "item_" + std::string(cNameId), std::string(cName), std::string(cTextureName), textureMeta);
+        std::string itemNameId(cNameId);
+        if(itemNameId.rfind("item_", 0) != 0) itemNameId = "item_" + itemNameId;
+        factory->initParameters(id, itemNameId, std::string(cName), std::string(cTextureName), textureMeta);
         factory->props.stack = 1;
         factory->tier = (Item::Tier*) tierPtr;
         LegacyItemRegistry::registerItemFactory(factory);
@@ -122,7 +130,9 @@ extern "C" {
         const char* cName = env->GetStringUTFChars(name, 0);
         const char* cTextureName = env->GetStringUTFChars(textureName, 0);
         HoeFactory* factory = new HoeFactory();
-        factory->initParameters(id, "item_" + std::string(cNameId), std::string(cName), std::string(cTextureName), textureMeta);
+        std::string itemNameId(cNameId);
+        if(itemNameId.rfind("item_", 0) != 0) itemNameId = "item_" + itemNameId;
+        factory->initParameters(id, itemNameId, std::string(cName), std::string(cTextureName), textureMeta);
         factory->props.stack = 1;
         factory->tier = (Item::Tier*) tierPtr;
         LegacyItemRegistry::registerItemFactory(factory);
@@ -244,7 +254,9 @@ extern "C" {
         CustomToolFactory* factory = new CustomToolFactory();
         factory->isWeapon = isWeapon;
         factory->baseAttackDamage = baseAttackDamage;
-        factory->initParameters(id, "item_" + std::string(cNameId), std::string(cName), std::string(cTextureName), textureMeta);
+        std::string itemNameId(cNameId);
+        if(itemNameId.rfind("item_", 0) != 0) itemNameId = "item_" + itemNameId;
+        factory->initParameters(id, itemNameId, std::string(cName), std::string(cTextureName), textureMeta);
         factory->props.stack = 1;
         factory->enchantType = enchantType;
         factory->tier = (Item::Tier*) tierPtr;
@@ -305,7 +317,9 @@ extern "C" {
         const char* cName = env->GetStringUTFChars(name, 0);
         const char* cTextureName = env->GetStringUTFChars(textureName, 0);
         ShearsFactory* factory = new ShearsFactory();
-        factory->initParameters(id, "item_" + std::string(cNameId), std::string(cName), std::string(cTextureName), textureMeta);
+        std::string itemNameId(cNameId);
+        if(itemNameId.rfind("item_", 0) != 0) itemNameId = "item_" + itemNameId;
+        factory->initParameters(id, itemNameId, std::string(cName), std::string(cTextureName), textureMeta);
         factory->props.stack = 1;
         if(tierPtr != 0) factory->tier = (Item::Tier*) tierPtr;
         else factory->props.durability = durabilityIfWithoutTier;
@@ -321,7 +335,9 @@ extern "C" {
         const char* cName = env->GetStringUTFChars(name, 0);
         const char* cTextureName = env->GetStringUTFChars(textureName, 0);
         FlintAndSteelFactory* factory = new FlintAndSteelFactory();
-        factory->initParameters(id, "item_" + std::string(cNameId), std::string(cName), std::string(cTextureName), textureMeta);
+        std::string itemNameId(cNameId);
+        if(itemNameId.rfind("item_", 0) != 0) itemNameId = "item_" + itemNameId;
+        factory->initParameters(id, itemNameId, std::string(cName), std::string(cTextureName), textureMeta);
         factory->props.stack = 1;
         factory->props.durability = durability;
         LegacyItemRegistry::registerItemFactory(factory);
