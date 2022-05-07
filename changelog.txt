@@ -68,3 +68,11 @@ BETA 2.1
     - Callback.on(name, handler, priority?) - analogue of Callback.addCallback
     - Callback.once(name, handler, priority?) - same as on, but the event handler will be called only once
     - Callback.off(name, handler) - removes the given event handler
+    
+BETA 2.2
+- Added method ItemsModule.setMaxUseDurationDynamic
+- Made InnerCore-defined EItemAnimation enum full, added DRINK, BLOCK, CAMERA, SPEAR, CROSSBOW
+- Fixed conflict with very old versions of ToolLib library (tested with ToolLib V14 in Nocube's Wilderness mod)
+- Fixed conflict with HarvestCraft mod
+- Added new tool types to the ToolsModule - shears and flint-and-steel
+- Adapted one internal feature to the future version of InnerCore pack

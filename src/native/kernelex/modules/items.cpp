@@ -10,6 +10,7 @@
 #include <innercore/vtable.h>
 #include <Item.hpp>
 #include <FoodItemComponentLegacy.hpp>
+#include <Player.hpp>
 #include "../utils/java_utils.hpp"
 #include "items.hpp"
 
@@ -58,8 +59,6 @@ ItemParamsModifier* KEXItemsModule::getOrCreateModifier(int id) {
         return itemParamsModifiers.at(id);
     }
 }
-
-#include <Player.hpp>
 
 void KEXItemsModule::initialize() {
     DLHandleManager::initializeHandle("libminecraftpe.so", "mcpe");
