@@ -48,6 +48,9 @@ class KEXToolsModule : public Module {
         static bool isPickaxe(int id);
         static bool isShovel(int id);
         static bool isHoe(int id);
+        inline static bool isCustomTool(int id) {
+            return KEXToolsModule::isCustomTool(id);
+        }
         static bool isShears(int id);
         static bool isFlintAndSteel(int id);
     };

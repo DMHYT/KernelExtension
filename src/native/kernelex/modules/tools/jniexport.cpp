@@ -384,4 +384,18 @@ extern "C" {
             }
         }
     }
+    #define TOOL_TYPE_CHECKER(NAME) JNIEXPORT jboolean JNICALL Java_vsdum_kex_modules_ToolsModule_##NAME \
+        (JNIEnv*, jclass, jint id) { \
+            return KEXToolsModule::SimpleTests::NAME(id); \
+        }
+    TOOL_TYPE_CHECKER(isTool);
+    TOOL_TYPE_CHECKER(isSword);
+    TOOL_TYPE_CHECKER(isAxe);
+    TOOL_TYPE_CHECKER(isPickaxe);
+    TOOL_TYPE_CHECKER(isShovel);
+    TOOL_TYPE_CHECKER(isHoe);
+    TOOL_TYPE_CHECKER(isCustomTool);
+    TOOL_TYPE_CHECKER(isShears);
+    TOOL_TYPE_CHECKER(isFlintAndSteel);
+    #undef TOOL_TYPE_CHECKER
 }

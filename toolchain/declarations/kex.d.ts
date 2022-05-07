@@ -1079,6 +1079,15 @@ declare module vsdum {
                 static playerAttackHook(attacker: number, victim: number, item: ItemInstance): void;
                 static useCustomShearsOn(x: number, y: number, z: number, side: number, rx: number, ry: number, rz: number, actorUID: number): void;
                 static useCustomFlintAndSteelOn(x: number, y: number, z: number, side: number, rx: number, ry: number, rz: number, actorUID: number): void;
+                static isTool(id: number): boolean;
+                static isSword(id: number): boolean;
+                static isAxe(id: number): boolean;
+                static isPickaxe(id: number): boolean;
+                static isShovel(id: number): boolean;
+                static isHoe(id: number): boolean;
+                static isCustomTool(id: number): boolean;
+                static isShears(id: number): boolean;
+                static isFlintAndSteel(id: number): boolean;
             }
             export module ToolsModule {
                 export class ItemTier extends java.lang.Object {

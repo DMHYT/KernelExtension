@@ -53,6 +53,15 @@ public class ToolsModule {
     protected static native void nativeRegisterFlintAndSteel(int id, String nameId, String name, String textureName, int textureMeta, boolean isTech, int durability);
     public static native void useCustomShearsOn(int x, int y, int z, byte side, float relX, float relY, float relZ, long actorUID);
     public static native void useCustomFlintAndSteelOn(int x, int y, int z, byte side, float relX, float relY, float relZ, long actorUID);
+    public static native boolean isTool(int id);
+    public static native boolean isSword(int id);
+    public static native boolean isAxe(int id);
+    public static native boolean isPickaxe(int id);
+    public static native boolean isShovel(int id);
+    public static native boolean isHoe(int id);
+    public static native boolean isCustomTool(int id);
+    public static native boolean isShears(int id);
+    public static native boolean isFlintAndSteel(int id);
 
     private static final Map<String, ItemTier> tiersByName = new HashMap<>();
 
