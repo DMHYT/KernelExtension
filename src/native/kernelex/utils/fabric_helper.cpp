@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <string>
 #include <jni.h>
+#include <dlfcn.h>
 #include <logger.h>
 #include <innercore/legacy_item_registry.h>
 
@@ -8,22 +9,20 @@
 extern "C" {
     JNIEXPORT jlong JNICALL Java_vsdum_kex_util_ItemFactoryHelper_nativeKillItem
     (JNIEnv*, jclass, jint id) {
-        auto found = LegacyItemRegistry::registeredFactories.find(id);
-        if(found == LegacyItemRegistry::registeredFactories.end()) return 0;
-        LegacyItemRegistry::LegacyItemFactoryBase* factory = found->second;
-        if(factory == nullptr) {
-            return 0;
-        }
-        LegacyItemRegistry::registeredFactories.erase(id);
+        LegacyItemRegistry::LegacyItemFactoryBase* factory = LegacyItemRegistry::findFactoryById(id);
+        if(factory == nullptr) return 0;
+        static void* (*newErase) (int) = (void* (*) (int)) dlsym(dlopen("libinnercore.so", RTLD_LAZY), "LegacyItemRegistry_eraseFactory");
+        if(newErase != nullptr) {
+            newErase(id);
+        } else LegacyItemRegistry::registeredFactories.erase(id);
         Logger::debug("KEX", "Successfully killed factory for item %d", id);
         return (jlong) factory;
     }
     JNIEXPORT void JNICALL Java_vsdum_kex_util_ItemFactoryHelper_nativePutPropertiesToNewFactory
     (JNIEnv*, jclass, jlong ptr, jint id) {
-        auto found = LegacyItemRegistry::registeredFactories.find(id);
-        if(found != LegacyItemRegistry::registeredFactories.end()) {
+        LegacyItemRegistry::LegacyItemFactoryBase* newFactory = LegacyItemRegistry::findFactoryById(id);
+        if(newFactory != nullptr) {
             LegacyItemRegistry::LegacyItemFactoryBase* oldFactory = (LegacyItemRegistry::LegacyItemFactoryBase*) ptr;
-            LegacyItemRegistry::LegacyItemFactoryBase* newFactory = found->second;
             if(newFactory != nullptr) {
                 newFactory->props = oldFactory->props;
                 Logger::debug("KEX", "Successfully applied old factory properties to the item %d", id);
