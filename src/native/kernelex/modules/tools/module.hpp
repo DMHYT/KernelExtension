@@ -1,8 +1,11 @@
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
+
 #include <mod.h>
+
 #include <innercore/legacy_item_registry.h>
+
 #include <Block.hpp>
 #include <items/DiggerItem.hpp>
 #include <items/WeaponItem.hpp>

@@ -1,5 +1,7 @@
 #include <jni.h>
+
 #include <innercore/id_conversion_map.h>
+
 #include <FoodItemComponentLegacy.hpp>
 #include <Item.hpp>
 

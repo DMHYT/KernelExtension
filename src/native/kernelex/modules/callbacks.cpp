@@ -1,11 +1,14 @@
 #include <hook.h>
-#include <symbol.h>
 #include <innercore_callbacks.h>
+#include <symbol.h>
+
 #include <innercore/vtable.h>
+
 #include <Player.hpp>
 #include <ActorUniqueID.hpp>
 #include <ActorDamageSource.hpp>
 #include <LocalPlayer.hpp>
+
 #include "../utils/java_utils.hpp"
 #include "callbacks.hpp"
 

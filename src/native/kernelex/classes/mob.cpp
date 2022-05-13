@@ -1,6 +1,9 @@
 #include <jni.h>
+
 #include <innercore/vtable.h>
+
 #include <static_symbol.hpp>
+
 #include <Mob.hpp>
 #include <Player.hpp>
 #include <ItemStackBase.hpp>

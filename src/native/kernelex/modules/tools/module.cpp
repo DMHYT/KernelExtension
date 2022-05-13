@@ -2,32 +2,37 @@
 #include <string.h>
 #include <unordered_map>
 #include <unordered_set>
+
 #include <hook.h>
+
 #include <innercore/global_context.h>
 #include <innercore/id_conversion_map.h>
 #include <innercore/item_extra.h>
 #include <innercore/item_registry.h>
 #include <innercore/vtable.h>
+
+#include <commontypes.hpp>
+#include <static_symbol.hpp>
+
 #include <Actor.hpp>
 #include <ActorTests.hpp>
 #include <ActorUniqueID.hpp>
 #include <Block.hpp>
 #include <BlockLegacy.hpp>
-#include <commontypes.hpp>
 #include <GameMode.hpp>
 #include <ItemStackBase.hpp>
 #include <ItemStack.hpp>
 #include <Item.hpp>
+#include <Level.hpp>
+#include <Mob.hpp>
+#include <Player.hpp>
+#include <SurvivalMode.hpp>
 #include <items/DiggerItem.hpp>
 #include <items/PickaxeItem.hpp>
 #include <items/HatchetItem.hpp>
 #include <items/ShovelItem.hpp>
 #include <items/WeaponItem.hpp>
-#include <Level.hpp>
-#include <Mob.hpp>
-#include <Player.hpp>
-#include <SurvivalMode.hpp>
-#include <static_symbol.hpp>
+
 #include "../../utils/java_utils.hpp"
 #include "classes.hpp"
 #include "module.hpp"

@@ -1,12 +1,15 @@
+#include <innercore/id_conversion_map.h>
+#include <innercore/item_registry.h>
+
+#include <static_symbol.hpp>
+
 #include <EnchantUtils.hpp>
 #include <ItemStackBase.hpp>
 #include <I18n.hpp>
 #include <Level.hpp>
 #include <Item.hpp>
 #include <items/ShearsItem.hpp>
-#include <innercore/id_conversion_map.h>
-#include <innercore/item_registry.h>
-#include <static_symbol.hpp>
+
 #include "../../utils/java_utils.hpp"
 #include "classes.hpp"
 #include "module.hpp"

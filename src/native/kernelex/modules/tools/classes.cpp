@@ -1,7 +1,11 @@
 #include <symbol.h>
+
 #include <innercore/id_conversion_map.h>
 #include <innercore/item_registry.h>
 #include <innercore/vtable.h>
+
+#include <static_symbol.hpp>
+
 #include <items/FlintAndSteelItem.hpp>
 #include <items/HatchetItem.hpp>
 #include <items/HoeItem.hpp>
@@ -9,7 +13,7 @@
 #include <items/ShovelItem.hpp>
 #include <items/ShearsItem.hpp>
 #include <items/WeaponItem.hpp>
-#include <static_symbol.hpp>
+
 #include "module.hpp"
 #include "patches.hpp"
 #include "classes.hpp"

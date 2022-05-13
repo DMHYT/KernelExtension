@@ -1,16 +1,20 @@
-#include <unordered_map>
-#include <math.h>
 #include <jni.h>
+#include <math.h>
+#include <unordered_map>
+
 #include <hook.h>
+#include <innercore_callbacks.h>
 #include <logger.h>
 #include <symbol.h>
-#include <innercore_callbacks.h>
+
 #include <innercore/id_conversion_map.h>
 #include <innercore/item_registry.h>
 #include <innercore/vtable.h>
+
 #include <Item.hpp>
 #include <FoodItemComponentLegacy.hpp>
 #include <Player.hpp>
+
 #include "../utils/java_utils.hpp"
 #include "items.hpp"
 

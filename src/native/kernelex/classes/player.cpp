@@ -1,10 +1,14 @@
 #include <jni.h>
+
 #include <innercore/id_conversion_map.h>
 #include <innercore/item_extra.h>
 #include <innercore/item_registry.h>
 #include <innercore/vtable.h>
+
 #include <commontypes.hpp>
+
 #include <LocalPlayer.hpp>
+
 #include "../utils/java_utils.hpp"
 
 

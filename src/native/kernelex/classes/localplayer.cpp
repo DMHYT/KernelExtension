@@ -1,5 +1,7 @@
 #include <jni.h>
+
 #include <innercore/vtable.h>
+
 #include <LocalPlayer.hpp>
 
 

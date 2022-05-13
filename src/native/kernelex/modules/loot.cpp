@@ -1,13 +1,17 @@
-#include <regex>
 #include <jni.h>
+#include <regex>
+
 #include <hook.h>
-#include <symbol.h>
 #include <innercore_callbacks.h>
+#include <symbol.h>
+
 #include <innercore/id_conversion_map.h>
 #include <innercore/item_extra.h>
 #include <innercore/item_registry.h>
+
 #include "../../../../../../DMH/cppheaders/json/value.h"
 #include "../../../../../../DMH/cppheaders/json/reader.h"
+
 #include "../utils/java_utils.hpp"
 #include "loot.hpp"
 

@@ -1,7 +1,10 @@
 #include <unordered_map>
 #include <unordered_set>
+
 #include <mod.h>
+
 #include <LootTable.hpp>
+
 #include "../../../../../../DMH/cppheaders/json/reader.h"
 
 #ifndef KEX_MODULES_LOOT_HPP

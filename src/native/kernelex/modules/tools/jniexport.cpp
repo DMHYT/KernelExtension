@@ -1,17 +1,21 @@
-#include <string>
-#include <set>
 #include <jni.h>
+#include <set>
+#include <string>
+
+#include <innercore/block_registry.h>
 #include <innercore/id_conversion_map.h>
 #include <innercore/legacy_item_registry.h>
-#include <innercore/block_registry.h>
 #include <innercore/vtable.h>
+
 #include <commontypes.hpp>
+#include <static_symbol.hpp>
+
 #include <Actor.hpp>
 #include <BlockLegacy.hpp>
 #include <Item.hpp>
 #include <ItemStackBase.hpp>
 #include <ItemStack.hpp>
-#include <static_symbol.hpp>
+
 #include "../../utils/java_utils.hpp"
 #include "classes.hpp"
 #include "module.hpp"

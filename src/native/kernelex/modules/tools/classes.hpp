@@ -1,6 +1,8 @@
-#include <string>
 #include <set>
+#include <string>
+
 #include <innercore/legacy_item_registry.h>
+
 #include <Item.hpp>
 
 #ifndef KEX_MODULES_TOOLS_CLASSES_HPP

@@ -1,8 +1,10 @@
 #include <algorithm>
-#include <string>
-#include <jni.h>
 #include <dlfcn.h>
+#include <jni.h>
+#include <string>
+
 #include <logger.h>
+
 #include <innercore/legacy_item_registry.h>
 
 

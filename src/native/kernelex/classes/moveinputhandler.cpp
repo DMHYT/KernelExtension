@@ -1,6 +1,9 @@
 #include <jni.h>
+
 #include <innercore/vtable.h>
+
 #include <commontypes.hpp>
+
 #include <MoveInputHandler.hpp>
 
 
