@@ -76,3 +76,8 @@ BETA 2.2
 - Fixed conflict with HarvestCraft mod
 - Added new tool types to the ToolsModule - shears and flint-and-steel
 - Adapted one internal feature to the future version of InnerCore pack
+
+BETA 2.2.1
+- Fixed custom tools crashing on last InnerCore Test pack update
+- Fixed ToolAPI.getDestroyTimeViaTool method patch
+- Some more ToolAPI backward compatibility fixes

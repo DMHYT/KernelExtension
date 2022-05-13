@@ -1,6 +1,6 @@
 ConfigureMultiplayer({
 	name: "Kernel Extension",
-	version: "2.2",
+	version: "2.2.1",
 	isClientOnly: false
 });
 Launch();
