@@ -15,6 +15,7 @@ namespace KEXJavaBridge {
         jclass ToolsModule(JNIEnv* env);
         jclass LootModule(JNIEnv* env);
         jclass CallbacksModule(JNIEnv* env);
+        jclass CallbacksModule();
         jclass ItemsModule(JNIEnv* env);
     }
     namespace KernelExtension {

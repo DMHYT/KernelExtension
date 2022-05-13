@@ -10,6 +10,7 @@
 #endif
 enum ActorCategory: int {};
 enum ActorEvent: int {};
+class ActorEventCoordinator;
 class ActorDamageSource;
 // enum ActorEvent: int {};
 enum ActorFlags: int {};
@@ -45,6 +46,7 @@ class BlockSource {
 };
 class Dimension;
 enum EquipmentSlot: int {};
+enum HandSlot { MAINHAND, OFFHAND };
 #ifndef KEX_HASHEDSTRING_HPP
     class HashedString;
 #endif

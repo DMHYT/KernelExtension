@@ -4,10 +4,10 @@
 
 #include <innercore/vtable.h>
 
-#include <Player.hpp>
+#include <LocalPlayer.hpp>
 #include <ActorUniqueID.hpp>
 #include <ActorDamageSource.hpp>
-#include <LocalPlayer.hpp>
+#include <ItemInstance.hpp>
 
 #include "../utils/java_utils.hpp"
 #include "callbacks.hpp"
@@ -29,4 +29,7 @@ void KEXCallbacksModule::initialize() {
         JavaCallbacks::invokeControlledCallback("onEntityHurt", "(JJIIZZ)V", controller, JavaCallbacks::PREVENTABLE, victim, attacker, type, value, b1, b2);
         return false;
     }, ), HookManager::CALL | HookManager::LISTENER | HookManager::CONTROLLER | HookManager::RESULT);
+    HookManager::addCallback(SYMBOL("mcpe", "_ZN21ActorEventCoordinator27sendActorCarriedItemChangedER5ActorRK12ItemInstanceS4_8HandSlot"), LAMBDA((ActorEventCoordinator* coordinator, Actor& actor, ItemInstance const& oldItem, ItemInstance const& newItem, HandSlot hand), {
+        JavaCallbacks::invokeCallback(KEXJavaBridge::Cache::CallbacksModule(), "onChangeCarriedItem", "(JJJB)V", actor.getUniqueID()->id, (jlong) &oldItem, (jlong) &newItem, (jbyte) hand);
+    }, ), HookManager::CALL | HookManager::LISTENER);
 }
