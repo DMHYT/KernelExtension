@@ -60,7 +60,7 @@ namespace Item {
             tier, typeof params.isTech === "boolean" ? params.isTech : false
         );
         if(typeof params.stack === "number" && params.stack > 1) Item.getItemById(id).setMaxStackSize(params.stack);
-        ToolAPI.toolData[ItemID[id]] ??= { toolMaterial: ToolAPI.objectFromTier(tier), isWeapon: true };
+        ToolAPI.toolData[ItemID[id]] ??= { toolMaterial: ToolAPI.objectFromTier(tier), isWeapon: true, blockMaterials: ToolAPI.toolBlockTypes.sword };
     }
     // @ts-ignore
     export function createAxeItem(id: string, name: string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: string | ToolAPI.ToolMaterial }): void {
@@ -78,7 +78,7 @@ namespace Item {
             tier, typeof params.isTech === "boolean" ? params.isTech : false
         );
         if(typeof params.stack === "number" && params.stack > 1) Item.getItemById(id).setMaxStackSize(params.stack);
-        ToolAPI.toolData[ItemID[id]] ??= { toolMaterial: ToolAPI.objectFromTier(tier), isWeapon: false };
+        ToolAPI.toolData[ItemID[id]] ??= { toolMaterial: ToolAPI.objectFromTier(tier), isWeapon: false, blockMaterials: ToolAPI.toolBlockTypes.axe };
     }
     // @ts-ignore
     export function createPickaxeItem(id: string, name: string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: string | ToolAPI.ToolMaterial }): void {
@@ -96,7 +96,7 @@ namespace Item {
             tier, typeof params.isTech === "boolean" ? params.isTech : false
         );
         if(typeof params.stack === "number" && params.stack > 1) Item.getItemById(id).setMaxStackSize(params.stack);
-        ToolAPI.toolData[ItemID[id]] ??= { toolMaterial: ToolAPI.objectFromTier(tier), isWeapon: false };
+        ToolAPI.toolData[ItemID[id]] ??= { toolMaterial: ToolAPI.objectFromTier(tier), isWeapon: false, blockMaterials: ToolAPI.toolBlockTypes.pickaxe };
     }
     // @ts-ignore
     export function createShovelItem(id: string, name: string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: string | ToolAPI.ToolMaterial }): void {
@@ -114,7 +114,7 @@ namespace Item {
             tier, typeof params.isTech === "boolean" ? params.isTech : false
         );
         if(typeof params.stack === "number" && params.stack > 1) Item.getItemById(id).setMaxStackSize(params.stack);
-        ToolAPI.toolData[ItemID[id]] ??= { toolMaterial: ToolAPI.objectFromTier(tier), isWeapon: false };
+        ToolAPI.toolData[ItemID[id]] ??= { toolMaterial: ToolAPI.objectFromTier(tier), isWeapon: false, blockMaterials: ToolAPI.toolBlockTypes.shovel };
     }
     // @ts-ignore
     export function createHoeItem(id: string, name: string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: string | ToolAPI.ToolMaterial }): void {
@@ -132,7 +132,7 @@ namespace Item {
             tier, typeof params.isTech === "boolean" ? params.isTech : false
         );
         if(typeof params.stack === "number" && params.stack > 1) Item.getItemById(id).setMaxStackSize(params.stack);
-        ToolAPI.toolData[ItemID[id]] ??= { toolMaterial: ToolAPI.objectFromTier(tier), isWeapon: false };
+        ToolAPI.toolData[ItemID[id]] ??= { toolMaterial: ToolAPI.objectFromTier(tier), isWeapon: false, blockMaterials: ToolAPI.toolBlockTypes.hoe };
     }
     // @ts-ignore
     export function createShearsItem(id: string, name: string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: string | ToolAPI.ToolMaterial, durability?: number }): void {
@@ -143,16 +143,17 @@ namespace Item {
                 ToolAPI.addToolMaterial(materialName, params.tier);
             } else materialName = params.tier;
         }
+        const tierOrDurability = typeof params.tier !== "undefined" ? (ToolsModule.getTierByName(materialName) ?? ToolsModule.getTierByName("iron")) : typeof params.durability === "number" && params.durability > 0 ? params.durability : 238;
         ToolsModule.registerShears(
             ItemID[id], id,
             typeof name === "string" ? name: "<unnamed shears>",
             typeof texture.name === "string" ? texture.name : "missing_item",
             typeof texture.meta === "number" && texture.meta > 0 ? texture.meta : typeof texture.data === "number" && texture.data > 0 ? texture.data : 0,
-            typeof params.tier !== "undefined" ? (ToolsModule.getTierByName(materialName) ?? ToolsModule.getTierByName("iron")) : typeof params.durability === "number" && params.durability > 0 ? params.durability : 238,
-            typeof params.isTech === "boolean" ? params.isTech : false
+            tierOrDurability, typeof params.isTech === "boolean" ? params.isTech : false
         );
         if(typeof params.stack === "number" && params.stack > 1) Item.getItemById(id).setMaxStackSize(params.stack);
         Item.registerUseFunctionForID(ItemID[id], (coords, item, block, player) => ToolsModule.useCustomShearsOn(coords.x, coords.y, coords.z, coords.side, coords.relative.x, coords.relative.y, coords.relative.z, player));
+        ToolAPI.toolData[ItemID[id]] ??= { toolMaterial: typeof tierOrDurability === "number" ? { durability: tierOrDurability } : ToolAPI.objectFromTier(tierOrDurability), isWeapon: false, blockMaterials: ToolAPI.toolBlockTypes.shears };
     }
     // @ts-ignore
     export function createFlintAndSteelItem(id: string, name: string, texture: TextureData, params: { stack?: number, isTech?: boolean, durability?: number }): void {
@@ -206,6 +207,7 @@ namespace Item {
 
 
 namespace ToolAPI {
+    export const toolBlockTypes = { sword: {}, axe: {}, pickaxe: {}, shovel: {}, hoe: {}, shears: {} };
     export function objectFromTier(tier: ItemTier): ToolAPI.ToolMaterial {
         return {
             damage: tier.getAttackDamageBonus(),
@@ -337,10 +339,12 @@ Block.setDestroyLevelForID = (blockID, level) => ToolAPI.registerBlockDiggingLev
         ToolAPI.registerBlockMaterial(numericId, ToolAPI.blockData[id].material, ToolAPI.blockData[id].level, typeof ToolAPI.blockData[id].isNative === "boolean" ? ToolAPI.blockData[id].isNative : false);
     }
     ToolAPI.blockData = {};
+    type StandardTools = "sword" | "axe" | "pickaxe" | "shovel" | "hoe";
     interface JSONToolAPIData {
         materials: { [key: string]: (number | string)[] },
         destroy_levels: (number | string)[][],
-        vanilla_tools: { [key: string]: (number | string)[] };
+        vanilla_tools: { [key: string]: { [key in StandardTools]: number } },
+        tool_block_types: { [key in (StandardTools | "shears")]: string[] };
     }
     const json = FileTools.ReadJSON(`${__dir__}/data/toolapi_data.json`) as JSONToolAPIData;
     for(let materialName in json.materials) ToolAPI.registerBlockMaterialAsArray(materialName, json.materials[materialName].map(val => typeof val === "number" ? val : VanillaTileID[val]), true);
@@ -349,8 +353,9 @@ Block.setDestroyLevelForID = (blockID, level) => ToolAPI.registerBlockDiggingLev
         typeof Block.dropFunctions[id] !== "undefined" && delete Block.dropFunctions[id];
         Block.setDestroyLevelForID(id as number, level + 1);
     }));
-    Object.keys(json.vanilla_tools).forEach(key => {
-        const tierObj = ToolAPI.objectFromTier(ToolsModule.getTierByName(key));
-        json.vanilla_tools[key].forEach(id => ToolAPI.toolData[(typeof id === "number" ? id : parseInt(id))] = { toolMaterial: tierObj, isWeapon: typeof id === "string" });
+    Object.keys(json.tool_block_types).forEach((toolType: StandardTools | "shears") => json.tool_block_types[toolType].forEach(material => ToolAPI.toolBlockTypes[toolType][material] = true));
+    Object.keys(json.vanilla_tools).forEach(tier => {
+        const tierObj = ToolAPI.objectFromTier(ToolsModule.getTierByName(tier));
+        Object.keys(json.vanilla_tools[tier]).forEach(toolType => ToolAPI.toolData[json.vanilla_tools[tier][toolType]] = { toolMaterial: tierObj, isWeapon: toolType === "sword", blockMaterials: ToolAPI.toolBlockTypes[toolType] });
     });
 })();

@@ -14,11 +14,18 @@
         [ "obsidian", "ancient_debris", "crying_obsidian", "netherite_block", "respawn_anchor" ]
     ],
     "vanilla_tools": {
-        "wood": [ "268", 269, 270, 271, 290 ],
-        "stone": [ "272", 273, 274, 275, 291 ],
-        "iron": [ 256, 257, 258, "267", 292 ],
-        "diamond": [ "276", 277, 278, 279, 293 ],
-        "golden": [ "283", 284, 285, 286, 294 ],
-        "netherite": [ 726, "727", 804, 835, 880 ]
+        "wood": { "sword": 268, "axe": 271, "pickaxe": 270, "shovel": 269, "hoe": 290 },
+        "stone": { "sword": 272, "axe": 275, "pickaxe": 274, "shovel": 273, "hoe": 291 },
+        "iron": { "sword": 267, "axe": 258, "pickaxe": 257, "shovel": 256, "hoe": 292 },
+        "diamond": { "sword": 276, "axe": 279, "pickaxe": 278, "shovel": 277, "hoe": 293 },
+        "golden": { "sword": 283, "axe": 286, "pickaxe": 285, "shovel": 284, "hoe": 294 },
+        "netherite": { "sword": 727, "axe": 835, "pickaxe": 804, "shovel": 726, "hoe": 880 }
+    },
+    "tool_block_types": {
+        "sword": [ "plant", "fibre" ],
+        "axe": [ "wood" ],
+        "pickaxe": [ "stone" ],
+        "shovel": [ "dirt" ], "hoe": [],
+        "shears": [ "plant", "fibre", "wool" ]
     }
 }
