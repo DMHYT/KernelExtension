@@ -233,14 +233,12 @@ extern "C" {
                 VTABLE_FIND_OFFSET(Item_getDestroySpeed, _ZTV4Item, _ZNK4Item15getDestroySpeedERK13ItemStackBaseRK5Block);
                 ItemStack stack(*item, itemCount, itemData);
                 if(itemExtra != 0L) ((ItemInstanceExtra*) itemExtra)->apply(&stack);
-                float speed = VTABLE_CALL<float>(Item_getDestroySpeed, item, stack, *(BlockRegistry::getBlockStateForIdData(id, data)));
-                float result = baseDestroyTime / speed;
+                float speed = VTABLE_CALL<float>(Item_getDestroySpeed, item, &stack, BlockRegistry::getBlockStateForIdData(id, data));
                 float materialDivider = 1.0f;
                 Item::Tier* itemTier = KEXToolsModule::getItemTier((DiggerItem*) item);
                 if(itemTier != nullptr) materialDivider = itemTier->getSpeed();
                 float bonus = item->destroySpeedBonus(stack);
-                result = KEXJavaBridge::ToolsModule::calcDestroyTime(id, data, x, y, z, (char) side, baseDestroyTime, materialDivider, bonus, baseDestroyTime / speed);
-                return result;
+                return KEXJavaBridge::ToolsModule::calcDestroyTime(id, data, x, y, z, (char) side, baseDestroyTime, materialDivider, bonus, baseDestroyTime / speed);
             }
             return baseDestroyTime;
         }
