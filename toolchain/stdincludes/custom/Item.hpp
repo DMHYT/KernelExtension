@@ -99,11 +99,11 @@ class Item {
     // virtual void setHandEquipped();
     // virtual void setUseAnimation(UseAnimation);
     // virtual void setMaxUseDuration(int);
-    // virtual void setRequiresWorldBuilder(bool);
-    // virtual void setExplodable(bool);
-    // virtual void setFireResistant(bool);
+    void setRequiresWorldBuilder(bool);
+    void setExplodable(bool);
+    void setFireResistant(bool);
     // virtual void setIsGlint(bool);
-    // virtual void setShouldDespawn(bool);
+    void setShouldDespawn(bool);
     // virtual void* getBlockShape() const;
     // virtual bool canBeDepleted() const;
     // virtual bool canDestroySpecial(Block const&) const;

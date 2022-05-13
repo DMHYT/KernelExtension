@@ -10,6 +10,7 @@ class DiggerItem : public Item {
     float speed; // 304
     Item::Tier* tier; // 308
     int attackDamage; // 312
+    char extraFiller[200]; // 512
     // virtual int getAttackDamage() const;
     // virtual bool isHandEquipped() const;
     // virtual void* appendFormattedHovertext(ItemStackBase const&, Level&, std::__ndk1::string&, bool) const;

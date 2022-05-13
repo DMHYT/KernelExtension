@@ -6,6 +6,7 @@
 
 class ShearsItem : public Item {
     public:
+    char extraFiller[212]; // 512
     // virtual bool canDestroySpecial(Block const&) const;
     // virtual void* getEnchantSlot() const;
     // virtual void* dispense(BlockSource&, Container&, int, Vec3 const&, unsigned char) const;

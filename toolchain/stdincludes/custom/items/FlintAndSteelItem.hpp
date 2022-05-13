@@ -6,6 +6,7 @@
 
 class FlintAndSteelItem : public Item {
     public:
+    char extraFiller[212]; // 512
     // virtual bool isDestructive(int) const;
     // virtual int getEnchantSlot() const;
     // virtual void* dispense(BlockSource&, Container&, int, Vec3 const&, unsigned char) const;

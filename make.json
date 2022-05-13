@@ -22,7 +22,7 @@
             "nativejs"
         ],
         "excludeFromRelease": [],
-        "pushTo": "storage/emulated/0/games/horizon/packs/Inner_Core_1/innercore/mods/KernelExtension",
+        "pushTo": "storage/emulated/0/games/horizon/packs/Inner_Core_Test/innercore/mods/KernelExtension",
         "ndkPath": null
     },
     "resources": [

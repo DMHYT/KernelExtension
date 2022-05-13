@@ -17,14 +17,11 @@
 
 void ItemParamsModifier::applyTo(int id) {
     Item* item = ItemRegistry::getItemById(IdConversion::staticToDynamic(id, IdConversion::ITEM));
-    VTABLE_FIND_OFFSET(Item_setRequiresWorldBuilder, _ZTV4Item, _ZN4Item23setRequiresWorldBuilderEb);
-    VTABLE_CALL<void>(Item_setRequiresWorldBuilder, item, requiresWorldBuilder);
-    VTABLE_FIND_OFFSET(Item_setExplodable, _ZTV4Item, _ZN4Item13setExplodableEb);
-    VTABLE_CALL<void>(Item_setExplodable, item, explodable);
-    VTABLE_FIND_OFFSET(Item_setFireResistant, _ZTV4Item, _ZN4Item16setFireResistantEb);
-    VTABLE_CALL<void>(Item_setFireResistant, item, fireResistant);
-    VTABLE_FIND_OFFSET(Item_setShouldDespawn, _ZTV4Item, _ZN4Item16setShouldDespawnEb);
-    VTABLE_CALL<void>(Item_setShouldDespawn, item, shouldDespawn);
+    if(item == nullptr) return;
+    item->setRequiresWorldBuilder(requiresWorldBuilder);
+    item->setExplodable(explodable);
+    item->setFireResistant(fireResistant);
+    item->setShouldDespawn(shouldDespawn);
     if(mirroredArt) item->setIsMirroredArt(mirroredArt);
     if(furnaceBurnIntervalMultiplier > 0) item->setFurnaceBurnIntervalMultiplier(furnaceBurnIntervalMultiplier);
     if(furnaceXPMultiplier > 0) item->setFurnaceXPmultiplier(furnaceXPMultiplier);
