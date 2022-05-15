@@ -81,3 +81,7 @@ BETA 2.2.1
 - Fixed custom tools crashing on last InnerCore Test pack update
 - Fixed ToolAPI.getDestroyTimeViaTool method patch
 - Some more ToolAPI backward compatibility fixes
+
+BETA 2.2.2
+- Fixed custom tools not breaking
+- Added callback "ChangeCarriedItem"
