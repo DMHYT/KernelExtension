@@ -1,3 +1,5 @@
+#include <stl/string>
+
 #include <jni.h>
 #include <math.h>
 #include <unordered_map>
@@ -83,6 +85,14 @@ void KEXItemsModule::initialize() {
             }
         }
     }, ), HookManager::CALL | HookManager::LISTENER | HookManager::CONTROLLER | HookManager::RESULT);
+    // HookManager::addCallback(SYMBOL("mcpe", "_ZNK4Item24appendFormattedHovertextERK13ItemStackBaseR5LevelRNSt6__ndk112basic_stringIcNS5_11char_traitsIcEENS5_9allocatorIcEEEEb"), LAMBDA((Item* item, ItemStackBase const& stack, Level& level, std::__ndk1::string& text, bool b), {
+    //     JNIEnv* env = KEXJavaUtils::attach();
+    //     jstring jText = KEXJavaBridge::ItemsModule::appendFormattedHovertext((jlong) &stack, (jlong) &level, text.c_str());
+    //     const char* cText = env->GetStringUTFChars(jText, 0);
+    //     text = cText;
+    //     env->ReleaseStringUTFChars(jText, cText);
+    //     env->DeleteLocalRef(jText);
+    // }, ), HookManager::RETURN | HookManager::LISTENER);
     Callbacks::addCallback("postModItemsInit", CALLBACK([], (), {
         for(std::unordered_map<int, ItemParamsModifier*>::iterator iter = itemParamsModifiers.begin(); iter != itemParamsModifiers.end(); iter++) {
             iter->second->applyTo(iter->first);

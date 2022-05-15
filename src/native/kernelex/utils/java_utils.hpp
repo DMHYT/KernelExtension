@@ -36,6 +36,7 @@ namespace KEXJavaBridge {
     }
     namespace ItemsModule {
         int getUseDurationDynamic(jlong stackPtr);
+        jstring appendFormattedHovertext(jlong stackPtr, jlong levelPtr, const char* text);
     }
 }
 

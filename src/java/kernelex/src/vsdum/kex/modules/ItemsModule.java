@@ -1,13 +1,18 @@
 package vsdum.kex.modules;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import com.zhekasmirnov.apparatus.adapter.innercore.game.item.ItemStack;
 import com.zhekasmirnov.horizon.runtime.logger.Logger;
 
 import android.support.annotation.Nullable;
+import vsdum.kex.common.CallbackFunction;
 import vsdum.kex.natives.FoodItemComponent;
+import vsdum.kex.natives.Level;
 
 public class ItemsModule {
 
@@ -86,6 +91,38 @@ public class ItemsModule {
         if(stack == null) return 0;
         if(!itemUseDurationCallbacks.containsKey(stack.id)) return 0;
         return itemUseDurationCallbacks.get(stack.id).getUseDuration(stack);
+    }
+
+    public static interface OnTooltipCallback {
+        public void onTooltip(ItemStack item, StringBuilder textBuilder, Level level);
+    }
+
+    private static final Map<Integer, List<CallbackFunction<OnTooltipCallback>>> itemOnTooltipCallbacks = new HashMap<>();
+
+    public static String appendFormattedHovertext(long stackPtr, long levelPtr, String text)
+    {
+        ItemStack stack = ItemStack.fromPtr(stackPtr);
+        if(stack == null) return text;
+        Level level = new Level(levelPtr);
+        StringBuilder textBuilder = new StringBuilder(text);
+        if(itemOnTooltipCallbacks.containsKey(stack.id))
+        {
+            Iterator<CallbackFunction<OnTooltipCallback>> iter = itemOnTooltipCallbacks.get(stack.id).iterator();
+            while(iter.hasNext()) iter.next().function.onTooltip(stack, textBuilder, level);
+        }
+        CallbacksModule.onItemTooltip(stack, level, textBuilder);
+        return textBuilder.toString();
+    }
+
+    public static void addTooltip(int id, OnTooltipCallback cb)
+    {
+        addTooltip(id, cb, 0);
+    }
+
+    public static void addTooltip(int id, OnTooltipCallback cb, int priority)
+    {
+        if(!itemOnTooltipCallbacks.containsKey(id)) itemOnTooltipCallbacks.put(id, new ArrayList<>());
+        CallbackFunction.addToList(new CallbackFunction<OnTooltipCallback>(cb, priority), itemOnTooltipCallbacks.get(id));
     }
     
 }

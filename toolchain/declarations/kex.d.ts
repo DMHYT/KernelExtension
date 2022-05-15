@@ -1017,6 +1017,9 @@ declare module vsdum {
             interface UseDurationCallback {
                 (stack: ItemInstance): number;
             }
+            interface OnTooltipCallback {
+                (stack: ItemInstance, text: java.lang.StringBuilder, level: natives.Level): void;
+            }
             export class ItemsModule extends java.lang.Object {
                 static class: java.lang.Class<ItemsModule>;
                 static setRequiresWorldBuilder(id: number, requiresWorldBuilder: boolean): void;
@@ -1032,6 +1035,7 @@ declare module vsdum {
                 static newFoodSaturationModifier(name: any_string, value: number): void;
                 static saturationModifierFromString(name: any_string): number;
                 static setMaxUseDurationDynamic(id: number, callback: UseDurationCallback): void;
+                static addTooltip(id: number, callback: OnTooltipCallback, priority?: number): void;
             }
         }
     }
@@ -1170,6 +1174,7 @@ declare namespace Callback {
     export function addCallback(name: "PlayerJump", func: (player: number) => void, priority?: number): void;
     export function addCallback(name: "GameModeChanged", func: (mode: number) => void, priority?: number): void;
     export function addCallback(name: "ChangeCarriedItem", func: (player: number, oldItem: ItemInstance, newItem: ItemInstance, hand: 0 | 1) => void, priority?: number): void;
+    export function addCallback(name: "ItemTooltip", func: vsdum.kex.modules.OnTooltipCallback, priority?: number): void;
     export var on: typeof addCallback;
     export var once: typeof addCallback;
     export var off: typeof addCallback;

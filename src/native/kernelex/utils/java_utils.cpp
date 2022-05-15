@@ -40,6 +40,7 @@ namespace KEXJavaBridge {
         JAVA_METHOD(CallbacksModule, onGameModeChanged, "(I)V")
         JAVA_CLASS(ItemsModule, "vsdum/kex/modules/ItemsModule")
         JAVA_METHOD(ItemsModule, getUseDurationDynamic, "(J)I")
+        JAVA_METHOD(ItemsModule, appendFormattedHovertext, "(JJLjava/lang/String;)Ljava/lang/String;")
     }
     namespace KernelExtension {
         void setMinecraftTextboxText(const char* text) {
@@ -88,6 +89,13 @@ namespace KEXJavaBridge {
     namespace ItemsModule {
         int getUseDurationDynamic(jlong stackPtr) {
             return KEXJavaUtils::attach()->CallStaticIntMethod(Cache::ItemsModule(), Cache::ItemsModule_getUseDurationDynamic(), stackPtr);
+        }
+        jstring appendFormattedHovertext(jlong stackPtr, jlong levelPtr, const char* text) {
+            JNIEnv* env = KEXJavaUtils::attach();
+            jstring jText = env->NewStringUTF(text);
+            jstring result = (jstring) env->CallStaticObjectMethod(Cache::ItemsModule(), Cache::ItemsModule_appendFormattedHovertext(), stackPtr, levelPtr, jText);
+            env->DeleteLocalRef(jText);
+            return result;
         }
     }
 }
