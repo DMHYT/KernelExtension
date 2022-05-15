@@ -466,7 +466,7 @@ public class ToolsModule {
         {
             if(toolData.containsKey(Integer.valueOf(item.getId())))
             {
-                if(onDestroy(coords, item, tile, player))
+                if(!onDestroy(coords, item, tile, player))
                 {
                     modifyEnchant(coords, item, tile, player);
                     NativeItemInstanceExtra extra = CommonTypes.getExtraFromInstance(item);
@@ -485,7 +485,7 @@ public class ToolsModule {
     {
         if(toolData.containsKey(Integer.valueOf(item.getId())))
         {
-            if(onAttack(victim, attacker, item))
+            if(!onAttack(victim, attacker, item))
             {
                 modifyEnchant(null, item, null, attacker);
                 NativeItemInstanceExtra extra = CommonTypes.getExtraFromInstance(item);
