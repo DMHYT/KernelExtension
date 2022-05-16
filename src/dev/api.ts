@@ -10,6 +10,7 @@ const LocalPlayer = WRAP_JAVA("vsdum.kex.natives.LocalPlayer");
 const Slime = WRAP_JAVA("vsdum.kex.natives.Slime");
 
 const GlobalContext = WRAP_JAVA("vsdum.kex.natives.GlobalContext");
+const I18n = WRAP_JAVA("vsdum.kex.natives.I18n");
 
 ModAPI.registerAPI("KernelExtension", {
     ItemsModule,
@@ -26,6 +27,7 @@ ModAPI.registerAPI("KernelExtension", {
     Slime,
 
     GlobalContext,
+    I18n,
 
     AddonUtils,
 

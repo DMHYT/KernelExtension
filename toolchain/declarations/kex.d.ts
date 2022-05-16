@@ -787,6 +787,18 @@ declare module vsdum {
 }
 declare function WRAP_JAVA(clazz: "vsdum.kex.natives.LootTableContext"): typeof vsdum.kex.natives.LootTableContext;
 
+declare module vsdum {
+    export module kex {
+        export module natives {
+            export class I18n extends java.lang.Object {
+                static class: java.lang.Class<I18n>;
+                static translate(key: string): string;
+            }
+        }
+    }
+}
+declare function WRAP_JAVA(clazz: "vsdum.kex.natives.I18n"): typeof vsdum.kex.natives.I18n;
+
 type MinMax = { min: number, max: number }
 type FeatureTypes = "buriedtreasure" | "endcity" | "fortress" | "mansion" | "mineshaft" | "monument" | "pillageroutpost" | "ruins" | "shipwreck" | "stronghold" | "temple" | "village";
 type EnchantTypes = Lowercase<keyof typeof EEnchantment>;
@@ -1220,6 +1232,7 @@ declare enum EItemAnimation {
     LocalPlayer: typeof vsdum.kex.natives.LocalPlayer,
     Slime: typeof vsdum.kex.natives.Slime,
     GlobalContext: typeof vsdum.kex.natives.GlobalContext,
+    I18n: typeof vsdum.kex.natives.I18n;
     AddonUtils: typeof vsdum.kex.util.AddonUtils,
     ESaturationModifier: {
         readonly POOR: 0.2,
