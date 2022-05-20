@@ -1,3 +1,5 @@
+#include <stl/string>
+
 #ifndef KEX_MOBEFFECT_HPP
 #define KEX_MOBEFFECT_HPP
 
@@ -14,6 +16,8 @@ class ResourcePackManager;
 
 class MobEffect {
     public:
+    char filler[52]; // 52
+    std::__ndk1::string descriptionId; // 64
     // virtual MobEffectInstance* applyEffects(Actor*, int, int) const;
     // virtual void removeEffects(Actor*);
     // virtual MobEffectInstance* applyInstantaneousEffect(Actor*, Actor*, Actor*, int, float) const;

@@ -8,9 +8,17 @@ const Mob = WRAP_JAVA("vsdum.kex.natives.Mob");
 const KEXPlayer = WRAP_JAVA("vsdum.kex.natives.Player");
 const LocalPlayer = WRAP_JAVA("vsdum.kex.natives.LocalPlayer");
 const Slime = WRAP_JAVA("vsdum.kex.natives.Slime");
+const FoodItemComponent = WRAP_JAVA("vsdum.kex.natives.FoodItemComponent")
 
 const GlobalContext = WRAP_JAVA("vsdum.kex.natives.GlobalContext");
 const I18n = WRAP_JAVA("vsdum.kex.natives.I18n");
+
+// ItemsModule.setDynamicFoodValues(VanillaItemID.sweet_berries, (stack) => {
+//     return new FoodItemComponent.Builder()
+//         .nutrition(Math.floor(Math.random() * 3) + 1)
+//         .saturationMod(ESaturationModifier.NORMAL)
+//         .alwaysEat();
+// });
 
 ModAPI.registerAPI("KernelExtension", {
     ItemsModule,
@@ -25,6 +33,7 @@ ModAPI.registerAPI("KernelExtension", {
     Player: KEXPlayer,
     LocalPlayer,
     Slime,
+    FoodItemComponent,
 
     GlobalContext,
     I18n,

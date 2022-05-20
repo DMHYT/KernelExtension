@@ -13,12 +13,14 @@ import android.support.annotation.Nullable;
 import vsdum.kex.common.CallbackFunction;
 import vsdum.kex.natives.FoodItemComponent;
 import vsdum.kex.natives.Level;
+import vsdum.kex.natives.MobEffectInstance;
 
 public class ItemsModule {
 
     protected static native long nativeGetFood(int id);
     protected static native void nativeNewFoodSaturationModifier(String name, float value);
     protected static native void nativeEnableDynamicUseDuration(int id);
+    protected static native void nativeEnableDynamicFoodValues(int id);
     
     public static native void setRequiresWorldBuilder(int id, boolean requiresWorldBuilder);
     public static native void setExplodable(int id, boolean explodable);
@@ -39,7 +41,7 @@ public class ItemsModule {
         if(!isFood(id)) return null;
         long ptr = nativeGetFood(id);
         if(ptr == 0L) return null;
-        FoodItemComponent component = new FoodItemComponent(ptr);
+        FoodItemComponent component = new FoodItemComponent(ptr, false);
         food.put(id, component);
         return component;
     }
@@ -123,6 +125,37 @@ public class ItemsModule {
     {
         if(!itemOnTooltipCallbacks.containsKey(id)) itemOnTooltipCallbacks.put(id, new ArrayList<>());
         CallbackFunction.addToList(new CallbackFunction<OnTooltipCallback>(cb, priority), itemOnTooltipCallbacks.get(id));
+    }
+
+    public static interface FoodValuesCallback {
+        public FoodItemComponent.Builder onEaten(ItemStack stack);
+    }
+
+    private static final Map<Integer, FoodValuesCallback> foodValuesCallbacks = new HashMap<>();
+
+    public static void setDynamicFoodValues(int id, FoodValuesCallback callback)
+    {
+        nativeEnableDynamicFoodValues(id);
+        foodValuesCallbacks.put(Integer.valueOf(id), callback);
+    }
+
+    public static void getDynamicFoodValues(long stackPtr, long foodPtr)
+    {
+        ItemStack stack = ItemStack.fromPtr(stackPtr);
+        if(stack == null) return;
+        if(!foodValuesCallbacks.containsKey(stack.id)) return;
+        FoodItemComponent food = new FoodItemComponent(foodPtr, true);
+        FoodItemComponent.Builder foodBuilder = foodValuesCallbacks.get(stack.id).onEaten(stack);
+        food.setNutrition(foodBuilder.getNutrition());
+        food.setSaturationModifier(foodBuilder.getSaturationMod());
+        food.setCanAlwaysEat(foodBuilder.getAlwaysEat());
+        food.clearEffects();
+        Iterator<Map.Entry<MobEffectInstance, Float>> iter = foodBuilder.getEffects().entrySet().iterator();
+        while(iter.hasNext())
+        {
+            Map.Entry<MobEffectInstance, Float> entry = iter.next();
+            food.addEffect(entry.getKey(), entry.getValue());
+        }
     }
     
 }

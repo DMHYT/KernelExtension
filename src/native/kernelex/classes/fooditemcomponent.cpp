@@ -2,8 +2,9 @@
 
 #include <innercore/id_conversion_map.h>
 
-#include <FoodItemComponentLegacy.hpp>
 #include <Item.hpp>
+#include <FoodItemComponentLegacy.hpp>
+#include <MobEffect.hpp>
 
 
 #define __EXPORT__(RET, NAME, ...) JNIEXPORT RET JNICALL Java_vsdum_kex_natives_FoodItemComponent_native##NAME (JNIEnv* env, jclass clazz, jlong ptr, ##__VA_ARGS__)
@@ -11,7 +12,9 @@
 
 extern "C" {
     __EXPORT__(jint, GetItem) {
-        return IdConversion::dynamicToStatic(((FoodItemComponentLegacy*) ptr)->item->id, IdConversion::ITEM);
+        Item* item = ((FoodItemComponentLegacy*) ptr)->item;
+        if(item == nullptr) return 0;
+        return IdConversion::dynamicToStatic(item->id, IdConversion::ITEM);
     }
     __EXPORT__(jint, GetNutrition) {
         return ((FoodItemComponentLegacy*) ptr)->nutrition;
@@ -80,6 +83,25 @@ extern "C" {
     }
     __EXPORT__(jfloat, EffectGetChance, jint index) {
         return ((FoodItemComponentLegacy*) ptr)->effects[index].chance;
+    }
+    __EXPORT__(void, SetNutrition, jint nutrition) {
+        ((FoodItemComponentLegacy*) ptr)->nutrition = nutrition;
+    }
+    __EXPORT__(void, SetSaturationModifier, jfloat satMod) {
+        ((FoodItemComponentLegacy*) ptr)->saturationModifier = satMod;
+    }
+    __EXPORT__(void, SetCanAlwaysEat, jboolean canAlwaysEat) {
+        ((FoodItemComponentLegacy*) ptr)->canAlwaysEat = canAlwaysEat;
+    }
+    __EXPORT__(void, ClearEffects) {
+        ((FoodItemComponentLegacy*) ptr)->effects.clear();
+    }
+    __EXPORT__(void, AddEffect, jstring descriptionId, jint id, jint duration, jint amplifier, jfloat chance) {
+        const char* cDescId = env->GetStringUTFChars(descriptionId, 0);
+        ((FoodItemComponentLegacy*) ptr)->effects.push_back(FoodItemComponentLegacy::Effect {
+            (char*) cDescId, (unsigned int) id, duration, amplifier, chance
+        });
+        env->ReleaseStringUTFChars(descriptionId, cDescId);
     }
 }
 

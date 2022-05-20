@@ -1,3 +1,5 @@
+#include <stl/string>
+
 #ifndef KEX_MOBEFFECTINSTANCE_HPP
 #define KEX_MOBEFFECTINSTANCE_HPP
 
@@ -10,35 +12,50 @@ enum Difficulty: int {};
 
 class MobEffectInstance {
     public:
-    MobEffectInstance(unsigned int, int, int);
-    MobEffectInstance(unsigned int, int, int, bool, bool, bool);
-    MobEffectInstance(unsigned int, int, int, int, int, int, bool, bool, bool);
-    MobEffectInstance(unsigned int, int);
-    MobEffectInstance(unsigned int);
+    unsigned int id; // 4
+    int durationPeaceful; // 8
+    int durationEasy; // 12
+    int durationNormal; // 16
+    int durationHard; // 20
+    int amplifier; // 24
+    bool _displaysOnScreenTextureAnimation; // 25
+    bool _isAmbient; // 26
+    bool _isNoCounter; // 27
+    bool _isEffectVisible; // 28
+    char filler[12]; // 40
+    MobEffectInstance(unsigned int id, int duration, int amplifier);
+    MobEffectInstance(unsigned int id, int duration, int amplifier, 
+                      bool isAmbient, bool isVisible, bool displaysOnScreenTextureAnimation);
+    MobEffectInstance(unsigned int id, int durationPeaceful, 
+                      int durationEasy, int durationNormal, int durationHard, int amplifier,
+                      bool isAmbient, bool isVisible, bool displaysOnScreenTextureAnimation);
+    MobEffectInstance(unsigned int id, int duration);
+    MobEffectInstance(unsigned int id);
     MobEffectInstance();
     //getColorValue
     void* getSplashEffect() const;
-    void* getLingerDuration() const;
+    int getLingerDuration() const;
     void _setVisibility();
     void* toString() const;
     bool isNoCounter() const;
     bool isAmbient() const;
     int getAmplifier() const;
     //areAllEffectsAmbient
-    void* getDisplayName() const;
+    std::__ndk1::string getDisplayName() const;
     void _tickDownDuration();
     void setNoCounter(bool);
     bool operator!=(MobEffectInstance const&) const;
-    void* getDescriptionId() const;
-    void* getSplashDuration() const;
-    void setDifficultyDuration(Difficulty, int) const;
+    std::__ndk1::string getDescriptionId() const;
+    int getSplashDuration() const;
+    void setDifficulityDuration(Difficulty, int);
     void* applyEffects(Actor*) const;
     bool operator<(MobEffectInstance const&) const;
     void update(MobEffectInstance const&);
     bool isEffectVisible() const;
     void tick(Actor*);
     void* save() const;
-    int getDifficultyDuration(Difficulty) const;
+    int getDifficulityDuration(Difficulty) const;
+    bool hasDifficulityDuration(Difficulty) const;
     void* getComponentName() const;
     void setDuration(int);
     void* removeEffects(Actor*) const;

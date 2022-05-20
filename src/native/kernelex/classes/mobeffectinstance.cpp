@@ -1,5 +1,3 @@
-#include <malloc.h>
-#include <new>
 #include <jni.h>
 
 #include <MobEffectInstance.hpp>
@@ -9,46 +7,43 @@
 
 
 extern "C" {
-    JNIEXPORT jlong JNICALL Java_vsdum_kex_natives_MobEffectInstance_nativeConstruct__III
-    (JNIEnv*, jclass, jint id, jint duration, jint amplifier) {
-        MobEffectInstance* instance = new (malloc(40)) MobEffectInstance((unsigned int) id, duration, amplifier);
-        return (jlong) instance;
-    }
-    JNIEXPORT jlong JNICALL Java_vsdum_kex_natives_MobEffectInstance_nativeConstruct__IIIZZZ
-    (JNIEnv*, jclass, jint id, jint duration, jint amplifier, jboolean isAmbient, jboolean alwaysTrue, jboolean textureSomething) {
-        MobEffectInstance* instance = new (malloc(40)) MobEffectInstance((unsigned int) id, duration, amplifier, isAmbient, alwaysTrue, textureSomething);
-        return (jlong) instance;
-    }
-    JNIEXPORT jlong JNICALL Java_vsdum_kex_natives_MobEffectInstance_nativeConstruct__II
-    (JNIEnv*, jclass, jint id, jint duration) {
-        MobEffectInstance* instance = new (malloc(40)) MobEffectInstance((unsigned int) id, duration);
-        return (jlong) instance;
-    }
-    JNIEXPORT jlong JNICALL Java_vsdum_kex_natives_MobEffectInstance_nativeConstruct__I
-    (JNIEnv*, jclass, jint id) {
-        MobEffectInstance* instance = new (malloc(40)) MobEffectInstance((unsigned int) id);
-        return (jlong) instance;
-    }
-    __EXPORT__(jboolean, IsNoCounter) {
-        return ((MobEffectInstance*) ptr)->isNoCounter();
-    }
-    __EXPORT__(jboolean, IsAmbient) {
-        return ((MobEffectInstance*) ptr)->isAmbient();
-    }
-    __EXPORT__(jint, GetAmplifier) {
-        return ((MobEffectInstance*) ptr)->getAmplifier();
-    }
-    __EXPORT__(jboolean, IsEffectVisible) {
-        return ((MobEffectInstance*) ptr)->isEffectVisible();
+    __EXPORT__(jint, GetId) {
+        return ((MobEffectInstance*) ptr)->getId();
     }
     __EXPORT__(jint, GetDuration) {
         return ((MobEffectInstance*) ptr)->getDuration();
     }
-    __EXPORT__(jint, GetId) {
-        return ((MobEffectInstance*) ptr)->getId();
+    __EXPORT__(jint, GetDifficultyDuration, jint difficulty) {
+        switch(difficulty) {
+            case 1: return ((MobEffectInstance*) ptr)->durationEasy;
+            case 2: return ((MobEffectInstance*) ptr)->durationNormal;
+            case 3: return ((MobEffectInstance*) ptr)->durationHard;
+            default: return -1;
+        }
+    }
+    __EXPORT__(jint, GetAmplifier) {
+        return ((MobEffectInstance*) ptr)->getAmplifier();
     }
     __EXPORT__(jboolean, DisplaysOnScreenTextureAnimation) {
         return ((MobEffectInstance*) ptr)->displaysOnScreenTextureAnimation();
+    }
+    __EXPORT__(jboolean, IsAmbient) {
+        return ((MobEffectInstance*) ptr)->isAmbient();
+    }
+    __EXPORT__(jboolean, IsNoCounter) {
+        return ((MobEffectInstance*) ptr)->isNoCounter();
+    }
+    __EXPORT__(jboolean, IsEffectVisible) {
+        return ((MobEffectInstance*) ptr)->isEffectVisible();
+    }
+    __EXPORT__(void, SetDuration, jint duration) {
+        ((MobEffectInstance*) ptr)->setDuration(duration);
+    }
+    __EXPORT__(void, SetDifficultyDuration, jint difficulty, jint duration) {
+        ((MobEffectInstance*) ptr)->setDifficulityDuration((Difficulty) difficulty, duration);
+    }
+    __EXPORT__(void, SetNoCounter, jboolean noCounter) {
+        ((MobEffectInstance*) ptr)->setNoCounter(noCounter);
     }
 }
 

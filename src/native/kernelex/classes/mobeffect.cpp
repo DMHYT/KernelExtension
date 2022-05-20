@@ -22,6 +22,11 @@ extern "C" {
     __EXPORT__(jboolean, IsHarmful) {
         return ((MobEffect*) ptr)->isHarmful();
     }
+    __EXPORT__(jstring, GetDescriptionId) {
+        const char* descId = ((MobEffect*) ptr)->descriptionId.c_str();
+        if(descId == nullptr) return NULL;
+        return env->NewStringUTF(descId);
+    }
 }
 
 

@@ -38,6 +38,7 @@ class FoodItemComponentLegacy {
     bool canAlwaysEat; // 61 + 3
     std::__ndk1::vector<Effect> effects; // 76
     std::__ndk1::vector<unsigned int> removeEffects; // 88
+    FoodItemComponentLegacy(Item&);
 };
 
 

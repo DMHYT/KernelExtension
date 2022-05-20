@@ -9,8 +9,14 @@ public class MobEffect implements INativeInterface {
     protected static native boolean nativeIsVisible(long ptr);
     protected static native int nativeGetId(long ptr);
     protected static native boolean nativeIsHarmful(long ptr);
+    @Nullable protected static native String nativeGetDescriptionId(long ptr);
     
     protected final long pointer;
+
+    private final int id;
+    private final boolean visible;
+    private final boolean harmful;
+    @Nullable private final String descriptionId;
     
     public final long getPointer()
     {
@@ -20,6 +26,10 @@ public class MobEffect implements INativeInterface {
     public MobEffect(long ptr)
     {
         this.pointer = ptr;
+        this.id = nativeGetId(this.pointer);
+        this.visible = nativeIsVisible(this.pointer);
+        this.harmful = nativeIsHarmful(this.pointer);
+        this.descriptionId = nativeGetDescriptionId(this.pointer);
     }
 
     @Nullable public static MobEffect getById(int id)
@@ -29,19 +39,24 @@ public class MobEffect implements INativeInterface {
         return new MobEffect(ptr);
     }
 
-    public boolean isVisible()
+    public final boolean isVisible()
     {
-        return nativeIsVisible(this.pointer);
+        return this.visible;
     }
 
-    public int getId()
+    public final int getId()
     {
-        return nativeGetId(this.pointer);
+        return this.id;
     }
 
-    public boolean isHarmful()
+    public final boolean isHarmful()
     {
-        return nativeIsHarmful(this.pointer);
+        return this.harmful;
+    }
+
+    @Nullable public final String getDescriptionId()
+    {
+        return this.descriptionId;
     }
 
 }

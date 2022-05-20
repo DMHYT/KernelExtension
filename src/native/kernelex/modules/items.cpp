@@ -13,8 +13,7 @@
 #include <innercore/item_registry.h>
 #include <innercore/vtable.h>
 
-#include <Item.hpp>
-#include <FoodItemComponentLegacy.hpp>
+#include <ActorUniqueID.hpp>
 #include <Player.hpp>
 
 #include "../utils/java_utils.hpp"
@@ -51,6 +50,8 @@ void ItemParamsModifier::applyTo(int id) {
 
 std::unordered_map<int, ItemParamsModifier*> KEXItemsModule::itemParamsModifiers;
 std::unordered_map<std::string, float> KEXItemsModule::customFoodSaturationModifiers;
+std::unordered_map<int, FoodItemComponentLegacy*> KEXItemsModule::dynamicFoodValues;
+ItemStack* KEXItemsModule::cachedFoodStack = nullptr;
 
 
 ItemParamsModifier* KEXItemsModule::getOrCreateModifier(int id) {
@@ -60,6 +61,16 @@ ItemParamsModifier* KEXItemsModule::getOrCreateModifier(int id) {
     } else {
         itemParamsModifiers.emplace(id, new ItemParamsModifier());
         return itemParamsModifiers.at(id);
+    }
+}
+
+FoodItemComponentLegacy* KEXItemsModule::getOrCreateDynamicFoodValues(int id, Item* item) {
+    auto found = dynamicFoodValues.find(id);
+    if(found != dynamicFoodValues.end()) {
+        return found->second;
+    } else {
+        dynamicFoodValues.emplace(id, new FoodItemComponentLegacy(*item));
+        return dynamicFoodValues.at(id);
     }
 }
 
@@ -93,6 +104,26 @@ void KEXItemsModule::initialize() {
     //     env->ReleaseStringUTFChars(jText, cText);
     //     env->DeleteLocalRef(jText);
     // }, ), HookManager::RETURN | HookManager::LISTENER);
+    // HookManager::addCallback(SYMBOL("mcpe", "_ZN6Player3eatERK9ItemStack"), LAMBDA((Player* player, ItemStack const& stack), {
+    //     Item* item = stack.getItem();
+    //     if(item != nullptr) {
+    //         int staticId = IdConversion::dynamicToStatic(item->id, IdConversion::ITEM);
+    //         ItemParamsModifier* mod = getModifierOrNull(staticId);
+    //         if(mod != nullptr && mod->dynamicFoodValues) {
+    //             cachedFoodStack = (ItemStack*) &stack;
+    //         }
+    //     }
+    // }, ), HookManager::CALL | HookManager::LISTENER);
+    // HookManager::addCallback(SYMBOL("mcpe", "_ZNK4Item7getFoodEv"), LAMBDA((HookManager::CallbackController* controller, Item* item), {
+    //     int staticId = IdConversion::dynamicToStatic(item->id, IdConversion::ITEM);
+    //     ItemParamsModifier* mod = getModifierOrNull(staticId);
+    //     if(mod != nullptr && mod->dynamicFoodValues) {
+    //         FoodItemComponentLegacy* dynamicFood = getOrCreateDynamicFoodValues(staticId, item);
+    //         KEXJavaBridge::ItemsModule::getDynamicFoodValues((jlong) cachedFoodStack, (jlong) dynamicFood);
+    //         controller->replace();
+    //         return dynamicFood;
+    //     }
+    // }, ), HookManager::CALL | HookManager::LISTENER | HookManager::CONTROLLER | HookManager::RESULT);
     Callbacks::addCallback("postModItemsInit", CALLBACK([], (), {
         for(std::unordered_map<int, ItemParamsModifier*>::iterator iter = itemParamsModifiers.begin(); iter != itemParamsModifiers.end(); iter++) {
             iter->second->applyTo(iter->first);
@@ -153,6 +184,10 @@ extern "C" {
     JNIEXPORT void JNICALL Java_vsdum_kex_modules_ItemsModule_nativeEnableDynamicUseDuration
     (JNIEnv*, jclass, jint id) {
         GET_MOD mod->dynamicUseDuration = true;
+    }
+    JNIEXPORT void JNICALL Java_vsdum_kex_modules_ItemsModule_nativeEnableDynamicFoodValues
+    (JNIEnv*, jclass, jint id) {
+        GET_MOD mod->dynamicFoodValues = true;
     }
     #undef GET_MOD
     JNIEXPORT jboolean JNICALL Java_vsdum_kex_modules_ItemsModule_isFood

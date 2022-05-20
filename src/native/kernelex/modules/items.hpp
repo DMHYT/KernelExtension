@@ -2,6 +2,8 @@
 
 #include <mod.h>
 
+#include <Item.hpp>
+#include <FoodItemComponentLegacy.hpp>
 #include <ItemStackBase.hpp>
 #include <ItemStack.hpp>
 
@@ -21,6 +23,7 @@ class ItemParamsModifier {
     bool cannotBeRepairedInAnvil = false;
     int cooldownTime = -1;
     bool dynamicUseDuration = false;
+    bool dynamicFoodValues = false;
     ItemParamsModifier() {}
     void applyTo(int id);
     static bool _anvilRepairDisable(ItemStackBase const&, ItemStackBase const&) {
@@ -35,6 +38,8 @@ class KEXItemsModule : public Module {
     public:
     static std::unordered_map<int, ItemParamsModifier*> itemParamsModifiers;
     static std::unordered_map<std::string, float> customFoodSaturationModifiers;
+    static std::unordered_map<int, FoodItemComponentLegacy*> dynamicFoodValues;
+    static ItemStack* cachedFoodStack;
     static ItemParamsModifier* getOrCreateModifier(int);
     static ItemParamsModifier* getModifierOrNull(int id) {
         auto found = itemParamsModifiers.find(id);
@@ -44,6 +49,7 @@ class KEXItemsModule : public Module {
     static inline bool hasModifier(int id) {
         return itemParamsModifiers.find(id) != itemParamsModifiers.end();
     }
+    static FoodItemComponentLegacy* getOrCreateDynamicFoodValues(int id, Item* item);
     KEXItemsModule(Module* parent): Module(parent, "kex.items") {}
     virtual void initialize();
 };

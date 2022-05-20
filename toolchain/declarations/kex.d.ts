@@ -695,15 +695,23 @@ declare module vsdum {
                 constructor(id: number);
                 constructor(id: number, duration: number);
                 constructor(id: number, duration: number, amplifier: number);
-                constructor(id: number, duration: number, amplifier: number, isAmbient: boolean, isVisible: boolean, displaysOnScreenTextureAnimation: boolean);
+                constructor(id: number, duration: number, amplifier: number, isAmbient: boolean, isEffectVisible: boolean, displaysOnScreenTextureAnimation: boolean);
+                constructor(id: number, durationPeaceful: number, durationEasy: number, durationNormal: number, durationHard: number, amplifier: number, isAmbient: boolean, isEffectVisible: boolean, displaysOnScreenTextureAnimation: boolean);
                 getId(): number;
-                getEffect(): Nullable<MobEffect>;
+                getDuration(): number;
+                setDuration(dur: number): void;
+                hasDifficultyDuration(difficulty: 1 | 2 | 3): boolean;
+                getDifficultyDuration(difficulty: 1 | 2 | 3): number;
+                setDifficultyDuration(difficulty: 1 | 2 | 3, duration: number): void;
                 getAmplifier(): number;
                 isAmbient(): boolean;
-                isVisible(): boolean;
+                isEffectVisible(): boolean;
                 displaysOnScreenTextureAnimation(): boolean;
                 isNoCounter(): boolean;
-                getDuration(): number;
+                setNoCounter(noCounter: boolean): void;
+                getSplashDuration(): number;
+                getLingerDuration(): number;
+                getEffect(): Nullable<MobEffect>;
             }
         }
     }
@@ -726,6 +734,7 @@ declare module vsdum {
         export module natives {
             export class FoodItemComponent extends java.lang.Object {
                 static class: java.lang.Class<FoodItemComponent>;
+                constructor(pointer: number, isGlobal?: boolean);
                 getItem(): number;
                 getNutrition(): number;
                 getSaturationModifier(): number;
@@ -749,10 +758,19 @@ declare module vsdum {
                     getAmplifier(): number;
                     getChance(): number;
                 }
+                export class Builder extends java.lang.Object {
+                    static class: java.lang.Class<Builder>;
+                    constructor();
+                    nutrition(nutr: number): Builder;
+                    saturationMod(sat: number): Builder;
+                    alwaysEat(): Builder;
+                    effect(eff: MobEffectInstance, chance: number): Builder;
+                }
             }
         }
     }
 }
+declare function WRAP_JAVA(clazz: "vsdum.kex.natives.FoodItemComponent"): typeof vsdum.kex.natives.FoodItemComponent;
 
 declare module vsdum {
     export module kex {
@@ -1032,6 +1050,9 @@ declare module vsdum {
             interface OnTooltipCallback {
                 (stack: ItemInstance, text: java.lang.StringBuilder, level: natives.Level): void;
             }
+            interface FoodValuesCallback {
+                (stack: ItemInstance): natives.FoodItemComponent.Builder;
+            }
             export class ItemsModule extends java.lang.Object {
                 static class: java.lang.Class<ItemsModule>;
                 static setRequiresWorldBuilder(id: number, requiresWorldBuilder: boolean): void;
@@ -1048,6 +1069,7 @@ declare module vsdum {
                 static saturationModifierFromString(name: any_string): number;
                 static setMaxUseDurationDynamic(id: number, callback: UseDurationCallback): void;
                 static addTooltip(id: number, callback: OnTooltipCallback, priority?: number): void;
+                static setDynamicFoodValues(id: number, callback: FoodValuesCallback): void;
             }
         }
     }
