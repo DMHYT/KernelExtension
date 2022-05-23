@@ -11,6 +11,7 @@ import com.zhekasmirnov.horizon.runtime.logger.Logger;
 
 import android.support.annotation.Nullable;
 import vsdum.kex.common.CallbackFunction;
+import vsdum.kex.modules.misc.ReachDistanceModifier;
 import vsdum.kex.natives.FoodItemComponent;
 import vsdum.kex.natives.Level;
 import vsdum.kex.natives.MobEffectInstance;
@@ -155,6 +156,28 @@ public class ItemsModule {
         {
             Map.Entry<MobEffectInstance, Float> entry = iter.next();
             food.addEffect(entry.getKey(), entry.getValue());
+        }
+    }
+
+    private static final Map<Integer, List<ReachDistanceModifier>> reachDistanceModifiers = new HashMap<>();
+
+    public static void registerReachDistanceModifierFor(int id, ReachDistanceModifier modifier)
+    {
+        if(!reachDistanceModifiers.containsKey(id)) reachDistanceModifiers.put(id, new ArrayList<>());
+        reachDistanceModifiers.get(id).add(modifier);
+    }
+
+    public static void onChangeCarriedItem(ItemStack oldStack, ItemStack newStack)
+    {
+        if(reachDistanceModifiers.containsKey(oldStack.id))
+        {
+            Iterator<ReachDistanceModifier> iter = reachDistanceModifiers.get(oldStack.id).iterator();
+            while(iter.hasNext()) iter.next().disable();
+        }
+        if(reachDistanceModifiers.containsKey(newStack.id))
+        {
+            Iterator<ReachDistanceModifier> iter = reachDistanceModifiers.get(newStack.id).iterator();
+            while(iter.hasNext()) iter.next().enable();
         }
     }
     

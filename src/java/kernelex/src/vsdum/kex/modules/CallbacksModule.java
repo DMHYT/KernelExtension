@@ -28,6 +28,7 @@ public class CallbacksModule {
         {
             Callback.invokeAPICallback("ChangeCarriedItem", new Object[]{ Long.valueOf(player), oldStack, newStack, Byte.valueOf(hand) });
         }
+        ItemsModule.onChangeCarriedItem(oldStack, newStack);
     }
 
     public static void onItemTooltip(ItemStack stack, Level level, StringBuilder textBuilder)

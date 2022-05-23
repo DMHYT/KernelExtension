@@ -8,7 +8,8 @@ const Mob = WRAP_JAVA("vsdum.kex.natives.Mob");
 const KEXPlayer = WRAP_JAVA("vsdum.kex.natives.Player");
 const LocalPlayer = WRAP_JAVA("vsdum.kex.natives.LocalPlayer");
 const Slime = WRAP_JAVA("vsdum.kex.natives.Slime");
-const FoodItemComponent = WRAP_JAVA("vsdum.kex.natives.FoodItemComponent")
+const FoodItemComponent = WRAP_JAVA("vsdum.kex.natives.FoodItemComponent");
+const ReachDistanceModifier = WRAP_JAVA("vsdum.kex.modules.misc.ReachDistanceModifier");
 
 const GlobalContext = WRAP_JAVA("vsdum.kex.natives.GlobalContext");
 const I18n = WRAP_JAVA("vsdum.kex.natives.I18n");
@@ -34,6 +35,7 @@ ModAPI.registerAPI("KernelExtension", {
     LocalPlayer,
     Slime,
     FoodItemComponent,
+    ReachDistanceModifier,
 
     GlobalContext,
     I18n,

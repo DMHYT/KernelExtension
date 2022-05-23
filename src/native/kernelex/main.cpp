@@ -4,6 +4,7 @@
 #include "modules/items.hpp"
 #include "modules/tools/module.hpp"
 #include "modules/callbacks.hpp"
+#include "modules/misc/reachdist.hpp"
 
 #include "utils/java_utils.hpp"
 
@@ -26,6 +27,7 @@ extern "C" JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *) {
 	Module* items = new KEXItemsModule(main);
 	Module* tools = new KEXToolsModule(main);
 	Module* callbacks = new KEXCallbacksModule(main);
+	Module* reachdist = new KEXMiscReachDistModule(main);
 }
 
 

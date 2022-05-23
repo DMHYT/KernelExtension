@@ -1070,6 +1070,7 @@ declare module vsdum {
                 static setMaxUseDurationDynamic(id: number, callback: UseDurationCallback): void;
                 static addTooltip(id: number, callback: OnTooltipCallback, priority?: number): void;
                 static setDynamicFoodValues(id: number, callback: FoodValuesCallback): void;
+                static registerReachDistanceModifierFor(id: number, modifier: misc.ReachDistanceModifier): void;
             }
         }
     }
@@ -1168,6 +1169,27 @@ declare module vsdum {
     }
 }
 declare function WRAP_JAVA(clazz: "vsdum.kex.util.AddonUtils"): typeof vsdum.kex.util.AddonUtils;
+
+declare module vsdum {
+    export module kex {
+        export module modules {
+            export module misc {
+                export class ReachDistanceModifier extends java.lang.Object {
+                    static class: java.lang.Class<ReachDistanceModifier>;
+                    constructor();
+                    setModifier(modifier: number): ReachDistanceModifier;
+                    setMultiplier(multiplier: number): ReachDistanceModifier;
+                    enable(): ReachDistanceModifier;
+                    disable(): ReachDistanceModifier;
+                    getModifier(): number;
+                    getMultiplier(): number;
+                    isActive(): boolean;
+                }
+            }
+        }
+    }
+}
+declare function WRAP_JAVA(clazz: "vsdum.kex.modules.misc.ReachDistanceModifier"): typeof vsdum.kex.modules.misc.ReachDistanceModifier;
 
 
 declare namespace Item {
