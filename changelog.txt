@@ -85,3 +85,7 @@ BETA 2.2.1
 BETA 2.2.2
 - Fixed custom tools not breaking
 - Added callback "ChangeCarriedItem"
+
+BETA 2.2.3
+- Fixed custom parameters in tool materials object, thus fixed conflict with RedPowerPE mod
+- Fixed vanilla tools not breaking blocks with appropriate speed, caused by VtableHelper in ProjectE and Item Information mods
