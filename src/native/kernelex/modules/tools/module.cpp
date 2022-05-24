@@ -11,7 +11,6 @@
 #include <innercore/item_registry.h>
 #include <innercore/vtable.h>
 
-#include <commontypes.hpp>
 #include <static_symbol.hpp>
 
 #include <Actor.hpp>
@@ -43,6 +42,9 @@ std::unordered_map<long long, LastDestroyedBlock*> KEXToolsModule::lastDestroyed
 std::unordered_map<int, BlockDataInterface*> KEXToolsModule::blockData;
 std::unordered_map<int, int> KEXToolsModule::toolsToBrokenIds;
 std::unordered_set<int> KEXToolsModule::customTools;
+HashedString* KEXToolsModule::isAxeItemTag = new HashedString("minecraft:is_axe");
+HashedString* KEXToolsModule::isPickaxeItemTag = new HashedString("minecraft:is_pickaxe");
+HashedString* KEXToolsModule::isShovelItemTag = new HashedString("minecraft:is_shovel");
 
 
 bool KEXToolsModule::isCustomTool(int id) {
@@ -123,14 +125,11 @@ void KEXToolsModule::setBlockIsNative(int id, bool isNative) {
 
 
 Item::Tier* KEXToolsModule::getItemTier(DiggerItem* item) {
-    void** vtable = *(void***) item;
-    STATIC_VTABLE_SYMBOL(HatchetItem_table, "_ZTV11HatchetItem");
-    STATIC_VTABLE_SYMBOL(PickaxeItem_table, "_ZTV11PickaxeItem");
-    STATIC_VTABLE_SYMBOL(ShovelItem_table, "_ZTV10ShovelItem");
-    if(vtable == HatchetItem_table || vtable == PickaxeItem_table || vtable == ShovelItem_table) {
+    int staticId = IdConversion::dynamicToStatic(item->id, IdConversion::ITEM);
+    if(staticId < 900) {
         return item->tier;
     } else {
-        LegacyItemRegistry::LegacyItemFactoryBase* factory = LegacyItemRegistry::findFactoryById(IdConversion::dynamicToStatic(item->id, IdConversion::ITEM));
+        LegacyItemRegistry::LegacyItemFactoryBase* factory = LegacyItemRegistry::findFactoryById(staticId);
         if(factory == nullptr) return nullptr;
         if(factory->getType() == ToolFactory::_factoryTypeId) {
             return ((ToolFactory*) factory)->tier;
@@ -149,15 +148,11 @@ bool KEXToolsModule::patchedCanDestroySpecial(DiggerItem* _this, Block const& bl
 bool KEXToolsModule::patchedHasBlock(DiggerItem* _this, Block const& block) {
     const char* materialName = getBlockMaterialName(IdConversion::dynamicToStatic(block.legacy->id, IdConversion::BLOCK));
     if(materialName == nullptr) return false;
-    void** vtable = *(void***) _this;
-    STATIC_VTABLE_SYMBOL(HatchetItem_table, "_ZTV11HatchetItem");
-    STATIC_VTABLE_SYMBOL(PickaxeItem_table, "_ZTV11PickaxeItem");
-    STATIC_VTABLE_SYMBOL(ShovelItem_table, "_ZTV10ShovelItem");
-    if(vtable == HatchetItem_table) {
+    if(_this->hasTag(*isAxeItemTag)) {
         return strcmp(materialName, "wood") == 0;
-    } else if(vtable == PickaxeItem_table) {
+    } else if(_this->hasTag(*isPickaxeItemTag)) {
         return strcmp(materialName, "stone") == 0;
-    } else if(vtable == ShovelItem_table) {
+    } else if(_this->hasTag(*isShovelItemTag)) {
         return strcmp(materialName, "dirt") == 0;
     } else {
         LegacyItemRegistry::LegacyItemFactoryBase* factory = LegacyItemRegistry::findFactoryById(IdConversion::dynamicToStatic(_this->id, IdConversion::ITEM));

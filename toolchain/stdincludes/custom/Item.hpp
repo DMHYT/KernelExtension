@@ -24,7 +24,9 @@ class CompoundTag;
 class Container;
 enum CreativeItemCategory: int {};
 class CreativeItemRegistry;
-class HashedString;
+#ifndef KEX_HASHEDSTRING_HPP
+    class HashedString;
+#endif
 class IDataInput;
 class IDataOutput;
 enum ItemAcquisitionMethod: int {};

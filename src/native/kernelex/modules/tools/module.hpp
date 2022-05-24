@@ -6,6 +6,8 @@
 
 #include <innercore/legacy_item_registry.h>
 
+#include <commontypes.hpp>
+
 #include <Block.hpp>
 #include <items/DiggerItem.hpp>
 #include <items/WeaponItem.hpp>
@@ -62,6 +64,9 @@ class KEXToolsModule : public Module {
     static std::unordered_map<int, BlockDataInterface*> blockData;
     static std::unordered_map<int, int> toolsToBrokenIds;
     static std::unordered_set<int> customTools;
+    static HashedString* isAxeItemTag;
+    static HashedString* isPickaxeItemTag;
+    static HashedString* isShovelItemTag;
     static bool isCustomTool(int id);
     static const char* getBlockMaterialName(int id);
     static int getBlockDestroyLevel(int id);
