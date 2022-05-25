@@ -37,15 +37,11 @@ extern "C" {
         return (jlong) player;
     }
     __EXPORT__(jlong, GetKillerPet) {
-        Logger::debug("KEX", "GETKILLERPET");
-        Logger::flush();
         Actor* actor = ((LootTableContext*) ptr)->getKillerPet();
         if(actor == nullptr) return 0;
         return (jlong) actor;
     }
     __EXPORT__(jlong, GetKillerEntity) {
-        Logger::debug("KEX", "GETKILLERENTITY");
-        Logger::flush();
         Actor* actor = ((LootTableContext*) ptr)->getKillerEntity();
         if(actor == nullptr) return 0;
         return (jlong) actor;

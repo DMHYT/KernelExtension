@@ -23,8 +23,6 @@ float KEXMiscReachDistModule::apply(float defaultValue) {
     return result;
 }
 
-#include <logger.h>
-
 void KEXMiscReachDistModule::initialize() {
     DLHandleManager::initializeHandle("libminecraftpe.so", "mcpe");
     HookManager::addCallback(SYMBOL("mcpe", "_ZN8GameMode12getPickRangeERK9InputModeb"), LAMBDA((HookManager::CallbackController* controller, void* gamemode, void* inputmode, bool b), {

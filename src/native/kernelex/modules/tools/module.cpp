@@ -294,7 +294,6 @@ void KEXToolsModule::initialize() {
         if(cppstr == "shears") {
             __REPLACER__(359, isShears)
         } else if(cppstr == "flint_and_steel") {
-            Logger::debug("KEX", "FLINT AND STEEL ISINSTANCE");
             __REPLACER__(259, isFlintAndSteel)
         }
     }, ), HookManager::CALL | HookManager::LISTENER | HookManager::CONTROLLER | HookManager::RESULT);
