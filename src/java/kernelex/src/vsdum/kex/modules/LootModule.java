@@ -6,7 +6,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.zhekasmirnov.apparatus.adapter.innercore.game.item.ItemStack;
+import com.zhekasmirnov.apparatus.mcpe.NativeBlockSource;
 import com.zhekasmirnov.horizon.runtime.logger.Logger;
+import com.zhekasmirnov.innercore.api.NativeTileEntity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -17,11 +20,16 @@ import vsdum.kex.modules.loot.LootConditions;
 import vsdum.kex.modules.loot.LootModifier;
 import vsdum.kex.modules.loot.LootPoolEntry;
 import vsdum.kex.modules.loot.RandomItemsList;
+import vsdum.kex.natives.Actor;
 import vsdum.kex.natives.LootTableContext;
 
 public class LootModule {
 
     private static native void enableOnDropCallbackFor(String table);
+    protected static native void nativeFillContainer(long bsPtr, int x, int y, int z, String tableName, long actorPtr);
+    protected static native long nativeGetRandomItems(String tableName, long contextPtr);
+    protected static native int nativeGetVectorSize(long vectorPtr);
+    protected static native void nativeDeleteVector(long vectorPtr);
     
     private static final Map<String, LootModifier> modifiers = new HashMap<>();
 
@@ -119,6 +127,12 @@ public class LootModule {
         onDropCallbacks.get(tableName).add(cb);
     }
 
+    static {
+        addOnDropCallbackFor("entities/wither_skeleton", new OnDropCallback() {
+            public void onDrop(RandomItemsList drops, LootTableContext context) {}
+        });
+    }
+
     public static void onDrop(String tableName, long vectorPtr, int vectorSize, long contextPtr)
     {
         if(onDropCallbacks.containsKey(tableName))
@@ -129,6 +143,52 @@ public class LootModule {
             while(iter.hasNext()) iter.next().onDrop(drops, context);
             drops.modifyNative();
         }
+    }
+
+    private static final List<Integer> supportedFillingContainers = new ArrayList<>();
+
+    static {
+        supportedFillingContainers.add(0);
+        supportedFillingContainers.add(2);
+        supportedFillingContainers.add(13);
+        supportedFillingContainers.add(14);
+        supportedFillingContainers.add(42);
+    }
+
+    private static String validateTableName(String tableName)
+    {
+        String result = tableName;
+        if(!result.startsWith("loot_tables/")) result = "loot_tables/" + result;
+        if(!result.startsWith("loot_tables/chests/") && !result.startsWith("loot_tables/entities/"))
+            throw new IllegalArgumentException("Loot table name must be [loot_tables/](chests|entities)/{path and name}[.json]");
+        if(!result.endsWith(".json")) result += ".json";
+        if(!result.matches("^loot_tables/(chests|entities)/([\\w-/]+).json$"))
+            throw new IllegalArgumentException("NOT MATCHING REGEX: Loot table name must be [loot_tables/](chests|entities)/{path and name}[.json]");
+        return result;
+    }
+
+    public static void fillContainer(NativeBlockSource region, int x, int y, int z, String tableName, @Nullable Actor actor)
+    {
+        NativeTileEntity tile = region.getBlockEntity(x, y, z);
+        if(tile != null && supportedFillingContainers.contains(tile.getType()))
+        {
+            String tableDir = validateTableName(tableName);
+            nativeFillContainer(region.getPointer(), x, y, z, tableDir, actor != null ? actor.getPointer() : 0L);
+        } else throw new IllegalStateException(String.format("Cannot fill container on %d %d %d, because the tile entity %s!", new Object[]{ Integer.valueOf(x), Integer.valueOf(y), Integer.valueOf(z), tile == null ? "is null" : "is not of supported type" }));
+    }
+
+    public static List<ItemStack> getRandomItems(String tableName, LootTableContext context)
+    {
+        String tableDir = validateTableName(tableName);
+        List<ItemStack> result = new ArrayList<>();
+        long vectorPtr = nativeGetRandomItems(tableDir, context.getPointer());
+        if(vectorPtr != 0L)
+        {
+            RandomItemsList list = new RandomItemsList(vectorPtr, nativeGetVectorSize(vectorPtr));
+            result.addAll(list);
+            nativeDeleteVector(vectorPtr);
+        }
+        return result;
     }
 
 }

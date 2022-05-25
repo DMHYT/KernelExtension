@@ -21,6 +21,8 @@ public class LootTableContext implements INativeInterface {
     private static native void nativeBuilderItemName(long ptr, String name);
     private static native void nativeBuilderKillerPlayer(long ptr, long playerPtr);
     private static native long nativeBuilderCreate(long ptr);
+    private static native void nativeFinalizeContext(long ptr);
+    private static native void nativeFinalizeBuilder(long ptr);
     
     private final long pointer;
     @Nullable private final Actor thisEntity;
@@ -37,9 +39,25 @@ public class LootTableContext implements INativeInterface {
         return this.pointer;
     }
 
+    private final boolean needsToBeDeleted;
+
+    @Override protected void finalize()
+    {
+        try {
+            super.finalize();
+            if(this.needsToBeDeleted) nativeFinalizeContext(this.pointer);
+        } catch(Throwable ex) { ex.printStackTrace(); }
+    }
+
     public LootTableContext(long ptr)
     {
+        this(ptr, false);
+    }
+
+    public LootTableContext(long ptr, boolean needsToBeDeleted)
+    {
         this.pointer = ptr;
+        this.needsToBeDeleted = needsToBeDeleted;
         long thisEntityPtr = nativeGetThisEntity(this.pointer);
         this.thisEntity = thisEntityPtr == 0L ? null : new Actor(thisEntityPtr, true);
         this.originalItemName = nativeGetOriginalItemName(this.pointer);
@@ -91,12 +109,12 @@ public class LootTableContext implements INativeInterface {
         return this.killerPlayer;
     }
 
-    @Nullable public final Actor getKillerPet()
+    @Nullable public Actor getKillerPet()
     {
         return this.killerPet;
     }
 
-    @Nullable public final Actor getKillerEntity()
+    @Nullable public Actor getKillerEntity()
     {
         return this.killerEntity;
     }
@@ -145,10 +163,17 @@ public class LootTableContext implements INativeInterface {
             return this;
         }
 
-        @Nullable public LootTableContext create()
+        public LootTableContext create()
         {
-            long ctxPtr = nativeBuilderCreate(this.pointer);
-            return ctxPtr == 0L ? null : new LootTableContext(ctxPtr);
+            return new LootTableContext(nativeBuilderCreate(this.pointer), true);
+        }
+
+        @Override protected void finalize()
+        {
+            try {
+                super.finalize();
+                nativeFinalizeBuilder(this.pointer);
+            } catch(Throwable ex) { ex.printStackTrace(); }
         }
 
     }

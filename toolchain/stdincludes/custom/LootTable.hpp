@@ -1,4 +1,6 @@
+#include <stl/string>
 #include <stl/vector>
+
 #include <ItemStackBase.hpp>
 #include <ItemStack.hpp>
 
@@ -7,8 +9,14 @@
 
 
 class Container;
-class LootTableContext {public:};
+#ifndef KEX_LEVEL_HPP
+    class Level;
+#endif
+#ifndef KEX_LOOTTABLECONTEXT_HPP
+    class LootTableContext {public:};
+#endif
 class Random {public:};
+class ResourcePackManager;
 
 class LootTable {
     public:
@@ -21,6 +29,19 @@ class LootTable {
     // void deserialize(Json::Value);
     // void shuffleAndSplitItems(std::__ndk1::vector<ItemStack>&, int, Random&);
     void fill(Container&, Random&, LootTableContext&);
+};
+
+class LootTables {
+    public:
+    LootTable* lookupByName(std::__ndk1::string const&, ResourcePackManager&);
+};
+
+class Util {
+    public:
+    class LootTableUtils {
+        public:
+        static void fillContainer(Level&, Container&, Random&, std::__ndk1::string const&, Actor*);
+    };
 };
 
 

@@ -1,4 +1,8 @@
+#include <cstdlib>
+#include <cstring>
 #include <jni.h>
+
+#include <static_symbol.hpp>
 
 #include <LootTableContext.hpp>
 
@@ -33,11 +37,15 @@ extern "C" {
         return (jlong) player;
     }
     __EXPORT__(jlong, GetKillerPet) {
+        Logger::debug("KEX", "GETKILLERPET");
+        Logger::flush();
         Actor* actor = ((LootTableContext*) ptr)->getKillerPet();
         if(actor == nullptr) return 0;
         return (jlong) actor;
     }
     __EXPORT__(jlong, GetKillerEntity) {
+        Logger::debug("KEX", "GETKILLERENTITY");
+        Logger::flush();
         Actor* actor = ((LootTableContext*) ptr)->getKillerEntity();
         if(actor == nullptr) return 0;
         return (jlong) actor;
@@ -72,9 +80,17 @@ extern "C" {
     }
     // TODO withDeathSource
     __EXPORT__(jlong, BuilderCreate) {
-        LootTableContext* ctx = ((LootTableContext::Builder*) ptr)->create();
-        if(ctx == nullptr) return 0;
-        return (jlong) ctx;
+        LootTableContext ctx = ((LootTableContext::Builder*) ptr)->create();
+        LootTableContext* result = (LootTableContext*) malloc(56);
+        memcpy(result, &ctx, 56);
+        return (jlong) result;
+    }
+    __EXPORT__(void, FinalizeContext) {
+        STATIC_SYMBOL(LootTableContextDestructor, "_ZN16LootTableContextD2Ev", (LootTableContext*));
+        LootTableContextDestructor((LootTableContext*) ptr);
+    }
+    __EXPORT__(void, FinalizeBuilder) {
+        delete ((LootTableContext::Builder*) ptr);
     }
 }
 

@@ -5,12 +5,22 @@
 #include <innercore_callbacks.h>
 #include <symbol.h>
 
+#include <innercore/global_context.h>
 #include <innercore/id_conversion_map.h>
 #include <innercore/item_extra.h>
 #include <innercore/item_registry.h>
+#include <innercore/vtable.h>
 
 #include "../../../../../../DMH/cppheaders/json/value.h"
 #include "../../../../../../DMH/cppheaders/json/reader.h"
+
+#include <commontypes.hpp>
+
+#include <BlockActor.hpp>
+#include <BlockSource.hpp>
+#include <Level.hpp>
+#include <LootTableContext.hpp>
+#include <LootTable.hpp>
 
 #include "../utils/java_utils.hpp"
 #include "loot.hpp"
@@ -123,5 +133,51 @@ extern "C" {
                 }
             }
         }
+    }
+    JNIEXPORT void JNICALL Java_vsdum_kex_modules_LootModule_nativeFillContainer
+    (JNIEnv* env, jclass, jlong bsPtr, jint x, jint y, jint z, jstring tableName, jlong actorPtr) {
+        const char* cTableName = env->GetStringUTFChars(tableName, 0);
+        BlockSource* blockSource = (BlockSource*) bsPtr;
+        Level* level = blockSource->getLevel();
+        BlockActor* blockActor = blockSource->getBlockEntity(BlockPos(x, y, z));
+        if(level != nullptr && blockActor != nullptr) {
+            Random* random = level->getRandom();
+            VTABLE_FIND_OFFSET(BlockActor_getContainer, _ZTV10BlockActor, _ZNK10BlockActor12getContainerEv);
+            Container* tileContainer = VTABLE_CALL<Container*>(BlockActor_getContainer, blockActor);
+            if(random != nullptr && tileContainer != nullptr) {
+                Util::LootTableUtils::fillContainer(*level, *tileContainer, *random, std::__ndk1::string(cTableName), actorPtr != 0 ? ((Actor*) actorPtr) : nullptr);
+            }
+        }
+        env->ReleaseStringUTFChars(tableName, cTableName);
+    }
+    JNIEXPORT jlong JNICALL Java_vsdum_kex_modules_LootModule_nativeGetRandomItems
+    (JNIEnv* env, jclass, jstring tableName, jlong contextPtr) {
+        LootTableContext* context = (LootTableContext*) contextPtr;
+        ServerLevel* level = GlobalContext::getServerLevel();
+        if(level != nullptr) {
+            Random* random = level->getRandom();
+            LootTables* lootTables = level->getLootTables();
+            VTABLE_FIND_OFFSET(Level_getResourcePackManager, _ZTV5Level, _ZNK5Level28getServerResourcePackManagerEv);
+            ResourcePackManager* rpManager = VTABLE_CALL<ResourcePackManager*>(Level_getResourcePackManager, level);
+            if(random != nullptr && lootTables != nullptr && rpManager != nullptr) {
+                const char* cTableName = env->GetStringUTFChars(tableName, 0);
+                LootTable* lootTable = lootTables->lookupByName(std::__ndk1::string(cTableName), *rpManager);
+                env->ReleaseStringUTFChars(tableName, cTableName);
+                if(lootTable != nullptr) {
+                    std::__ndk1::vector<ItemStack>* items = new std::__ndk1::vector<ItemStack>();
+                    *items = lootTable->getRandomItems(*random, *context);
+                    return (jlong) items;
+                }
+            }
+        }
+        return 0;
+    }
+    JNIEXPORT jint JNICALL Java_vsdum_kex_modules_LootModule_nativeGetVectorSize
+    (JNIEnv*, jclass, jlong vectorPtr) {
+        return ((std::__ndk1::vector<ItemStack>*) vectorPtr)->size();
+    }
+    JNIEXPORT void JNICALL Java_vsdum_kex_modules_LootModule_nativeDeleteVector
+    (JNIEnv*, jclass, jlong vectorPtr) {
+        delete ((std::__ndk1::vector<ItemStack>*) vectorPtr);
     }
 }

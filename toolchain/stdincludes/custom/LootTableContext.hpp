@@ -47,7 +47,7 @@ class LootTableContext {
         void withLuck(float);
         void withOriginalItemName(std::__ndk1::string&);
         void withKillerPlayer(Player*);
-        LootTableContext* create() const;
+        LootTableContext create() const;
         void withDeathSource(ActorDamageSource const*);
     };
 };

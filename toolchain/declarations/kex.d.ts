@@ -797,7 +797,7 @@ declare module vsdum {
                     withLuck(luck: number): Builder;
                     withOriginalItemName(name: any_string): Builder;
                     withKillerPlayer(player: Player): Builder;
-                    create(): Nullable<LootTableContext>;
+                    create(): LootTableContext;
                 }
             }
         }
@@ -810,7 +810,7 @@ declare module vsdum {
         export module natives {
             export class I18n extends java.lang.Object {
                 static class: java.lang.Class<I18n>;
-                static translate(key: string): string;
+                static translate(key: any_string): jstring;
             }
         }
     }
@@ -945,6 +945,8 @@ declare module vsdum {
                 static createConditionsList(): LootConditions;
                 static addPiglinBarteringItem(): LootEntry;
                 static addOnDropCallbackFor(tableName: any_string, cb: OnDropCallback): void;
+                static fillContainer(region: BlockSource, x: number, y: number, z: number, tableName: any_string, actor: Nullable<natives.Actor>): void;
+                static getRandomItems(tableName: any_string, context: natives.LootTableContext): java.util.List<ItemInstance>;
             }
             export interface OnDropCallback {
                 (drops: RandomItemsList, context: natives.LootTableContext): void;
@@ -1245,6 +1247,41 @@ declare enum EItemAnimation {
     CAMERA = 5,
     SPEAR = 6,
     CROSSBOW = 9
+}
+
+
+declare enum ETileEntityType {
+    NETHER_REACTOR = 3,
+    SIGN = 4,
+    MOB_SPAWNER = 5,
+    SKULL = 6,
+    FLOWER_POT = 7,
+    ENCHANTING_TABLE = 9,
+    DAYLIGHT_DETECTOR = 10,
+    MUSIC_BLOCK = 11,
+    COMPARATOR = 12,
+    DROPPER = 14,
+    ITEM_FRAME = 17,
+    PISTON = 18,
+    CHALKBOARD = 20,
+    END_PORTAL = 22,
+    END_GATEWAY = 24,
+    COMMAND_BLOCK = 26,
+    BED = 27,
+    BANNER = 28,
+    STRUCTURE_BLOCK = 32,
+    CHEMISTRY_TABLE = 34,
+    CONDUIT_BLOCK = 35,
+    JIGSAW = 36,
+    BLAST_FURNACE = 38,
+    SMOKER = 39,
+    BELL = 40,
+    CAMPFIRE = 41,
+    BARREL = 42,
+    BEEHIVE = 43,
+    LODESTONE = 44,
+    // SHULKER_BOX = ???,
+    // ENDER_CHEST = ???,
 }
 
 
