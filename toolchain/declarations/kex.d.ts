@@ -944,7 +944,7 @@ declare module vsdum {
                 static createLootTableModifier(tableName: any_string): LootModifier;
                 static createConditionsList(): LootConditions;
                 static addPiglinBarteringItem(): LootEntry;
-                static addOnDropCallbackFor(tableName: any_string, cb: OnDropCallback): void;
+                static addOnDropCallbackFor(tableName: any_string, cb: OnDropCallback, priority?: number): void;
                 static fillContainer(region: BlockSource, x: number, y: number, z: number, tableName: any_string, actor: Nullable<natives.Actor>): void;
                 static getRandomItems(tableName: any_string, context: natives.LootTableContext): java.util.List<ItemInstance>;
             }

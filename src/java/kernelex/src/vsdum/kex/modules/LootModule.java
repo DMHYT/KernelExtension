@@ -16,6 +16,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.support.annotation.Nullable;
+import vsdum.kex.common.CallbackFunction;
 import vsdum.kex.modules.loot.LootConditions;
 import vsdum.kex.modules.loot.LootModifier;
 import vsdum.kex.modules.loot.LootPoolEntry;
@@ -118,19 +119,18 @@ public class LootModule {
         public void onDrop(RandomItemsList drops, LootTableContext context);
     }
 
-    private static final Map<String, List<OnDropCallback>> onDropCallbacks = new HashMap<>();
+    private static final Map<String, List<CallbackFunction<OnDropCallback>>> onDropCallbacks = new HashMap<>();
 
     public static void addOnDropCallbackFor(String tableName, OnDropCallback cb)
     {
-        enableOnDropCallbackFor(tableName);
-        if(!onDropCallbacks.containsKey(tableName)) onDropCallbacks.put(tableName, new ArrayList<>());
-        onDropCallbacks.get(tableName).add(cb);
+        addOnDropCallbackFor(tableName, cb, 0);
     }
 
-    static {
-        addOnDropCallbackFor("entities/wither_skeleton", new OnDropCallback() {
-            public void onDrop(RandomItemsList drops, LootTableContext context) {}
-        });
+    public static void addOnDropCallbackFor(String tableName, OnDropCallback cb, int priority)
+    {
+        enableOnDropCallbackFor(tableName);
+        if(!onDropCallbacks.containsKey(tableName)) onDropCallbacks.put(tableName, new ArrayList<>());
+        CallbackFunction.addToList(new CallbackFunction<OnDropCallback>(cb, priority), onDropCallbacks.get(tableName));
     }
 
     public static void onDrop(String tableName, long vectorPtr, int vectorSize, long contextPtr)
@@ -139,8 +139,8 @@ public class LootModule {
         {
             RandomItemsList drops = new RandomItemsList(vectorPtr, vectorSize);
             LootTableContext context = new LootTableContext(contextPtr);
-            Iterator<OnDropCallback> iter = onDropCallbacks.get(tableName).iterator();
-            while(iter.hasNext()) iter.next().onDrop(drops, context);
+            Iterator<CallbackFunction<OnDropCallback>> iter = onDropCallbacks.get(tableName).iterator();
+            while(iter.hasNext()) iter.next().function.onDrop(drops, context);
             drops.modifyNative();
         }
     }
