@@ -1,5 +1,4 @@
 #include <jni.h>
-#include <set>
 #include <string>
 
 #include <innercore/block_registry.h>
@@ -17,12 +16,12 @@
 #include <ItemStack.hpp>
 
 #include "../../utils/java_utils.hpp"
-#include "classes.hpp"
+#include "tooltypes/custom.hpp"
 #include "module.hpp"
 
 
 extern "C" {
-    JNIEXPORT jlongArray JNICALL Java_vsdum_kex_modules_ToolsModule_nativeGrabVanillaItemTiers
+    JNIEXPORT jlongArray JNICALL Java_vsdum_kex_modules_tools_ToolsNativeAPI_nativeGrabVanillaItemTiers
     (JNIEnv* env, jclass) {
         jlongArray result = env->NewLongArray(6);
         jlong fill[6];
@@ -35,115 +34,30 @@ extern "C" {
         env->SetLongArrayRegion(result, 0, 6, fill);
         return result;
     }
-    JNIEXPORT jlong JNICALL Java_vsdum_kex_modules_ToolsModule_nativeNewItemTier
+    JNIEXPORT jlong JNICALL Java_vsdum_kex_modules_tools_ToolsNativeAPI_nativeNewItemTier
     (JNIEnv*, jclass, jint level, jint uses, jfloat speed, jint attackDamageBonus, jint enchantmentValue) {
         Item::Tier* tier = new Item::Tier(level, uses, speed, attackDamageBonus, enchantmentValue);
         return (jlong) tier;
     }
-    JNIEXPORT jint JNICALL Java_vsdum_kex_modules_ToolsModule_nativeGetItemTierLevel
+    JNIEXPORT jint JNICALL Java_vsdum_kex_modules_tools_ToolsNativeAPI_nativeGetItemTierLevel
     (JNIEnv*, jclass, jlong ptr) {
         return ((Item::Tier*) ptr)->getLevel();
     }
-    JNIEXPORT jint JNICALL Java_vsdum_kex_modules_ToolsModule_nativeGetItemTierUses
+    JNIEXPORT jint JNICALL Java_vsdum_kex_modules_tools_ToolsNativeAPI_nativeGetItemTierUses
     (JNIEnv*, jclass, jlong ptr) {
         return ((Item::Tier*) ptr)->getUses();
     }
-    JNIEXPORT jfloat JNICALL Java_vsdum_kex_modules_ToolsModule_nativeGetItemTierSpeed
+    JNIEXPORT jfloat JNICALL Java_vsdum_kex_modules_tools_ToolsNativeAPI_nativeGetItemTierSpeed
     (JNIEnv*, jclass, jlong ptr) {
         return ((Item::Tier*) ptr)->getSpeed();
     }
-    JNIEXPORT jint JNICALL Java_vsdum_kex_modules_ToolsModule_nativeGetItemTierAttackDamageBonus
+    JNIEXPORT jint JNICALL Java_vsdum_kex_modules_tools_ToolsNativeAPI_nativeGetItemTierAttackDamageBonus
     (JNIEnv*, jclass, jlong ptr) {
         return ((Item::Tier*) ptr)->getAttackDamageBonus();
     }
-    JNIEXPORT jint JNICALL Java_vsdum_kex_modules_ToolsModule_nativeGetItemTierEnchantmentValue
+    JNIEXPORT jint JNICALL Java_vsdum_kex_modules_tools_ToolsNativeAPI_nativeGetItemTierEnchantmentValue
     (JNIEnv*, jclass, jlong ptr) {
         return ((Item::Tier*) ptr)->getEnchantmentValue();
-    }
-    JNIEXPORT void JNICALL Java_vsdum_kex_modules_ToolsModule_nativeRegisterSword
-    (JNIEnv* env, jclass, jint id, jstring nameId, jstring name, jstring textureName, jint textureMeta, jlong tierPtr, jboolean isTech) {
-        const char* cNameId = env->GetStringUTFChars(nameId, 0);
-        const char* cName = env->GetStringUTFChars(name, 0);
-        const char* cTextureName = env->GetStringUTFChars(textureName, 0);
-        SwordFactory* factory = new SwordFactory();
-        std::string itemNameId(cNameId);
-        if(itemNameId.rfind("item_", 0) != 0) itemNameId = "item_" + itemNameId;
-        factory->initParameters(id, itemNameId, std::string(cName), std::string(cTextureName), textureMeta);
-        factory->props.stack = 1;
-        factory->tier = (Item::Tier*) tierPtr;
-        LegacyItemRegistry::registerItemFactory(factory);
-        if(!isTech) LegacyItemRegistry::addItemToCreative(id, 1, 0, nullptr);
-        env->ReleaseStringUTFChars(nameId, cNameId);
-        env->ReleaseStringUTFChars(name, cName);
-        env->ReleaseStringUTFChars(textureName, cTextureName);
-    }
-    JNIEXPORT void JNICALL Java_vsdum_kex_modules_ToolsModule_nativeRegisterAxe
-    (JNIEnv* env, jclass, jint id, jstring nameId, jstring name, jstring textureName, jint textureMeta, jlong tierPtr, jboolean isTech) {
-        const char* cNameId = env->GetStringUTFChars(nameId, 0);
-        const char* cName = env->GetStringUTFChars(name, 0);
-        const char* cTextureName = env->GetStringUTFChars(textureName, 0);
-        AxeFactory* factory = new AxeFactory();
-        std::string itemNameId(cNameId);
-        if(itemNameId.rfind("item_", 0) != 0) itemNameId = "item_" + itemNameId;
-        factory->initParameters(id, itemNameId, std::string(cName), std::string(cTextureName), textureMeta);
-        factory->props.stack = 1;
-        factory->tier = (Item::Tier*) tierPtr;
-        LegacyItemRegistry::registerItemFactory(factory);
-        if(!isTech) LegacyItemRegistry::addItemToCreative(id, 1, 0, nullptr);
-        env->ReleaseStringUTFChars(nameId, cNameId);
-        env->ReleaseStringUTFChars(name, cName);
-        env->ReleaseStringUTFChars(textureName, cTextureName);
-    }
-    JNIEXPORT void JNICALL Java_vsdum_kex_modules_ToolsModule_nativeRegisterPickaxe
-    (JNIEnv* env, jclass, jint id, jstring nameId, jstring name, jstring textureName, jint textureMeta, jlong tierPtr, jboolean isTech) {
-        const char* cNameId = env->GetStringUTFChars(nameId, 0);
-        const char* cName = env->GetStringUTFChars(name, 0);
-        const char* cTextureName = env->GetStringUTFChars(textureName, 0);
-        PickaxeFactory* factory = new PickaxeFactory();
-        std::string itemNameId(cNameId);
-        if(itemNameId.rfind("item_", 0) != 0) itemNameId = "item_" + itemNameId;
-        factory->initParameters(id, itemNameId, std::string(cName), std::string(cTextureName), textureMeta);
-        factory->props.stack = 1;
-        factory->tier = (Item::Tier*) tierPtr;
-        LegacyItemRegistry::registerItemFactory(factory);
-        if(!isTech) LegacyItemRegistry::addItemToCreative(id, 1, 0, nullptr);
-        env->ReleaseStringUTFChars(nameId, cNameId);
-        env->ReleaseStringUTFChars(name, cName);
-        env->ReleaseStringUTFChars(textureName, cTextureName);
-    }
-    JNIEXPORT void JNICALL Java_vsdum_kex_modules_ToolsModule_nativeRegisterShovel
-    (JNIEnv* env, jclass, jint id, jstring nameId, jstring name, jstring textureName, jint textureMeta, jlong tierPtr, jboolean isTech) {
-        const char* cNameId = env->GetStringUTFChars(nameId, 0);
-        const char* cName = env->GetStringUTFChars(name, 0);
-        const char* cTextureName = env->GetStringUTFChars(textureName, 0);
-        ShovelFactory* factory = new ShovelFactory();
-        std::string itemNameId(cNameId);
-        if(itemNameId.rfind("item_", 0) != 0) itemNameId = "item_" + itemNameId;
-        factory->initParameters(id, itemNameId, std::string(cName), std::string(cTextureName), textureMeta);
-        factory->props.stack = 1;
-        factory->tier = (Item::Tier*) tierPtr;
-        LegacyItemRegistry::registerItemFactory(factory);
-        if(!isTech) LegacyItemRegistry::addItemToCreative(id, 1, 0, nullptr);
-        env->ReleaseStringUTFChars(nameId, cNameId);
-        env->ReleaseStringUTFChars(name, cName);
-        env->ReleaseStringUTFChars(textureName, cTextureName);
-    }
-    JNIEXPORT void JNICALL Java_vsdum_kex_modules_ToolsModule_nativeRegisterHoe
-    (JNIEnv* env, jclass, jint id, jstring nameId, jstring name, jstring textureName, jint textureMeta, jlong tierPtr, jboolean isTech) {
-        const char* cNameId = env->GetStringUTFChars(nameId, 0);
-        const char* cName = env->GetStringUTFChars(name, 0);
-        const char* cTextureName = env->GetStringUTFChars(textureName, 0);
-        HoeFactory* factory = new HoeFactory();
-        std::string itemNameId(cNameId);
-        if(itemNameId.rfind("item_", 0) != 0) itemNameId = "item_" + itemNameId;
-        factory->initParameters(id, itemNameId, std::string(cName), std::string(cTextureName), textureMeta);
-        factory->props.stack = 1;
-        factory->tier = (Item::Tier*) tierPtr;
-        LegacyItemRegistry::registerItemFactory(factory);
-        if(!isTech) LegacyItemRegistry::addItemToCreative(id, 1, 0, nullptr);
-        env->ReleaseStringUTFChars(nameId, cNameId);
-        env->ReleaseStringUTFChars(name, cName);
-        env->ReleaseStringUTFChars(textureName, cTextureName);
     }
     JNIEXPORT jfloat JNICALL Java_vsdum_kex_modules_ToolsModule_getBlockDestroyTime
     (JNIEnv*, jclass, jint id) {
@@ -154,42 +68,42 @@ extern "C" {
         }
         return 0.0f;
     }
-    JNIEXPORT jstring JNICALL Java_vsdum_kex_modules_ToolsModule_nativeGetBlockMaterialName
+    JNIEXPORT jstring JNICALL Java_vsdum_kex_modules_tools_ToolsNativeAPI_nativeGetBlockMaterialName
     (JNIEnv* env, jclass, jint id) {
-        const char* materialName = KEXToolsModule::getBlockMaterialName(id);
+        const char* materialName = KEXToolsModule::ToolAPI::getBlockMaterialName(id);
         if(materialName == nullptr) return NULL;
         return env->NewStringUTF(materialName);
     }
-    JNIEXPORT jint JNICALL Java_vsdum_kex_modules_ToolsModule_nativeGetBlockDestroyLevel
+    JNIEXPORT jint JNICALL Java_vsdum_kex_modules_tools_ToolsNativeAPI_nativeGetBlockDestroyLevel
     (JNIEnv*, jclass, jint id) {
-        return KEXToolsModule::getBlockDestroyLevel(id);
+        return KEXToolsModule::ToolAPI::getBlockDestroyLevel(id);
     }
-    JNIEXPORT jboolean JNICALL Java_vsdum_kex_modules_ToolsModule_nativeGetBlockIsNative
+    JNIEXPORT jboolean JNICALL Java_vsdum_kex_modules_tools_ToolsNativeAPI_nativeGetBlockIsNative
     (JNIEnv*, jclass, jint id) {
-        return KEXToolsModule::getBlockIsNative(id);
+        return KEXToolsModule::ToolAPI::getBlockIsNative(id);
     }
-    JNIEXPORT void JNICALL Java_vsdum_kex_modules_ToolsModule_nativeSetBlockMaterialName
+    JNIEXPORT void JNICALL Java_vsdum_kex_modules_tools_ToolsNativeAPI_nativeSetBlockMaterialName
     (JNIEnv* env, jclass, jint id, jstring materialName) {
         const char* cMaterialName = env->GetStringUTFChars(materialName, 0);
-        KEXToolsModule::setBlockMaterialName(id, cMaterialName);
+        KEXToolsModule::ToolAPI::setBlockMaterialName(id, cMaterialName);
         env->ReleaseStringUTFChars(materialName, cMaterialName);
     }
-    JNIEXPORT void JNICALL Java_vsdum_kex_modules_ToolsModule_nativeSetBlockDestroyLevel
+    JNIEXPORT void JNICALL Java_vsdum_kex_modules_tools_ToolsNativeAPI_nativeSetBlockDestroyLevel
     (JNIEnv*, jclass, jint id, jint destroyLevel) {
-        KEXToolsModule::setBlockDestroyLevel(id, destroyLevel);
+        KEXToolsModule::ToolAPI::setBlockDestroyLevel(id, destroyLevel);
     }
-    JNIEXPORT void JNICALL Java_vsdum_kex_modules_ToolsModule_nativeSetBlockIsNative
+    JNIEXPORT void JNICALL Java_vsdum_kex_modules_tools_ToolsNativeAPI_nativeSetBlockIsNative
     (JNIEnv*, jclass, jint id, jboolean isNative) {
-        KEXToolsModule::setBlockIsNative(id, isNative);
+        KEXToolsModule::ToolAPI::setBlockIsNative(id, isNative);
     }
-    JNIEXPORT jobject JNICALL Java_vsdum_kex_modules_ToolsModule_nativeGetBlockData
+    JNIEXPORT jobject JNICALL Java_vsdum_kex_modules_tools_ToolsNativeAPI_nativeGetBlockData
     (JNIEnv* env, jclass, jint id) {
-        auto found = KEXToolsModule::blockData.find(id);
-        if(found == KEXToolsModule::blockData.end()) {
-            KEXToolsModule::blockData.emplace(id, new BlockDataInterface());
-            found = KEXToolsModule::blockData.find(id);
+        auto found = KEXToolsModule::Data::blockData.find(id);
+        if(found == KEXToolsModule::Data::blockData.end()) {
+            KEXToolsModule::Data::blockData.emplace(id, new KEXToolsModule::BlockDataInterface());
+            found = KEXToolsModule::Data::blockData.find(id);
         }
-        BlockDataInterface* iface = found->second;
+        KEXToolsModule::BlockDataInterface* iface = found->second;
         jclass dataClass = env->FindClass("vsdum/kex/modules/ToolsModule$BlockData");
         jstring jMaterialName = env->NewStringUTF(iface->materialName.c_str());
         jobject result = env->NewObject(dataClass, env->GetMethodID(dataClass, "<init>", "(Ljava/lang/String;IZ)V"), env->GetStringUTFLength(jMaterialName) != 0 ? jMaterialName : NULL, iface->destroyLevel, iface->isNative);
@@ -197,37 +111,43 @@ extern "C" {
         env->DeleteLocalRef(jMaterialName);
         return result;
     }
-    JNIEXPORT void JNICALL Java_vsdum_kex_modules_ToolsModule_nativeSetBlockData
+    JNIEXPORT void JNICALL Java_vsdum_kex_modules_tools_ToolsNativeAPI_nativeSetBlockData
     (JNIEnv* env, jclass, jint id, jstring materialName, jint destroyLevel, jboolean isNative) {
         const char* cMaterialName = env->GetStringUTFChars(materialName, 0);
-        auto found = KEXToolsModule::blockData.find(id);
-        if(found == KEXToolsModule::blockData.end()) {
-            KEXToolsModule::blockData.emplace(id, new BlockDataInterface());
-            found = KEXToolsModule::blockData.find(id);
+        auto found = KEXToolsModule::Data::blockData.find(id);
+        if(found == KEXToolsModule::Data::blockData.end()) {
+            KEXToolsModule::Data::blockData.emplace(id, new KEXToolsModule::BlockDataInterface());
+            found = KEXToolsModule::Data::blockData.find(id);
         }
-        BlockDataInterface* iface = found->second;
-        iface->materialName = std::string(cMaterialName);
+        KEXToolsModule::BlockDataInterface* iface = found->second;
+        iface->materialName = cMaterialName;
         env->ReleaseStringUTFChars(materialName, cMaterialName);
         iface->destroyLevel = destroyLevel;
         iface->isNative = isNative;
     }
     JNIEXPORT jint JNICALL Java_vsdum_kex_modules_ToolsModule_getToolLevel
     (JNIEnv*, jclass, jint id) {
-        Item::Tier* tier = KEXToolsModule::getItemTier((DiggerItem*) ItemRegistry::getItemById(IdConversion::staticToDynamic(id, IdConversion::ITEM)));
+        int dynamicId = IdConversion::staticToDynamic(id, IdConversion::ITEM);
+        Item* item = ItemRegistry::getItemById(dynamicId);
+        if(item == nullptr) return 0;
+        Item::Tier* tier = KEXToolsModule::ToolAPI::getItemTier((DiggerItem*) item);
         if(tier == nullptr) return 0;
         return tier->getLevel() + 1;
     }
     JNIEXPORT jint JNICALL Java_vsdum_kex_modules_ToolsModule_getToolLevelViaBlock
     (JNIEnv*, jclass, jint itemID, jint blockID) {
-        auto find = KEXToolsModule::blockData.find(blockID);
-        if(find == KEXToolsModule::blockData.end()) return 0;
-        BlockDataInterface* iface = find->second;
-        Item::Tier* tier = KEXToolsModule::getItemTier((DiggerItem*) ItemRegistry::getItemById(IdConversion::staticToDynamic(itemID, IdConversion::ITEM)));
+        auto find = KEXToolsModule::Data::blockData.find(blockID);
+        if(find == KEXToolsModule::Data::blockData.end()) return 0;
+        KEXToolsModule::BlockDataInterface* iface = find->second;
+        int dynamicId = IdConversion::staticToDynamic(itemID, IdConversion::ITEM);
+        Item* item = ItemRegistry::getItemById(dynamicId);
+        if(item == nullptr) return 0;
+        Item::Tier* tier = KEXToolsModule::ToolAPI::getItemTier((DiggerItem*) item);
         if(tier == nullptr) return 0;
         int toolLevel = tier->getLevel() + 1;
         return toolLevel >= iface->destroyLevel ? toolLevel : 0;
     }
-    JNIEXPORT jfloat JNICALL Java_vsdum_kex_modules_ToolsModule_nativeGetDestroyTimeViaTool
+    JNIEXPORT jfloat JNICALL Java_vsdum_kex_modules_tools_ToolsNativeAPI_nativeGetDestroyTimeViaTool
     (JNIEnv* env, jclass, jint id, jint data, jint itemID, jint itemCount, jint itemData, jlong itemExtra, jint x, jint y, jint z, jint side) {
         BlockLegacy* block = BlockRegistry::getBlockById(IdConversion::staticToDynamic(id, IdConversion::BLOCK));
         if(block != nullptr) {
@@ -239,54 +159,14 @@ extern "C" {
                 if(itemExtra != 0L) ((ItemInstanceExtra*) itemExtra)->apply(&stack);
                 float speed = VTABLE_CALL<float>(Item_getDestroySpeed, item, &stack, BlockRegistry::getBlockStateForIdData(id, data));
                 float materialDivider = 1.0f;
-                Item::Tier* itemTier = KEXToolsModule::getItemTier((DiggerItem*) item);
+                Item::Tier* itemTier = KEXToolsModule::ToolAPI::getItemTier((DiggerItem*) item);
                 if(itemTier != nullptr) materialDivider = itemTier->getSpeed();
                 float bonus = item->destroySpeedBonus(stack);
-                return KEXJavaBridge::ToolsModule::calcDestroyTime(id, data, x, y, z, (char) side, baseDestroyTime, materialDivider, bonus, baseDestroyTime / speed);
+                return KEXJavaBridge::CustomToolEvents::calcDestroyTime(id, data, x, y, z, (char) side, baseDestroyTime, materialDivider, bonus, baseDestroyTime / speed);
             }
             return baseDestroyTime;
         }
         return 0.0f;
-    }
-    JNIEXPORT void JNICALL Java_vsdum_kex_modules_ToolsModule_nativeRegisterCustomTool
-    (JNIEnv* env, jclass, jint id, jstring nameId, jstring name, jstring textureName, jint textureMeta, jlong tierPtr, jboolean isTech, jboolean isWeapon, jobjectArray blockMaterials, jint brokenId, jint baseAttackDamage, jint enchantType) {
-        const char* cNameId = env->GetStringUTFChars(nameId, 0);
-        const char* cName = env->GetStringUTFChars(name, 0);
-        const char* cTextureName = env->GetStringUTFChars(textureName, 0);
-        CustomToolFactory* factory = new CustomToolFactory();
-        factory->isWeapon = isWeapon;
-        factory->baseAttackDamage = baseAttackDamage;
-        std::string itemNameId(cNameId);
-        if(itemNameId.rfind("item_", 0) != 0) itemNameId = "item_" + itemNameId;
-        factory->initParameters(id, itemNameId, std::string(cName), std::string(cTextureName), textureMeta);
-        factory->props.stack = 1;
-        factory->enchantType = enchantType;
-        factory->tier = (Item::Tier*) tierPtr;
-        if(brokenId != 0) KEXToolsModule::toolsToBrokenIds.emplace(id, brokenId);
-        if(blockMaterials != NULL && !isWeapon) {
-            std::set<std::string> materials;
-            jsize l = env->GetArrayLength(blockMaterials);
-            if(l > 0) {
-                for(int i = 0; i < l; ++i) {
-                    jobject el = env->GetObjectArrayElement(blockMaterials, i);
-                    if(el != NULL) {
-                        jstring sEl = (jstring) el;
-                        const char* cEl = env->GetStringUTFChars(sEl, 0);
-                        if(materials.find(cEl) == materials.end()) {
-                            materials.emplace(std::string(cEl));
-                        }
-                        env->ReleaseStringUTFChars(sEl, cEl);
-                    }
-                }
-                factory->blockMaterials = materials;
-            }
-        }
-        LegacyItemRegistry::registerItemFactory(factory);
-        // if(!isTech) LegacyItemRegistry::addItemToCreative(id, 1, 0, nullptr);
-        env->ReleaseStringUTFChars(nameId, cNameId);
-        env->ReleaseStringUTFChars(name, cName);
-        env->ReleaseStringUTFChars(textureName, cTextureName);
-        KEXToolsModule::customTools.emplace(id);
     }
     JNIEXPORT void JNICALL Java_vsdum_kex_modules_ToolsModule_enableDynamicDamageFor
     (JNIEnv*, jclass, jint id) {
@@ -302,7 +182,7 @@ extern "C" {
             }
         }
     }
-    JNIEXPORT void JNICALL Java_vsdum_kex_modules_ToolsModule_nativeDamageToolInHand
+    JNIEXPORT void JNICALL Java_vsdum_kex_modules_tools_ToolsNativeAPI_nativeDamageToolInHand
     (JNIEnv*, jclass, jlong player, jint damage) {
         Actor* actor = Actor::wrap(player);
         if(actor != nullptr) {
@@ -312,41 +192,6 @@ extern "C" {
                 stack->hurtAndBreak(damage, actor);
             }
         }
-    }
-    JNIEXPORT void JNICALL Java_vsdum_kex_modules_ToolsModule_nativeRegisterShears
-    (JNIEnv* env, jclass, jint id, jstring nameId, jstring name, jstring textureName, jint textureMeta, jlong tierPtr, jboolean isTech, jint durabilityIfWithoutTier) {
-        const char* cNameId = env->GetStringUTFChars(nameId, 0);
-        const char* cName = env->GetStringUTFChars(name, 0);
-        const char* cTextureName = env->GetStringUTFChars(textureName, 0);
-        ShearsFactory* factory = new ShearsFactory();
-        std::string itemNameId(cNameId);
-        if(itemNameId.rfind("item_", 0) != 0) itemNameId = "item_" + itemNameId;
-        factory->initParameters(id, itemNameId, std::string(cName), std::string(cTextureName), textureMeta);
-        factory->props.stack = 1;
-        if(tierPtr != 0) factory->tier = (Item::Tier*) tierPtr;
-        else factory->props.durability = durabilityIfWithoutTier;
-        LegacyItemRegistry::registerItemFactory(factory);
-        if(!isTech) LegacyItemRegistry::addItemToCreative(id, 1, 0, nullptr);
-        env->ReleaseStringUTFChars(nameId, cNameId);
-        env->ReleaseStringUTFChars(name, cName);
-        env->ReleaseStringUTFChars(textureName, cTextureName);
-    }
-    JNIEXPORT void JNICALL Java_vsdum_kex_modules_ToolsModule_nativeRegisterFlintAndSteel
-    (JNIEnv* env, jclass, jint id, jstring nameId, jstring name, jstring textureName, jint textureMeta, jboolean isTech, jint durability) {
-        const char* cNameId = env->GetStringUTFChars(nameId, 0);
-        const char* cName = env->GetStringUTFChars(name, 0);
-        const char* cTextureName = env->GetStringUTFChars(textureName, 0);
-        FlintAndSteelFactory* factory = new FlintAndSteelFactory();
-        std::string itemNameId(cNameId);
-        if(itemNameId.rfind("item_", 0) != 0) itemNameId = "item_" + itemNameId;
-        factory->initParameters(id, itemNameId, std::string(cName), std::string(cTextureName), textureMeta);
-        factory->props.stack = 1;
-        factory->props.durability = durability;
-        LegacyItemRegistry::registerItemFactory(factory);
-        if(!isTech) LegacyItemRegistry::addItemToCreative(id, 1, 0, nullptr);
-        env->ReleaseStringUTFChars(nameId, cNameId);
-        env->ReleaseStringUTFChars(name, cName);
-        env->ReleaseStringUTFChars(textureName, cTextureName);
     }
     JNIEXPORT void JNICALL Java_vsdum_kex_modules_ToolsModule_useCustomShearsOn
     (JNIEnv*, jclass, jint x, jint y, jint z, jbyte side, jfloat relX, jfloat relY, jfloat relZ, jlong actorUID) {

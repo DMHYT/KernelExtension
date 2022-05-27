@@ -10,36 +10,12 @@
 
 #include <Block.hpp>
 #include <items/DiggerItem.hpp>
+#include <items/ShearsItem.hpp>
 #include <items/WeaponItem.hpp>
 #include <ItemStackBase.hpp>
 
 #ifndef KEX_MODULES_TOOLS_MODULE_HPP
 #define KEX_MODULES_TOOLS_MODULE_HPP
-
-
-class BlockDataInterface {
-    public:
-    std::string materialName = std::string("");
-    int destroyLevel = 0;
-    bool isNative = false;
-};
-
-
-class LastDestroyedBlock {
-    public:
-    int x = 0;
-    int y = 0;
-    int z = 0;
-    unsigned char side = 0;
-    float destroySpeed = 1.0f;
-    int calculatedForX = 0;
-    int calculatedForY = 0;
-    int calculatedForZ = 0;
-    LastDestroyedBlock() {};
-    float getOrCalculateSpeed(ItemStackBase const&, Block const&, WeaponItem*);
-    float getOrCalculateSpeed(ItemStackBase const&, Block const&, DiggerItem*);
-    void onEvent(int, int, int, unsigned char);
-};
 
 
 class KEXToolsModule : public Module {
@@ -54,30 +30,69 @@ class KEXToolsModule : public Module {
         static bool isShovel(int id);
         static bool isHoe(int id);
         inline static bool isCustomTool(int id) {
-            return KEXToolsModule::isCustomTool(id);
+            return KEXToolsModule::ToolAPI::isCustomTool(id);
         }
         static bool isShears(int id);
         static bool isFlintAndSteel(int id);
     };
-    static LastDestroyedBlock* lastDestroyedClient;
-    static std::unordered_map<long long, LastDestroyedBlock*> lastDestroyed;
-    static std::unordered_map<int, BlockDataInterface*> blockData;
-    static std::unordered_map<int, int> toolsToBrokenIds;
-    static std::unordered_set<int> customTools;
-    static HashedString* isAxeItemTag;
-    static HashedString* isPickaxeItemTag;
-    static HashedString* isShovelItemTag;
-    static bool isCustomTool(int id);
-    static const char* getBlockMaterialName(int id);
-    static int getBlockDestroyLevel(int id);
-    static bool getBlockIsNative(int id);
-    static void setBlockMaterialName(int id, const char* materialName);
-    static void setBlockDestroyLevel(int id, int destroyLevel);
-    static void setBlockIsNative(int id, bool isNative);
-    static Item::Tier* getItemTier(DiggerItem*);
-    static bool patchedCanDestroySpecial(DiggerItem*, Block const&);
-    static bool patchedHasBlock(DiggerItem*, Block const&);
-    static unsigned char modifiedItemStackHurtAndBreak(ItemStackBase*, int);
+    class BlockDataInterface {
+        public:
+        std::string materialName = std::string("");
+        int destroyLevel = 0;
+        bool isNative = false;
+    };
+    class LastDestroyedBlock {
+        public:
+        int x = 0;
+        int y = 0;
+        int z = 0;
+        unsigned char side = 0;
+        float destroySpeed = 1.0f;
+        int calculatedForX = 0;
+        int calculatedForY = 0;
+        int calculatedForZ = 0;
+        LastDestroyedBlock() {};
+        float getOrCalculateSpeed(ItemStackBase const&, Block const&, WeaponItem*);
+        float getOrCalculateSpeed(ItemStackBase const&, Block const&, DiggerItem*);
+        inline void onEvent(int xIn, int yIn, int zIn, unsigned char sideIn) {
+            x = xIn, y = yIn, z = zIn, side = sideIn;
+        }
+    };
+    class Data {
+        public:
+        static LastDestroyedBlock* lastClient;
+        static std::unordered_map<long long, LastDestroyedBlock*> last;
+        static std::unordered_map<int, BlockDataInterface*> blockData;
+        static std::unordered_map<int, int> toolsToBrokenIds;
+        static std::unordered_set<int> customTools;
+    };
+    class ToolAPI {
+        public:
+        static inline bool isCustomTool(int id) {
+            return KEXToolsModule::Data::customTools.find(id) != KEXToolsModule::Data::customTools.end();
+        }
+        static const char* getBlockMaterialName(int id);
+        static int getBlockDestroyLevel(int id);
+        static bool getBlockIsNative(int id);
+        static void setBlockMaterialName(int id, const char* materialName);
+        static void setBlockDestroyLevel(int id, int destroyLevel);
+        static void setBlockIsNative(int id, bool isNative);
+        static Item::Tier* getItemTier(DiggerItem*);
+    };
+    class CustomToolPatches {
+        public:
+        static inline float diggerGetDestroySpeed(DiggerItem* _this, ItemStackBase const& stack, Block const& block) {
+            return KEXToolsModule::Data::lastClient->getOrCalculateSpeed(stack, block, _this);
+        }
+        static inline float weaponGetDestroySpeed(WeaponItem* _this, ItemStackBase const& stack, Block const& block) {
+            return KEXToolsModule::Data::lastClient->getOrCalculateSpeed(stack, block, _this);
+        }
+        static inline bool hurtActor(Item*, ItemStack&, Actor&, Mob&) { return true; }
+        static inline bool mineBlock__instance(Item*, ItemInstance&, Block const&, int, int, int, Actor*) { return true; }
+        static inline bool mineBlock__stack(Item*, ItemStack&, Block const&, int, int, int, Actor*) { return true; }
+        static void appendFormattedHovertext(Item*, ItemStackBase const&, Level&, std::__ndk1::string&, bool);
+        static float _shearsTieredGetDestroySpeed(ShearsItem*, ItemStackBase const&, Block const&);
+    };
     KEXToolsModule(Module* parent): Module(parent, "kex.tools") {};
     virtual void initialize();
 };

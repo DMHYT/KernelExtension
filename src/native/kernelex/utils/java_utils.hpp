@@ -12,7 +12,7 @@ namespace KEXJavaUtils {
 namespace KEXJavaBridge {
     namespace Cache {
         jclass KernelExtension(JNIEnv* env);
-        jclass ToolsModule(JNIEnv* env);
+        jclass CustomToolEvents(JNIEnv* env);
         jclass LootModule(JNIEnv* env);
         jclass CallbacksModule(JNIEnv* env);
         jclass CallbacksModule();
@@ -21,7 +21,7 @@ namespace KEXJavaBridge {
     namespace KernelExtension {
         void setMinecraftTextboxText(const char* text);
     }
-    namespace ToolsModule {
+    namespace CustomToolEvents {
         bool onBroke();
         float calcDestroyTime(int id, int data, int x, int y, int z, char side, float baseDestroyTime, float divider, float modifier, float defaultTime);
         int getAttackDamageBonus(int id, int count, int data, jlong extra, int defaultValue);

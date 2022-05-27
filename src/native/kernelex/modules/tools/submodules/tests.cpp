@@ -1,5 +1,5 @@
-#include "classes.hpp"
-#include "module.hpp"
+#include "../tooltypes/base.hpp"
+#include "../module.hpp"
 
 
 #define FACTORY(ID) LegacyItemRegistry::LegacyItemFactoryBase* factory = LegacyItemRegistry::findFactoryById(ID);

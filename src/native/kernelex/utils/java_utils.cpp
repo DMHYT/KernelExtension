@@ -28,10 +28,10 @@ namespace KEXJavaBridge {
     namespace Cache {
         JAVA_CLASS(KernelExtension, "vsdum/kex/KernelExtension")
         JAVA_METHOD(KernelExtension, setMinecraftTextboxText, "(Ljava/lang/String;)V")
-        JAVA_CLASS(ToolsModule, "vsdum/kex/modules/ToolsModule")
-        JAVA_METHOD(ToolsModule, onBroke, "()Z")
-        JAVA_METHOD(ToolsModule, calcDestroyTime, "(IIIIIBFFFF)F")
-        JAVA_METHOD(ToolsModule, getAttackDamageBonus, "(IIIJI)I")
+        JAVA_CLASS(CustomToolEvents, "vsdum/kex/modules/tools/CustomToolEvents")
+        JAVA_METHOD(CustomToolEvents, onBroke, "()Z")
+        JAVA_METHOD(CustomToolEvents, calcDestroyTime, "(IIIIIBFFFF)F")
+        JAVA_METHOD(CustomToolEvents, getAttackDamageBonus, "(IIIJI)I")
         JAVA_CLASS(LootModule, "vsdum/kex/modules/LootModule")
         JAVA_METHOD(LootModule, modify, "(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;")
         JAVA_METHOD(LootModule, onDrop, "(Ljava/lang/String;JIJ)V")
@@ -51,15 +51,15 @@ namespace KEXJavaBridge {
             env->DeleteLocalRef(jText);
         }
     }
-    namespace ToolsModule {
+    namespace CustomToolEvents {
         bool onBroke() {
-            return KEXJavaUtils::attach()->CallStaticBooleanMethod(Cache::ToolsModule(), Cache::ToolsModule_onBroke());
+            return KEXJavaUtils::attach()->CallStaticBooleanMethod(Cache::CustomToolEvents(), Cache::CustomToolEvents_onBroke());
         }
         float calcDestroyTime(int id, int data, int x, int y, int z, char side, float baseDestroyTime, float divider, float modifier, float defaultTime) {
-            return KEXJavaUtils::attach()->CallStaticFloatMethod(Cache::ToolsModule(), Cache::ToolsModule_calcDestroyTime(), id, data, x, y, z, (jbyte) side, baseDestroyTime, divider, modifier, defaultTime);
+            return KEXJavaUtils::attach()->CallStaticFloatMethod(Cache::CustomToolEvents(), Cache::CustomToolEvents_calcDestroyTime(), id, data, x, y, z, (jbyte) side, baseDestroyTime, divider, modifier, defaultTime);
         }
         int getAttackDamageBonus(int id, int count, int data, jlong extra, int defaultValue) {
-            return KEXJavaUtils::attach()->CallStaticIntMethod(Cache::ToolsModule(), Cache::ToolsModule_getAttackDamageBonus(), id, count, data, extra, defaultValue);
+            return KEXJavaUtils::attach()->CallStaticIntMethod(Cache::CustomToolEvents(), Cache::CustomToolEvents_getAttackDamageBonus(), id, count, data, extra, defaultValue);
         }
     }
     namespace LootModule {
