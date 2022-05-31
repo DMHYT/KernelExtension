@@ -1,6 +1,8 @@
 #include <stl/string>
 #include <stl/vector>
 
+#include <enums.hpp>
+
 #ifndef KEX_ACTOR_HPP
 #define KEX_ACTOR_HPP
 
@@ -8,19 +10,11 @@
 #ifndef KEX_AABB_HPP
     class AABB;
 #endif
-enum ActorCategory: int {};
-enum ActorEvent: int {};
 class ActorEventCoordinator;
 class ActorDamageSource;
-// enum ActorEvent: int {};
-enum ActorFlags: int {};
-enum ActorType: int {};
-enum AttributeBuffType: int {};
 #ifndef KEX_ACTORUNIQUEID_HPP
     class ActorUniqueID;
 #endif
-enum ArmorSlot: int {};
-enum ArmorTextureType: int {};
 // class Attribute;
 #ifndef KEX_BLOCK_HPP
     // class Block;
@@ -28,9 +22,6 @@ enum ArmorTextureType: int {};
 #ifndef KEX_BLOCKPOS_HPP
     class BlockPos;
 #endif
-enum BlockActorType {
-    SIGN = 4
-};
 class BlockActor {
     public:
     char filler1[72]; // 72
@@ -45,8 +36,6 @@ class BlockSource {
     BlockActor* getBlockEntity(BlockPos const&);
 };
 class Dimension;
-enum EquipmentSlot: int {};
-enum HandSlot { MAINHAND, OFFHAND };
 #ifndef KEX_HASHEDSTRING_HPP
     class HashedString;
 #endif
@@ -55,12 +44,10 @@ class ItemActor;
     class ItemStack;
 #endif
 // class ItemStackBase;
-// enum ItemUseMethod: int {};
 #ifndef KEX_LEVEL_HPP
     class Level;
 #endif
 // class LootTable;
-enum MaterialType: int {};
 #ifndef KEX_MOBEFFECT_HPP
     class MobEffect;
 #endif
@@ -68,7 +55,6 @@ enum MaterialType: int {};
     class MobEffectInstance;
 #endif
 class MolangVariableMap;
-enum PaletteColor: int {};
 #ifndef KEX_PLAYER_HPP
     class Player;
 #endif

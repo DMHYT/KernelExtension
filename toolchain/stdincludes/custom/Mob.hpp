@@ -4,9 +4,6 @@
 #define KEX_MOB_HPP
 
 
-#ifndef KEX_ACTORDAMAGESOURCE_HPP
-    enum ActorDamageCause: int {};
-#endif
 class BaseAttributeMap;
 #ifndef KEX_BLOCK_HPP
     class Block;
@@ -19,9 +16,7 @@ class ListTag;
 namespace mce {
     class UUID;
 }
-enum MobSpawnMethod: int {};
 class SynchedActorData;
-enum TravelType: int {};
 #ifndef KEX_VEC2_HPP
     class Vec2;
 #endif

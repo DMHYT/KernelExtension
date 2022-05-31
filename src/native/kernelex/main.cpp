@@ -5,6 +5,7 @@
 #include "modules/tools/module.hpp"
 #include "modules/tools/submodules/method_patches.hpp"
 #include "modules/tools/submodules/interactions.hpp"
+#include "modules/commands/module.hpp"
 #include "modules/callbacks.hpp"
 #include "modules/misc/reachdist.hpp"
 
@@ -30,6 +31,7 @@ extern "C" JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *) {
 	Module* tools = new KEXToolsModule(main);
 	Module* toolPatches = new KEXToolPatchesModule(tools);
 	Module* toolInteractions = new KEXToolInteractionsModule(tools);
+	Module* commands = new KEXCommandsModule(main);
 	Module* callbacks = new KEXCallbacksModule(main);
 	Module* reachdist = new KEXMiscReachDistModule(main);
 }

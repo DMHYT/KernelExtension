@@ -1,5 +1,7 @@
 #include <stl/string>
 
+#include <enums.hpp>
+
 #ifndef KEX_MOBEFFECTINSTANCE_HPP
 #define KEX_MOBEFFECTINSTANCE_HPP
 
@@ -8,7 +10,6 @@
     class Actor;
 #endif
 class CompoundTag;
-enum Difficulty: int {};
 
 class MobEffectInstance {
     public:

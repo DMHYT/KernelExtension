@@ -1,5 +1,7 @@
 #include <stl/string>
 
+#include <enums.hpp>
+
 #ifndef KEX_ITEM_HPP
 #define KEX_ITEM_HPP
 
@@ -22,14 +24,12 @@ class BaseGameVersion;
 class BlockSource;
 class CompoundTag;
 class Container;
-enum CreativeItemCategory: int {};
 class CreativeItemRegistry;
 #ifndef KEX_HASHEDSTRING_HPP
     class HashedString;
 #endif
 class IDataInput;
 class IDataOutput;
-enum ItemAcquisitionMethod: int {};
 class ItemDescriptor;
 #ifndef KEX_ITEMINSTANCE_HPP
     class ItemInstance;
@@ -60,7 +60,6 @@ class ReadOnlyBinaryStream;
 class RenderParams;
 class TextureAtlasItem;
 class TextureUVCoordinateSet;
-enum UseAnimation : int {};
 #ifndef KEX_VEC3_HPP
     class Vec3;
 #endif

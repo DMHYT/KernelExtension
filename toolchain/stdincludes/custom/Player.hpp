@@ -4,7 +4,6 @@
 #define KEX_PLAYER_HPP
 
 
-enum AbilitiesIndex: int {};
 class Agent;
 class AnimationComponent;
 class Attribute {public:};
@@ -21,30 +20,19 @@ class AttributeInstance {
     void addBuff(AttributeBuff const&);
 };
 class BlockActor;
-enum BuildPlatform: int {};
 class Camera;
 class ChalkboardBlockActor;
 class ChangeDimensionPacket;
 class ChunkSource;
 class ClientInstance;
 class ClientPlayMode;
-enum CommandPermissionLevel: int {};
 class ComplexInventoryTransaction;
 class Container;
-enum ContainerID: int {};
-enum ContainerType: int {};
 class EventPacket;
 class FrameUpdateContext;
 class FrameUpdateContextBase;
-enum GameType {
-    SURVIVAL,
-    CREATIVE,
-    ADVENTURE,
-    SPECTATOR
-};
 class HitResult;
 class HudContainerManagerModel;
-enum InputMode: int {};
 class InventoryMenu;
 class InventoryOptions;
 class InventoryTransaction;
@@ -54,12 +42,9 @@ class InventoryTransaction;
 class ItemDescriptor;
 class ItemGroup;
 class ItemStackBase;
-enum ItemUseMethod: int {};
-enum LevelSoundEvent: int {};
 #ifndef KEX_MOVEINPUTHANDLER_HPP
     class MoveInputHandler;
 #endif
-enum MovementEventType: int {};
 class NetworkChunkSubscriber;
 class Packet;
 class PacketObserver;
@@ -67,13 +52,11 @@ class PlayerEventCoordinator;
 class PlayerInventory;
 class PlayerListener;
 class PlayerRespawnState;
-enum PlayerUISlot: int {};
 class ResolvedTextObject;
 class SerializedSkin;
 class ServerMoveInputHandler;
 class ServerPlayerEventCoordinator;
 class ShieldItem;
-enum Side: int {};
 class TextObjectRoot;
 class Tick;
 

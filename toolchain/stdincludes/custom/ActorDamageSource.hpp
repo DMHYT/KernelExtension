@@ -1,17 +1,14 @@
 #include <stl/string>
 
+#include <enums.hpp>
+
 #ifndef KEX_ACTORDAMAGESOURCE_HPP
 #define KEX_ACTORDAMAGESOURCE_HPP
 
 
 #ifndef KEX_ACTOR_HPP
     class Actor;
-    enum ActorCategory: int {};
-    enum ActorType: int {};
     class BlockSource;
-#endif
-#ifndef KEX_MOB_HPP
-    enum ActorDamageCause: int {};
 #endif
 #ifndef KEX_ACTORUNIQUEID_HPP
     class ActorUniqueID {public:};

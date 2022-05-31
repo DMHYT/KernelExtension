@@ -1,3 +1,5 @@
+#include <enums.hpp>
+
 #ifndef KEX_ENCHANTUTILS_HPP
 #define KEX_ENCHANTUTILS_HPP
 
@@ -12,7 +14,6 @@ class Enchant {
     enum Type: int {};
 };
 class EnchantmentInstance;
-enum EquipmentFilter: int {};
 #ifndef KEX_ITEM_HPP
     class Item;
 #endif

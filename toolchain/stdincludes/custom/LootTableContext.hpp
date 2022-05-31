@@ -1,5 +1,7 @@
 #include <stl/string>
 
+#include <enums.hpp>
+
 #ifndef KEX_LOOTTABLECONTEXT_HPP
 #define KEX_LOOTTABLECONTEXT_HPP
 
@@ -7,7 +9,6 @@
 #ifndef KEX_ACTOR_HPP
     class Actor;
 #endif
-enum ActorTarget: int {};
 #ifndef KEX_ACTORDAMAGESOURCE_HPP
     class ActorDamageSource;
 #endif
