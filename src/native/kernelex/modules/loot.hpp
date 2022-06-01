@@ -5,7 +5,7 @@
 
 #include <LootTable.hpp>
 
-#include "../../../../../../DMH/cppheaders/json/reader.h"
+#include <json/reader.h>
 
 #ifndef KEX_MODULES_LOOT_HPP
 #define KEX_MODULES_LOOT_HPP

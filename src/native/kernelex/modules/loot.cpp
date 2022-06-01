@@ -11,8 +11,8 @@
 #include <innercore/item_registry.h>
 #include <innercore/vtable.h>
 
-#include "../../../../../../DMH/cppheaders/json/value.h"
-#include "../../../../../../DMH/cppheaders/json/reader.h"
+#include <json/value.h>
+#include <json/reader.h>
 
 #include <commontypes.hpp>
 
