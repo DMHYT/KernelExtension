@@ -23,10 +23,10 @@ class KEXMiscReachDistModule : public Module {
         inline void toggle(bool on) {
             enabled = on;
         }
-        inline int getModifier() const {
+        inline float getModifier() const {
             return modifier;
         }
-        inline int getMultiplier() const {
+        inline float getMultiplier() const {
             return multiplier;
         }
         inline bool isActive() const {
