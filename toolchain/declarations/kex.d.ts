@@ -1187,11 +1187,25 @@ declare module vsdum {
                     getMultiplier(): number;
                     isActive(): boolean;
                 }
+                export class CameraRollModifier extends java.lang.Object {
+                    static class: java.lang.Class<CameraRollModifier>;
+                    constructor();
+                    setModifier(modifier: number): CameraRollModifier;
+                    setInterpolationEnabled(enabled: boolean): CameraRollModifier;
+                    setSmoothing(smoothing: number): CameraRollModifier;
+                    enable(): CameraRollModifier;
+                    disable(): CameraRollModifier;
+                    getModifier(): number;
+                    isInterpolationEnabled(): boolean;
+                    getSmoothing(): number;
+                    isActive(): boolean;
+                }
             }
         }
     }
 }
 declare function WRAP_JAVA(clazz: "vsdum.kex.modules.misc.ReachDistanceModifier"): typeof vsdum.kex.modules.misc.ReachDistanceModifier;
+declare function WRAP_JAVA(clazz: "vsdum.kex.modules.misc.CameraRollModifier"): typeof vsdum.kex.modules.misc.CameraRollModifier;
 
 
 declare namespace Item {
@@ -1315,6 +1329,9 @@ declare enum ETileEntityType {
     GlobalContext: typeof vsdum.kex.natives.GlobalContext,
     I18n: typeof vsdum.kex.natives.I18n;
     AddonUtils: typeof vsdum.kex.util.AddonUtils,
+    FoodItemComponent: typeof vsdum.kex.natives.FoodItemComponent,
+    ReachDistanceModifier: typeof vsdum.kex.modules.misc.ReachDistanceModifier,
+    CameraRollModifier: typeof vsdum.kex.modules.misc.CameraRollModifier,
     ESaturationModifier: {
         readonly POOR: 0.2,
         readonly LOW: 0.6,

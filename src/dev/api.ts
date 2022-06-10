@@ -10,6 +10,7 @@ const LocalPlayer = WRAP_JAVA("vsdum.kex.natives.LocalPlayer");
 const Slime = WRAP_JAVA("vsdum.kex.natives.Slime");
 const FoodItemComponent = WRAP_JAVA("vsdum.kex.natives.FoodItemComponent");
 const ReachDistanceModifier = WRAP_JAVA("vsdum.kex.modules.misc.ReachDistanceModifier");
+const CameraRollModifier = WRAP_JAVA("vsdum.kex.modules.misc.CameraRollModifier");
 
 const GlobalContext = WRAP_JAVA("vsdum.kex.natives.GlobalContext");
 const I18n = WRAP_JAVA("vsdum.kex.natives.I18n");
@@ -20,6 +21,20 @@ const I18n = WRAP_JAVA("vsdum.kex.natives.I18n");
 //         .saturationMod(ESaturationModifier.NORMAL)
 //         .alwaysEat();
 // });
+
+
+
+
+const testRollMod = new CameraRollModifier().enable();
+let roll: number = 0.0;
+
+Callback.on("LocalTick", () => {
+    roll += Math.PI / 30.0;
+    testRollMod.setModifier(roll);
+});
+
+
+
 
 ModAPI.registerAPI("KernelExtension", {
     ItemsModule,
@@ -36,6 +51,7 @@ ModAPI.registerAPI("KernelExtension", {
     Slime,
     FoodItemComponent,
     ReachDistanceModifier,
+    CameraRollModifier,
 
     GlobalContext,
     I18n,

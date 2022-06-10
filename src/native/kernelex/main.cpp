@@ -8,6 +8,7 @@
 #include "modules/commands/module.hpp"
 #include "modules/callbacks.hpp"
 #include "modules/misc/reachdist.hpp"
+#include "modules/misc/cameraroll.hpp"
 
 #include "utils/java_utils.hpp"
 
@@ -34,6 +35,7 @@ extern "C" JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *) {
 	Module* commands = new KEXCommandsModule(main);
 	Module* callbacks = new KEXCallbacksModule(main);
 	Module* reachdist = new KEXMiscReachDistModule(main);
+	Module* cameraroll = new KEXMiscCameraRollModule(main);
 }
 
 
