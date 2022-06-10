@@ -59,6 +59,7 @@ ModAPI.registerAPI("KernelExtension", {
     AddonUtils,
 
     ESaturationModifier,
+    EDamageCause,
 
     getKEXVersion: () => MAIN.getVersion(),
     getKEXVersionCode: () => MAIN.getVersionCode()

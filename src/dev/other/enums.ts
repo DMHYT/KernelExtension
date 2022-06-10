@@ -8,6 +8,39 @@ enum ESaturationModifier {
 }
 
 
+enum EDamageCause {
+    NONE = -1,
+    OVERRIDE = 0,
+    CONTACT = 1,
+    ENTITY_ATTACK = 2,
+    PROJECTILE = 3,
+    SUFFOCATION = 4,
+    FALL = 5,
+    FIRE = 6,
+    FIRE_TICK = 7,
+    LAVA = 8,
+    DROWNING = 9,
+    BLOCK_EXPLOSION = 10,
+    ENTITY_EXPLOSION = 11,
+    VOID = 12,
+    SUICIDE = 13,
+    MAGIC = 14,
+    WITHER = 15,
+    STARVE = 16,
+    ANVIL = 17,
+    THORNS = 18,
+    FALLING_BLOCK = 19,
+    PISTON = 20,
+    FLY_INTO_WALL = 21,
+    MAGMA = 22,
+    FIREWORKS = 23,
+    LIGHTNING = 24,
+    CHARGING = 25,
+    TEMPERATURE = 26,
+    ALL = 31
+}
+
+
 // @ts-ignore
 EItemAnimation.NONE = 0;
 // @ts-ignore
