@@ -11,13 +11,13 @@ float KEXMiscReachDistModule::last = 7.0f;
 float KEXMiscReachDistModule::apply(float defaultValue) {
     float result = defaultValue;
     for(auto iter = modifiers.begin(); iter != modifiers.end(); iter++) {
-        if((*iter)->isActive()) {
-            result += (*iter)->getModifier();
+        if((*iter)->enabled) {
+            result += (*iter)->modifier;
         } 
     }
     for(auto iter = modifiers.begin(); iter != modifiers.end(); iter++) {
-        if((*iter)->isActive()) {
-            result *= (*iter)->getMultiplier();
+        if((*iter)->enabled) {
+            result *= (*iter)->multiplier;
         }
     }
     return result;
@@ -52,24 +52,26 @@ extern "C" {
         KEXMiscReachDistModule::modifiers.emplace(mod);
         return (jlong) mod;
     }
+    #define __CONVERT__ ((KEXMiscReachDistModule::ReachDistModifier*) ptr)
     __EXPORT__(void, SetModifier, jfloat modifier) {
-        ((KEXMiscReachDistModule::ReachDistModifier*) ptr)->setModifier(modifier);
+        __CONVERT__->modifier = modifier;
     }
     __EXPORT__(void, SetMultiplier, jfloat multiplier) {
-        ((KEXMiscReachDistModule::ReachDistModifier*) ptr)->setMultiplier(multiplier);
+        __CONVERT__->multiplier = multiplier;
     }
     __EXPORT__(void, Toggle, jboolean enable) {
-        ((KEXMiscReachDistModule::ReachDistModifier*) ptr)->toggle(enable);
+        __CONVERT__->enabled = enable;
     }
     __EXPORT__(jfloat, GetModifier) {
-        return ((KEXMiscReachDistModule::ReachDistModifier*) ptr)->getModifier();
+        return __CONVERT__->modifier;
     }
     __EXPORT__(jfloat, GetMultiplier) {
-        return ((KEXMiscReachDistModule::ReachDistModifier*) ptr)->getMultiplier();
+        return __CONVERT__->multiplier;
     }
     __EXPORT__(jboolean, IsActive) {
-        return ((KEXMiscReachDistModule::ReachDistModifier*) ptr)->isActive();
+        return __CONVERT__->enabled;
     }
+    #undef __CONVERT__
 }
 
 
