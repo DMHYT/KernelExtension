@@ -22,20 +22,6 @@ const I18n = WRAP_JAVA("vsdum.kex.natives.I18n");
 //         .alwaysEat();
 // });
 
-
-
-
-const testRollMod = new CameraRollModifier().enable();
-let roll: number = 0.0;
-
-Callback.on("LocalTick", () => {
-    roll += Math.PI / 30.0;
-    testRollMod.setModifier(roll);
-});
-
-
-
-
 ModAPI.registerAPI("KernelExtension", {
     ItemsModule,
     LootModule,
