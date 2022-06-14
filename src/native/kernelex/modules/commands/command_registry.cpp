@@ -21,7 +21,6 @@ std::unordered_set<std::string> KEXCommandRegistry::usedNamesAndAliases {
 
 
 std::unordered_map<std::string, KEXCommandRegistry::NativeCommandFactoryBase*> KEXCommandRegistry::registeredFactories;
-std::unordered_map<std::string, void*> CommandRegistry::KEX_parsePointers;
 
 
 void KEXCommandRegistry::registerNativeCommandFactory(const std::string& commandName, KEXCommandRegistry::NativeCommandFactoryBase* factory) {

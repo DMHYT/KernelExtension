@@ -17,6 +17,7 @@
 #include "CommandItem.hpp"
 #include "CommandMessage.hpp"
 #include "CommandPosition.hpp"
+#include "CommandWildcardInt.hpp"
 #include <MobEffect.hpp>
 #include "RelativeFloat.hpp"
 
@@ -61,25 +62,23 @@ typeid_t<T> type_id() {
 
 template typeid_t<CommandRegistry> type_id<CommandRegistry, ActorDamageCause>();
 template typeid_t<CommandRegistry> type_id<CommandRegistry, AutomaticID<Dimension, int>>();
-template typeid_t<CommandRegistry> type_id<CommandRegistry, Block const*>();
 template typeid_t<CommandRegistry> type_id<CommandRegistry, bool>();
 template typeid_t<CommandRegistry> type_id<CommandRegistry, CommandMessage>();
 template typeid_t<CommandRegistry> type_id<CommandRegistry, CommandPosition>();
 template typeid_t<CommandRegistry> type_id<CommandRegistry, CommandPositionFloat>();
 template typeid_t<CommandRegistry> type_id<CommandRegistry, CommandSelector<Actor>>();
 template typeid_t<CommandRegistry> type_id<CommandRegistry, CommandSelector<Player>>();
-template typeid_t<CommandRegistry> type_id<CommandRegistry, EquipmentSlot>();
 template typeid_t<CommandRegistry> type_id<CommandRegistry, float>();
 template typeid_t<CommandRegistry> type_id<CommandRegistry, int>();
 template typeid_t<CommandRegistry> type_id<CommandRegistry, Json::Value>();
 template typeid_t<CommandRegistry> type_id<CommandRegistry, Mirror>();
-template typeid_t<CommandRegistry> type_id<CommandRegistry, MobEffect const*>();
 template typeid_t<CommandRegistry> type_id<CommandRegistry, RelativeFloat>();
 template typeid_t<CommandRegistry> type_id<CommandRegistry, std::__ndk1::string>();
 template typeid_t<CommandRegistry> type_id<CommandRegistry, std::__ndk1::unique_ptr<Command>>();
 template typeid_t<CommandRegistry> type_id<CommandRegistry, WildcardCommandSelector<Actor>>();
 template typeid_t<CommandRegistry> type_id<CommandRegistry, CommandItem>();
 template typeid_t<CommandRegistry> type_id<CommandRegistry, CommandIntegerRange>();
+template typeid_t<CommandRegistry> type_id<CommandRegistry, CommandWildcardInt>();
 template<>
 inline typeid_t<CommandRegistry> type_id<CommandRegistry, ActorDefinitionIdentifier const*>() {
     static typeid_t<CommandRegistry> id = *(typeid_t<CommandRegistry>*) SYMBOL("mcpe", "_ZZ7type_idI15CommandRegistryPK25ActorDefinitionIdentifierE8typeid_tIT_EvE2id");
@@ -90,6 +89,7 @@ inline typeid_t<CommandRegistry> type_id<CommandRegistry, ActorDefinitionIdentif
 class CommandVersion {
     public:
     int min, max; // 8
+    inline CommandVersion(): min(0), max(0x7fffffff) {}
     CommandVersion(int, int);
 };
 
@@ -97,15 +97,13 @@ class CommandVersion {
 class CommandRegistry {
     public:
 
-    typedef unsigned int Symbol;
-
     struct ParseToken {
         std::__ndk1::unique_ptr<ParseToken> child; // 4
         std::__ndk1::unique_ptr<ParseToken> next; // 8
         ParseToken* parent; // 12
         const char* text; // 16
         unsigned int length; // 20
-        Symbol type; // 24
+        void* tokenType; // 24
         std::__ndk1::string toString() const;
     };
 
@@ -119,6 +117,8 @@ class CommandRegistry {
         Factory factory; // 12
         std::__ndk1::vector<CommandParameterData> params; // 24
         int someShit; // 28
+        inline Overload(CommandVersion v, Factory f, const std::__ndk1::vector<CommandParameterData>& p)
+            : version(v), factory(f), params(p), someShit(-1) {}
         Overload(CommandVersion, Factory);
     };
 
@@ -129,23 +129,7 @@ class CommandRegistry {
         char rest[28]; // 64
     };
 
-    template<typename T>
-    struct DefaultIdConverter {
-
-        template<typename Target, typename Source>
-        static Target convert(Source source) {
-            return (Target) source;
-        }
-
-        unsigned long long operator()(T value) const {
-            return convert<unsigned long long, T>(value);
-        }
-
-        T operator()(unsigned long long value) const {
-            return convert<T, unsigned long long>(value);
-        }
-
-    };
+    template<typename T> struct DefaultIdConverter;
 
     void registerCommand(std::__ndk1::string const&, const char*, CommandPermissionLevel, CommandFlag, CommandFlag);
 
@@ -175,60 +159,15 @@ class CommandRegistry {
     
     template<typename CommandType>
     inline void registerOverloadParamsVec(const char* commandName, const std::__ndk1::vector<CommandParameterData>& params) {
-        CommandVersion version(1, 0x7fffffff);
-        Overload overload(version, (Overload::Factory) &allocateCommand<CommandType>);
-        overload.params = params;
         Signature* signature = findCommand(commandName);
-        signature->overloads.emplace_back(overload);
-        registerOverloadInternal(*signature, overload);
-    }
-
-    Symbol addEnumValuesInternal(std::__ndk1::string const&, std::__ndk1::vector<std::__ndk1::pair<unsigned int, unsigned long long>> const&, typeid_t<CommandRegistry>, ParseFn);
-    Symbol addEnumValuesInternal(std::__ndk1::string const&, std::__ndk1::vector<std::__ndk1::pair<std::__ndk1::string, unsigned long long>> const&, typeid_t<CommandRegistry>, ParseFn);
-    unsigned long long getEnumData(ParseToken const&) const;
-
-    template<typename Type, typename IDConverter = DefaultIdConverter<Type>>
-    inline bool parseEnum(void* target, ParseToken const& token, CommandOrigin const&, int, std::__ndk1::string&, std::__ndk1::vector<std::__ndk1::string>&) const {
-        auto data = getEnumData(token);
-        *(Type*)target = IDConverter{}(data);
-        return true;
+        signature->overloads.emplace_back(CommandVersion{}, (Overload::Factory) &allocateCommand<CommandType>, params);
+        registerOverloadInternal(*signature, signature->overloads.back());
     }
     
     template<typename Type, typename IDConverter = DefaultIdConverter<Type>>
-    inline Symbol addEnumValues(std::__ndk1::string const& name, typeid_t<CommandRegistry> tid, std::__ndk1::vector<std::__ndk1::pair<std::__ndk1::string, Type>> const& values) {
-        std::__ndk1::vector<std::__ndk1::pair<std::__ndk1::string, unsigned long long>> converted;
-        IDConverter converter;
-        for(auto& value : values) {
-            converted.emplace_back(value.first, converter(value.second));
-        }
-        return addEnumValuesInternal(name, converted, tid, (ParseFn) &CommandRegistry::parseEnum<Type, IDConverter>);
-    }
+    int addEnumValues(std::__ndk1::string const& name, std::__ndk1::vector<std::__ndk1::pair<std::__ndk1::string, Type>> const& values);
 
-    template<typename T>
-    inline CommandRegistry* addEnum(const char* name, std::__ndk1::vector<std::__ndk1::pair<std::__ndk1::string, T>> const& values) {
-        this->addEnumValues<T>(name, type_id<CommandRegistry, T>(), values);
-        return this;
-    }
-
-    static std::unordered_map<std::string, void*> KEX_parsePointers;
-
-    template<typename Type>
-    inline bool fakeParse(void*, ParseToken const&, CommandOrigin const&, int, std::__ndk1::string&, std::__ndk1::vector<std::__ndk1::string>&) const { return false; }
-
-    template<typename T>
-    static inline ParseFn getParseFn() {
-        if(!std::is_same<CommandOperator, T>::value && std::is_enum<T>::value) {
-            return (ParseFn) &CommandRegistry::fakeParse<T>;
-        }
-        auto found = CommandRegistry::KEX_parsePointers.find(typeid(T).name());
-        if(found == CommandRegistry::KEX_parsePointers.end()) return (ParseFn) &CommandRegistry::fakeParse<T>;
-        union {
-            void* unresolved;
-            ParseFn resolved;
-        } u;
-        u.unresolved = found->second;
-        return (ParseFn) u.resolved;
-    }
+    template<typename Type> bool parse(void*, ParseToken const&, CommandOrigin const&, int, std::__ndk1::string&, std::__ndk1::vector<std::__ndk1::string>&) const;
     
 };
 

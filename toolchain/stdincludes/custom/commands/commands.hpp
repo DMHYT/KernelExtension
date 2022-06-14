@@ -21,8 +21,8 @@ namespace commands {
     template<typename CommandClass, typename FieldType>
     inline CommandParameterData mandatory(int valueFieldOffset, const char* paramName, int isSetFieldOffset) {
         return CommandParameterData(
-            type_id<CommandRegistry>(),
-            CommandRegistry::getParseFn<FieldType>(),
+            type_id<CommandRegistry, FieldType>(),
+            (CommandRegistry::ParseFn) &CommandRegistry::parse<FieldType>,
             paramName, CommandParameterDataType::NORMAL, nullptr,
             valueFieldOffset, false, isSetFieldOffset
         );
@@ -37,8 +37,8 @@ namespace commands {
     template<CommandParameterDataType DataType, typename CommandClass, typename FieldType>
     inline CommandParameterData mandatory(int valueFieldOffset, const char* paramName, const char* paramDescription, int isSetFieldOffset) {
         return CommandParameterData(
-            type_id<CommandRegistry>(),
-            CommandRegistry::getParseFn<FieldType>(),
+            type_id<CommandRegistry, FieldType>(),
+            (CommandRegistry::ParseFn) &CommandRegistry::parse<FieldType>,
             paramName, DataType, paramDescription,
             valueFieldOffset, false, isSetFieldOffset
         );
@@ -53,8 +53,8 @@ namespace commands {
     template<typename CommandClass, typename FieldType>
     inline CommandParameterData optional(int valueFieldOffset, const char* paramName, int isSetFieldOffset) {
         return CommandParameterData(
-            type_id<CommandRegistry>(),
-            CommandRegistry::getParseFn<FieldType>(),
+            type_id<CommandRegistry, FieldType>(),
+            (CommandRegistry::ParseFn) &CommandRegistry::parse<FieldType>,
             paramName, CommandParameterDataType::NORMAL, nullptr,
             valueFieldOffset, true, isSetFieldOffset
         );
@@ -69,8 +69,8 @@ namespace commands {
     template<CommandParameterDataType DataType, typename CommandClass, typename FieldType>
     inline CommandParameterData optional(int valueFieldOffset, const char* paramName, const char* paramDescription, int isSetFieldOffset) {
         return CommandParameterData(
-            type_id<CommandRegistry>(),
-            CommandRegistry::getParseFn<FieldType>(),
+            type_id<CommandRegistry, FieldType>(),
+            (CommandRegistry::ParseFn) &CommandRegistry::parse<FieldType>,
             paramName, DataType, paramDescription,
             valueFieldOffset, true, isSetFieldOffset
         );
