@@ -1,3 +1,6 @@
+#include <stl/vector>
+#include <stl/string>
+
 #include <jni.h>
 
 #ifndef KEX_UTILS_JAVA_UTILS_HPP
@@ -17,6 +20,7 @@ namespace KEXJavaBridge {
         jclass CallbacksModule(JNIEnv* env);
         jclass CallbacksModule();
         jclass ItemsModule(JNIEnv* env);
+        jclass DamageModule(JNIEnv* env);
     }
     namespace KernelExtension {
         void setMinecraftTextboxText(const char* text);
@@ -38,6 +42,10 @@ namespace KEXJavaBridge {
         int getUseDurationDynamic(jlong stackPtr);
         jstring appendFormattedHovertext(jlong stackPtr, jlong levelPtr, const char* text);
         void getDynamicFoodValues(jlong stackPtr, jlong foodPtr);
+    }
+    namespace DamageModule {
+        jstring getDeathMessage(jlong sourcePtr, const char* nickname, jlong actorPtr);
+        jstring translateAndFormatDeathMessage(const char* causeName, const std::__ndk1::vector<std::__ndk1::string>& formatData);
     }
 }
 

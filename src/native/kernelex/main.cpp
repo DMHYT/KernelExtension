@@ -7,6 +7,7 @@
 #include "modules/tools/submodules/interactions.hpp"
 #include "modules/commands/module.hpp"
 #include "modules/callbacks.hpp"
+#include "modules/damage.hpp"
 #include "modules/misc/reachdist.hpp"
 #include "modules/misc/cameraroll.hpp"
 
@@ -34,6 +35,7 @@ extern "C" JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *) {
 	Module* toolInteractions = new KEXToolInteractionsModule(tools);
 	Module* commands = new KEXCommandsModule(main);
 	Module* callbacks = new KEXCallbacksModule(main);
+	Module* damage = new KEXDamageModule(main);
 	Module* reachdist = new KEXMiscReachDistModule(main);
 	Module* cameraroll = new KEXMiscCameraRollModule(main);
 }
@@ -46,4 +48,5 @@ extern "C" JNIEXPORT void JNICALL Java_vsdum_kex_KernelExtension_defineCallbackC
 	KEXJavaBridge::Cache::LootModule(env);
 	KEXJavaBridge::Cache::CallbacksModule(env);
 	KEXJavaBridge::Cache::ItemsModule(env);
+	KEXJavaBridge::Cache::DamageModule(env);
 }

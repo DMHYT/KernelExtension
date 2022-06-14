@@ -817,6 +817,35 @@ declare module vsdum {
 }
 declare function WRAP_JAVA(clazz: "vsdum.kex.natives.I18n"): typeof vsdum.kex.natives.I18n;
 
+declare module vsdum {
+    export module kex {
+        export module natives {
+            export class ActorDamageSource extends common.INativeInterface {
+                static class: java.lang.Class<ActorDamageSource>;
+                constructor(ptr: number);
+                isEntitySource(): boolean;
+                isChildEntitySource(): boolean;
+                isBlockSource(): boolean;
+                isEntityCreative(): boolean;
+                isEntityWorldBuilder(): boolean;
+                getEntityUniqueID(): number;
+                getEntityType(): number;
+                getEntityCategories(): number;
+                getEntity(): Nullable<Actor>;
+                isDamagingEntityCreative(): boolean;
+                isDamagingEntityWorldBuilder(): boolean;
+                getDamagingEntityUniqueID(): number;
+                getDamagingEntityType(): number;
+                getDamagingEntityCategories(): number;
+                getDamagingEntity(): Nullable<Actor>;
+                getCause(): number;
+                setCause(cause: number): void;
+                getBlock(): Nullable<BlockState>;
+            }
+        }
+    }
+}
+
 type MinMax = { min: number, max: number }
 type FeatureTypes = "buriedtreasure" | "endcity" | "fortress" | "mansion" | "mineshaft" | "monument" | "pillageroutpost" | "ruins" | "shipwreck" | "stronghold" | "temple" | "village";
 type EnchantTypes = Lowercase<keyof typeof EEnchantment>;
@@ -1148,6 +1177,41 @@ declare function WRAP_JAVA(clazz: "vsdum.kex.modules.ToolsModule"): typeof vsdum
 
 declare module vsdum {
     export module kex {
+        export module modules {
+            export module DamageModule {
+                export type DamageDealingParams = {} | {
+                    source: "actor" | "entity" | "blocksource" | "world" | "block",
+                    bool1?: boolean, bool2?: boolean,
+                    attacker?: number,
+                    world?: BlockSource,
+                    region?: BlockSource,
+                    pos?: Partial<Vector>,
+                    position?: Partial<Vector>,
+                    x?: number, y?: number, z?: number;
+                }
+                export interface CustomTranslationCallback {
+                    (source: natives.ActorDamageSource, nickname: jstring, actor: natives.Actor): any_string;
+                }
+                export function isFire(id: number): boolean;
+                export function damageEntity(entity: number, damage: number, cause: number, params?: DamageDealingParams): void;
+                export class CustomCause extends java.lang.Object {
+                    static class: java.lang.Class<CustomCause>;
+                    readonly name: jstring;
+                    readonly id: number;
+                    constructor(name: any_string);
+                    setFire(): CustomCause;
+                    setDeathMessage(message: any_string): CustomCause;
+                    setDeathMessage(translations: object): CustomCause;
+                    setDeathMessageCallback(callback: CustomTranslationCallback): CustomCause;
+                }
+            }
+        }
+    }
+}
+declare function WRAP_JAVA(clazz: "vsdum.kex.modules.DamageModule"): typeof vsdum.kex.modules.DamageModule;
+
+declare module vsdum {
+    export module kex {
         export class KernelExtension extends java.lang.Object {
             static class: java.lang.Class<KernelExtension>;
             static getVersion(): [number, number, number];
@@ -1318,6 +1382,7 @@ declare enum ETileEntityType {
     ItemsModule: typeof vsdum.kex.modules.ItemsModule,
     LootModule: typeof vsdum.kex.modules.LootModule,
     ToolsModule: typeof vsdum.kex.modules.ToolsModule,
+    DamageModule: typeof vsdum.kex.modules.DamageModule,
     LootTableContext: typeof vsdum.kex.natives.LootTableContext,
     MobEffect: typeof vsdum.kex.natives.MobEffect,
     MobEffectInstance: typeof vsdum.kex.natives.MobEffectInstance,

@@ -31,10 +31,12 @@ class SignBlockActor {
     public:
     std::__ndk1::string& getMessage();
 };
-class BlockSource {
-    public:
-    BlockActor* getBlockEntity(BlockPos const&);
-};
+#ifndef KEX_BLOCKSOURCE_HPP
+    class BlockSource {
+        public:
+        BlockActor* getBlockEntity(BlockPos const&);
+    };
+#endif
 class Dimension;
 #ifndef KEX_HASHEDSTRING_HPP
     class HashedString;
@@ -464,6 +466,7 @@ class Actor {
     float getRadius() const;
     bool isResting() const;
     void setSaddle(bool);
+    void hurt(ActorDamageSource const&, int, bool, bool);
     template<typename Component> Component* tryGetComponent();
 };
 

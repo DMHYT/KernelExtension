@@ -8,9 +8,11 @@
 
 class Block {
     public:
-    char filler1[4]; // 4
+    void** vtable; // 4
     int data; // 8
     BlockLegacy* legacy; // 12
+    unsigned int getRuntimeId() const;
+    int getVariant() const;
 };
 
 

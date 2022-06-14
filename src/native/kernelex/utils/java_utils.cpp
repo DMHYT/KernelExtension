@@ -42,6 +42,9 @@ namespace KEXJavaBridge {
         JAVA_METHOD(ItemsModule, getUseDurationDynamic, "(J)I")
         JAVA_METHOD(ItemsModule, appendFormattedHovertext, "(JJLjava/lang/String;)Ljava/lang/String;")
         JAVA_METHOD(ItemsModule, getDynamicFoodValues, "(JJ)V")
+        JAVA_CLASS(DamageModule, "vsdum/kex/modules/DamageModule")
+        JAVA_METHOD(DamageModule, getDeathMessage, "(JLjava/lang/String;J)Ljava/lang/String;")
+        JAVA_METHOD(DamageModule, translateAndFormatDeathMessage, "(Ljava/lang/String;[Ljava/lang/String;)Ljava/lang/String;")
     }
     namespace KernelExtension {
         void setMinecraftTextboxText(const char* text) {
@@ -100,6 +103,27 @@ namespace KEXJavaBridge {
         }
         void getDynamicFoodValues(jlong stackPtr, jlong foodPtr) {
             KEXJavaUtils::attach()->CallStaticVoidMethod(Cache::ItemsModule(), Cache::ItemsModule_getDynamicFoodValues(), stackPtr, foodPtr);
+        }
+    }
+    namespace DamageModule {
+        jstring getDeathMessage(jlong sourcePtr, const char* nickname, jlong actorPtr) {
+            JNIEnv* env = KEXJavaUtils::attach();
+            jstring jNickname = env->NewStringUTF(nickname);
+            jstring result = (jstring) env->CallStaticObjectMethod(Cache::DamageModule(), Cache::DamageModule_getDeathMessage(), sourcePtr, jNickname, actorPtr);
+            env->DeleteLocalRef(jNickname);
+            return result;
+        }
+        jstring translateAndFormatDeathMessage(const char* causeName, const std::__ndk1::vector<std::__ndk1::string>& formatData) {
+            JNIEnv* env = KEXJavaUtils::attach();
+            jstring jCauseName = env->NewStringUTF(causeName);
+            jobjectArray arr = env->NewObjectArray(formatData.size(), env->FindClass("java/lang/String"), nullptr);
+            for(int i = 0; i < formatData.size(); i++) {
+                env->SetObjectArrayElement(arr, i, env->NewStringUTF(formatData.at(i).c_str()));
+            }
+            jstring result = (jstring) env->CallStaticObjectMethod(Cache::DamageModule(), Cache::DamageModule_translateAndFormatDeathMessage(), jCauseName, arr);
+            env->DeleteLocalRef(jCauseName);
+            env->DeleteLocalRef(arr);
+            return result;
         }
     }
 }

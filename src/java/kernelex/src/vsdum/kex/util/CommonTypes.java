@@ -33,6 +33,15 @@ public final class CommonTypes {
         return new Pair<>(min, max);
     }
 
+    public static final int[] deserializeIntVec3(ScriptableObject scr)
+    {
+        int[] result = new int[]{ 0, 0, 0 };
+        if(ScriptableObject.hasProperty(scr, "x")) result[0] = ScriptableObjectHelper.getIntProperty(scr, "x", 0);
+        if(ScriptableObject.hasProperty(scr, "y")) result[1] = ScriptableObjectHelper.getIntProperty(scr, "y", 0);
+        if(ScriptableObject.hasProperty(scr, "z")) result[2] = ScriptableObjectHelper.getIntProperty(scr, "z", 0);
+        return result;
+    }
+
     @Nullable public static final JSONObject scriptableToJson(ScriptableObject scr)
     {
         try {
@@ -199,6 +208,21 @@ public final class CommonTypes {
             }
         }
         return null;
+    }
+
+    public static String getShortLanguageName(String languageName)
+    {
+        int underscore = languageName.indexOf('_');
+        return underscore == -1 ? languageName : languageName.substring(0, underscore);
+    }
+
+    public static String formatLikeInVanilla(String str, String[] formatData)
+    {
+        for(int i = 0; i < formatData.length; ++i)
+        {
+            str = str.replace(String.format("%%%d$s", new Object[]{ Integer.valueOf(i + 1) }), formatData[i]);
+        }
+        return str;
     }
 
 }
