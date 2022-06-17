@@ -13,6 +13,7 @@ import com.zhekasmirnov.innercore.utils.FileTools;
 import org.json.JSONObject;
 
 import android.support.annotation.Nullable;
+import vsdum.kex.modules.LootModule;
 
 public final class AddonUtils {
 
@@ -118,6 +119,7 @@ public final class AddonUtils {
             }
             Callback.invokeAPICallback("KEX-InnerCoreIdsCached", new Object[]{});
         } catch(Throwable ex) {}
+        LootModule.onLevelDisplayed();
     }
 
     public static int getNumericIdFromIdentifier(String identifier)

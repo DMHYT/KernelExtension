@@ -2,13 +2,16 @@ package vsdum.kex.modules;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.zhekasmirnov.apparatus.adapter.innercore.game.item.ItemStack;
 import com.zhekasmirnov.apparatus.mcpe.NativeBlockSource;
 import com.zhekasmirnov.horizon.runtime.logger.Logger;
+import com.zhekasmirnov.innercore.api.NativeCallback;
 import com.zhekasmirnov.innercore.api.NativeTileEntity;
 
 import org.json.JSONArray;
@@ -31,6 +34,7 @@ public class LootModule {
     protected static native long nativeGetRandomItems(String tableName, long contextPtr);
     protected static native int nativeGetVectorSize(long vectorPtr);
     protected static native void nativeDeleteVector(long vectorPtr);
+    protected static native void nativeForceLoad(String tableName);
     
     private static final Map<String, LootModifier> modifiers = new HashMap<>();
 
@@ -189,6 +193,27 @@ public class LootModule {
             nativeDeleteVector(vectorPtr);
         }
         return result;
+    }
+
+    private static final Set<String> forceLoaded = new HashSet<>();
+
+    public static void forceLoad(String tableName)
+    {
+        String tableDir = validateTableName(tableName);
+        if(NativeCallback.isLevelDisplayed()) nativeForceLoad(tableDir);
+        if(!forceLoaded.contains(tableName)) forceLoaded.add(tableDir);
+    }
+
+    public static void onLevelDisplayed()
+    {
+        if(!forceLoaded.isEmpty())
+        {
+            long start = System.currentTimeMillis();
+            Logger.debug("KEX", String.format("The level has been displayed, force loading %d loot tables...", new Object[]{ Integer.valueOf(forceLoaded.size()) }));
+            Iterator<String> iter = forceLoaded.iterator();
+            while(iter.hasNext()) nativeForceLoad(iter.next());
+            Logger.debug("KEX", String.format("Finished in %d ms!", new Object[]{ Long.valueOf(System.currentTimeMillis() - start) }));
+        } else Logger.debug("KEX", "The level has been displayed, no loot tables to force load.");
     }
 
 }

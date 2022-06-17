@@ -976,6 +976,7 @@ declare module vsdum {
                 static addOnDropCallbackFor(tableName: any_string, cb: OnDropCallback, priority?: number): void;
                 static fillContainer(region: BlockSource, x: number, y: number, z: number, tableName: any_string, actor: Nullable<natives.Actor>): void;
                 static getRandomItems(tableName: any_string, context: natives.LootTableContext): java.util.List<ItemInstance>;
+                static forceLoad(tableName: any_string): void;
             }
             export interface OnDropCallback {
                 (drops: RandomItemsList, context: natives.LootTableContext): void;

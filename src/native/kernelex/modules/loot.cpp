@@ -180,4 +180,18 @@ extern "C" {
     (JNIEnv*, jclass, jlong vectorPtr) {
         delete ((std::__ndk1::vector<ItemStack>*) vectorPtr);
     }
+    JNIEXPORT void JNICALL Java_vsdum_kex_modules_LootModule_nativeForceLoad
+    (JNIEnv* env, jclass, jstring tableName) {
+        ServerLevel* level = GlobalContext::getServerLevel();
+        if(level != nullptr) {
+            LootTables* lootTables = level->getLootTables();
+            VTABLE_FIND_OFFSET(Level_getResourcePackManager, _ZTV5Level, _ZNK5Level28getServerResourcePackManagerEv);
+            ResourcePackManager* rpManager = VTABLE_CALL<ResourcePackManager*>(Level_getResourcePackManager, level);
+            if(lootTables != nullptr && rpManager != nullptr) {
+                const char* cTableName = env->GetStringUTFChars(tableName, 0);
+                lootTables->lookupByName(cTableName, *rpManager);
+                env->ReleaseStringUTFChars(tableName, cTableName);
+            }
+        }
+    }
 }
