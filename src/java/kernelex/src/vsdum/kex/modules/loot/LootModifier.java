@@ -12,6 +12,7 @@ import org.json.JSONObject;
 import org.mozilla.javascript.ScriptableObject;
 
 import android.util.Pair;
+import vsdum.kex.common.CallbackFunction;
 import vsdum.kex.common.IJSONSerializable;
 import vsdum.kex.util.CommonTypes;
 import vsdum.kex.util.JsonUtils;
@@ -27,10 +28,10 @@ public class LootModifier implements IJSONSerializable {
     }
     
     public final List<LootPool> pools = new ArrayList<>();
-    public final List<JSModifyCallback> jsCallbacks = new ArrayList<>();
-    public final List<JSONModifyCallback> jsonCallbacks = new ArrayList<>();
-    public final List<JSModifyCallback> jsPostCallbacks = new ArrayList<>();
-    public final List<JSONModifyCallback> jsonPostCallbacks = new ArrayList<>();
+    public final List<CallbackFunction<JSModifyCallback>> jsCallbacks = new ArrayList<>();
+    public final List<CallbackFunction<JSONModifyCallback>> jsonCallbacks = new ArrayList<>();
+    public final List<CallbackFunction<JSModifyCallback>> jsPostCallbacks = new ArrayList<>();
+    public final List<CallbackFunction<JSONModifyCallback>> jsonPostCallbacks = new ArrayList<>();
 
     public LootModifier() {}
 
@@ -286,25 +287,45 @@ public class LootModifier implements IJSONSerializable {
 
     public LootModifier addJSModifyCallback(JSModifyCallback cb)
     {
-        this.jsCallbacks.add(cb);
+        return this.addJSModifyCallback(cb, 0);
+    }
+
+    public LootModifier addJSModifyCallback(JSModifyCallback cb, int priority)
+    {
+        CallbackFunction.addToList(new CallbackFunction<JSModifyCallback>(cb, priority), this.jsCallbacks);
         return this;
     }
 
     public LootModifier addJSONModifyCallback(JSONModifyCallback cb)
     {
-        this.jsonCallbacks.add(cb);
+        return this.addJSONModifyCallback(cb, 0);
+    }
+
+    public LootModifier addJSONModifyCallback(JSONModifyCallback cb, int priority)
+    {
+        CallbackFunction.addToList(new CallbackFunction<JSONModifyCallback>(cb, priority), this.jsonCallbacks);
         return this;
     }
 
     public LootModifier addJSPostModifyCallback(JSModifyCallback cb)
     {
-        this.jsPostCallbacks.add(cb);
+        return this.addJSPostModifyCallback(cb, 0);
+    }
+
+    public LootModifier addJSPostModifyCallback(JSModifyCallback cb, int priority)
+    {
+        CallbackFunction.addToList(new CallbackFunction<JSModifyCallback>(cb, priority), this.jsPostCallbacks);
         return this;
     }
 
     public LootModifier addJSONPostModifyCallback(JSONModifyCallback cb)
     {
-        this.jsonPostCallbacks.add(cb);
+        return this.addJSONPostModifyCallback(cb, 0);
+    }
+
+    public LootModifier addJSONPostModifyCallback(JSONModifyCallback cb, int priority)
+    {
+        CallbackFunction.addToList(new CallbackFunction<JSONModifyCallback>(cb, priority), this.jsonPostCallbacks);
         return this;
     }
 
@@ -319,37 +340,31 @@ public class LootModifier implements IJSONSerializable {
                 poolsArray.put(pool.obj);
             }
         } catch(JSONException ex) {}
-        if(this.jsonCallbacks.size() > 0)
+        Iterator<CallbackFunction<JSModifyCallback>> iterJS;
+        Iterator<CallbackFunction<JSONModifyCallback>> iterJSON;
+        if(!this.jsonCallbacks.isEmpty())
         {
-            for(int i = 0; i < this.jsonCallbacks.size(); ++i)
-            {
-                this.jsonCallbacks.get(i).onModify(obj);
-            }
+            iterJSON = this.jsonCallbacks.iterator();
+            while(iterJSON.hasNext()) iterJSON.next().function.onModify(obj);
         }
-        if(this.jsCallbacks.size() > 0)
+        if(!this.jsCallbacks.isEmpty())
         {
             ScriptableObject scr = CommonTypes.jsonToScriptable(obj);
-            for(int i = 0; i < this.jsCallbacks.size(); ++i)
-            {
-                this.jsCallbacks.get(i).onModify(scr);
-            }
+            iterJS = this.jsCallbacks.iterator();
+            while(iterJS.hasNext()) iterJS.next().function.onModify(scr);
             obj = CommonTypes.scriptableToJson(scr);
         }
-        if(this.jsonPostCallbacks.size() > 0)
+        if(!this.jsonPostCallbacks.isEmpty())
         {
-            for(int i = 0; i < this.jsonPostCallbacks.size(); ++i)
-            {
-                try {
-                    this.jsonPostCallbacks.get(i).onModify(new JSONObject(obj.toString()));
-                } catch(JSONException ex) {}
-            }
+            iterJSON = this.jsonPostCallbacks.iterator();
+            while(iterJSON.hasNext()) try {
+                iterJSON.next().function.onModify(new JSONObject(obj.toString()));
+            } catch(JSONException ex) {}
         }
-        if(this.jsPostCallbacks.size() > 0)
+        if(!this.jsPostCallbacks.isEmpty())
         {
-            for(int i = 0; i < this.jsPostCallbacks.size(); ++i)
-            {
-                this.jsPostCallbacks.get(i).onModify(CommonTypes.jsonToScriptable(obj));
-            }
+            iterJS = this.jsPostCallbacks.iterator();
+            while(iterJS.hasNext()) iterJS.next().function.onModify(CommonTypes.jsonToScriptable(obj));
         }
     }
 

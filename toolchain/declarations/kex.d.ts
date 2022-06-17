@@ -994,10 +994,10 @@ declare module vsdum {
                 modifyWithJSON(json: LootTableTypes.JsonFormat): LootModifier;
                 addItem(id: number, count: number | MinMax, data: number, chance: number, rolls?: number | MinMax): LootModifier;
                 addAddonItem(namespace: any_string, identifier: any_string, count: number | MinMax, data: number, chance: number, rolls?: number | MinMax): LootModifier;
-                addJSModifyCallback(cb: JSModifyCallback): LootModifier;
-                addJSONModifyCallback(cb: JSONModifyCallback): LootModifier;
-                addJSPostModifyCallback(cb: JSModifyCallback): LootModifier;
-                addJSONPostModifyCallback(cb: JSONModifyCallback): LootModifier;
+                addJSModifyCallback(cb: JSModifyCallback, priority?: number): LootModifier;
+                addJSONModifyCallback(cb: JSONModifyCallback, priority?: number): LootModifier;
+                addJSPostModifyCallback(cb: JSModifyCallback, priority?: number): LootModifier;
+                addJSONPostModifyCallback(cb: JSONModifyCallback, priority?: number): LootModifier;
             }
             export interface JSModifyCallback {
                 (obj: LootTableTypes.JsonFormat): void;

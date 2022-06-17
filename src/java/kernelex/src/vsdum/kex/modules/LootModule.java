@@ -99,7 +99,7 @@ public class LootModule {
             .addJSONModifyCallback(new LootModifier.JSONModifyCallback() {
                 public void onModify(JSONObject obj)
                 {
-                    if(piglinBarteringItems.size() > 0)
+                    if(!piglinBarteringItems.isEmpty())
                     {
                         try {
                             JSONArray entriesArray = obj.getJSONArray("pools")
