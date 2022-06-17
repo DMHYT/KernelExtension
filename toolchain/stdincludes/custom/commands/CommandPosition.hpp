@@ -1,10 +1,10 @@
 #include <commontypes.hpp>
 
-#include "CommandOrigin.hpp"
-
 #ifndef KEX_COMMANDPOSITION_HPP
 #define KEX_COMMANDPOSITION_HPP
 
+
+class CommandOrigin;
 
 class CommandPosition {
     public:

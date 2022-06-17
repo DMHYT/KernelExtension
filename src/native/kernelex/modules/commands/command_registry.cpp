@@ -21,6 +21,8 @@ std::unordered_set<std::string> KEXCommandRegistry::usedNamesAndAliases {
 
 
 std::unordered_map<std::string, KEXCommandRegistry::NativeCommandFactoryBase*> KEXCommandRegistry::registeredFactories;
+std::vector<std::pair<std::string, std::string>> KEXCommandRegistry::staticAliases;
+std::unordered_map<std::string, std::__ndk1::vector<std::__ndk1::pair<std::__ndk1::string, int>>> KEXCommandRegistry::customEnums;
 
 
 void KEXCommandRegistry::registerNativeCommandFactory(const std::string& commandName, KEXCommandRegistry::NativeCommandFactoryBase* factory) {
@@ -54,9 +56,10 @@ void KEXCommandRegistry::NonNativeCommandFactory::setup(CommandRegistry& registr
 }
 
 
-void KEXCommandRegistry::NonNativeCommandFactory::init(const std::string& commandName) {
+void KEXCommandRegistry::NonNativeCommandFactory::init(const std::string& commandName, CommandPermissionLevel permissionLevel) {
     props.name = commandName;
     props.description = "commands." + commandName + ".description";
+    props.permissionLevel = permissionLevel;
 }
 
 void KEXCommandRegistry::NonNativeCommandFactory::addAlias(const std::string& alias) {
@@ -68,10 +71,6 @@ void KEXCommandRegistry::NonNativeCommandFactory::addAlias(const std::string& al
     }
 }
 
-void KEXCommandRegistry::NonNativeCommandFactory::setPermissionLevel(CommandPermissionLevel level) {
-    props.permissionLevel = level;
-}
-
 void KEXCommandRegistry::NonNativeCommandFactory::setFlags(int first, int last) {
     props.flag1 = (CommandFlag) first;
     props.flag2 = (CommandFlag) last;
@@ -81,12 +80,17 @@ void KEXCommandRegistry::NonNativeCommandFactory::setCustomParsed(bool customPar
     props.customParsed = customParsed;
 }
 
-const std::__ndk1::vector<CommandParameterData>& KEXCommandRegistry::NonNativeCommandFactory::addOverload() {
-    props.overloads.push_back(std::__ndk1::vector<CommandParameterData>());
-    return props.overloads.back();
+std::__ndk1::vector<CommandParameterData>* KEXCommandRegistry::NonNativeCommandFactory::addOverload(int overloadIndex) {
+    if(overloadIndex < props.overloads.size()) {
+        return &props.overloads.at(overloadIndex);
+    } else if(overloadIndex == props.overloads.size()) {
+        props.overloads.push_back(std::__ndk1::vector<CommandParameterData>());
+        return &props.overloads.at(overloadIndex);
+    }
+    Logger::debug("KEX-WARNING", "Overload index %d for command %s is too big, maximum index at the moment is %d. Returning dummy vector reference...", overloadIndex, props.name.c_str(), props.overloads.size());
+    std::__ndk1::vector<CommandParameterData>* v = new std::__ndk1::vector<CommandParameterData>();
+    return v;
 }
 
 
-void KEXCommandRegistry::KEXAPICommand::execute(CommandOrigin const& origin, CommandOutput& output) const {
-
-}
+void KEXCommandRegistry::KEXAPICommand::execute(CommandOrigin const& origin, CommandOutput& output) const {}

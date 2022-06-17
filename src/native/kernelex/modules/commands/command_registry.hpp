@@ -6,6 +6,7 @@
 #include <logger.h>
 
 #include <commands/Command.hpp>
+#include <commands/commands.hpp>
 
 #ifndef _KEX_COMMANDREGISTRY_HPP
 #define _KEX_COMMANDREGISTRY_HPP
@@ -26,21 +27,22 @@ class KEXCommandRegistry {
             std::vector<std::string> aliases;
             CommandPermissionLevel permissionLevel = CommandPermissionLevel::GAMEMASTERS;
             CommandFlag flag1 = (CommandFlag) 0;
-            CommandFlag flag2 = (CommandFlag) 128;
+            CommandFlag flag2 = (CommandFlag) 0;
             std::vector<std::__ndk1::vector<CommandParameterData>> overloads;
             bool customParsed = false;
         } props;
         NonNativeCommandFactory(): NativeCommandFactoryBase() {}
         virtual void setup(CommandRegistry& registry);
-        void init(const std::string& commandName);
+        void init(const std::string& commandName, CommandPermissionLevel permissionLevel);
         void addAlias(const std::string& alias);
-        void setPermissionLevel(CommandPermissionLevel level);
         void setFlags(int first, int last);
         void setCustomParsed(bool customParsed);
-        const std::__ndk1::vector<CommandParameterData>& addOverload();
+        std::__ndk1::vector<CommandParameterData>* addOverload(int overloadIndex);
     };
     static std::unordered_map<std::string, NativeCommandFactoryBase*> registeredFactories;
     static std::unordered_set<std::string> usedNamesAndAliases;
+    static std::vector<std::pair<std::string, std::string>> staticAliases;
+    static std::unordered_map<std::string, std::__ndk1::vector<std::__ndk1::pair<std::__ndk1::string, int>>> customEnums;
     static void registerNativeCommandFactory(const std::string& commandName, NativeCommandFactoryBase* factory);
     static NativeCommandFactoryBase* getFactoryByName(const std::string& commandName);
     class KEXAPICommand : public Command {

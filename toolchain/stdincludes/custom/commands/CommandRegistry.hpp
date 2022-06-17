@@ -26,6 +26,7 @@
 
 
 class Command;
+class CommandOrigin;
 class CommandParameterData;
 class CommandRegistry;
 class Dimension;
@@ -60,7 +61,6 @@ typeid_t<T> type_id() {
     return id;
 }
 
-template typeid_t<CommandRegistry> type_id<CommandRegistry, ActorDamageCause>();
 template typeid_t<CommandRegistry> type_id<CommandRegistry, AutomaticID<Dimension, int>>();
 template typeid_t<CommandRegistry> type_id<CommandRegistry, bool>();
 template typeid_t<CommandRegistry> type_id<CommandRegistry, CommandMessage>();
@@ -71,13 +71,11 @@ template typeid_t<CommandRegistry> type_id<CommandRegistry, CommandSelector<Play
 template typeid_t<CommandRegistry> type_id<CommandRegistry, float>();
 template typeid_t<CommandRegistry> type_id<CommandRegistry, int>();
 template typeid_t<CommandRegistry> type_id<CommandRegistry, Json::Value>();
-template typeid_t<CommandRegistry> type_id<CommandRegistry, Mirror>();
 template typeid_t<CommandRegistry> type_id<CommandRegistry, RelativeFloat>();
 template typeid_t<CommandRegistry> type_id<CommandRegistry, std::__ndk1::string>();
 template typeid_t<CommandRegistry> type_id<CommandRegistry, std::__ndk1::unique_ptr<Command>>();
 template typeid_t<CommandRegistry> type_id<CommandRegistry, WildcardCommandSelector<Actor>>();
 template typeid_t<CommandRegistry> type_id<CommandRegistry, CommandItem>();
-template typeid_t<CommandRegistry> type_id<CommandRegistry, CommandIntegerRange>();
 template typeid_t<CommandRegistry> type_id<CommandRegistry, CommandWildcardInt>();
 template<>
 inline typeid_t<CommandRegistry> type_id<CommandRegistry, ActorDefinitionIdentifier const*>() {
@@ -103,7 +101,7 @@ class CommandRegistry {
         ParseToken* parent; // 12
         const char* text; // 16
         unsigned int length; // 20
-        void* tokenType; // 24
+        unsigned int tokenType; // 24
         std::__ndk1::string toString() const;
     };
 
@@ -168,24 +166,24 @@ class CommandRegistry {
     int addEnumValues(std::__ndk1::string const& name, std::__ndk1::vector<std::__ndk1::pair<std::__ndk1::string, Type>> const& values);
 
     template<typename Type> bool parse(void*, ParseToken const&, CommandOrigin const&, int, std::__ndk1::string&, std::__ndk1::vector<std::__ndk1::string>&) const;
+
+    bool parseParameter(Command*, CommandParameterData const&, ParseToken const&, CommandOrigin const&, int, std::__ndk1::string&, std::__ndk1::vector<std::__ndk1::string>&) const;
     
 };
 
 
 class CommandParameterData {
     public:
-    // typeid_t<CommandRegistry> tid; // 4
-    // CommandRegistry::ParseFn parser; // 8
-    // std::__ndk1::string name; // 20
-    // const char* description; // 24
-    // int something; // 28
-    // CommandParameterDataType type; // 32
-    // int offset; // 36
-    // int flag_offset; // 40
-    // bool optional; // 41
-    // unsigned char options; // 42
-    // char something2[6]; // 48
-    char filler[48]; // 48
+    typeid_t<CommandRegistry> tid; // 2 + 2
+    CommandRegistry::ParseFn parser; // 12
+    std::__ndk1::string name; // 24
+    const char* description; // 28
+    int something; // 32
+    CommandParameterDataType type; // 36
+    int offset; // 40
+    int flag_offset; // 44
+    bool optional; // 45
+    unsigned char options; // 46 + 2
     CommandParameterData(typeid_t<CommandRegistry> tid, CommandRegistry::ParseFn parser, const char* paramName, CommandParameterDataType type, const char* enumName, int offset, bool optional, int flagOffset);
     CommandParameterData& addOptions(CommandParameterOption);
 };

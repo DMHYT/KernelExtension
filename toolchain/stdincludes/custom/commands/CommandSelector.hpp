@@ -6,7 +6,6 @@
 #include <enums.hpp>
 
 #include <ActorDefinitionIdentifier.hpp>
-#include "CommandOrigin.hpp"
 #include "CommandPosition.hpp"
 
 #ifndef KEX_COMMANDSELECTOR_HPP

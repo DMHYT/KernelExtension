@@ -2,7 +2,6 @@
 #include <stl/string>
 #include <stl/vector>
 
-#include "CommandOrigin.hpp"
 #include "CommandSelector.hpp"
 
 #ifndef KEX_COMMANDMESSAGE_HPP
