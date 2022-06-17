@@ -17,7 +17,7 @@ class KEXLootModule : public Module {
     static std::string getLootTableName(LootTable* table);
     static std::unordered_map<std::string, std::string> cachedModifiedTables;
     static std::unordered_set<std::string> tablesWithDropCallbacks;
-    KEXLootModule(Module* parent): Module(parent, "kernelex.loot") {};
+    KEXLootModule(Module* parent): Module(parent, "kex.loot") {};
     virtual void initialize();
 };
 

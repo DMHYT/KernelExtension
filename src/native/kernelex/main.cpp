@@ -16,7 +16,7 @@
 
 class KernelExtensionMain : public Module {
 public:
-	KernelExtensionMain(): Module("kernelex") {};
+	KernelExtensionMain(): Module("kex") {};
 	virtual void initialize() {
 		
     }
