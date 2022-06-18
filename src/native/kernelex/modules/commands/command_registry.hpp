@@ -18,6 +18,7 @@ class KEXCommandRegistry {
         public:
         NativeCommandFactoryBase() {}
         virtual void setup(CommandRegistry& registry) = 0;
+        virtual bool isNative() const { return true; }
     };
     class NonNativeCommandFactory : public NativeCommandFactoryBase {
         public:
@@ -33,6 +34,7 @@ class KEXCommandRegistry {
         } props;
         NonNativeCommandFactory(): NativeCommandFactoryBase() {}
         virtual void setup(CommandRegistry& registry);
+        virtual bool isNative() const { return false; }
         void init(const std::string& commandName, CommandPermissionLevel permissionLevel);
         void addAlias(const std::string& alias);
         void setFlags(int first, int last);
@@ -47,7 +49,11 @@ class KEXCommandRegistry {
     static NativeCommandFactoryBase* getFactoryByName(const std::string& commandName);
     class KEXAPICommand : public Command {
         public:
-        KEXAPICommand(): Command() {};
+        int overloadIndex; // 36
+        char extraFiller[2012]; // 2048
+        KEXAPICommand(int _version, CommandRegistry* _registry, CommandRegistry::Symbol _symbol, CommandPermissionLevel perm, CommandFlag _flag, int index)
+            : Command(_version, _registry, _symbol, perm, _flag), overloadIndex(index) {}
+        KEXAPICommand(): Command() {}
         virtual void execute(CommandOrigin const& origin, CommandOutput& output) const;
     };
 };

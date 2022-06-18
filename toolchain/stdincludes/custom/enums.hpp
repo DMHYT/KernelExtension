@@ -53,7 +53,7 @@ enum CommandParameterOption: unsigned char {
     HAS_SEMANTIC_CONSTRAINT = 2,
     ENUM_AS_CHAINED_COMMAND = 4
 };
-enum CommandFlag {
+enum CommandFlag: char {
     CFLAG_NONE = 0,
     USAGE = 1,
     VISIBILITY2 = 2,
@@ -64,7 +64,7 @@ enum CommandFlag {
     TYPE = 32,
     CHEAT = 64
 };
-enum CommandPermissionLevel {
+enum CommandPermissionLevel: char {
     ANY = 0,
     GAMEMASTERS = 1,
     ADMIN = 2,

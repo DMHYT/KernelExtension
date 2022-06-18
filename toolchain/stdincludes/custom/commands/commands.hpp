@@ -38,7 +38,7 @@ namespace commands {
     inline CommandParameterData mandatory(int valueFieldOffset, const char* paramName, const char* paramDescription, int isSetFieldOffset) {
         return CommandParameterData(
             type_id<CommandRegistry, FieldType>(),
-            (CommandRegistry::ParseFn) &CommandRegistry::parse<FieldType>,
+            (CommandRegistry::ParseFn) &CommandRegistry::parseEnum<FieldType>,
             paramName, DataType, paramDescription,
             valueFieldOffset, false, isSetFieldOffset
         );
@@ -70,7 +70,7 @@ namespace commands {
     inline CommandParameterData optional(int valueFieldOffset, const char* paramName, const char* paramDescription, int isSetFieldOffset) {
         return CommandParameterData(
             type_id<CommandRegistry, FieldType>(),
-            (CommandRegistry::ParseFn) &CommandRegistry::parse<FieldType>,
+            (CommandRegistry::ParseFn) &CommandRegistry::parseEnum<FieldType>,
             paramName, DataType, paramDescription,
             valueFieldOffset, true, isSetFieldOffset
         );
