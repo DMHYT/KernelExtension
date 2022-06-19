@@ -13,14 +13,14 @@ class DiggerItem : public Item {
     char extraFiller[200]; // 512
     // virtual int getAttackDamage() const;
     // virtual bool isHandEquipped() const;
-    // virtual void* appendFormattedHovertext(ItemStackBase const&, Level&, std::__ndk1::string&, bool) const;
-    // virtual bool isValidRepairItem(ItemStackBase const&, ItemStackBase const&) const;
+    // virtual void* appendFormattedHovertext(const ItemStackBase&, Level&, std::__ndk1::string&, bool) const;
+    // virtual bool isValidRepairItem(const ItemStackBase&, const ItemStackBase&) const;
     // virtual int getEnchantValue() const;
-    // virtual float getDestroySpeed(ItemStackBase const&, Block const&) const;
-    // virtual bool mineBlock(ItemStack&, Block const&, int, int, int, Actor*) const;
-    DiggerItem(std::__ndk1::string const&, int, int, Item::Tier const&, std::__ndk1::vector<Block const*> const&);
-    bool hasBlock(Block const&) const;
-    void setBlocks(std::__ndk1::vector<Block const*> const&);
+    // virtual float getDestroySpeed(const ItemStackBase&, const Block&) const;
+    // virtual bool mineBlock(ItemStack&, const Block&, int, int, int, Actor*) const;
+    DiggerItem(const std::__ndk1::string&, int, int, const Item::Tier&, std::__ndk1::vector<const Block*> const&);
+    bool hasBlock(const Block&) const;
+    void setBlocks(std::__ndk1::vector<const Block*> const&);
 };
 
 

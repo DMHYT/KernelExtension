@@ -34,7 +34,7 @@ class SignBlockActor {
 #ifndef KEX_BLOCKSOURCE_HPP
     class BlockSource {
         public:
-        BlockActor* getBlockEntity(BlockPos const&);
+        BlockActor* getBlockEntity(const BlockPos&);
     };
 #endif
 class Dimension;
@@ -77,7 +77,7 @@ class Actor {
     bool onGround; // 377 (+3?)
     static Actor* wrap(long long);
     // enum InitializationMethod: int {};
-    // virtual bool hasComponent(HashedString const&) const;
+    // virtual bool hasComponent(const HashedString&) const;
     // virtual int getOnDeathExperience();
     // virtual Vec3* getInterpolatedRidingPosition(float) const;
     // virtual Vec2* getInterpolatedBodyRot(float) const;
@@ -88,11 +88,11 @@ class Actor {
     // virtual void* getInterpolatedRidingOffset(float) const;
     // virtual bool isFireImmune() const;
     // virtual bool breaksFallingBlocks() const;
-    // virtual bool blockedByShield(ActorDamageSource const&, Actor&);
-    // virtual void teleportTo(Vec3 const&, bool, int, int, ActorUniqueID const&);
+    // virtual bool blockedByShield(const ActorDamageSource&, Actor&);
+    // virtual void teleportTo(const Vec3&, bool, int, int, const ActorUniqueID&);
     // virtual void chorusFruitTeleport(Vec3&);
-    // virtual void lerpTo(Vec3 const&, Vec2 const&, int);
-    // virtual void lerpMotion(Vec3 const&);
+    // virtual void lerpTo(const Vec3&, const Vec2&, int);
+    // virtual void lerpMotion(const Vec3&);
     // virtual void normalTick();
     // virtual void baseTick();
     // virtual void rideTick();
@@ -100,9 +100,9 @@ class Actor {
     // virtual void startRiding(Actor&);
     // virtual void addRider(Actor&);
     // virtual void flagRiderToRemove(Actor&);
-    // virtual bool intersects(Vec3 const&, Vec3 const&) const;
-    // virtual bool isFree(Vec3 const&, float) const;
-    // virtual bool isFree(Vec3 const&);
+    // virtual bool intersects(const Vec3&, const Vec3&) const;
+    // virtual bool isFree(const Vec3&, float) const;
+    // virtual bool isFree(const Vec3&);
     // virtual bool isInWall() const;
     // virtual bool isInvisible() const;
     // virtual bool canShowNameTag() const;
@@ -120,14 +120,14 @@ class Actor {
     // virtual bool isInLava() const;
     // virtual bool isUnderLiquid(MaterialType) const;
     // virtual bool isOverWater() const;
-    // virtual void makeStuckInBlock(Vec3 const&);
+    // virtual void makeStuckInBlock(const Vec3&);
     // virtual void* getCameraOffset() const;
     // virtual void* getShadowHeightOffs() const;
     // virtual float getShadowRadius() const;
     // virtual void* getHeadLookVector(float);
     // virtual bool canSeeInvisible() const;
-    // virtual bool canSee(Actor const&) const;
-    // virtual void canSee(Vec3 const&) const;
+    // virtual bool canSee(const Actor&) const;
+    // virtual void canSee(const Vec3&) const;
     // virtual bool isSkyLit(float);
     // virtual float getBrightness(float) const;
     // virtual void interactPreventDefault();
@@ -141,7 +141,7 @@ class Actor {
     // virtual bool isShootable() const;
     // virtual void setSneaking(bool) const;
     // virtual bool isBlocking() const;
-    // virtual bool isDamageBlocked(ActorDamageSource const&) const;
+    // virtual bool isDamageBlocked(const ActorDamageSource&) const;
     // virtual bool isAlive() const;
     // virtual bool isOnFire() const;
     // virtual bool isOnHotBlock() const;
@@ -171,15 +171,15 @@ class Actor {
     // virtual bool isJumping() const;
     // virtual bool isEnchanted() const;
     // virtual void rideJumped();
-    // virtual void rideLanded(Vec3 const&, Vec3 const&);
+    // virtual void rideLanded(const Vec3&, const Vec3&);
     // virtual bool shouldRender() const;
-    // virtual bool isInvulnerableTo(ActorDamageSource const&) const;
-    // virtual void* getBlockDamageCause(Block const&) const;
-    // virtual void actuallyHurt(int, ActorDamageSource const&, bool);
+    // virtual bool isInvulnerableTo(const ActorDamageSource&) const;
+    // virtual void* getBlockDamageCause(const Block&) const;
+    // virtual void actuallyHurt(int, const ActorDamageSource&, bool);
     // virtual void animateHurt();
     // virtual void doFireHurt(int);
     // virtual void onLightningHit();
-    // virtual void onBounceStarted(BlockPos const&, Block const&);
+    // virtual void onBounceStarted(const BlockPos&, const Block&);
     // virtual void feed(int);
     // virtual void handleEntityEvent(ActorEvent, int);
     // virtual float getPickRadius() const;
@@ -187,22 +187,22 @@ class Actor {
     // virtual void despawn();
     // virtual void killed(Actor&);
     // virtual void awardKillSource(Actor&, int);
-    // virtual void setArmor(ArmorSlot, ItemStack const&);
+    // virtual void setArmor(ArmorSlot, const ItemStack&);
     // virtual ItemStack* getArmor(ArmorSlot) const;
     // virtual MaterialType getArmorMaterialTypeInSlot(ArmorSlot) const;
     // virtual ArmorTextureType getArmorMaterialTextureTypeInSlot(ArmorSlot) const;
     // virtual void* getArmorColorInSlot(ArmorSlot, int) const;
     // virtual ItemStack* getEquippedSlot(EquipmentSlot) const;
-    // virtual void setEquippedSlot(EquipmentSlot, ItemStack const&);
+    // virtual void setEquippedSlot(EquipmentSlot, const ItemStack&);
     // virtual ItemStack* getCarriedItem() const;
-    // virtual void setCarriedItem(ItemStack const&);
-    // virtual void setOffhandSlot(ItemStack const&);
+    // virtual void setCarriedItem(const ItemStack&);
+    // virtual void setOffhandSlot(const ItemStack&);
     // virtual ItemStack* getEquippedTotem() const;
     // virtual void consumeTotem();
     // virtual void setOnFire(int);
     // virtual ActorType getEntityTypeId() const;
     // virtual AABB& getHandleWaterAABB() const;
-    // virtual void handleInsidePortal(BlockPos const&);
+    // virtual void handleInsidePortal(const BlockPos&);
     // virtual int getPortalCooldown() const;
     // virtual int getPortalWaitTime() const;
     // virtual int getDimensionId() const;
@@ -212,7 +212,7 @@ class Actor {
     // virtual void causeFallDamage(float);
     // virtual void handleFallDistanceOnServer(float, bool);
     // virtual bool canAddRider(Actor&) const;
-    // virtual bool canPickupItem(ItemStack const&) const;
+    // virtual bool canPickupItem(const ItemStack&) const;
     // virtual bool canBePulledIntoVehicle() const;
     // virtual bool inCaravan() const;
     // virtual bool isLeashableType() const;
@@ -221,28 +221,28 @@ class Actor {
     // virtual void startSwimming();
     // virtual void stopSwimming();
     // virtual void* getCommandPermissionLevel() const;
-    // virtual void* getMutableAttribute(Attribute const&);
-    // virtual void* getAttribute(Attribute const&) const;
+    // virtual void* getMutableAttribute(const Attribute&);
+    // virtual void* getAttribute(const Attribute&) const;
     // virtual int getDeathTime() const;
     // virtual void heal(int);
     // virtual bool isInvertedHealAndHarm() const;
     // virtual bool canBeAffected(int) const;
-    // virtual bool canBeAffected(MobEffectInstance const&) const;
-    // virtual bool canBeAffectedByArrow(MobEffectInstance const&) const;
+    // virtual bool canBeAffected(const MobEffectInstance&) const;
+    // virtual bool canBeAffectedByArrow(const MobEffectInstance&) const;
     // virtual void openContainerComponent(Player&);
     // virtual void swing();
     // virtual void useItem(ItemStackBase&, ItemUseMethod, bool);
     // virtual bool hasOutputSignal(unsigned char) const;
     // virtual int getOutputSignal() const;
     // virtual void* getMapDecorationRotation() const;
-    // virtual float getRiderYRotation(Actor const&) const;
+    // virtual float getRiderYRotation(const Actor&) const;
     // virtual float getYHeadRot() const;
     // virtual bool isWorldBuilder() const;
     // virtual bool isCreative() const;
     // virtual bool isAdventure() const;
     // virtual void add(ItemStack&);
-    // virtual void drop(ItemStack const&, bool);
-    // virtual bool canDestroyBlock(Block const&) const;
+    // virtual void drop(const ItemStack&, bool);
+    // virtual bool canDestroyBlock(const Block&) const;
     // virtual void setAuxValue(int);
     // virtual void setSize(float, float);
     // virtual int getLifeSpan() const;
@@ -253,7 +253,7 @@ class Actor {
     // virtual void setDamageNearbyMobs(bool);
     // virtual int getDeletionDelayTimeSeconds() const;
     // virtual void kill();
-    // virtual void die(ActorDamageSource const&);
+    // virtual void die(const ActorDamageSource&);
     // virtual bool shouldTick() const;
     // virtual void updateEntitySpecificMolangVariables(RenderParams&);
     // virtual bool shouldTryMakeStepSound();
@@ -261,7 +261,7 @@ class Actor {
     // virtual bool canMakeStepSound() const;
     // virtual bool outOfWorld();
     // virtual void markHurt();
-    // virtual void pushOutOfBlocks(Vec3 const&);
+    // virtual void pushOutOfBlocks(const Vec3&);
     // virtual void doWaterSplashEffect();
     // virtual void spawnTrailBubbles();
     // virtual LootTable* getLootTable();
@@ -284,7 +284,7 @@ class Actor {
     int getStructuralIntegrity() const;
     Level* getLevel() const;
     void setCameraDistance(float);
-    float distanceSqrToBlockPosCenter(BlockPos const&) const;
+    float distanceSqrToBlockPosCenter(const BlockPos&) const;
     void _setHeightOffset(float);
     bool hasTags() const;
     void setDoorOpener(bool);
@@ -292,8 +292,8 @@ class Actor {
     bool hasType(ActorType) const;
     void removeEffectNoUpdate(int);
     bool isInSnow() const;
-    bool canMate(Actor const&) const;
-    MobEffectInstance* getEffect(MobEffect const&) const;
+    bool canMate(const Actor&) const;
+    MobEffectInstance* getEffect(const MobEffect&) const;
     bool hasTickingArea() const;
     bool getIsOnScreen() const;
     bool isOverScaffolding() const;
@@ -311,14 +311,14 @@ class Actor {
     bool getStatusFlag(ActorFlags) const;
     bool isChested() const;
     bool isStackable() const;
-    bool isRider(Actor const&) const;
+    bool isRider(const Actor&) const;
     void setResting(bool);
     float getHealth() const;
     int getControllingSeat();
     bool isInsidePortal() const;
     bool hasTeleported() const;
     void moveRelative(float, float, float, float);
-    bool isRider(ActorUniqueID const&) const;
+    bool isRider(const ActorUniqueID&) const;
     void* getCurrentSwimAmount() const;
     BlockSource* getRegion() const;
     bool isTame() const;
@@ -337,9 +337,9 @@ class Actor {
     bool hasFishingHook() const;
     bool getChainedDamageEffects() const;
     bool isPacified() const;
-    float distanceTo(Actor const&) const;
+    float distanceTo(const Actor&) const;
     bool canCurrentlySwim() const;
-    bool hasFamily(HashedString const&) const;
+    bool hasFamily(const HashedString&) const;
     void setChainedDamageEffects(bool);
     bool hasPlayerRider() const;
     bool hasAttributeBuff(AttributeBuffType) const;
@@ -347,7 +347,7 @@ class Actor {
     bool isControlledByLocalInstance() const;
     void setColor(PaletteColor);
     bool isClimbing() const;
-    bool hasEffect(MobEffect const&) const;
+    bool hasEffect(const MobEffect&) const;
     void* getInterpolatedPosition(float) const;
     void setSkinID(int);
     bool hasAnyVisibleEffects() const;
@@ -359,7 +359,7 @@ class Actor {
     void setClimbing(bool);
     void setTempted(bool);
     bool isOrphan() const;
-    void dropTowards(ItemStack const&, Vec3);
+    void dropTowards(const ItemStack&, Vec3);
     bool isTrading() const;
     bool inDownwardFlowingLiquid() const;
     int getJumpDuration() const;
@@ -378,22 +378,22 @@ class Actor {
     bool isType(ActorType) const;
     bool isInWorld() const;
     bool isInLove() const;
-    void* getLocator(HashedString const&);
+    void* getLocator(const HashedString&);
     Player* getTradingPlayer() const;
     bool isDoorBreaker() const;
     bool isAutonomous() const;
     bool isWASDControlled();
     void setScared(bool);
     bool hasAnyEffects() const;
-    void setAABB(AABB const&);
+    void setAABB(const AABB&);
     bool isRiding() const;
     bool isDoorOpener() const;
     bool isSafeToSleepNear() const;
     TickingArea* getTickingArea();
-    void setBlockTarget(BlockPos const&);
+    void setBlockTarget(const BlockPos&);
     bool hasPersistingTrade() const;
     bool canClimb() const;
-    float distanceTo(Vec3 const&) const;
+    float distanceTo(const Vec3&) const;
     bool getTempted() const;
     void setBreakingObstruction(bool);
     Actor* getRide() const;
@@ -456,7 +456,7 @@ class Actor {
     bool isSwimming() const;
     short getAirSupply() const;
     float getCameraDistance();
-    void addEffect(MobEffectInstance const&);
+    void addEffect(const MobEffectInstance&);
     bool isMoving() const;
     float getVerticalSpeedInMetersPerSecond() const;
     bool isTrusting() const;
@@ -466,21 +466,21 @@ class Actor {
     float getRadius() const;
     bool isResting() const;
     void setSaddle(bool);
-    void hurt(ActorDamageSource const&, int, bool, bool);
+    void hurt(const ActorDamageSource&, int, bool, bool);
     template<typename Component> Component* tryGetComponent();
 };
 
 
 class ActorClassTree {
     public:
-    static bool hasCategory(ActorCategory const&, ActorCategory);
+    static bool hasCategory(const ActorCategory&, ActorCategory);
     static bool isTypeInstanceOf(ActorType, ActorType);
     static void* getEntityTypeIdLegacy(ActorType);
     static bool isMobLegacy(ActorType);
     static bool isOfType(ActorType, ActorType);
-    static bool isInstanceOf(Actor const&, ActorType);
+    static bool isInstanceOf(const Actor&, ActorType);
     static bool isMob(ActorType);
-    static bool isHangingEntity(Actor const&);
+    static bool isHangingEntity(const Actor&);
 };
 
 

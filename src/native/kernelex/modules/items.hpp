@@ -26,11 +26,11 @@ class ItemParamsModifier {
     bool dynamicFoodValues = false;
     ItemParamsModifier() {}
     void applyTo(int id);
-    static bool _anvilRepairDisable(ItemStackBase const&, ItemStackBase const&) {
+    static bool _anvilRepairDisable(const ItemStackBase&, const ItemStackBase&) {
         return false;
     }
     static int _getCooldownTimePatch(Item* item);
-    static int _getMaxUseDurationPatch(Item* item, ItemStackBase const* stack);
+    static int _getMaxUseDurationPatch(Item* item, const ItemStackBase* stack);
 };
 
 

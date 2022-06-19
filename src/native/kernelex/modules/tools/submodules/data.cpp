@@ -8,14 +8,14 @@
 #include "../module.hpp"
 
 
-float KEXToolsModule::LastDestroyedBlock::getOrCalculateSpeed(ItemStackBase const& stack, Block const& block, WeaponItem* item) {
+float KEXToolsModule::LastDestroyedBlock::getOrCalculateSpeed(const ItemStackBase& stack, const Block& block, WeaponItem* item) {
     if(x == calculatedForX && y == calculatedForY && z == calculatedForZ) {
         return destroySpeed;
     } else {
         calculatedForX = x;
         calculatedForY = y;
         calculatedForZ = z;
-        STATIC_SYMBOL(WeaponItem_getDestroySpeed, "_ZNK10WeaponItem15getDestroySpeedERK13ItemStackBaseRK5Block", (WeaponItem*, ItemStackBase const&, Block const&));
+        STATIC_SYMBOL(WeaponItem_getDestroySpeed, "_ZNK10WeaponItem15getDestroySpeedERK13ItemStackBaseRK5Block", (WeaponItem*, const ItemStackBase&, const Block&));
         void* output = WeaponItem_getDestroySpeed(item, stack, block);
         float result = *(float*)&output;
         float blockDestroyTime = block.legacy->getDestroySpeed();
@@ -27,14 +27,14 @@ float KEXToolsModule::LastDestroyedBlock::getOrCalculateSpeed(ItemStackBase cons
 }
 
 
-float KEXToolsModule::LastDestroyedBlock::getOrCalculateSpeed(ItemStackBase const& stack, Block const& block, DiggerItem* item) {
+float KEXToolsModule::LastDestroyedBlock::getOrCalculateSpeed(const ItemStackBase& stack, const Block& block, DiggerItem* item) {
     if(x == calculatedForX && y == calculatedForY && z == calculatedForZ) {
         return destroySpeed;
     } else {
         calculatedForX = x;
         calculatedForY = y;
         calculatedForZ = z;
-        STATIC_SYMBOL(DiggerItem_getDestroySpeed, "_ZNK10DiggerItem15getDestroySpeedERK13ItemStackBaseRK5Block", (DiggerItem*, ItemStackBase const&, Block const&));
+        STATIC_SYMBOL(DiggerItem_getDestroySpeed, "_ZNK10DiggerItem15getDestroySpeedERK13ItemStackBaseRK5Block", (DiggerItem*, const ItemStackBase&, const Block&));
         void* output = DiggerItem_getDestroySpeed(item, stack, block);
         float result = *(float*)&output;
         int staticId = IdConversion::dynamicToStatic(block.legacy->id, IdConversion::BLOCK);

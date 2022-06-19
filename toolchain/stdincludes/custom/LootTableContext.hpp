@@ -25,19 +25,19 @@
 class LootTableContext {
     public:
     char filler[56];
-    LootTableContext(float, Level*, Actor*, Player*, ActorDamageSource const*, float);
+    LootTableContext(float, Level*, Actor*, Player*, const ActorDamageSource*, float);
     Actor* getThisEntity() const;
     std::__ndk1::string getOriginalItemName() const;
-    void removeVisitedTable(LootTable const*);
+    void removeVisitedTable(const LootTable*);
     Level* getLevel() const;
     float getExplosionRadius() const;
     float getLuck() const;
     Player* getKillerPlayer() const;
-    void addVisitedTable(LootTable const*);
+    void addVisitedTable(const LootTable*);
     Actor* getKillerPet() const;
     Actor* getKillerEntity() const;
     ActorDamageSource* getDeathSource() const;
-    void setOriginalItemName(std::__ndk1::string const&);
+    void setOriginalItemName(const std::__ndk1::string&);
     Actor* getEntity(ActorTarget) const;
     class Builder {
         public:
@@ -49,7 +49,7 @@ class LootTableContext {
         void withOriginalItemName(std::__ndk1::string&);
         void withKillerPlayer(Player*);
         LootTableContext create() const;
-        void withDeathSource(ActorDamageSource const*);
+        void withDeathSource(const ActorDamageSource*);
     };
 };
 

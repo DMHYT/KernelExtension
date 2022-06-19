@@ -6,27 +6,27 @@
 
 class ServerPlayer : public Player {
     public:
-    // virtual void initializeComponents(Actor::InitializationMethod, VariantParameterList const&);
+    // virtual void initializeComponents(Actor::InitializationMethod, const VariantParameterList&);
     // virtual void _serverInitItemStackIds();
     // virtual void normalTick();
     // virtual bool isValidTarget(Actor*) const;
     // virtual void handleEntityEvent(ActorEvent, int);
-    // virtual void setArmor(ArmorSlot, ItemStack const&);
-    // virtual void setOffhandSlot(ItemStack const&);
-    // virtual void load(CompoundTag const&, DataLoadHelper&);
+    // virtual void setArmor(ArmorSlot, const ItemStack&);
+    // virtual void setOffhandSlot(const ItemStack&);
+    // virtual void load(const CompoundTag&, DataLoadHelper&);
     // virtual bool canChangeDimensions() const;
     // virtual void changeDimension(AutomaticID<Dimension, int>, bool);
     // virtual void* getControllingPlayer() const;
     // virtual void checkFallDamage(float, bool);
     // virtual void handleFallDistanceOnServer(float, bool);
     // virtual void onEffectAdded(MobEffectInstance&);
-    // virtual void onEffectUpdated(MobEffectInstance const&);
+    // virtual void onEffectUpdated(const MobEffectInstance&);
     // virtual void onEffectRemoved(MobEffectInstance&);
-    // virtual void die(ActorDamageSource const&);
+    // virtual void die(const ActorDamageSource&);
     // virtual void knockback(Actor*, int, float, float, float, float, float);
     // virtual void aiStep();
-    // virtual void hurtArmor(ActorDamageSource const&, int);
-    // virtual void setDamagedArmor(ArmorSlot, ItemStack const&);
+    // virtual void hurtArmor(const ActorDamageSource&, int);
+    // virtual void setDamagedArmor(ArmorSlot, const ItemStack&);
     // virtual void sendArmorDamage(std::__ndk1::bitset<4u> const&);
     // virtual void sendArmor(std::__ndk1::bitset<4u> const&);
     // virtual void clearVanishEnchantedItemsOnDeath();
@@ -36,27 +36,27 @@ class ServerPlayer : public Player {
     // virtual void suspendRegion();
     // virtual void resendAllChunks();
     // virtual void changeDimensionWithCredits(AutomaticID<Dimension, int>);
-    // virtual void tickWorld(Tick const&);
+    // virtual void tickWorld(const Tick&);
     // virtual void frameUpdate(FrameUpdateContextBase&);
-    // virtual void checkMovementStats(Vec3 const&);
+    // virtual void checkMovementStats(const Vec3&);
     // virtual void setPermissions(CommandPermissionLevel);
     // virtual void openPortfolio();
-    // virtual void openTrading(ActorUniqueID const&, bool);
+    // virtual void openTrading(const ActorUniqueID&, bool);
     // virtual void openNpcInteractScreen(Actor&);
     // virtual void openInventory();
-    // virtual void displayTextObjectMessage(TextObjectRoot const&);
-    // virtual void displayTextObjectWhisperMessage(ResolvedTextObject const&, std::__ndk1::string const&, std::__ndk1::string const&);
-    // virtual void displayWhisperMessage(std::__ndk1::string const&, std::__ndk1::string const&, std::__ndk1::string const&, std::__ndk1::string const&);
+    // virtual void displayTextObjectMessage(const TextObjectRoot&);
+    // virtual void displayTextObjectWhisperMessage(const ResolvedTextObject&, const std::__ndk1::string&, const std::__ndk1::string&);
+    // virtual void displayWhisperMessage(const std::__ndk1::string&, const std::__ndk1::string&, const std::__ndk1::string&, const std::__ndk1::string&);
     // virtual void stopSleepInBed(bool, bool);
     // virtual bool isHostingPlayer() const;
     // virtual bool isLoading() const;
     // virtual bool isPlayerInitialized() const;
     // virtual void setPlayerGameType(GameType);
-    // virtual bool isEntityRelevant(Actor const&);
+    // virtual bool isEntityRelevant(const Actor&);
     // virtual bool isTeacher() const;
     // virtual void onSuspension();
     // virtual void onLinkedSlotsChanged();
-    // virtual void* sendInventoryTransaction(InventoryTransaction const&) const;
+    // virtual void* sendInventoryTransaction(const InventoryTransaction&) const;
     // virtual void* sendComplexInventoryTransaction(std::__ndk1::unique_ptr<ComplexInventoryTransaction>) const;
     // virtual void* sendNetworkPacket(Packet&) const;
     // virtual PlayerEventCoordinator* getPlayerEventCoordinator() const;
@@ -64,7 +64,7 @@ class ServerPlayer : public Player {
     // virtual InputMode getInputMode();
     // virtual int getPlayMode();
     // virtual void reportMovementTelemetry(MovementEventType);
-    void handleActorPickRequestOnServer(Actor const&, bool);
+    void handleActorPickRequestOnServer(const Actor&, bool);
     void* getItemStackNetManagerServer();
     InventoryMenu* getInventoryMenu();
     void _updateNearbyActors();
@@ -74,9 +74,9 @@ class ServerPlayer : public Player {
     int _getViewDistanceDeterminismBufferRadius() const;
     int _getReadOnlyChunkCount();
     void* findClientChunkRadius(unsigned int) const;
-    void updateChunkPublisherView(Vec3 const&, float);
+    void updateChunkPublisherView(const Vec3&, float);
     void postLoad(bool);
-    void checkCheating(Vec3 const&);
+    void checkCheating(const Vec3&);
     void sendMobEffectPackets();
     ServerMoveInputHandler* getServerMoveInputHandler();
     void setClientChunkRadius(unsigned int);
@@ -86,8 +86,8 @@ class ServerPlayer : public Player {
     ServerPlayerEventCoordinator* _getServerPlayerEventCoordinator();
     void triggerRespawnFromCompletingTheEnd();
     void recoverR5LostInventoryAndXP();
-    void selectItem(ItemStack const&);
-    void setPlayMode(ClientPlayMode const&);
+    void selectItem(const ItemStack&);
+    void setPlayMode(const ClientPlayMode&);
     void* getItemStackNetManagerServer() const;
     void initiateContainerClose();
     void doDeleteContainerManager(bool);
@@ -96,7 +96,7 @@ class ServerPlayer : public Player {
     void openUnmanagedContainer();
     void setTeacher();
     void setLostDataTag(std::__ndk1::unique_ptr<CompoundTag>);
-    void setInputMode(InputMode const&);
+    void setInputMode(const InputMode&);
 };
 
 

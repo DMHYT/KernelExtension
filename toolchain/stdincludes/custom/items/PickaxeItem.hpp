@@ -6,10 +6,10 @@
 
 class PickaxeItem : public DiggerItem {
     public:
-    // virtual bool canDestroySpecial(Block const&) const;
+    // virtual bool canDestroySpecial(const Block&) const;
     // virtual void* getEnchantSlot() const;
-    // virtual float getDestroySpeed(ItemStackBase const&, Block const&) const;
-    PickaxeItem(std::__ndk1::string const&, int, Item::Tier const&);
+    // virtual float getDestroySpeed(const ItemStackBase&, const Block&) const;
+    PickaxeItem(const std::__ndk1::string&, int, const Item::Tier&);
 };
 
 

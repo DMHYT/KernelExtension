@@ -37,7 +37,7 @@ void KEXToolInteractionsModule::initialize() {
             return true; \
         }
 
-    HookManager::addCallback(SYMBOL("mcpe", "_ZNK21ActorHasEquipmentTest8evaluateERK13FilterContext"), LAMBDA((HookManager::CallbackController* controller, ActorHasEquipmentTest* test, FilterContext const& ctx), {
+    HookManager::addCallback(SYMBOL("mcpe", "_ZNK21ActorHasEquipmentTest8evaluateERK13FilterContext"), LAMBDA((HookManager::CallbackController* controller, ActorHasEquipmentTest* test, const FilterContext& ctx), {
         int dynamicTestId = test->id;
         int testId = IdConversion::dynamicToStatic(dynamicTestId, IdConversion::ITEM);
         if(testId == 359) { // for custom shears to shear sheep, snowmen, mooshrooms etc.
@@ -47,8 +47,8 @@ void KEXToolInteractionsModule::initialize() {
         }
     }, ), HookManager::CALL | HookManager::LISTENER | HookManager::CONTROLLER | HookManager::RESULT);
 
-    HookManager::addCallback(SYMBOL("mcpe", "_ZNK13ItemStackBase10isInstanceERK12HashedStringb"), LAMBDA((HookManager::CallbackController* controller, ItemStackBase* stack, HashedString const& str), {
-        std::__ndk1::string const& cppstr = str.getString();
+    HookManager::addCallback(SYMBOL("mcpe", "_ZNK13ItemStackBase10isInstanceERK12HashedStringb"), LAMBDA((HookManager::CallbackController* controller, ItemStackBase* stack, const HashedString& str), {
+        const std::__ndk1::string& cppstr = str.getString();
         if(cppstr == "shears") { // for custom shears to carve pumpkins, gather honey from beehives etc.
             IS_INSTANCE_REPLACER(359, isShears)
         } else if(cppstr == "flint_and_steel") { // for custom flint&steel's to lit campfires

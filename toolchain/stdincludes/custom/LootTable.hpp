@@ -33,14 +33,14 @@ class LootTable {
 
 class LootTables {
     public:
-    LootTable* lookupByName(std::__ndk1::string const&, ResourcePackManager&);
+    LootTable* lookupByName(const std::__ndk1::string&, ResourcePackManager&);
 };
 
 class Util {
     public:
     class LootTableUtils {
         public:
-        static void fillContainer(Level&, Container&, Random&, std::__ndk1::string const&, Actor*);
+        static void fillContainer(Level&, Container&, Random&, const std::__ndk1::string&, Actor*);
     };
 };
 

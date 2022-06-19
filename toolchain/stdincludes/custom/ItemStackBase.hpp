@@ -22,23 +22,23 @@ class ItemStackBase {
     public:
     char filler[96];
     // virtual void setNull(); // pure virtual
-    // virtual std::__ndk1::string const& toString(); // pure virtual
-    // virtual std::__ndk1::string const& toDebugString(); // pure virtual
-    ItemStackBase(Block const&, int, CompoundTag const*);
-    ItemStackBase(BlockLegacy const&, int, short);
-    ItemStackBase(ItemStackBase const&);
-    ItemStackBase(Item const&);
-    ItemStackBase(Item const&, int, int);
-    ItemStackBase(Item const&, int, int, CompoundTag const*);
+    // virtual const std::__ndk1::string& toString(); // pure virtual
+    // virtual const std::__ndk1::string& toDebugString(); // pure virtual
+    ItemStackBase(const Block&, int, const CompoundTag*);
+    ItemStackBase(const BlockLegacy&, int, short);
+    ItemStackBase(const ItemStackBase&);
+    ItemStackBase(const Item&);
+    ItemStackBase(const Item&, int, int);
+    ItemStackBase(const Item&, int, int, const CompoundTag*);
     ItemStackBase();
-    ItemStackBase(Item const&, int);
+    ItemStackBase(const Item&, int);
     short getMaxDamage() const;
     bool isBlock() const;
     Item* getItem() const;
     bool isNull() const;
     int getId() const;
     short getDamageValue() const;
-    ItemStackBase& operator=(ItemStackBase const&);
+    ItemStackBase& operator=(const ItemStackBase&);
     ~ItemStackBase();
     void hurtAndBreak(int, Actor*);
 };

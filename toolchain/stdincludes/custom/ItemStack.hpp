@@ -23,20 +23,20 @@ class CompoundTag;
 
 class ItemStack : public ItemStackBase {
     public:
-    // virtual void reinit(Item const&, int, int);
-    // virtual void reinit(BlockLegacy const&, int);
+    // virtual void reinit(const Item&, int, int);
+    // virtual void reinit(const BlockLegacy&, int);
     // here these three pure virtual methods are overloaded
     // virtual void setNull();
-    // virtual std::__ndk1::string const& toString() const;
-    // virtual std::__ndk1::string const& toDebugString() const;
-    ItemStack(ItemInstance const&);
-    ItemStack(Block const&, int, CompoundTag const*);
-    ItemStack(ItemStack const&);
-    ItemStack(Item const&, int);
-    ItemStack(Item const&, int, int);
-    ItemStack(BlockLegacy const&, int);
+    // virtual const std::__ndk1::string& toString() const;
+    // virtual const std::__ndk1::string& toDebugString() const;
+    ItemStack(const ItemInstance&);
+    ItemStack(const Block&, int, const CompoundTag*);
+    ItemStack(const ItemStack&);
+    ItemStack(const Item&, int);
+    ItemStack(const Item&, int, int);
+    ItemStack(const BlockLegacy&, int);
     ItemStack();
-    ItemStack& operator=(ItemStack const&);
+    ItemStack& operator=(const ItemStack&);
 };
 
 

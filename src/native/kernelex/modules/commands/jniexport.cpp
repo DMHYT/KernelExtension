@@ -75,9 +75,9 @@ extern "C" {
             } else if(paramType == 12) {
                 vec->push_back(commands::mandatory<CommandParameterDataType::ENUM, KEXCommandRegistry::KEXAPICommand, CommandItem>(fieldOffset, cParamName, cEnumName, isSetOffset));
             } else if(paramType == 13) {
-                vec->push_back(commands::mandatory<CommandParameterDataType::ENUM, KEXCommandRegistry::KEXAPICommand, Block const*>(fieldOffset, cParamName, cEnumName, isSetOffset));
+                vec->push_back(commands::mandatory<CommandParameterDataType::ENUM, KEXCommandRegistry::KEXAPICommand, const Block*>(fieldOffset, cParamName, cEnumName, isSetOffset));
             } else if(paramType == 14) {
-                vec->push_back(commands::mandatory<CommandParameterDataType::ENUM, KEXCommandRegistry::KEXAPICommand, MobEffect const*>(fieldOffset, cParamName, cEnumName, isSetOffset));
+                vec->push_back(commands::mandatory<CommandParameterDataType::ENUM, KEXCommandRegistry::KEXAPICommand, const MobEffect*>(fieldOffset, cParamName, cEnumName, isSetOffset));
             }
         } else {
             if(paramType == 0 || paramType == 15) {
@@ -111,9 +111,9 @@ extern "C" {
             } else if(paramType == 12) {
                 vec->push_back(commands::optional<CommandParameterDataType::ENUM, KEXCommandRegistry::KEXAPICommand, CommandItem>(fieldOffset, cParamName, cEnumName, isSetOffset));
             } else if(paramType == 13) {
-                vec->push_back(commands::optional<CommandParameterDataType::ENUM, KEXCommandRegistry::KEXAPICommand, Block const*>(fieldOffset, cParamName, cEnumName, isSetOffset));
+                vec->push_back(commands::optional<CommandParameterDataType::ENUM, KEXCommandRegistry::KEXAPICommand, const Block*>(fieldOffset, cParamName, cEnumName, isSetOffset));
             } else if(paramType == 14) {
-                vec->push_back(commands::optional<CommandParameterDataType::ENUM, KEXCommandRegistry::KEXAPICommand, MobEffect const*>(fieldOffset, cParamName, cEnumName, isSetOffset));
+                vec->push_back(commands::optional<CommandParameterDataType::ENUM, KEXCommandRegistry::KEXAPICommand, const MobEffect*>(fieldOffset, cParamName, cEnumName, isSetOffset));
             }
         }
         env->ReleaseStringUTFChars(paramName, cParamName);

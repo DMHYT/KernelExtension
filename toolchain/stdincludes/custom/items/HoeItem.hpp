@@ -6,9 +6,9 @@
 
 class HoeItem : public DiggerItem {
     public:
-    // virtual void* executeEvent(ItemStackBase&, std::__ndk1::string const&, RenderParams&) const;
+    // virtual void* executeEvent(ItemStackBase&, const std::__ndk1::string&, RenderParams&) const;
     // virtual void* getEnchantSlot() const;
-    HoeItem(std::__ndk1::string const&, int, Item::Tier const&);
+    HoeItem(const std::__ndk1::string&, int, const Item::Tier&);
 };
 
 

@@ -9,11 +9,11 @@ class FlintAndSteelItem : public Item {
     char extraFiller[212]; // 512
     // virtual bool isDestructive(int) const;
     // virtual int getEnchantSlot() const;
-    // virtual void* dispense(BlockSource&, Container&, int, Vec3 const&, unsigned char) const;
+    // virtual void* dispense(BlockSource&, Container&, int, const Vec3&, unsigned char) const;
     // virtual void* hurtActor(ItemStack&, Actor&, Mob&) const;
     // virtual void* _calculatePlacePos(ItemStackBase&, Actor&, unsigned char&, BlockPos&) const;
     // virtual void* _useOn(ItemStack&, Actor&, BlockPos, unsigned char, float, float, float) const;
-    FlintAndSteelItem(std::__ndk1::string const&, int);
+    FlintAndSteelItem(const std::__ndk1::string&, int);
 };
 
 

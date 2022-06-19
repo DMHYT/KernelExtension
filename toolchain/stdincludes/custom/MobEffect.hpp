@@ -22,9 +22,9 @@ class MobEffect {
     // virtual void removeEffects(Actor*);
     // virtual MobEffectInstance* applyInstantaneousEffect(Actor*, Actor*, Actor*, int, float) const;
     // virtual bool isInstantaneous() const;
-    // virtual float getAttributeModifierValue(int, AttributeModifier const&) const;
+    // virtual float getAttributeModifierValue(int, const AttributeModifier&) const;
     static void shutdownEffects();
-    void* _createTemporalBuff(AttributeBuff const&, int, int) const;
+    void* _createTemporalBuff(const AttributeBuff&, int, int) const;
     void clearTemporalBuffs();
     void* getComponentName() const;
     void* getColor() const;
@@ -38,14 +38,14 @@ class MobEffect {
     bool isDisabled() const;
     void* viewAttributeModifiers() const;
     unsigned int getId() const;
-    void* createInstantBuff(AttributeBuff const&, int, float) const;
+    void* createInstantBuff(const AttributeBuff&, int, float) const;
     //setValueAmplifier
     void* getDurationModifier() const;
     void* getIconName() const;
     bool hasIcon() const;
-    void* formatDuration(MobEffectInstance const*);
+    void* formatDuration(const MobEffectInstance*);
     void initEffects(ResourcePackManager*);
-    void* _createAttributeModifier(AttributeModifier const&, int) const;
+    void* _createAttributeModifier(const AttributeModifier&, int) const;
     //getByName
     bool isHarmful() const;
     void* getResourceName() const;

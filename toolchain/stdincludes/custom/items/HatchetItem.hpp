@@ -6,10 +6,10 @@
 
 class HatchetItem : public DiggerItem {
     public:
-    // virtual void* executeEvent(std::__ndk1::string const&, RenderParams&) const;
+    // virtual void* executeEvent(const std::__ndk1::string&, RenderParams&) const;
     // virtual void* getEnchantSlot() const;
-    // virtual float getDestroySpeed(ItemStackBase const&, Block const&) const;
-    HatchetItem(std::__ndk1::string const&, int, Item::Tier const&);
+    // virtual float getDestroySpeed(const ItemStackBase&, const Block&) const;
+    HatchetItem(const std::__ndk1::string&, int, const Item::Tier&);
 };
 
 

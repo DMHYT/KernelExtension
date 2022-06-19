@@ -7,14 +7,14 @@
 class ShearsItem : public Item {
     public:
     char extraFiller[212]; // 512
-    // virtual bool canDestroySpecial(Block const&) const;
+    // virtual bool canDestroySpecial(const Block&) const;
     // virtual void* getEnchantSlot() const;
-    // virtual void* dispense(BlockSource&, Container&, int, Vec3 const&, unsigned char) const;
-    // virtual float getDestroySpeed(ItemStackBase const&, Block const&) const;
+    // virtual void* dispense(BlockSource&, Container&, int, const Vec3&, unsigned char) const;
+    // virtual float getDestroySpeed(const ItemStackBase&, const Block&) const;
     // virtual bool hurtActor(ItemStack&, Actor&, Mob&) const;
-    // virtual bool mineBlock(ItemStack&, Block const&, int, int, int, Actor*) const;
+    // virtual bool mineBlock(ItemStack&, const Block&, int, int, int, Actor*) const;
     // virtual void* _useOn(ItemStack&, Actor&, BlockPos, unsigned char, float, float, float) const;
-    ShearsItem(std::__ndk1::string const&, int);
+    ShearsItem(const std::__ndk1::string&, int);
 };
 
 

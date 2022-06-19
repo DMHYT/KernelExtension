@@ -8,18 +8,18 @@ class WeaponItem : public Item {
     public:
     int attackDamage; // 304
     char extraFiller[208]; // 512
-    // virtual bool canDestroySpecial(Block const&) const;
+    // virtual bool canDestroySpecial(const Block&) const;
     // virtual int getAttackDamage() const;
     // virtual bool isHandEquipped() const;
     // virtual bool canDestroyInCreative() const;
-    // virtual void* appendFormattedHovertext(ItemStackBase const&, Level&, std::__ndk1::string&, bool) const;
-    // virtual bool isValidRepairItem(ItemStackBase const&, ItemStackBase const&) const;
+    // virtual void* appendFormattedHovertext(const ItemStackBase&, Level&, std::__ndk1::string&, bool) const;
+    // virtual bool isValidRepairItem(const ItemStackBase&, const ItemStackBase&) const;
     // virtual void* getEnchantSlot() const;
     // virtual int getEnchantValue() const;
     // virtual void* use(ItemStack&, Player&) const;
-    // virtual float getDestroySpeed(ItemStackBase const&, Block const&) const;
+    // virtual float getDestroySpeed(const ItemStackBase&, const Block&) const;
     // virtual bool hurtActor(ItemStack&, Actor&, Mob&) const;
-    WeaponItem(std::__ndk1::string const&, int, Item::Tier const&);
+    WeaponItem(const std::__ndk1::string&, int, const Item::Tier&);
 };
 
 

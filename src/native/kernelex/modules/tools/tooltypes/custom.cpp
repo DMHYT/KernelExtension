@@ -17,7 +17,7 @@ void CustomToolFactory::registerItem() {
             WeaponItem* registeredItem = ItemRegistry::registerItemFixed<WeaponItem>(new CustomToolProvider(this), IdConversion::staticToDynamic(id, IdConversion::ITEM), nameId, *tier);
             registeredItem->attackDamage = baseAttackDamage + tier->getAttackDamageBonus();
         } else {
-            std::__ndk1::vector<Block const*> blocks;
+            std::__ndk1::vector<const Block*> blocks;
             ItemRegistry::registerItemFixed<DiggerItem>(new CustomToolProvider(this), IdConversion::staticToDynamic(id, IdConversion::ITEM), nameId, baseAttackDamage, *tier, blocks);
         }
     }

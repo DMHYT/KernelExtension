@@ -16,7 +16,7 @@ class CommandMessage {
     };
     std::__ndk1::vector<MessageComponent> components; // 12
     CommandMessage();
-    std::__ndk1::string getMessage(CommandOrigin const&) const;
+    std::__ndk1::string getMessage(const CommandOrigin&) const;
 };
 
 

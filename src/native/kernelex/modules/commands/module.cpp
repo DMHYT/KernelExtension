@@ -14,7 +14,7 @@ class KEXTestCommand : public Command {
     public:
     char extraFiller[992]; // 1024
     KEXTestCommand(): Command() {}
-    virtual void execute(CommandOrigin const& origin, CommandOutput& output) const {
+    virtual void execute(const CommandOrigin& origin, CommandOutput& output) const {
         Logger::debug("KEX", "CALLED KEXTEST COMMAND!!!");
     }
 };
@@ -34,8 +34,8 @@ class KEXTestCommandFactory : public KEXCommandRegistry::NativeCommandFactoryBas
             commands::mandatory<CommandParameterDataType::ENUM, KEXTestCommand, int>(568, "customEnum", "KEXTestEnum", -1),
             commands::mandatory<KEXTestCommand, CommandSelector<Actor>>(280, "actor", -1),
             commands::mandatory<KEXTestCommand, CommandSelector<Player>>(420, "player", -1),
-            commands::mandatory<CommandParameterDataType::ENUM, KEXTestCommand, Block const*>(560, "block", "Block", -1),
-            commands::mandatory<CommandParameterDataType::ENUM, KEXTestCommand, MobEffect const*>(564, "effect", "Effect", -1),
+            commands::mandatory<CommandParameterDataType::ENUM, KEXTestCommand, const Block*>(560, "block", "Block", -1),
+            commands::mandatory<CommandParameterDataType::ENUM, KEXTestCommand, const MobEffect*>(564, "effect", "Effect", -1),
             commands::mandatory<KEXTestCommand, int>(256, "int", -1),
             commands::mandatory<KEXTestCommand, float>(260, "float", -1),
             commands::mandatory<CommandParameterDataType::ENUM, KEXTestCommand, bool>(268, "bool", "Boolean", -1),
@@ -115,14 +115,14 @@ Command* KEXCommandsModule::onCreateAPICommand(CommandRegistry* registry, const 
 
 void KEXCommandsModule::initialize() {
     DLHandleManager::initializeHandle("libminecraftpe.so", "mcpe");
-    // CommandMessage, std::__ndk1::string, bool, float, int, CommandSelector<Actor>, CommandSelector<Player>, CommandPosition, CommandPositionFloat, Json::Value, std::__ndk1::unique_ptr<Command>, RelativeFloat, Block const*, MobEffect const*, CommandItem, WildcardCommandSelector<Actor>, ActorDefinitionIdentifier const*
+    // CommandMessage, std::__ndk1::string, bool, float, int, CommandSelector<Actor>, CommandSelector<Player>, CommandPosition, CommandPositionFloat, Json::Value, std::__ndk1::unique_ptr<Command>, RelativeFloat, const Block*, const MobEffect*, CommandItem, WildcardCommandSelector<Actor>, const ActorDefinitionIdentifier*
     HookManager::addCallback(SYMBOL("mcpe", "_ZN14ServerCommands19setupStandardServerER9MinecraftRKNSt6__ndk112basic_stringIcNS2_11char_traitsIcEENS2_9allocatorIcEEEESA_P15PermissionsFile"), LAMBDA((Minecraft* mc), {
         CommandRegistry* registry = mc->getCommands()->getRegistry();
         if(registry != nullptr) {
             setupCustom(*registry);
         }
     }, ), HookManager::RETURN | HookManager::LISTENER);
-    HookManager::addCallback(SYMBOL("mcpe", "_ZNK15CommandRegistry13createCommandERKNS_10ParseTokenERK13CommandOriginiRNSt6__ndk112basic_stringIcNS6_11char_traitsIcEENS6_9allocatorIcEEEERNS6_6vectorISC_NSA_ISC_EEEE"), LAMBDA((HookManager::CallbackController* controller, Command** result, CommandRegistry* registry, CommandRegistry::ParseToken const& token, CommandOrigin const& origin, int version, std::__ndk1::string& str, std::__ndk1::vector<std::__ndk1::string>& strvec), {
+    HookManager::addCallback(SYMBOL("mcpe", "_ZNK15CommandRegistry13createCommandERKNS_10ParseTokenERK13CommandOriginiRNSt6__ndk112basic_stringIcNS6_11char_traitsIcEENS6_9allocatorIcEEEERNS6_6vectorISC_NSA_ISC_EEEE"), LAMBDA((HookManager::CallbackController* controller, Command** result, CommandRegistry* registry, const CommandRegistry::ParseToken& token, const CommandOrigin& origin, int version, std::__ndk1::string& str, std::__ndk1::vector<std::__ndk1::string>& strvec), {
         auto found = KEXCommandRegistry::registeredFactories.find(token.child->toString().c_str());
         if(found != KEXCommandRegistry::registeredFactories.end() && !found->second->isNative()) {
             controller->prevent();

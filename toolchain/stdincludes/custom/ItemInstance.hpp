@@ -9,8 +9,8 @@
 class ItemInstance : public ItemStackBase {
     public:
     char filler[88];
-    ItemInstance(ItemStackBase const&);
-    ItemInstance& operator=(ItemInstance const&);
+    ItemInstance(const ItemStackBase&);
+    ItemInstance& operator=(const ItemInstance&);
 };
 
 

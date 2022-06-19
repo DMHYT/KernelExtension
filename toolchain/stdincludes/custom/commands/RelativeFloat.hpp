@@ -9,9 +9,7 @@ class RelativeFloat {
     RelativeFloat(float value): value(value), isRelative(true) {}
     RelativeFloat(float, bool);
     RelativeFloat();
-    inline float getFloat(float center) const {
-        return isRelative ? center + value : value;
-    }
+    float getFloat(float center) const;
 };
 
 

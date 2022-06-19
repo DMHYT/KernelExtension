@@ -24,18 +24,18 @@ class CommandOutputParameter {
     public:
     std::__ndk1::string _text; // 12
     int _count; // 16
-    CommandOutputParameter(std::__ndk1::vector<Actor const*> const&);
-    CommandOutputParameter(Actor const&);
+    CommandOutputParameter(std::__ndk1::vector<const Actor*> const&);
+    CommandOutputParameter(const Actor&);
     CommandOutputParameter(bool);
     CommandOutputParameter(float);
     CommandOutputParameter(int);
     CommandOutputParameter(std::__ndk1::vector<std::__ndk1::string> const&);
-    CommandOutputParameter(Actor const*);
+    CommandOutputParameter(const Actor*);
     CommandOutputParameter(Vec3);
     CommandOutputParameter(const char*);
-    CommandOutputParameter(std::__ndk1::string const&, int);
-    CommandOutputParameter(std::__ndk1::string const&);
-    CommandOutputParameter(std::__ndk1::vector<Player const*> const&);
+    CommandOutputParameter(const std::__ndk1::string&, int);
+    CommandOutputParameter(const std::__ndk1::string&);
+    CommandOutputParameter(std::__ndk1::vector<const Player*> const&);
     CommandOutputParameter(BlockPos);
     std::__ndk1::string getText() const;
     int count() const;
@@ -47,11 +47,11 @@ class CommandOutput {
     bool empty() const;
     bool wantsData() const;
     CommandOutputType getType() const;
-    void addToResultList(std::__ndk1::string const&, std::__ndk1::string const&);
-    void addToResultList(std::__ndk1::string const&, Actor const&);
-    void success(std::__ndk1::string const&, std::__ndk1::vector<CommandOutputParameter> const&);
+    void addToResultList(const std::__ndk1::string&, const std::__ndk1::string&);
+    void addToResultList(const std::__ndk1::string&, const Actor&);
+    void success(const std::__ndk1::string&, std::__ndk1::vector<CommandOutputParameter> const&);
     void success();
-    void error(std::__ndk1::string const&, std::__ndk1::vector<CommandOutputParameter> const&);
+    void error(const std::__ndk1::string&, std::__ndk1::vector<CommandOutputParameter> const&);
 };
 
 

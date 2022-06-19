@@ -52,8 +52,8 @@ class KEXToolsModule : public Module {
         int calculatedForY = 0;
         int calculatedForZ = 0;
         LastDestroyedBlock() {};
-        float getOrCalculateSpeed(ItemStackBase const&, Block const&, WeaponItem*);
-        float getOrCalculateSpeed(ItemStackBase const&, Block const&, DiggerItem*);
+        float getOrCalculateSpeed(const ItemStackBase&, const Block&, WeaponItem*);
+        float getOrCalculateSpeed(const ItemStackBase&, const Block&, DiggerItem*);
         inline void onEvent(int xIn, int yIn, int zIn, unsigned char sideIn) {
             x = xIn, y = yIn, z = zIn, side = sideIn;
         }
@@ -81,17 +81,17 @@ class KEXToolsModule : public Module {
     };
     class CustomToolPatches {
         public:
-        static inline float diggerGetDestroySpeed(DiggerItem* _this, ItemStackBase const& stack, Block const& block) {
+        static inline float diggerGetDestroySpeed(DiggerItem* _this, const ItemStackBase& stack, const Block& block) {
             return KEXToolsModule::Data::lastClient->getOrCalculateSpeed(stack, block, _this);
         }
-        static inline float weaponGetDestroySpeed(WeaponItem* _this, ItemStackBase const& stack, Block const& block) {
+        static inline float weaponGetDestroySpeed(WeaponItem* _this, const ItemStackBase& stack, const Block& block) {
             return KEXToolsModule::Data::lastClient->getOrCalculateSpeed(stack, block, _this);
         }
         static inline bool hurtActor(Item*, ItemStack&, Actor&, Mob&) { return true; }
-        static inline bool mineBlock__instance(Item*, ItemInstance&, Block const&, int, int, int, Actor*) { return true; }
-        static inline bool mineBlock__stack(Item*, ItemStack&, Block const&, int, int, int, Actor*) { return true; }
-        static void appendFormattedHovertext(Item*, ItemStackBase const&, Level&, std::__ndk1::string&, bool);
-        static float _shearsTieredGetDestroySpeed(ShearsItem*, ItemStackBase const&, Block const&);
+        static inline bool mineBlock__instance(Item*, ItemInstance&, const Block&, int, int, int, Actor*) { return true; }
+        static inline bool mineBlock__stack(Item*, ItemStack&, const Block&, int, int, int, Actor*) { return true; }
+        static void appendFormattedHovertext(Item*, const ItemStackBase&, Level&, std::__ndk1::string&, bool);
+        static float _shearsTieredGetDestroySpeed(ShearsItem*, const ItemStackBase&, const Block&);
     };
     KEXToolsModule(Module* parent): Module(parent, "kex.tools") {};
     virtual void initialize();

@@ -6,11 +6,11 @@
 
 class ShovelItem : public DiggerItem {
     public:
-    // virtual void* executeEvent(ItemStackBase&, std::__ndk1::string const&, RenderParams&) const;
-    // virtual bool canDestroySpecial(Block const&) const;
+    // virtual void* executeEvent(ItemStackBase&, const std::__ndk1::string&, RenderParams&) const;
+    // virtual bool canDestroySpecial(const Block&) const;
     // virtual void* getEnchantSlot() const;
     // virtual void* _useOn(ItemStack&, Actor&, BlockPos, unsigned char, float, float, float) const;
-    ShovelItem(std::__ndk1::string const&, int, Item::Tier const&);
+    ShovelItem(const std::__ndk1::string&, int, const Item::Tier&);
 };
 
 

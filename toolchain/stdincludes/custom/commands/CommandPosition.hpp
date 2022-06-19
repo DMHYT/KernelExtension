@@ -10,12 +10,12 @@ class CommandPosition {
     public:
     float offsetX, offsetY, offsetZ; // 12
     bool relativeX, relativeY, relativeZ, local; // 16
-    CommandPosition(Vec3 const&);
+    CommandPosition(const Vec3&);
     CommandPosition();
-    BlockPos getBlockPos(CommandOrigin const&, Vec3 const&) const;
-    BlockPos getBlockPos(Vec3 const&, Vec3 const&) const;
-    Vec3 getPosition(Vec3 const&, Vec3 const&) const;
-    Vec3 getPosition(CommandOrigin const&, Vec3 const&) const;
+    BlockPos getBlockPos(const CommandOrigin&, const Vec3&) const;
+    BlockPos getBlockPos(const Vec3&, const Vec3&) const;
+    Vec3 getPosition(const Vec3&, const Vec3&) const;
+    Vec3 getPosition(const CommandOrigin&, const Vec3&) const;
 };
 
 class CommandPositionFloat : public CommandPosition {};

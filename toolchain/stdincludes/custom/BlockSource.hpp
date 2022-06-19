@@ -17,8 +17,8 @@
 
 class BlockSource {
     public:
-    Block* getBlock(BlockPos const&) const;
-    BlockActor* getBlockEntity(BlockPos const&);
+    Block* getBlock(const BlockPos&) const;
+    BlockActor* getBlockEntity(const BlockPos&);
     Level* getLevel() const;
 };
 

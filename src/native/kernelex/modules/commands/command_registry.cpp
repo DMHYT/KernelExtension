@@ -93,4 +93,4 @@ std::__ndk1::vector<CommandParameterData>* KEXCommandRegistry::NonNativeCommandF
 }
 
 
-void KEXCommandRegistry::KEXAPICommand::execute(CommandOrigin const& origin, CommandOutput& output) const {}
+void KEXCommandRegistry::KEXAPICommand::execute(const CommandOrigin& origin, CommandOutput& output) const {}

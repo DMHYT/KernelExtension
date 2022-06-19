@@ -15,7 +15,7 @@
 
 void KEXToolsModule::initialize() {
     DLHandleManager::initializeHandle("libminecraftpe.so", "mcpe");
-    HookManager::addCallback(SYMBOL("mcpe", "_ZN8GameMode17startDestroyBlockERK8BlockPoshRb"), LAMBDA((GameMode* mode, BlockPos const& pos, unsigned char side, bool& someBoolRef), {
+    HookManager::addCallback(SYMBOL("mcpe", "_ZN8GameMode17startDestroyBlockERK8BlockPoshRb"), LAMBDA((GameMode* mode, const BlockPos& pos, unsigned char side, bool& someBoolRef), {
         if(!mode->player->getLevel()->isClientSide()) {
             long long player = mode->player->getUniqueID()->id;
             auto found = KEXToolsModule::Data::last.find(player);
@@ -28,7 +28,7 @@ void KEXToolsModule::initialize() {
             KEXToolsModule::Data::lastClient->onEvent(pos.x, pos.y, pos.z, side);
         }
     }, ), HookManager::CALL | HookManager::LISTENER);
-    HookManager::addCallback(SYMBOL("mcpe", "_ZN8GameMode12destroyBlockERK8BlockPosh"), LAMBDA((GameMode* mode, BlockPos const& pos, unsigned char side), {
+    HookManager::addCallback(SYMBOL("mcpe", "_ZN8GameMode12destroyBlockERK8BlockPosh"), LAMBDA((GameMode* mode, const BlockPos& pos, unsigned char side), {
         if(!mode->player->getLevel()->isClientSide()) {
             long long player = mode->player->getUniqueID()->id;
             auto found = KEXToolsModule::Data::last.find(player);

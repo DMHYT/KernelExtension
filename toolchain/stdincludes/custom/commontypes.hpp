@@ -46,7 +46,7 @@ class AABB {
     public:
     float minX, minY, minZ, maxX, maxY, maxZ;
     AABB(float, float, float, float, float, float);
-    AABB(Vec3 const&, Vec3 const&);
+    AABB(const Vec3&, const Vec3&);
 };
 
 #endif //KEX_AABB_HPP
@@ -60,20 +60,20 @@ class HashedString {
     unsigned long long hash; // 8
     std::__ndk1::string str; // 20
     int something; // 24
-    HashedString(std::__ndk1::string const&);
+    HashedString(const std::__ndk1::string&);
     HashedString(const char*);
     HashedString(unsigned long long, const char*);
     const char* c_str() const;
     void clear();
     bool empty() const;
     unsigned long long getHash() const;
-    std::__ndk1::string const& getString() const;
+    const std::__ndk1::string& getString() const;
     bool isEmpty() const;
-    bool operator!=(HashedString const&) const;
-    bool operator<(HashedString const&) const;
-    HashedString& operator=(HashedString const&);
-    bool operator==(HashedString const&) const;
-    static unsigned long long computeHash(std::__ndk1::string const&);
+    bool operator!=(const HashedString&) const;
+    bool operator<(const HashedString&) const;
+    HashedString& operator=(const HashedString&);
+    bool operator==(const HashedString&) const;
+    static unsigned long long computeHash(const std::__ndk1::string&);
     static unsigned long long computeHash(const char*);
     static HashedString defaultErrorValue;
     static const HashedString& getEmptyString();

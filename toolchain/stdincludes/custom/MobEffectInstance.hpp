@@ -45,13 +45,13 @@ class MobEffectInstance {
     std::__ndk1::string getDisplayName() const;
     void _tickDownDuration();
     void setNoCounter(bool);
-    bool operator!=(MobEffectInstance const&) const;
+    bool operator!=(const MobEffectInstance&) const;
     std::__ndk1::string getDescriptionId() const;
     int getSplashDuration() const;
     void setDifficulityDuration(Difficulty, int);
     void* applyEffects(Actor*) const;
-    bool operator<(MobEffectInstance const&) const;
-    void update(MobEffectInstance const&);
+    bool operator<(const MobEffectInstance&) const;
+    void update(const MobEffectInstance&);
     bool isEffectVisible() const;
     void tick(Actor*);
     void* save() const;
@@ -61,7 +61,7 @@ class MobEffectInstance {
     void setDuration(int);
     void* removeEffects(Actor*) const;
     int getDuration() const;
-    void load(CompoundTag const&);
+    void load(const CompoundTag&);
     int getId() const;
     bool displaysOnScreenTextureAnimation() const;
 };

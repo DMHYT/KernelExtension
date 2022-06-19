@@ -54,7 +54,7 @@ class KEXCommandRegistry {
         KEXAPICommand(int _version, CommandRegistry* _registry, CommandRegistry::Symbol _symbol, CommandPermissionLevel perm, CommandFlag _flag, int index)
             : Command(_version, _registry, _symbol, perm, _flag), overloadIndex(index) {}
         KEXAPICommand(): Command() {}
-        virtual void execute(CommandOrigin const& origin, CommandOutput& output) const;
+        virtual void execute(const CommandOrigin& origin, CommandOutput& output) const;
     };
 };
 

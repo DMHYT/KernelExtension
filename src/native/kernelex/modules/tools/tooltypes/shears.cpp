@@ -17,7 +17,7 @@ void ShearsFactory::registerItem() {
         id = pool->allocateId(nameId, id, IdPool::FLAG_ID_USED);
         if(id != INVALID_ID) {
             void* alloc = operator new(300);
-            STATIC_SYMBOL(ShearsConstructor, "_ZN10ShearsItemC2ERKNSt6__ndk112basic_stringIcNS0_11char_traitsIcEENS0_9allocatorIcEEEEi", (ShearsItem*, stl_string const&, int));
+            STATIC_SYMBOL(ShearsConstructor, "_ZN10ShearsItemC2ERKNSt6__ndk112basic_stringIcNS0_11char_traitsIcEENS0_9allocatorIcEEEEi", (ShearsItem*, const stl_string&, int));
             ShearsConstructor((ShearsItem*) alloc, to_stl(nameId), id);
             ItemRegistry::registerItem((Item*) alloc, new ShearsProvider(this));
         } else {

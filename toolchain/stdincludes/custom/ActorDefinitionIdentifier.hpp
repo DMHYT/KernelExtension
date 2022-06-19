@@ -14,26 +14,26 @@ class ActorDefinitionIdentifier {
     std::__ndk1::string event; // 36
     std::__ndk1::string fullName; // 48
     HashedString canonicalHash; // 72
-    ActorDefinitionIdentifier(std::__ndk1::string const&);
+    ActorDefinitionIdentifier(const std::__ndk1::string&);
     ActorDefinitionIdentifier(const char*);
     ActorDefinitionIdentifier(std::__ndk1::string, std::__ndk1::string, std::__ndk1::string);
     ActorDefinitionIdentifier(ActorType);
     ActorType _getLegacyActorType() const;
     void clear();
-    HashedString const& getCanonicalHash() const;
-    std::__ndk1::string const& getCanonicalName() const;
-    std::__ndk1::string const& getFullName() const;
-    std::__ndk1::string const& getIdentifier() const;
-    std::__ndk1::string const& getInitEvent() const;
-    std::__ndk1::string const& getNamespace() const;
-    void initialize(std::__ndk1::string const&, std::__ndk1::string const&, std::__ndk1::string const&);
-    void initialize(std::__ndk1::string const&);
+    const HashedString& getCanonicalHash() const;
+    const std::__ndk1::string& getCanonicalName() const;
+    const std::__ndk1::string& getFullName() const;
+    const std::__ndk1::string& getIdentifier() const;
+    const std::__ndk1::string& getInitEvent() const;
+    const std::__ndk1::string& getNamespace() const;
+    void initialize(const std::__ndk1::string&, const std::__ndk1::string&, const std::__ndk1::string&);
+    void initialize(const std::__ndk1::string&);
     bool isEmpty() const;
     bool isVanilla() const;
-    ActorDefinitionIdentifier& operator=(ActorDefinitionIdentifier const&);
-    bool operator==(ActorDefinitionIdentifier const&) const;
-    void setIdentifier(std::__ndk1::string const&);
-    void setInitEvent(std::__ndk1::string const&);
+    ActorDefinitionIdentifier& operator=(const ActorDefinitionIdentifier&);
+    bool operator==(const ActorDefinitionIdentifier&) const;
+    void setIdentifier(const std::__ndk1::string&);
+    void setInitEvent(const std::__ndk1::string&);
 };
 
 

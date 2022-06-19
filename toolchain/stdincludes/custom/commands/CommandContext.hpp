@@ -12,7 +12,7 @@ class CommandContext {
     std::__ndk1::string command; // 12
     CommandOrigin* origin; // 16
     int version; // 20
-    CommandContext(std::__ndk1::string const&, std::__ndk1::unique_ptr<CommandOrigin>, int);
+    CommandContext(const std::__ndk1::string&, std::__ndk1::unique_ptr<CommandOrigin>, int);
     CommandOrigin& getCommandOrigin() const;
 };
 

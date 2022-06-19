@@ -85,7 +85,7 @@ int KEXDamageModule::nextCustomCauseId = 100;
 
 void KEXDamageModule::initialize() {
     DLHandleManager::initializeHandle("libminecraftpe.so", "mcpe");
-    HookManager::addCallback(SYMBOL("mcpe", "_ZN17ActorDamageSource11lookupCauseERKNSt6__ndk112basic_stringIcNS0_11char_traitsIcEENS0_9allocatorIcEEEE"), LAMBDA((HookManager::CallbackController* controller, std::__ndk1::string const& causeName), {
+    HookManager::addCallback(SYMBOL("mcpe", "_ZN17ActorDamageSource11lookupCauseERKNSt6__ndk112basic_stringIcNS0_11char_traitsIcEENS0_9allocatorIcEEEE"), LAMBDA((HookManager::CallbackController* controller, const std::__ndk1::string& causeName), {
         controller->replace();
         auto found = causeNameToCause.find(causeName.c_str());
         if(found == causeNameToCause.end()) return -1;
@@ -116,7 +116,7 @@ void KEXDamageModule::initialize() {
             }
         }
     }, ), HookManager::RETURN | HookManager::LISTENER);
-    HookManager::addCallback(SYMBOL("mcpe", "_ZN4I18n3getERKNSt6__ndk112basic_stringIcNS0_11char_traitsIcEENS0_9allocatorIcEEEERKNS0_6vectorIS6_NS4_IS6_EEEE"), LAMBDA((std::__ndk1::string* result, std::__ndk1::string const& key, std::__ndk1::vector<std::__ndk1::string> const& values), {
+    HookManager::addCallback(SYMBOL("mcpe", "_ZN4I18n3getERKNSt6__ndk112basic_stringIcNS0_11char_traitsIcEENS0_9allocatorIcEEEERKNS0_6vectorIS6_NS4_IS6_EEEE"), LAMBDA((std::__ndk1::string* result, const std::__ndk1::string& key, std::__ndk1::vector<std::__ndk1::string> const& values), {
         if(key.rfind("death.kex.", 0) == 0 && *result == key) {
             JNIEnv* env = KEXJavaUtils::attach();
             jstring output = KEXJavaBridge::DamageModule::translateAndFormatDeathMessage(key.substr(10).c_str(), values);

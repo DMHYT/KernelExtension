@@ -37,11 +37,11 @@ class ActorDamageSource {
     // virtual ActorType getDamagingEntityType() const;
     // virtual int getDamagingEntityCategories() const;
     // virtual ActorDamageSource* clone() const;
-    ActorDamageSource(std::__ndk1::string const&);
+    ActorDamageSource(const std::__ndk1::string&);
     ActorDamageSource(ActorDamageCause);
     ActorDamageCause getCause() const;
     void setCause(ActorDamageCause);
-    static ActorDamageCause lookupCause(std::__ndk1::string const&);
+    static ActorDamageCause lookupCause(const std::__ndk1::string&);
     static std::__ndk1::string lookupCauseName(ActorDamageCause);
 };
 
@@ -95,7 +95,7 @@ class ActorDamageByBlockSource : public ActorDamageSource {
     // virtual std::__ndk1::pair<std::__ndk1::string, std::__ndk1::vector<std::__ndk1::string>> getDeathMessage(std::__ndk1::string, Actor*) const;
     // virtual ActorDamageByBlockSource* clone() const;
     ActorDamageByBlockSource(ActorDamageCause);
-    ActorDamageByBlockSource(Block const&, ActorDamageCause);
+    ActorDamageByBlockSource(const Block&, ActorDamageCause);
     Block* getBlock() const;
 };
 

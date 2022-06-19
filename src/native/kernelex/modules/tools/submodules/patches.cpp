@@ -11,8 +11,8 @@
 #include "../module.hpp"
 
 
-void KEXToolsModule::CustomToolPatches::appendFormattedHovertext(Item* _this, ItemStackBase const& stack, Level& level, std::__ndk1::string& text, bool someBool) {
-    STATIC_SYMBOL(Item_appendFormattedHovertext, "_ZNK4Item24appendFormattedHovertextERK13ItemStackBaseR5LevelRNSt6__ndk112basic_stringIcNS5_11char_traitsIcEENS5_9allocatorIcEEEEb", (Item*, ItemStackBase const&, Level&, std::__ndk1::string&, bool));
+void KEXToolsModule::CustomToolPatches::appendFormattedHovertext(Item* _this, const ItemStackBase& stack, Level& level, std::__ndk1::string& text, bool someBool) {
+    STATIC_SYMBOL(Item_appendFormattedHovertext, "_ZNK4Item24appendFormattedHovertextERK13ItemStackBaseR5LevelRNSt6__ndk112basic_stringIcNS5_11char_traitsIcEENS5_9allocatorIcEEEEb", (Item*, const ItemStackBase&, Level&, std::__ndk1::string&, bool));
     Item_appendFormattedHovertext(_this, stack, level, text, someBool);
     text.append("\n\n§9+");
     int staticId = IdConversion::dynamicToStatic(_this->id, IdConversion::ITEM);
@@ -31,8 +31,8 @@ void KEXToolsModule::CustomToolPatches::appendFormattedHovertext(Item* _this, It
 }
 
 
-float KEXToolsModule::CustomToolPatches::_shearsTieredGetDestroySpeed(ShearsItem* shears, ItemStackBase const& stack, Block const& block) {
-    STATIC_SYMBOL(ShearsItem_getDestroySpeed, "_ZNK10ShearsItem15getDestroySpeedERK13ItemStackBaseRK5Block", (ShearsItem*, ItemStackBase const&, Block const&));
+float KEXToolsModule::CustomToolPatches::_shearsTieredGetDestroySpeed(ShearsItem* shears, const ItemStackBase& stack, const Block& block) {
+    STATIC_SYMBOL(ShearsItem_getDestroySpeed, "_ZNK10ShearsItem15getDestroySpeedERK13ItemStackBaseRK5Block", (ShearsItem*, const ItemStackBase&, const Block&));
     void* output = ShearsItem_getDestroySpeed(shears, stack, block);
     float result = *(float*)&output;
     int staticId = IdConversion::dynamicToStatic(shears->id, IdConversion::ITEM);

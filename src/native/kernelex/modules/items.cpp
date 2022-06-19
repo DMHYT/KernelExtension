@@ -76,7 +76,7 @@ FoodItemComponentLegacy* KEXItemsModule::getOrCreateDynamicFoodValues(int id, It
 
 void KEXItemsModule::initialize() {
     DLHandleManager::initializeHandle("libminecraftpe.so", "mcpe");
-    HookManager::addCallback(SYMBOL("mcpe", "_Z24FoodSaturationFromStringRKNSt6__ndk112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEE"), LAMBDA((HookManager::CallbackController* controller, std::__ndk1::string const& str), {
+    HookManager::addCallback(SYMBOL("mcpe", "_Z24FoodSaturationFromStringRKNSt6__ndk112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEE"), LAMBDA((HookManager::CallbackController* controller, const std::__ndk1::string& str), {
         controller->replace();
         float defaultResult = controller->call<float>(str);
         if(roundf(defaultResult * 100) / 100 == 0.6f && str != "normal") {
@@ -87,7 +87,7 @@ void KEXItemsModule::initialize() {
         }
         return defaultResult;
     }, ), HookManager::CALL | HookManager::LISTENER | HookManager::CONTROLLER | HookManager::RESULT);
-    HookManager::addCallback(SYMBOL("mcpe", "_ZN6Player14startUsingItemERK9ItemStacki"), LAMBDA((HookManager::CallbackController* controller, Player* player, ItemStack const& stack, int time), {
+    HookManager::addCallback(SYMBOL("mcpe", "_ZN6Player14startUsingItemERK9ItemStacki"), LAMBDA((HookManager::CallbackController* controller, Player* player, const ItemStack& stack, int time), {
         Item* item = stack.getItem();
         if(item != nullptr) {
             ItemParamsModifier* mod = getModifierOrNull(IdConversion::dynamicToStatic(item->id, IdConversion::ITEM));
@@ -96,7 +96,7 @@ void KEXItemsModule::initialize() {
             }
         }
     }, ), HookManager::CALL | HookManager::LISTENER | HookManager::CONTROLLER | HookManager::RESULT);
-    // HookManager::addCallback(SYMBOL("mcpe", "_ZNK4Item24appendFormattedHovertextERK13ItemStackBaseR5LevelRNSt6__ndk112basic_stringIcNS5_11char_traitsIcEENS5_9allocatorIcEEEEb"), LAMBDA((Item* item, ItemStackBase const& stack, Level& level, std::__ndk1::string& text, bool b), {
+    // HookManager::addCallback(SYMBOL("mcpe", "_ZNK4Item24appendFormattedHovertextERK13ItemStackBaseR5LevelRNSt6__ndk112basic_stringIcNS5_11char_traitsIcEENS5_9allocatorIcEEEEb"), LAMBDA((Item* item, const ItemStackBase& stack, Level& level, std::__ndk1::string& text, bool b), {
     //     JNIEnv* env = KEXJavaUtils::attach();
     //     jstring jText = KEXJavaBridge::ItemsModule::appendFormattedHovertext((jlong) &stack, (jlong) &level, text.c_str());
     //     const char* cText = env->GetStringUTFChars(jText, 0);
@@ -104,7 +104,7 @@ void KEXItemsModule::initialize() {
     //     env->ReleaseStringUTFChars(jText, cText);
     //     env->DeleteLocalRef(jText);
     // }, ), HookManager::RETURN | HookManager::LISTENER);
-    // HookManager::addCallback(SYMBOL("mcpe", "_ZN6Player3eatERK9ItemStack"), LAMBDA((Player* player, ItemStack const& stack), {
+    // HookManager::addCallback(SYMBOL("mcpe", "_ZN6Player3eatERK9ItemStack"), LAMBDA((Player* player, const ItemStack& stack), {
     //     Item* item = stack.getItem();
     //     if(item != nullptr) {
     //         int staticId = IdConversion::dynamicToStatic(item->id, IdConversion::ITEM);
@@ -136,7 +136,7 @@ int ItemParamsModifier::_getCooldownTimePatch(Item* item) {
     return KEXItemsModule::itemParamsModifiers.at(IdConversion::dynamicToStatic(item->id, IdConversion::ITEM))->cooldownTime;
 }
 
-int ItemParamsModifier::_getMaxUseDurationPatch(Item* item, ItemStackBase const* stack) {
+int ItemParamsModifier::_getMaxUseDurationPatch(Item* item, const ItemStackBase* stack) {
     return KEXJavaBridge::ItemsModule::getUseDurationDynamic((jlong) stack);
 }
 

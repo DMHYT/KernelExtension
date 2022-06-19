@@ -21,7 +21,7 @@ HashedString* KEXToolPatchesModule::isPickaxeTag = new HashedString("minecraft:i
 HashedString* KEXToolPatchesModule::isShovelTag = new HashedString("minecraft:is_shovel");
 
 
-bool KEXToolPatchesModule::canDestroySpecial(DiggerItem* _this, Block const& block) {
+bool KEXToolPatchesModule::canDestroySpecial(DiggerItem* _this, const Block& block) {
     int staticId = IdConversion::dynamicToStatic(block.legacy->id, IdConversion::BLOCK);
     int blockLevel = KEXToolsModule::ToolAPI::getBlockDestroyLevel(staticId);
     Item::Tier* tier = KEXToolsModule::ToolAPI::getItemTier(_this);
@@ -30,7 +30,7 @@ bool KEXToolPatchesModule::canDestroySpecial(DiggerItem* _this, Block const& blo
 }
 
 
-bool KEXToolPatchesModule::hasBlock(DiggerItem* _this, Block const& block) {
+bool KEXToolPatchesModule::hasBlock(DiggerItem* _this, const Block& block) {
     int staticId = IdConversion::dynamicToStatic(block.legacy->id, IdConversion::BLOCK);
     const char* materialName = KEXToolsModule::ToolAPI::getBlockMaterialName(staticId);
     if(materialName == nullptr) return false;
@@ -75,11 +75,11 @@ unsigned char KEXToolPatchesModule::hurtAndBreak(ItemStackBase* stack, int damag
 
 void KEXToolPatchesModule::initialize() {
     DLHandleManager::initializeHandle("libminecraftpe.so", "mcpe");
-    HookManager::addCallback(SYMBOL("mcpe", "_ZNK11PickaxeItem17canDestroySpecialERK5Block"), LAMBDA((HookManager::CallbackController* controller, PickaxeItem* item, Block const& block), {
+    HookManager::addCallback(SYMBOL("mcpe", "_ZNK11PickaxeItem17canDestroySpecialERK5Block"), LAMBDA((HookManager::CallbackController* controller, PickaxeItem* item, const Block& block), {
         controller->replace();
         return canDestroySpecial((DiggerItem*) item, block);
     }, ), HookManager::CALL | HookManager::LISTENER | HookManager::CONTROLLER | HookManager::RESULT);
-    HookManager::addCallback(SYMBOL("mcpe", "_ZNK10DiggerItem8hasBlockERK5Block"), LAMBDA((HookManager::CallbackController* controller, DiggerItem* item, Block const& block), {
+    HookManager::addCallback(SYMBOL("mcpe", "_ZNK10DiggerItem8hasBlockERK5Block"), LAMBDA((HookManager::CallbackController* controller, DiggerItem* item, const Block& block), {
         controller->replace();
         return hasBlock(item, block);
     }, ), HookManager::CALL | HookManager::LISTENER | HookManager::CONTROLLER | HookManager::RESULT);

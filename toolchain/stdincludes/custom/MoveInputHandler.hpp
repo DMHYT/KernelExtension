@@ -18,7 +18,7 @@ class MoveInputHandler {
     bool isMovingLeft() const;
     bool isJumpDown() const;
     bool isMovingRight() const;
-    void setGazeDirection(Vec3 const&);
+    void setGazeDirection(const Vec3&);
     bool wantsMoveForward() const;
     bool isMovingForward() const;
     void setSneakPersistence(bool);

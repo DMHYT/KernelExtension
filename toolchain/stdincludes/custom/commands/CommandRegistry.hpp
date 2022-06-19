@@ -73,7 +73,7 @@ template typeid_t<CommandRegistry> type_id<CommandRegistry, std::__ndk1::unique_
 template typeid_t<CommandRegistry> type_id<CommandRegistry, WildcardCommandSelector<Actor>>();
 template typeid_t<CommandRegistry> type_id<CommandRegistry, CommandItem>();
 template typeid_t<CommandRegistry> type_id<CommandRegistry, CommandWildcardInt>();
-template typeid_t<CommandRegistry> type_id<CommandRegistry, ActorDefinitionIdentifier const*>();
+template typeid_t<CommandRegistry> type_id<CommandRegistry, const ActorDefinitionIdentifier*>();
 
 
 class CommandVersion {
@@ -101,7 +101,7 @@ class CommandRegistry {
     };
 
     using ParseFn = bool (CommandRegistry::*)(
-        void*, ParseToken const&, CommandOrigin const&, int, std::__ndk1::string&, 
+        void*, const ParseToken&, const CommandOrigin&, int, std::__ndk1::string&, 
         std::__ndk1::vector<std::__ndk1::string>&) const;
 
     struct Overload {
@@ -128,16 +128,16 @@ class CommandRegistry {
 
     template<typename T> struct DefaultIdConverter;
 
-    void registerCommand(std::__ndk1::string const&, const char*, CommandPermissionLevel, CommandFlag, CommandFlag);
+    void registerCommand(const std::__ndk1::string&, const char*, CommandPermissionLevel, CommandFlag, CommandFlag);
     void registerAlias(std::__ndk1::string, std::__ndk1::string);
     void registerOverloadInternal(Signature&, Overload&);
-    Signature* findCommand(std::__ndk1::string const&);
-    template<typename Type, typename IDConverter = DefaultIdConverter<Type>> int addEnumValues(std::__ndk1::string const& name, std::__ndk1::vector<std::__ndk1::pair<std::__ndk1::string, Type>> const& values);
-    template<typename Type> bool parse(void*, ParseToken const&, CommandOrigin const&, int, std::__ndk1::string&, std::__ndk1::vector<std::__ndk1::string>&) const;
-    template<typename Type, typename IDConverter = DefaultIdConverter<Type>> bool parseEnum(void*, ParseToken const&, CommandOrigin const&, int, std::__ndk1::string&, std::__ndk1::vector<std::__ndk1::string>&) const;
-    bool parseParameter(Command*, CommandParameterData const&, ParseToken const&, CommandOrigin const&, int, std::__ndk1::string&, std::__ndk1::vector<std::__ndk1::string>&) const;
-    std::__ndk1::string getCommandName(std::__ndk1::string const&) const;
-    static bool isParseMatch(CommandParameterData const&, Symbol);
+    Signature* findCommand(const std::__ndk1::string&);
+    template<typename Type, typename IDConverter = DefaultIdConverter<Type>> int addEnumValues(const std::__ndk1::string& name, std::__ndk1::vector<std::__ndk1::pair<std::__ndk1::string, Type>> const& values);
+    template<typename Type> bool parse(void*, const ParseToken&, const CommandOrigin&, int, std::__ndk1::string&, std::__ndk1::vector<std::__ndk1::string>&) const;
+    template<typename Type, typename IDConverter = DefaultIdConverter<Type>> bool parseEnum(void*, const ParseToken&, const CommandOrigin&, int, std::__ndk1::string&, std::__ndk1::vector<std::__ndk1::string>&) const;
+    bool parseParameter(Command*, const CommandParameterData&, const ParseToken&, const CommandOrigin&, int, std::__ndk1::string&, std::__ndk1::vector<std::__ndk1::string>&) const;
+    std::__ndk1::string getCommandName(const std::__ndk1::string&) const;
+    static bool isParseMatch(const CommandParameterData&, Symbol);
 
     inline void registerOverload(const char* commandName, Overload::Factory factory, std::__ndk1::vector<CommandParameterData>&& args) {
         Signature* signature = findCommand(commandName);
