@@ -37,7 +37,7 @@ class KEXToolsModule : public Module {
     };
     class BlockDataInterface {
         public:
-        std::string materialName = std::string("");
+        std::string materialName = "";
         int destroyLevel = 0;
         bool isNative = false;
     };

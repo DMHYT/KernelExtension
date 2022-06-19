@@ -29,9 +29,9 @@ std::unordered_set<KEXMiscCameraRollModule::CameraRollModifier*> KEXMiscCameraRo
 
 float KEXMiscCameraRollModule::apply(float defaultValue) {
     float result = defaultValue;
-    for(auto iter = modifiers.begin(); iter != modifiers.end(); iter++) {
-        if((*iter)->enabled) {
-            result -= (*iter)->interpolate();
+    for(const auto& modifier : modifiers) {
+        if(modifier->enabled) {
+            result -= modifier->interpolate();
         }
     }
     return result;
@@ -61,7 +61,7 @@ void KEXMiscCameraRollModule::initialize() {
 extern "C" {
     JNIEXPORT jlong JNICALL Java_vsdum_kex_modules_misc_CameraRollModifier_nativeConstruct
     (JNIEnv*, jclass) {
-        KEXMiscCameraRollModule::CameraRollModifier* mod = new KEXMiscCameraRollModule::CameraRollModifier();
+        auto mod = new KEXMiscCameraRollModule::CameraRollModifier();
         KEXMiscCameraRollModule::modifiers.emplace(mod);
         return (jlong) mod;
     }

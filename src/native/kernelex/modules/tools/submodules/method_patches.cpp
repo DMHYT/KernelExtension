@@ -42,7 +42,7 @@ bool KEXToolPatchesModule::hasBlock(DiggerItem* _this, const Block& block) {
         return strcmp(materialName, "dirt") == 0;
     } else {
         staticId = IdConversion::dynamicToStatic(_this->id, IdConversion::ITEM);
-        LegacyItemRegistry::LegacyItemFactoryBase* factory = LegacyItemRegistry::findFactoryById(staticId);
+        auto factory = LegacyItemRegistry::findFactoryById(staticId);
         if(factory == nullptr) return false;
         if(factory->getType() == ToolFactory::_factoryTypeId) {
             ToolFactory* toolFactory = (ToolFactory*) factory;

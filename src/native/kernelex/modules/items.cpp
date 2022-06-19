@@ -84,7 +84,7 @@ void KEXItemsModule::initialize() {
             controller->replace();
             float defaultResult = controller->call<float>(str);
             if(roundf(defaultResult * 100) / 100 == 0.6f && str != "normal") {
-                auto found = customFoodSaturationModifiers.find(std::string(str.c_str()));
+                auto found = customFoodSaturationModifiers.find(str.c_str());
                 if(found != customFoodSaturationModifiers.end()) {
                     return found->second;
                 }
@@ -139,7 +139,7 @@ void KEXItemsModule::initialize() {
 
     Callbacks::addCallback("postModItemsInit", 
         CALLBACK([], (), {
-            for(std::unordered_map<int, ItemParamsModifier*>::iterator iter = itemParamsModifiers.begin(); iter != itemParamsModifiers.end(); iter++) {
+            for(auto iter = itemParamsModifiers.begin(); iter != itemParamsModifiers.end(); iter++) {
                 iter->second->applyTo(iter->first);
             }
         })
@@ -225,10 +225,10 @@ extern "C" {
     JNIEXPORT void JNICALL Java_vsdum_kex_modules_ItemsModule_nativeNewFoodSaturationModifier
     (JNIEnv* env, jclass, jstring name, jfloat value) {
         const char* cName = env->GetStringUTFChars(name, 0);
-        if(KEXItemsModule::customFoodSaturationModifiers.find(std::string(cName)) != KEXItemsModule::customFoodSaturationModifiers.end()) {
+        if(KEXItemsModule::customFoodSaturationModifiers.find(cName) != KEXItemsModule::customFoodSaturationModifiers.end()) {
             Logger::debug("KEX-WARNING", "Custom food saturation modifier %s has already been registered before!", cName);
         }
-        KEXItemsModule::customFoodSaturationModifiers.emplace(std::string(cName), value);
+        KEXItemsModule::customFoodSaturationModifiers.emplace(cName, value);
         env->ReleaseStringUTFChars(name, cName);
     }
 }

@@ -193,8 +193,8 @@ extern "C" {
     __EXPORT__(void, RemoveEffects, jboolean harmful, jboolean harmless) {
         Actor* actor = (Actor*) ptr;
         if(actor != nullptr) {
-            std::__ndk1::vector<MobEffectInstance>& effects = actor->getAllEffects();
-            for(MobEffectInstance& ieffect : effects) {
+            auto& effects = actor->getAllEffects();
+            for(const auto& ieffect : effects) {
                 int id = ieffect.getId();
                 MobEffect* effect = MobEffect::getById(id);
                 if(effect != nullptr) {

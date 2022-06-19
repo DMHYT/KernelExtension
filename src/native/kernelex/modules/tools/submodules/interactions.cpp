@@ -54,7 +54,7 @@ void KEXToolInteractionsModule::initialize() {
     HookManager::addCallback(
         SYMBOL("mcpe", "_ZNK13ItemStackBase10isInstanceERK12HashedStringb"),
         LAMBDA((HookManager::CallbackController* controller, ItemStackBase* stack, const HashedString& str), {
-            const std::__ndk1::string& cppstr = str.getString();
+            const auto& cppstr = str.getString();
             if(cppstr == "shears") { // for custom shears to carve pumpkins, gather honey from beehives etc.
                 IS_INSTANCE_REPLACER(359, isShears)
             } else if(cppstr == "flint_and_steel") { // for custom flint&steel's to lit campfires

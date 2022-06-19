@@ -9,7 +9,7 @@
 extern "C" {
     JNIEXPORT jlong JNICALL Java_vsdum_kex_util_ItemFactoryHelper_nativeKillItem
     (JNIEnv*, jclass, jint id) {
-        LegacyItemRegistry::LegacyItemFactoryBase* factory = LegacyItemRegistry::findFactoryById(id);
+        auto factory = LegacyItemRegistry::findFactoryById(id);
         if(factory == nullptr) return 0;
         static void* (*newErase) (int) = (void* (*) (int)) dlsym(dlopen("libinnercore.so", RTLD_LAZY), "LegacyItemRegistry_eraseFactory");
         if(newErase != nullptr) {
@@ -19,9 +19,9 @@ extern "C" {
     }
     JNIEXPORT void JNICALL Java_vsdum_kex_util_ItemFactoryHelper_nativePutPropertiesToNewFactory
     (JNIEnv*, jclass, jlong ptr, jint id) {
-        LegacyItemRegistry::LegacyItemFactoryBase* newFactory = LegacyItemRegistry::findFactoryById(id);
+        auto newFactory = LegacyItemRegistry::findFactoryById(id);
         if(newFactory != nullptr) {
-            LegacyItemRegistry::LegacyItemFactoryBase* oldFactory = (LegacyItemRegistry::LegacyItemFactoryBase*) ptr;
+            auto oldFactory = (LegacyItemRegistry::LegacyItemFactoryBase*) ptr;
             if(newFactory != nullptr) {
                 newFactory->props = oldFactory->props;
             }

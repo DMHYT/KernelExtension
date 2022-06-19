@@ -17,7 +17,7 @@ extern "C" {
         return (jlong) actor;
     }
     __EXPORT__(jstring, GetOriginalItemName) {
-        std::__ndk1::string name = ((LootTableContext*) ptr)->getOriginalItemName();
+        auto name = ((LootTableContext*) ptr)->getOriginalItemName();
         return name.empty() ? NULL : env->NewStringUTF(name.c_str());
     }
     __EXPORT__(jlong, GetLevel) {
@@ -49,7 +49,7 @@ extern "C" {
     // TODO getDeathSource
     __EXPORT__(void, SetOriginalItemName, jstring name) {
         const char* cName = env->GetStringUTFChars(name, 0);
-        ((LootTableContext*) ptr)->setOriginalItemName(std::__ndk1::string(cName));
+        ((LootTableContext*) ptr)->setOriginalItemName(cName);
         env->ReleaseStringUTFChars(name, cName);
     }
     __EXPORT__(jlong, BuilderConstruct) {

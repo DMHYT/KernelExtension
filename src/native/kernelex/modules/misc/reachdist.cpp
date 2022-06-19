@@ -10,14 +10,14 @@ float KEXMiscReachDistModule::last = 7.0f;
 
 float KEXMiscReachDistModule::apply(float defaultValue) {
     float result = defaultValue;
-    for(auto iter = modifiers.begin(); iter != modifiers.end(); iter++) {
-        if((*iter)->enabled) {
-            result += (*iter)->modifier;
-        } 
+    for(const auto& modifier : modifiers) {
+        if(modifier->enabled) {
+            result += modifier->modifier;
+        }
     }
-    for(auto iter = modifiers.begin(); iter != modifiers.end(); iter++) {
-        if((*iter)->enabled) {
-            result *= (*iter)->multiplier;
+    for(const auto& modifier : modifiers) {
+        if(modifier->enabled) {
+            result *= modifier->multiplier;
         }
     }
     return result;
@@ -65,7 +65,7 @@ void KEXMiscReachDistModule::initialize() {
 extern "C" {
     JNIEXPORT jlong JNICALL Java_vsdum_kex_modules_misc_ReachDistanceModifier_nativeConstruct
     (JNIEnv*, jclass) {
-        KEXMiscReachDistModule::ReachDistModifier* mod = new KEXMiscReachDistModule::ReachDistModifier();
+        auto mod = new KEXMiscReachDistModule::ReachDistModifier();
         KEXMiscReachDistModule::modifiers.emplace(mod);
         return (jlong) mod;
     }

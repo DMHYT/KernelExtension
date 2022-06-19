@@ -13,7 +13,7 @@ extern "C" {
         const char* cCommandName = env->GetStringUTFChars(commandName, 0);
         if(KEXCommandRegistry::usedNamesAndAliases.find(cCommandName) != KEXCommandRegistry::usedNamesAndAliases.end()) return 0;
         KEXCommandRegistry::usedNamesAndAliases.emplace(cCommandName);
-        KEXCommandRegistry::NonNativeCommandFactory* factory = new KEXCommandRegistry::NonNativeCommandFactory();
+        auto factory = new KEXCommandRegistry::NonNativeCommandFactory();
         factory->init(cCommandName, (CommandPermissionLevel) permissionLevel);
         jsize l = env->GetArrayLength(aliases);
         for(int i = 0; i < l; i++) {
@@ -29,12 +29,12 @@ extern "C" {
     }
     JNIEXPORT jlong JNICALL Java_vsdum_kex_modules_commands_CommandsNativeAPI_nativeAddOverload
     (JNIEnv*, jclass, jlong factoryPtr, jint overloadIndex) {
-        KEXCommandRegistry::NonNativeCommandFactory* factory = (KEXCommandRegistry::NonNativeCommandFactory*) factoryPtr;
+        auto factory = (KEXCommandRegistry::NonNativeCommandFactory*) factoryPtr;
         return (jlong) factory->addOverload(overloadIndex);
     }
     JNIEXPORT void JNICALL Java_vsdum_kex_modules_commands_CommandsNativeAPI_nativeBuildArgument
     (JNIEnv* env, jclass, jlong vectorPtr, jstring paramName, jint paramType, jstring enumName, jboolean mandatory, jint fieldOffset) {
-        std::__ndk1::vector<CommandParameterData>* vec = (std::__ndk1::vector<CommandParameterData>*) vectorPtr;
+        auto vec = (std::__ndk1::vector<CommandParameterData>*) vectorPtr;
         const char* cParamName = env->GetStringUTFChars(paramName, 0);
         const char* cEnumNameTemp = enumName == nullptr ? nullptr : env->GetStringUTFChars(enumName, 0);
         char* cEnumName = cEnumNameTemp == nullptr ? nullptr : (char*) malloc(strlen(cEnumNameTemp) + 1);

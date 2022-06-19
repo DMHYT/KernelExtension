@@ -76,15 +76,15 @@ void KEXCommandsModule::setupCustom(CommandRegistry& registry) {
 
 Command* KEXCommandsModule::onCreateAPICommand(CommandRegistry* registry, const CommandRegistry::ParseToken& token, const CommandOrigin& origin, int version, std::__ndk1::string& str, std::__ndk1::vector<std::__ndk1::string>& strvec) {
     STATIC_SYMBOL(CommandRegistry_isParseMatch, "_ZN15CommandRegistry12isParseMatchERK20CommandParameterDataNS_6SymbolE", (const CommandParameterData&, CommandRegistry::Symbol*), bool)
-    CommandRegistry::Signature* signature = registry->findCommand(token.child->toString());
+    auto signature = registry->findCommand(token.child->toString());
     if(signature != nullptr) {
-        CommandRegistry::ParseToken* startToken = token.child->next.get();
+        auto startToken = token.child->next.get();
         for(int overloadIndex = 0; overloadIndex < signature->overloads.size(); overloadIndex++) {
-            CommandRegistry::Overload& overload = signature->overloads.at(overloadIndex);
+            auto& overload = signature->overloads.at(overloadIndex);
             if(overload.version.isCompatible(version)) {
-                CommandRegistry::ParseToken* tokenToUse = startToken;
+                auto tokenToUse = startToken;
                 bool parseResult = true;
-                for(const CommandParameterData& param : overload.params) {
+                for(const auto& param : overload.params) {
                     if(tokenToUse == nullptr) {
                         if(!param.optional) parseResult = false;
                         break;
@@ -96,9 +96,9 @@ Command* KEXCommandsModule::onCreateAPICommand(CommandRegistry* registry, const 
                     tokenToUse = tokenToUse->next.get();
                 }
                 if(parseResult) {
-                    KEXCommandRegistry::KEXAPICommand* command = new KEXCommandRegistry::KEXAPICommand(version, registry, signature->mainSymbol, signature->perm, signature->flag, overloadIndex);
+                    auto command = new KEXCommandRegistry::KEXAPICommand(version, registry, signature->mainSymbol, signature->perm, signature->flag, overloadIndex);
                     tokenToUse = startToken;
-                    for(const CommandParameterData& param : overload.params) {
+                    for(const auto& param : overload.params) {
                         bool paramParseResult = registry->parseParameter(command, param, *tokenToUse, origin, version, str, strvec);
                         if(param.flag_offset >= 0) *(bool*) ((char*) command + param.flag_offset) = paramParseResult;
                         if(tokenToUse->next != nullptr) tokenToUse = tokenToUse->next.get();

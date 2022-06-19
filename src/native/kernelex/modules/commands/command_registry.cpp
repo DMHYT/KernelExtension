@@ -45,11 +45,11 @@ void KEXCommandRegistry::NonNativeCommandFactory::setup(CommandRegistry& registr
     if(!props.overloads.empty()) {
         registry.registerCommand(props.name.c_str(), props.description.c_str(), props.permissionLevel, props.flag1, props.flag2);
         if(!props.aliases.empty()) {
-            for(const std::string& alias : props.aliases) {
+            for(const auto& alias : props.aliases) {
                 registry.registerAlias(props.name.c_str(), alias.c_str());
             }
         }
-        for(const std::__ndk1::vector<CommandParameterData>& overload : props.overloads) {
+        for(const auto& overload : props.overloads) {
             registry.registerOverloadParamsVec<KEXAPICommand>(props.name.c_str(), overload);
         }
     }
@@ -84,12 +84,11 @@ std::__ndk1::vector<CommandParameterData>* KEXCommandRegistry::NonNativeCommandF
     if(overloadIndex < props.overloads.size()) {
         return &props.overloads.at(overloadIndex);
     } else if(overloadIndex == props.overloads.size()) {
-        props.overloads.push_back(std::__ndk1::vector<CommandParameterData>());
+        props.overloads.push_back({});
         return &props.overloads.at(overloadIndex);
     }
     Logger::debug("KEX-WARNING", "Overload index %d for command %s is too big, maximum index at the moment is %d. Returning dummy vector reference...", overloadIndex, props.name.c_str(), props.overloads.size());
-    std::__ndk1::vector<CommandParameterData>* v = new std::__ndk1::vector<CommandParameterData>();
-    return v;
+    return new std::__ndk1::vector<CommandParameterData>();
 }
 
 

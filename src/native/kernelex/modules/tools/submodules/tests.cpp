@@ -2,7 +2,7 @@
 #include "../module.hpp"
 
 
-#define FACTORY(ID) LegacyItemRegistry::LegacyItemFactoryBase* factory = LegacyItemRegistry::findFactoryById(ID);
+#define FACTORY(ID) auto factory = LegacyItemRegistry::findFactoryById(ID);
 #define FACTORY_CHECKER(NAME, TYPE) \
     bool KEXToolsModule::SimpleTests::NAME(int id) { \
         FACTORY(id) if(!isTool(factory)) return false; \

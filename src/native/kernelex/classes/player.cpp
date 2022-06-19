@@ -86,7 +86,7 @@ extern "C" {
             if(region != nullptr) {
                 BlockActor* tile = region->getBlockEntity(pos);
                 if(tile != nullptr && tile->type == BlockActorType::SIGN) {
-                    std::__ndk1::string& signMessage = ((SignBlockActor*) tile)->getMessage();
+                    auto& signMessage = ((SignBlockActor*) tile)->getMessage();
                     ClientInstance* clientInstance = localPlayer->getClientInstance();
                     if(clientInstance != nullptr) {
                         VTABLE_FIND_OFFSET(ClientInstance_getClientSceneStack, _ZTV14ClientInstance, _ZNK14ClientInstance19getClientSceneStackEv);
@@ -94,7 +94,7 @@ extern "C" {
                         SceneStack* sceneStack = VTABLE_CALL<SceneStack*>(ClientInstance_getClientSceneStack, clientInstance);
                         SceneFactory* sceneFactory = VTABLE_CALL<SceneFactory*>(ClientInstance_getSceneFactory, clientInstance);
                         if(sceneStack != nullptr && sceneFactory != nullptr) {
-                            std::__ndk1::shared_ptr<UIScene> scene = sceneFactory->createSignScreen(pos);
+                            auto scene = sceneFactory->createSignScreen(pos);
                             sceneStack->pushScreen(scene, false);
                             KEXJavaBridge::KernelExtension::setMinecraftTextboxText(signMessage.c_str());
                         }

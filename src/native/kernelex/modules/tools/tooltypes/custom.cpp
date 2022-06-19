@@ -59,7 +59,7 @@ extern "C" JNIEXPORT void JNICALL Java_vsdum_kex_modules_tools_ToolsNativeAPI_na
     factory->baseAttackDamage = baseAttackDamage;
     std::string itemNameId(cNameId);
     if(itemNameId.rfind("item_", 0) != 0) itemNameId = "item_" + itemNameId;
-    factory->initParameters(id, itemNameId, std::string(cName), std::string(cTextureName), textureMeta);
+    factory->initParameters(id, itemNameId, cName, cTextureName, textureMeta);
     factory->props.stack = 1;
     factory->enchantType = enchantType;
     factory->tier = (Item::Tier*) tierPtr;
@@ -74,7 +74,7 @@ extern "C" JNIEXPORT void JNICALL Java_vsdum_kex_modules_tools_ToolsNativeAPI_na
                     jstring sEl = (jstring) el;
                     const char* cEl = env->GetStringUTFChars(sEl, 0);
                     if(materials.find(cEl) == materials.end()) {
-                        materials.emplace(std::string(cEl));
+                        materials.emplace(cEl);
                     }
                     env->ReleaseStringUTFChars(sEl, cEl);
                 }

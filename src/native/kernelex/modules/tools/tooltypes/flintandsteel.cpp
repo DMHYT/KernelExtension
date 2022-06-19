@@ -31,7 +31,7 @@ extern "C" JNIEXPORT void JNICALL Java_vsdum_kex_modules_tools_ToolsNativeAPI_na
     FlintAndSteelFactory* factory = new FlintAndSteelFactory();
     std::string itemNameId(cNameId);
     if(itemNameId.rfind("item_", 0) != 0) itemNameId = "item_" + itemNameId;
-    factory->initParameters(id, itemNameId, std::string(cName), std::string(cTextureName), textureMeta);
+    factory->initParameters(id, itemNameId, cName, cTextureName, textureMeta);
     factory->props.stack = 1;
     factory->props.durability = durability;
     LegacyItemRegistry::registerItemFactory(factory);

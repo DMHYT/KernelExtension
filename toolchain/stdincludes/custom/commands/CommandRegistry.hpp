@@ -140,7 +140,7 @@ class CommandRegistry {
     static bool isParseMatch(const CommandParameterData&, Symbol);
 
     inline void registerOverload(const char* commandName, Overload::Factory factory, std::__ndk1::vector<CommandParameterData>&& args) {
-        Signature* signature = findCommand(commandName);
+        auto signature = findCommand(commandName);
         Overload overload(CommandVersion(1, 0x7fffffff), factory);
         overload.params = args;
         signature->overloads.emplace_back(overload);
@@ -159,7 +159,7 @@ class CommandRegistry {
     
     template<typename CommandType>
     inline void registerOverloadParamsVec(const char* commandName, const std::__ndk1::vector<CommandParameterData>& params) {
-        Signature* signature = findCommand(commandName);
+        auto signature = findCommand(commandName);
         signature->overloads.emplace_back(CommandVersion{}, (Overload::Factory) &allocateCommand<CommandType>, params);
         registerOverloadInternal(*signature, signature->overloads.back());
     }

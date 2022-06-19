@@ -7,7 +7,7 @@
 const char* KEXToolsModule::ToolAPI::getBlockMaterialName(int id) {
     auto found = KEXToolsModule::Data::blockData.find(id);
     if(found != KEXToolsModule::Data::blockData.end()) {
-        std::string materialName = found->second->materialName;
+        auto materialName = found->second->materialName;
         if(!materialName.empty()) {
             return materialName.c_str();
         }
@@ -45,7 +45,7 @@ void KEXToolsModule::ToolAPI::setBlockMaterialName(int id, const char* materialN
     if(found != KEXToolsModule::Data::blockData.end()) {
         found->second->materialName = materialName;
     } else {
-        KEXToolsModule::BlockDataInterface* iface = new KEXToolsModule::BlockDataInterface();
+        auto iface = new KEXToolsModule::BlockDataInterface();
         iface->materialName = materialName;
         KEXToolsModule::Data::blockData.emplace(id, iface);
     }
@@ -57,7 +57,7 @@ void KEXToolsModule::ToolAPI::setBlockDestroyLevel(int id, int destroyLevel) {
     if(found != KEXToolsModule::Data::blockData.end()) {
         found->second->destroyLevel = destroyLevel;
     } else {
-        KEXToolsModule::BlockDataInterface* iface = new KEXToolsModule::BlockDataInterface();
+        auto iface = new KEXToolsModule::BlockDataInterface();
         iface->destroyLevel = destroyLevel;
         KEXToolsModule::Data::blockData.emplace(id, iface);
     }
@@ -69,7 +69,7 @@ void KEXToolsModule::ToolAPI::setBlockIsNative(int id, bool isNative) {
     if(found != KEXToolsModule::Data::blockData.end()) {
         found->second->isNative = isNative;
     } else {
-        KEXToolsModule::BlockDataInterface* iface = new KEXToolsModule::BlockDataInterface();
+        auto iface = new KEXToolsModule::BlockDataInterface();
         iface->isNative = isNative;
         KEXToolsModule::Data::blockData.emplace(id, iface);
     }
@@ -81,7 +81,7 @@ Item::Tier* KEXToolsModule::ToolAPI::getItemTier(DiggerItem* item) {
     if(staticId < 900) {
         return item->tier;
     } else {
-        LegacyItemRegistry::LegacyItemFactoryBase* factory = LegacyItemRegistry::findFactoryById(staticId);
+        auto factory = LegacyItemRegistry::findFactoryById(staticId);
         if(factory == nullptr) return nullptr;
         if(factory->getType() == ToolFactory::_factoryTypeId) {
             return ((ToolFactory*) factory)->tier;

@@ -104,7 +104,7 @@ extern "C" {
             KEXToolsModule::Data::blockData.emplace(id, new KEXToolsModule::BlockDataInterface());
             found = KEXToolsModule::Data::blockData.find(id);
         }
-        KEXToolsModule::BlockDataInterface* iface = found->second;
+        auto iface = found->second;
         jclass dataClass = env->FindClass("vsdum/kex/modules/ToolsModule$BlockData");
         jstring jMaterialName = env->NewStringUTF(iface->materialName.c_str());
         jobject result = env->NewObject(dataClass, env->GetMethodID(dataClass, "<init>", "(Ljava/lang/String;IZ)V"), env->GetStringUTFLength(jMaterialName) != 0 ? jMaterialName : NULL, iface->destroyLevel, iface->isNative);
@@ -120,7 +120,7 @@ extern "C" {
             KEXToolsModule::Data::blockData.emplace(id, new KEXToolsModule::BlockDataInterface());
             found = KEXToolsModule::Data::blockData.find(id);
         }
-        KEXToolsModule::BlockDataInterface* iface = found->second;
+        auto iface = found->second;
         iface->materialName = cMaterialName;
         env->ReleaseStringUTFChars(materialName, cMaterialName);
         iface->destroyLevel = destroyLevel;
@@ -131,7 +131,7 @@ extern "C" {
         int dynamicId = IdConversion::staticToDynamic(id, IdConversion::ITEM);
         Item* item = ItemRegistry::getItemById(dynamicId);
         if(item == nullptr) return 0;
-        Item::Tier* tier = KEXToolsModule::ToolAPI::getItemTier((DiggerItem*) item);
+        auto tier = KEXToolsModule::ToolAPI::getItemTier((DiggerItem*) item);
         if(tier == nullptr) return 0;
         return tier->getLevel() + 1;
     }
@@ -139,11 +139,11 @@ extern "C" {
     (JNIEnv*, jclass, jint itemID, jint blockID) {
         auto find = KEXToolsModule::Data::blockData.find(blockID);
         if(find == KEXToolsModule::Data::blockData.end()) return 0;
-        KEXToolsModule::BlockDataInterface* iface = find->second;
+        auto iface = find->second;
         int dynamicId = IdConversion::staticToDynamic(itemID, IdConversion::ITEM);
         Item* item = ItemRegistry::getItemById(dynamicId);
         if(item == nullptr) return 0;
-        Item::Tier* tier = KEXToolsModule::ToolAPI::getItemTier((DiggerItem*) item);
+        auto tier = KEXToolsModule::ToolAPI::getItemTier((DiggerItem*) item);
         if(tier == nullptr) return 0;
         int toolLevel = tier->getLevel() + 1;
         return toolLevel >= iface->destroyLevel ? toolLevel : 0;
@@ -160,7 +160,7 @@ extern "C" {
                 if(itemExtra != 0L) ((ItemInstanceExtra*) itemExtra)->apply(&stack);
                 float speed = VTABLE_CALL<float>(Item_getDestroySpeed, item, &stack, BlockRegistry::getBlockStateForIdData(id, data));
                 float materialDivider = 1.0f;
-                Item::Tier* itemTier = KEXToolsModule::ToolAPI::getItemTier((DiggerItem*) item);
+                auto itemTier = KEXToolsModule::ToolAPI::getItemTier((DiggerItem*) item);
                 if(itemTier != nullptr) materialDivider = itemTier->getSpeed();
                 float bonus = item->destroySpeedBonus(stack);
                 return KEXJavaBridge::CustomToolEvents::calcDestroyTime(id, data, x, y, z, (char) side, baseDestroyTime, materialDivider, bonus, baseDestroyTime / speed);
@@ -171,11 +171,11 @@ extern "C" {
     }
     JNIEXPORT void JNICALL Java_vsdum_kex_modules_ToolsModule_enableDynamicDamageFor
     (JNIEnv*, jclass, jint id) {
-        LegacyItemRegistry::LegacyItemFactoryBase* factory = LegacyItemRegistry::findFactoryById(id);
+        auto factory = LegacyItemRegistry::findFactoryById(id);
         if(factory != nullptr) {
             if(factory->getType() == ToolFactory::_factoryTypeId) {
                 ToolFactory* toolFactory = (ToolFactory*) factory;
-                ToolFactory::ToolType tt = toolFactory->getToolType();
+                auto tt = toolFactory->getToolType();
                 if(tt == ToolFactory::CUSTOM_DIGGER || tt == ToolFactory::CUSTOM_WEAPON) {
                     CustomToolFactory* customToolFactory = (CustomToolFactory*) toolFactory;
                     customToolFactory->dynamicDamageEnabled =  true;
