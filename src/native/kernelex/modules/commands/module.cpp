@@ -74,7 +74,7 @@ void KEXCommandsModule::setupCustom(CommandRegistry& registry) {
 }
 
 
-Command* KEXCommandsModule::onCreateAPICommand(CommandRegistry* registry, const CommandRegistry::ParseToken& token, const CommandOrigin& origin, int version, std::__ndk1::string& str, std::__ndk1::vector<std::__ndk1::string>& strvec) {
+Command* KEXCommandsModule::onCreateAPICommand(CommandRegistry* registry, const CommandRegistry::ParseToken& token, const CommandOrigin& origin, int version, stl::string& str, stl::vector<stl::string>& strvec) {
     STATIC_SYMBOL(CommandRegistry_isParseMatch, "_ZN15CommandRegistry12isParseMatchERK20CommandParameterDataNS_6SymbolE", (const CommandParameterData&, CommandRegistry::Symbol*), bool)
     auto signature = registry->findCommand(token.child->toString());
     if(signature != nullptr) {
@@ -129,7 +129,7 @@ void KEXCommandsModule::initialize() {
 
     HookManager::addCallback(
         SYMBOL("mcpe", "_ZNK15CommandRegistry13createCommandERKNS_10ParseTokenERK13CommandOriginiRNSt6__ndk112basic_stringIcNS6_11char_traitsIcEENS6_9allocatorIcEEEERNS6_6vectorISC_NSA_ISC_EEEE"),
-        LAMBDA((HookManager::CallbackController* controller, Command** result, CommandRegistry* registry, const CommandRegistry::ParseToken& token, const CommandOrigin& origin, int version, std::__ndk1::string& str, std::__ndk1::vector<std::__ndk1::string>& strvec), {
+        LAMBDA((HookManager::CallbackController* controller, Command** result, CommandRegistry* registry, const CommandRegistry::ParseToken& token, const CommandOrigin& origin, int version, stl::string& str, stl::vector<stl::string>& strvec), {
             auto found = KEXCommandRegistry::registeredFactories.find(token.child->toString().c_str());
             if(found != KEXCommandRegistry::registeredFactories.end() && !found->second->isNative()) {
                 controller->prevent();

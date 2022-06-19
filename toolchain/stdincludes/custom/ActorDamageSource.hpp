@@ -1,4 +1,5 @@
 #include <stl/string>
+#include <stl.h>
 
 #include <enums.hpp>
 
@@ -25,7 +26,7 @@ class ActorDamageSource {
     // virtual bool isChildEntitySource() const;
     // virtual bool isBlockSource() const;
     // virtual bool isFire() const;
-    // virtual std::__ndk1::pair<std::__ndk1::string, std::__ndk1::vector<std::__ndk1::string>> getDeathMessage(std::__ndk1::string, Actor*) const;
+    // virtual stl::pair<stl::string, stl::vector<stl::string>> getDeathMessage(stl::string, Actor*) const;
     // virtual bool getIsCreative() const;
     // virtual bool getIsWorldBuilder() const;
     // virtual ActorUniqueID getEntityUniqueID() const;
@@ -37,12 +38,12 @@ class ActorDamageSource {
     // virtual ActorType getDamagingEntityType() const;
     // virtual int getDamagingEntityCategories() const;
     // virtual ActorDamageSource* clone() const;
-    ActorDamageSource(const std::__ndk1::string&);
+    ActorDamageSource(const stl::string&);
     ActorDamageSource(ActorDamageCause);
     ActorDamageCause getCause() const;
     void setCause(ActorDamageCause);
-    static ActorDamageCause lookupCause(const std::__ndk1::string&);
-    static std::__ndk1::string lookupCauseName(ActorDamageCause);
+    static ActorDamageCause lookupCause(const stl::string&);
+    static stl::string lookupCauseName(ActorDamageCause);
 };
 
 class ActorDamageByActorSource : public ActorDamageSource {
@@ -53,9 +54,9 @@ class ActorDamageByActorSource : public ActorDamageSource {
     ActorUniqueID entityUid; // 24
     ActorType entityType; // 28
     int entityCategory; // 32
-    std::__ndk1::string someStringFromEntity; // 44
+    stl::string someStringFromEntity; // 44
     // virtual bool isEntitySource() const;
-    // virtual std::__ndk1::pair<std::__ndk1::string, std::__ndk1::vector<std::__ndk1::string>> getDeathMessage(std::__ndk1::string, Actor*) const;
+    // virtual stl::pair<stl::string, stl::vector<stl::string>> getDeathMessage(stl::string, Actor*) const;
     // virtual bool getIsCreative() const;
     // virtual bool getIsWorldBuilder() const;
     // virtual ActorUniqueID getEntityUniqueID() const;
@@ -75,9 +76,9 @@ class ActorDamageByChildActorSource : public ActorDamageByActorSource {
     ActorUniqueID damagingEntityUid; // 56
     ActorType damagingEntityType; // 60
     int damagingEntityCategories; // 64
-    std::__ndk1::string someStringFromDamagingEntity; // 76
+    stl::string someStringFromDamagingEntity; // 76
     // virtual bool isChildEntitySource() const;
-    // virtual std::__ndk1::pair<std::__ndk1::string, std::__ndk1::vector<std::__ndk1::string>> getDeathMessage(std::__ndk1::string, Actor*) const;
+    // virtual stl::pair<stl::string, stl::vector<stl::string>> getDeathMessage(stl::string, Actor*) const;
     // virtual bool getDamagingEntityIsCreative() const;
     // virtual bool getDamagingEntityIsWorldBuilder() const;
     // virtual ActorUniqueID getDamagingEntityUniqueID() const;
@@ -92,7 +93,7 @@ class ActorDamageByBlockSource : public ActorDamageSource {
     public:
     Block* block; // 12
     // virtual bool isBlockSource() const;
-    // virtual std::__ndk1::pair<std::__ndk1::string, std::__ndk1::vector<std::__ndk1::string>> getDeathMessage(std::__ndk1::string, Actor*) const;
+    // virtual stl::pair<stl::string, stl::vector<stl::string>> getDeathMessage(stl::string, Actor*) const;
     // virtual ActorDamageByBlockSource* clone() const;
     ActorDamageByBlockSource(ActorDamageCause);
     ActorDamageByBlockSource(const Block&, ActorDamageCause);
@@ -102,7 +103,7 @@ class ActorDamageByBlockSource : public ActorDamageSource {
 class RemovedActorDamageByType : public ActorDamageSource {
     public:
     ActorType actorType; // 12
-    // virtual std::__ndk1::pair<std::__ndk1::string, std::__ndk1::vector<std::__ndk1::string>> getDeathMessage(std::__ndk1::string, Actor*) const;
+    // virtual stl::pair<stl::string, stl::vector<stl::string>> getDeathMessage(stl::string, Actor*) const;
     // virtual ActorType getEntityType() const;
     // virtual RemovedActorDamageByType* clone() const;
     RemovedActorDamageByType(ActorDamageCause, ActorType);

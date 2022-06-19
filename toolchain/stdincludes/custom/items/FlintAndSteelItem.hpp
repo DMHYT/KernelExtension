@@ -13,7 +13,7 @@ class FlintAndSteelItem : public Item {
     // virtual void* hurtActor(ItemStack&, Actor&, Mob&) const;
     // virtual void* _calculatePlacePos(ItemStackBase&, Actor&, unsigned char&, BlockPos&) const;
     // virtual void* _useOn(ItemStack&, Actor&, BlockPos, unsigned char, float, float, float) const;
-    FlintAndSteelItem(const std::__ndk1::string&, int);
+    FlintAndSteelItem(const stl::string&, int);
 };
 
 

@@ -1,5 +1,6 @@
 #include <stl/string>
 #include <stl/vector>
+#include <stl.h>
 
 #ifndef KEX_FOODITEMCOMPONENTLEGACY_HPP
 #define KEX_FOODITEMCOMPONENTLEGACY_HPP
@@ -28,16 +29,16 @@ class FoodItemComponentLegacy {
     Item* item; // 8
     int nutrition; // 12
     float saturationModifier; // 16
-    std::__ndk1::string usingConvertsTo; // 28
+    stl::string usingConvertsTo; // 28
     FoodUseAction onUseAction; // 32
     float onUseRangeX; // 36
     float onUseRangeY; // 40
     float onUseRangeZ; // 44
-    std::__ndk1::string cooldownType; // 56
+    stl::string cooldownType; // 56
     int cooldownTime; // 60
     bool canAlwaysEat; // 61 + 3
-    std::__ndk1::vector<Effect> effects; // 76
-    std::__ndk1::vector<unsigned int> removeEffects; // 88
+    stl::vector<Effect> effects; // 76
+    stl::vector<unsigned int> removeEffects; // 88
     FoodItemComponentLegacy(Item&);
 };
 

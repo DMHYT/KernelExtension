@@ -1,4 +1,5 @@
 #include <stl/string>
+#include <stl.h>
 
 #include <enums.hpp>
 
@@ -27,7 +28,7 @@ class LootTableContext {
     char filler[56];
     LootTableContext(float, Level*, Actor*, Player*, const ActorDamageSource*, float);
     Actor* getThisEntity() const;
-    std::__ndk1::string getOriginalItemName() const;
+    stl::string getOriginalItemName() const;
     void removeVisitedTable(const LootTable*);
     Level* getLevel() const;
     float getExplosionRadius() const;
@@ -37,7 +38,7 @@ class LootTableContext {
     Actor* getKillerPet() const;
     Actor* getKillerEntity() const;
     ActorDamageSource* getDeathSource() const;
-    void setOriginalItemName(const std::__ndk1::string&);
+    void setOriginalItemName(const stl::string&);
     Actor* getEntity(ActorTarget) const;
     class Builder {
         public:
@@ -46,7 +47,7 @@ class LootTableContext {
         void withExplosionRadius(float);
         void withThisEntity(Actor*);
         void withLuck(float);
-        void withOriginalItemName(std::__ndk1::string&);
+        void withOriginalItemName(stl::string&);
         void withKillerPlayer(Player*);
         LootTableContext create() const;
         void withDeathSource(const ActorDamageSource*);

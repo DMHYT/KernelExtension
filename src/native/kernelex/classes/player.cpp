@@ -35,14 +35,14 @@ extern "C" {
         const char* cPrefix = env->GetStringUTFChars(prefix, 0);
         const char* cMessage = env->GetStringUTFChars(message, 0);
         VTABLE_FIND_OFFSET(Player_displayChatMessage, _ZTV6Player, _ZN6Player18displayChatMessageERKNSt6__ndk112basic_stringIcNS0_11char_traitsIcEENS0_9allocatorIcEEEES8_);
-        VTABLE_CALL<void>(Player_displayChatMessage, (Player*) ptr, std::__ndk1::string(cPrefix), std::__ndk1::string(cMessage));
+        VTABLE_CALL<void>(Player_displayChatMessage, (Player*) ptr, stl::string(cPrefix), stl::string(cMessage));
         env->ReleaseStringUTFChars(prefix, cPrefix);
         env->ReleaseStringUTFChars(message, cMessage);
     }
     __EXPORT__(void, DisplayClientMessage, jstring message) {
         const char* cMessage = env->GetStringUTFChars(message, 0);
         VTABLE_FIND_OFFSET(Player_displayClientMessage, _ZTV6Player, _ZN6Player20displayClientMessageERKNSt6__ndk112basic_stringIcNS0_11char_traitsIcEENS0_9allocatorIcEEEE);
-        VTABLE_CALL<void>(Player_displayClientMessage, (Player*) ptr, std::__ndk1::string(cMessage));
+        VTABLE_CALL<void>(Player_displayClientMessage, (Player*) ptr, stl::string(cMessage));
         env->ReleaseStringUTFChars(message, cMessage);
     }
     __EXPORT__(void, DisplayWhisperMessage, jstring s1, jstring s2, jstring s3, jstring s4) {
@@ -51,7 +51,7 @@ extern "C" {
         const char* c3 = env->GetStringUTFChars(s3, 0);
         const char* c4 = env->GetStringUTFChars(s4, 0);
         VTABLE_FIND_OFFSET(Player_displayWhisperMessage, _ZTV6Player, _ZN6Player21displayWhisperMessageERKNSt6__ndk112basic_stringIcNS0_11char_traitsIcEENS0_9allocatorIcEEEES8_S8_S8_);
-        VTABLE_CALL<void>(Player_displayWhisperMessage, (Player*) ptr, std::__ndk1::string(c1), std::__ndk1::string(c2), std::__ndk1::string(c3), std::__ndk1::string(c4));
+        VTABLE_CALL<void>(Player_displayWhisperMessage, (Player*) ptr, stl::string(c1), stl::string(c2), stl::string(c3), stl::string(c4));
         env->ReleaseStringUTFChars(s1, c1);
         env->ReleaseStringUTFChars(s2, c2);
         env->ReleaseStringUTFChars(s3, c3);
@@ -106,7 +106,7 @@ extern "C" {
     __EXPORT__(void, PlayEmote, jstring emote) {
         const char* cEmote = env->GetStringUTFChars(emote, 0);
         VTABLE_FIND_OFFSET(Player_playEmote, _ZTV6Player, _ZN6Player9playEmoteERKNSt6__ndk112basic_stringIcNS0_11char_traitsIcEENS0_9allocatorIcEEEE);
-        VTABLE_CALL<void>(Player_playEmote, (Player*) ptr, std::__ndk1::string(cEmote));
+        VTABLE_CALL<void>(Player_playEmote, (Player*) ptr, stl::string(cEmote));
         env->ReleaseStringUTFChars(emote, cEmote);
     }
     __EXPORT__(jboolean, IsHostingPlayer) {

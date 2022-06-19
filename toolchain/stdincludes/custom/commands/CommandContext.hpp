@@ -1,5 +1,6 @@
 #include <stl/string>
 #include <stl/memory>
+#include <stl.h>
 
 #include "CommandRegistry.hpp"
 
@@ -9,10 +10,10 @@
 
 class CommandContext {
     public:
-    std::__ndk1::string command; // 12
+    stl::string command; // 12
     CommandOrigin* origin; // 16
     int version; // 20
-    CommandContext(const std::__ndk1::string&, std::__ndk1::unique_ptr<CommandOrigin>, int);
+    CommandContext(const stl::string&, stl::unique_ptr<CommandOrigin>, int);
     CommandOrigin& getCommandOrigin() const;
 };
 

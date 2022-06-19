@@ -1,5 +1,6 @@
 #include <stl/string>
 #include <stl/vector>
+#include <stl.h>
 
 #include <enums.hpp>
 
@@ -29,7 +30,7 @@ class BlockActor {
 };
 class SignBlockActor {
     public:
-    std::__ndk1::string& getMessage();
+    stl::string& getMessage();
 };
 #ifndef KEX_BLOCKSOURCE_HPP
     class BlockSource {
@@ -450,7 +451,7 @@ class Actor {
     void* getSwimAmount(float) const;
     void setCanFly(bool);
     int getSkinID() const;
-    std::__ndk1::vector<MobEffectInstance>& getAllEffects() const;
+    stl::vector<MobEffectInstance>& getAllEffects() const;
     bool hasRider() const;
     void setJumpDuration(int);
     bool isSwimming() const;

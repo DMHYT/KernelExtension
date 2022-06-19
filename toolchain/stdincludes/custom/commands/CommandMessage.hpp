@@ -1,6 +1,7 @@
 #include <stl/memory>
 #include <stl/string>
 #include <stl/vector>
+#include <stl.h>
 
 #include "CommandSelector.hpp"
 
@@ -11,12 +12,12 @@
 class CommandMessage {
     public:
     struct MessageComponent {
-        std::__ndk1::string msg; // 12
-        std::__ndk1::unique_ptr<CommandSelector<Actor>> actor; // 16
+        stl::string msg; // 12
+        stl::unique_ptr<CommandSelector<Actor>> actor; // 16
     };
-    std::__ndk1::vector<MessageComponent> components; // 12
+    stl::vector<MessageComponent> components; // 12
     CommandMessage();
-    std::__ndk1::string getMessage(const CommandOrigin&) const;
+    stl::string getMessage(const CommandOrigin&) const;
 };
 
 

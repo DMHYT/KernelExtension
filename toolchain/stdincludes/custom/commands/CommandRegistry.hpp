@@ -2,6 +2,7 @@
 #include <stl/string>
 #include <stl/utility>
 #include <stl/vector>
+#include <stl.h>
 
 #include <json/value.h>
 
@@ -68,8 +69,8 @@ template typeid_t<CommandRegistry> type_id<CommandRegistry, float>();
 template typeid_t<CommandRegistry> type_id<CommandRegistry, int>();
 template typeid_t<CommandRegistry> type_id<CommandRegistry, Json::Value>();
 template typeid_t<CommandRegistry> type_id<CommandRegistry, RelativeFloat>();
-template typeid_t<CommandRegistry> type_id<CommandRegistry, std::__ndk1::string>();
-template typeid_t<CommandRegistry> type_id<CommandRegistry, std::__ndk1::unique_ptr<Command>>();
+template typeid_t<CommandRegistry> type_id<CommandRegistry, stl::string>();
+template typeid_t<CommandRegistry> type_id<CommandRegistry, stl::unique_ptr<Command>>();
 template typeid_t<CommandRegistry> type_id<CommandRegistry, WildcardCommandSelector<Actor>>();
 template typeid_t<CommandRegistry> type_id<CommandRegistry, CommandItem>();
 template typeid_t<CommandRegistry> type_id<CommandRegistry, CommandWildcardInt>();
@@ -91,34 +92,34 @@ class CommandRegistry {
     struct Symbol { unsigned int val; };
 
     struct ParseToken {
-        std::__ndk1::unique_ptr<ParseToken> child; // 4
-        std::__ndk1::unique_ptr<ParseToken> next; // 8
+        stl::unique_ptr<ParseToken> child; // 4
+        stl::unique_ptr<ParseToken> next; // 8
         ParseToken* parent; // 12
         const char* text; // 16
         unsigned int length; // 20
         Symbol tokenType; // 24
-        std::__ndk1::string toString() const;
+        stl::string toString() const;
     };
 
     using ParseFn = bool (CommandRegistry::*)(
-        void*, const ParseToken&, const CommandOrigin&, int, std::__ndk1::string&, 
-        std::__ndk1::vector<std::__ndk1::string>&) const;
+        void*, const ParseToken&, const CommandOrigin&, int, stl::string&, 
+        stl::vector<stl::string>&) const;
 
     struct Overload {
-        using Factory = std::__ndk1::unique_ptr<Command> (*)();
+        using Factory = stl::unique_ptr<Command> (*)();
         CommandVersion version; // 8
         Factory factory; // 12
-        std::__ndk1::vector<CommandParameterData> params; // 24
+        stl::vector<CommandParameterData> params; // 24
         int someShit; // 28
-        inline Overload(CommandVersion v, Factory f, const std::__ndk1::vector<CommandParameterData>& p)
+        inline Overload(CommandVersion v, Factory f, const stl::vector<CommandParameterData>& p)
             : version(v), factory(f), params(p), someShit(-1) {}
         Overload(CommandVersion, Factory);
     };
 
     struct Signature {
-        std::__ndk1::string name; // 12
-        std::__ndk1::string description; // 24
-        std::__ndk1::vector<Overload> overloads; // 36
+        stl::string name; // 12
+        stl::string description; // 24
+        stl::vector<Overload> overloads; // 36
         CommandPermissionLevel perm; // 37 + 3
         Symbol mainSymbol; // 44
         Symbol altSymbol; // 48
@@ -128,18 +129,18 @@ class CommandRegistry {
 
     template<typename T> struct DefaultIdConverter;
 
-    void registerCommand(const std::__ndk1::string&, const char*, CommandPermissionLevel, CommandFlag, CommandFlag);
-    void registerAlias(std::__ndk1::string, std::__ndk1::string);
+    void registerCommand(const stl::string&, const char*, CommandPermissionLevel, CommandFlag, CommandFlag);
+    void registerAlias(stl::string, stl::string);
     void registerOverloadInternal(Signature&, Overload&);
-    Signature* findCommand(const std::__ndk1::string&);
-    template<typename Type, typename IDConverter = DefaultIdConverter<Type>> int addEnumValues(const std::__ndk1::string& name, std::__ndk1::vector<std::__ndk1::pair<std::__ndk1::string, Type>> const& values);
-    template<typename Type> bool parse(void*, const ParseToken&, const CommandOrigin&, int, std::__ndk1::string&, std::__ndk1::vector<std::__ndk1::string>&) const;
-    template<typename Type, typename IDConverter = DefaultIdConverter<Type>> bool parseEnum(void*, const ParseToken&, const CommandOrigin&, int, std::__ndk1::string&, std::__ndk1::vector<std::__ndk1::string>&) const;
-    bool parseParameter(Command*, const CommandParameterData&, const ParseToken&, const CommandOrigin&, int, std::__ndk1::string&, std::__ndk1::vector<std::__ndk1::string>&) const;
-    std::__ndk1::string getCommandName(const std::__ndk1::string&) const;
+    Signature* findCommand(const stl::string&);
+    template<typename Type, typename IDConverter = DefaultIdConverter<Type>> int addEnumValues(const stl::string& name, stl::vector<stl::pair<stl::string, Type>> const& values);
+    template<typename Type> bool parse(void*, const ParseToken&, const CommandOrigin&, int, stl::string&, stl::vector<stl::string>&) const;
+    template<typename Type, typename IDConverter = DefaultIdConverter<Type>> bool parseEnum(void*, const ParseToken&, const CommandOrigin&, int, stl::string&, stl::vector<stl::string>&) const;
+    bool parseParameter(Command*, const CommandParameterData&, const ParseToken&, const CommandOrigin&, int, stl::string&, stl::vector<stl::string>&) const;
+    stl::string getCommandName(const stl::string&) const;
     static bool isParseMatch(const CommandParameterData&, Symbol);
 
-    inline void registerOverload(const char* commandName, Overload::Factory factory, std::__ndk1::vector<CommandParameterData>&& args) {
+    inline void registerOverload(const char* commandName, Overload::Factory factory, stl::vector<CommandParameterData>&& args) {
         auto signature = findCommand(commandName);
         Overload overload(CommandVersion(1, 0x7fffffff), factory);
         overload.params = args;
@@ -153,12 +154,12 @@ class CommandRegistry {
     }
 
     template<typename CommandType>
-    static inline std::__ndk1::unique_ptr<CommandType> allocateCommand() {
-        return std::__ndk1::unique_ptr<CommandType>(new CommandType());
+    static inline stl::unique_ptr<CommandType> allocateCommand() {
+        return stl::unique_ptr<CommandType>(new CommandType());
     }
     
     template<typename CommandType>
-    inline void registerOverloadParamsVec(const char* commandName, const std::__ndk1::vector<CommandParameterData>& params) {
+    inline void registerOverloadParamsVec(const char* commandName, const stl::vector<CommandParameterData>& params) {
         auto signature = findCommand(commandName);
         signature->overloads.emplace_back(CommandVersion{}, (Overload::Factory) &allocateCommand<CommandType>, params);
         registerOverloadInternal(*signature, signature->overloads.back());
@@ -171,7 +172,7 @@ class CommandParameterData {
     public:
     typeid_t<CommandRegistry> tid; // 2 + 2
     CommandRegistry::ParseFn parser; // 12
-    std::__ndk1::string name; // 24
+    stl::string name; // 24
     const char* description; // 28
     int something; // 32
     CommandParameterDataType type; // 36

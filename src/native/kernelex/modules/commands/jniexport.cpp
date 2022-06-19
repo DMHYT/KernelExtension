@@ -34,7 +34,7 @@ extern "C" {
     }
     JNIEXPORT void JNICALL Java_vsdum_kex_modules_commands_CommandsNativeAPI_nativeBuildArgument
     (JNIEnv* env, jclass, jlong vectorPtr, jstring paramName, jint paramType, jstring enumName, jboolean mandatory, jint fieldOffset) {
-        auto vec = (std::__ndk1::vector<CommandParameterData>*) vectorPtr;
+        auto vec = (stl::vector<CommandParameterData>*) vectorPtr;
         const char* cParamName = env->GetStringUTFChars(paramName, 0);
         const char* cEnumNameTemp = enumName == nullptr ? nullptr : env->GetStringUTFChars(enumName, 0);
         char* cEnumName = cEnumNameTemp == nullptr ? nullptr : (char*) malloc(strlen(cEnumNameTemp) + 1);
@@ -61,7 +61,7 @@ extern "C" {
             } else if(paramType == 5) {
                 vec->push_back(commands::mandatory<KEXCommandRegistry::KEXAPICommand, CommandPositionFloat>(fieldOffset, cParamName, isSetOffset));
             } else if(paramType == 6) {
-                vec->push_back(commands::mandatory<KEXCommandRegistry::KEXAPICommand, std::__ndk1::string>(fieldOffset, cParamName, isSetOffset));
+                vec->push_back(commands::mandatory<KEXCommandRegistry::KEXAPICommand, stl::string>(fieldOffset, cParamName, isSetOffset));
             } else if(paramType == 7) {
                 vec->push_back(commands::mandatory<KEXCommandRegistry::KEXAPICommand, CommandMessage>(fieldOffset, cParamName, isSetOffset));
             } else if(paramType == 8) {
@@ -97,7 +97,7 @@ extern "C" {
             } else if(paramType == 5) {
                 vec->push_back(commands::optional<KEXCommandRegistry::KEXAPICommand, CommandPositionFloat>(fieldOffset, cParamName, isSetOffset));
             } else if(paramType == 6) {
-                vec->push_back(commands::optional<KEXCommandRegistry::KEXAPICommand, std::__ndk1::string>(fieldOffset, cParamName, isSetOffset));
+                vec->push_back(commands::optional<KEXCommandRegistry::KEXAPICommand, stl::string>(fieldOffset, cParamName, isSetOffset));
             } else if(paramType == 7) {
                 vec->push_back(commands::optional<KEXCommandRegistry::KEXAPICommand, CommandMessage>(fieldOffset, cParamName, isSetOffset));
             } else if(paramType == 8) {
@@ -137,7 +137,7 @@ extern "C" {
         if(KEXCommandRegistry::customEnums.find(cEnumName) == KEXCommandRegistry::customEnums.end()) {
             jsize l = env->GetArrayLength(strings);
             if(l > 0) {
-                std::__ndk1::vector<std::__ndk1::pair<std::__ndk1::string, int>> values;
+                stl::vector<stl::pair<stl::string, int>> values;
                 jint* cInts = env->GetIntArrayElements(ints, 0);
                 for(int i = 0; i < l; i++) {
                     jstring s = (jstring) env->GetObjectArrayElement(strings, i);

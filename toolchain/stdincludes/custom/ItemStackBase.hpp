@@ -1,4 +1,5 @@
 #include <stl/string>
+#include <stl.h>
 
 #ifndef KEX_ITEMSTACKBASE_HPP
 #define KEX_ITEMSTACKBASE_HPP
@@ -22,8 +23,8 @@ class ItemStackBase {
     public:
     char filler[96];
     // virtual void setNull(); // pure virtual
-    // virtual const std::__ndk1::string& toString(); // pure virtual
-    // virtual const std::__ndk1::string& toDebugString(); // pure virtual
+    // virtual const stl::string& toString(); // pure virtual
+    // virtual const stl::string& toDebugString(); // pure virtual
     ItemStackBase(const Block&, int, const CompoundTag*);
     ItemStackBase(const BlockLegacy&, int, short);
     ItemStackBase(const ItemStackBase&);

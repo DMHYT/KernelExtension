@@ -12,14 +12,14 @@ class WeaponItem : public Item {
     // virtual int getAttackDamage() const;
     // virtual bool isHandEquipped() const;
     // virtual bool canDestroyInCreative() const;
-    // virtual void* appendFormattedHovertext(const ItemStackBase&, Level&, std::__ndk1::string&, bool) const;
+    // virtual void* appendFormattedHovertext(const ItemStackBase&, Level&, stl::string&, bool) const;
     // virtual bool isValidRepairItem(const ItemStackBase&, const ItemStackBase&) const;
     // virtual void* getEnchantSlot() const;
     // virtual int getEnchantValue() const;
     // virtual void* use(ItemStack&, Player&) const;
     // virtual float getDestroySpeed(const ItemStackBase&, const Block&) const;
     // virtual bool hurtActor(ItemStack&, Actor&, Mob&) const;
-    WeaponItem(const std::__ndk1::string&, int, const Item::Tier&);
+    WeaponItem(const stl::string&, int, const Item::Tier&);
 };
 
 

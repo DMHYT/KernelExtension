@@ -11,8 +11,8 @@
 #include "../module.hpp"
 
 
-void KEXToolsModule::CustomToolPatches::appendFormattedHovertext(Item* _this, const ItemStackBase& stack, Level& level, std::__ndk1::string& text, bool someBool) {
-    STATIC_SYMBOL(Item_appendFormattedHovertext, "_ZNK4Item24appendFormattedHovertextERK13ItemStackBaseR5LevelRNSt6__ndk112basic_stringIcNS5_11char_traitsIcEENS5_9allocatorIcEEEEb", (Item*, const ItemStackBase&, Level&, std::__ndk1::string&, bool), void);
+void KEXToolsModule::CustomToolPatches::appendFormattedHovertext(Item* _this, const ItemStackBase& stack, Level& level, stl::string& text, bool someBool) {
+    STATIC_SYMBOL(Item_appendFormattedHovertext, "_ZNK4Item24appendFormattedHovertextERK13ItemStackBaseR5LevelRNSt6__ndk112basic_stringIcNS5_11char_traitsIcEENS5_9allocatorIcEEEEb", (Item*, const ItemStackBase&, Level&, stl::string&, bool), void);
     Item_appendFormattedHovertext(_this, stack, level, text, someBool);
     text.append("\n\n§9+");
     int staticId = IdConversion::dynamicToStatic(_this->id, IdConversion::ITEM);
@@ -23,7 +23,7 @@ void KEXToolsModule::CustomToolPatches::appendFormattedHovertext(Item* _this, co
         damage += KEXJavaBridge::CustomToolEvents::getAttackDamageBonus(staticId, 1, stack.getDamageValue(), (jlong) extra, factory->tier->getAttackDamageBonus());
         delete extra;
         damage += (int)((float) EnchantUtils::getEnchantLevel((Enchant::Type) 9, stack) * 1.25);
-        text.append(std::__ndk1::to_string(damage));
+        text.append(stl::to_string(damage));
         text.append(" ");
         text.append(I18n::get("attribute.name.generic.attackDamage"));
         text.append("§r");

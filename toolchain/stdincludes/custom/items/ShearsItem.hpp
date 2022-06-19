@@ -14,7 +14,7 @@ class ShearsItem : public Item {
     // virtual bool hurtActor(ItemStack&, Actor&, Mob&) const;
     // virtual bool mineBlock(ItemStack&, const Block&, int, int, int, Actor*) const;
     // virtual void* _useOn(ItemStack&, Actor&, BlockPos, unsigned char, float, float, float) const;
-    ShearsItem(const std::__ndk1::string&, int);
+    ShearsItem(const stl::string&, int);
 };
 
 

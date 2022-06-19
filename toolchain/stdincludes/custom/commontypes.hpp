@@ -1,6 +1,7 @@
 #include <stl/memory>
 #include <stl/string>
 #include <stl/vector>
+#include <stl.h>
 
 #ifndef KEX_BLOCKPOS_HPP
 #define KEX_BLOCKPOS_HPP
@@ -58,22 +59,22 @@ class AABB {
 class HashedString {
     public:
     unsigned long long hash; // 8
-    std::__ndk1::string str; // 20
+    stl::string str; // 20
     int something; // 24
-    HashedString(const std::__ndk1::string&);
+    HashedString(const stl::string&);
     HashedString(const char*);
     HashedString(unsigned long long, const char*);
     const char* c_str() const;
     void clear();
     bool empty() const;
     unsigned long long getHash() const;
-    const std::__ndk1::string& getString() const;
+    const stl::string& getString() const;
     bool isEmpty() const;
     bool operator!=(const HashedString&) const;
     bool operator<(const HashedString&) const;
     HashedString& operator=(const HashedString&);
     bool operator==(const HashedString&) const;
-    static unsigned long long computeHash(const std::__ndk1::string&);
+    static unsigned long long computeHash(const stl::string&);
     static unsigned long long computeHash(const char*);
     static HashedString defaultErrorValue;
     static const HashedString& getEmptyString();
@@ -103,9 +104,9 @@ struct InvertableFilter {
 template<typename T>
 class CommandSelectorResults {
     public:
-    std::__ndk1::shared_ptr<std::__ndk1::vector<T*>> data;
-    typename std::__ndk1::vector<T*>::const_iterator begin() { return data->begin(); }
-    typename std::__ndk1::vector<T*>::const_iterator end() { return data->end(); }
+    stl::shared_ptr<stl::vector<T*>> data;
+    typename stl::vector<T*>::const_iterator begin() { return data->begin(); }
+    typename stl::vector<T*>::const_iterator end() { return data->end(); }
     unsigned int count() const { return data->size(); }
     bool empty() const { return data->empty(); }
 };

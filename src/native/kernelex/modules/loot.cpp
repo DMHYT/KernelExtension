@@ -73,7 +73,7 @@ void KEXLootModule::initialize() {
 
     HookManager::addCallback(
         SYMBOL("mcpe", "_ZNK9LootTable14getRandomItemsER6RandomR16LootTableContext"),
-        LAMBDA((std::__ndk1::vector<ItemStack>* items, LootTable* table, Random& rnd, LootTableContext& ctx), {
+        LAMBDA((stl::vector<ItemStack>* items, LootTable* table, Random& rnd, LootTableContext& ctx), {
             auto tableName = getLootTableName(table);
             if(KEXLootModule::tablesWithDropCallbacks.find(tableName) != KEXLootModule::tablesWithDropCallbacks.end()) {
                 KEXJavaBridge::LootModule::onDrop(tableName.c_str(), (jlong) items, items->size(), (jlong) &ctx);
@@ -97,13 +97,13 @@ extern "C" {
     }
     JNIEXPORT jlong JNICALL Java_vsdum_kex_modules_loot_RandomItemsList_nativeGet
     (JNIEnv*, jclass, jlong vectorPtr, jint index) {
-        auto vec = (std::__ndk1::vector<ItemStack>*) vectorPtr;
+        auto vec = (stl::vector<ItemStack>*) vectorPtr;
         ItemStack& stack = vec->operator[](index);
         return (jlong) &stack;
     }
     JNIEXPORT void JNICALL Java_vsdum_kex_modules_loot_RandomItemsList_nativeAdd
     (JNIEnv*, jclass, jlong vectorPtr, jint id, jint count, jint data, jlong extra) {
-        auto vec = (std::__ndk1::vector<ItemStack>*) vectorPtr;
+        auto vec = (stl::vector<ItemStack>*) vectorPtr;
         Item* item = ItemRegistry::getItemById(IdConversion::staticToDynamic(id, IdConversion::ITEM));
         if(item != nullptr && count > 0) {
             ItemStack newStack(*item, count, data);
@@ -115,7 +115,7 @@ extern "C" {
     }
     JNIEXPORT void JNICALL Java_vsdum_kex_modules_loot_RandomItemsList_nativeRefill
     (JNIEnv* env, jclass, jlong vectorPtr, jobjectArray stackArray) {
-        auto vec = (std::__ndk1::vector<ItemStack>*) vectorPtr;
+        auto vec = (stl::vector<ItemStack>*) vectorPtr;
         vec->clear();
         int length = env->GetArrayLength(stackArray);
         if(length > 0) {
@@ -176,7 +176,7 @@ extern "C" {
                 LootTable* lootTable = lootTables->lookupByName(cTableName, *rpManager);
                 env->ReleaseStringUTFChars(tableName, cTableName);
                 if(lootTable != nullptr) {
-                    auto items = new std::__ndk1::vector<ItemStack>();
+                    auto items = new stl::vector<ItemStack>();
                     *items = lootTable->getRandomItems(*random, *context);
                     return (jlong) items;
                 }
@@ -186,11 +186,11 @@ extern "C" {
     }
     JNIEXPORT jint JNICALL Java_vsdum_kex_modules_LootModule_nativeGetVectorSize
     (JNIEnv*, jclass, jlong vectorPtr) {
-        return ((std::__ndk1::vector<ItemStack>*) vectorPtr)->size();
+        return ((stl::vector<ItemStack>*) vectorPtr)->size();
     }
     JNIEXPORT void JNICALL Java_vsdum_kex_modules_LootModule_nativeDeleteVector
     (JNIEnv*, jclass, jlong vectorPtr) {
-        delete ((std::__ndk1::vector<ItemStack>*) vectorPtr);
+        delete ((stl::vector<ItemStack>*) vectorPtr);
     }
     JNIEXPORT void JNICALL Java_vsdum_kex_modules_LootModule_nativeForceLoad
     (JNIEnv* env, jclass, jstring tableName) {

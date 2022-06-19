@@ -29,7 +29,7 @@ class KEXCommandRegistry {
             CommandPermissionLevel permissionLevel = CommandPermissionLevel::GAMEMASTERS;
             CommandFlag flag1 = (CommandFlag) 0;
             CommandFlag flag2 = (CommandFlag) 0;
-            std::vector<std::__ndk1::vector<CommandParameterData>> overloads;
+            std::vector<stl::vector<CommandParameterData>> overloads;
             bool customParsed = false;
         } props;
         NonNativeCommandFactory(): NativeCommandFactoryBase() {}
@@ -39,12 +39,12 @@ class KEXCommandRegistry {
         void addAlias(const std::string& alias);
         void setFlags(int first, int last);
         void setCustomParsed(bool customParsed);
-        std::__ndk1::vector<CommandParameterData>* addOverload(int overloadIndex);
+        stl::vector<CommandParameterData>* addOverload(int overloadIndex);
     };
     static std::unordered_map<std::string, NativeCommandFactoryBase*> registeredFactories;
     static std::unordered_set<std::string> usedNamesAndAliases;
     static std::vector<std::pair<std::string, std::string>> staticAliases;
-    static std::unordered_map<std::string, std::__ndk1::vector<std::__ndk1::pair<std::__ndk1::string, int>>> customEnums;
+    static std::unordered_map<std::string, stl::vector<stl::pair<stl::string, int>>> customEnums;
     static void registerNativeCommandFactory(const std::string& commandName, NativeCommandFactoryBase* factory);
     static NativeCommandFactoryBase* getFactoryByName(const std::string& commandName);
     class KEXAPICommand : public Command {

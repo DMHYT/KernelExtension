@@ -18,7 +18,7 @@ class Command {
     inline Command(int _version, CommandRegistry* _registry, CommandRegistry::Symbol _symbol, CommandPermissionLevel perm, CommandFlag _flag)
         : version(_version), registry(_registry), symbol(_symbol), permissionLevel(perm), flag(_flag) {}
     Command();
-    std::__ndk1::string getCommandName() const;
+    stl::string getCommandName() const;
     static Player* getPlayerFromOrigin(const CommandOrigin&);
 };
 

@@ -1,5 +1,6 @@
 #include <stl/vector>
 #include <stl/string>
+#include <stl.h>
 
 #include <jni.h>
 
@@ -45,7 +46,7 @@ namespace KEXJavaBridge {
     }
     namespace DamageModule {
         jstring getDeathMessage(jlong sourcePtr, const char* nickname, jlong actorPtr);
-        jstring translateAndFormatDeathMessage(const char* causeName, const std::__ndk1::vector<std::__ndk1::string>& formatData);
+        jstring translateAndFormatDeathMessage(const char* causeName, const stl::vector<stl::string>& formatData);
     }
 }
 

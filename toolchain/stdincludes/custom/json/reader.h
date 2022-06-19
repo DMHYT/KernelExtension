@@ -74,7 +74,7 @@ public:
    * error occurred.
    */
   bool
-  parse(const std::__ndk1::string& document, Value& root, bool collectComments = true);
+  parse(const stl::string& document, Value& root, bool collectComments = true);
 
   /** \brief Read a Value from a <a HREF="http://www.json.org">JSON</a>
    document.

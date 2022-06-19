@@ -113,7 +113,7 @@ namespace KEXJavaBridge {
             env->DeleteLocalRef(jNickname);
             return result;
         }
-        jstring translateAndFormatDeathMessage(const char* causeName, const std::__ndk1::vector<std::__ndk1::string>& formatData) {
+        jstring translateAndFormatDeathMessage(const char* causeName, const stl::vector<stl::string>& formatData) {
             JNIEnv* env = KEXJavaUtils::attach();
             jstring jCauseName = env->NewStringUTF(causeName);
             jobjectArray arr = env->NewObjectArray(formatData.size(), env->FindClass("java/lang/String"), nullptr);

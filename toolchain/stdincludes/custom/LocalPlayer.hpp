@@ -9,11 +9,11 @@ class BaseScreen : public AbstractScene {public:};
 class UIScene : public BaseScreen {public:};
 class SceneStack {
     public:
-    void pushScreen(std::__ndk1::shared_ptr<AbstractScene>, bool);
+    void pushScreen(stl::shared_ptr<AbstractScene>, bool);
 };
 class SceneFactory {
     public:
-    std::__ndk1::shared_ptr<UIScene> createSignScreen(const BlockPos&);  
+    stl::shared_ptr<UIScene> createSignScreen(const BlockPos&);  
 };
 
 class LocalPlayer : public Player {
@@ -78,14 +78,14 @@ class LocalPlayer : public Player {
     // virtual void openChalkboard(ChalkboardBlockActor&, bool);
     // virtual void openNpcInteractScreen(Actor&);
     // virtual void openInventory();
-    // virtual void displayClientMessage(const std::__ndk1::string&);
+    // virtual void displayClientMessage(const stl::string&);
     // virtual void displayTextObjectMessage(const TextObjectRoot&);
-    // virtual void displayWhisperMessage(const std::__ndk1::string&, const std::__ndk1::string&, const std::__ndk1::string&, const std::__ndk1::string&);
+    // virtual void displayWhisperMessage(const stl::string&, const stl::string&, const stl::string&, const stl::string&);
     // virtual void startSleepInBed(const BlockPos&);
     // virtual void stopSleepInBed(bool, bool);
     // virtual bool canStartSleepInBed();
     // virtual void openSign(const BlockPos&);
-    // virtual void playEmote(const std::__ndk1::string&);
+    // virtual void playEmote(const stl::string&);
     // virtual bool isHostingPlayer() const;
     // virtual bool isLoading() const;
     // virtual bool stopLoading();
@@ -99,7 +99,7 @@ class LocalPlayer : public Player {
     // virtual bool isEntityRelevant(const Actor&);
     // virtual bool isTeacher() const;
     // virtual void* sendInventoryTransaction(const InventoryTransaction&) const;
-    // virtual void sendComplexInventoryTransaction(std::__ndk1::unique_ptr<ComplexInventoryTransaction>) const;
+    // virtual void sendComplexInventoryTransaction(stl::unique_ptr<ComplexInventoryTransaction>) const;
     // virtual void sendNetworkPacket(Packet&) const;
     // virtual PlayerEventCoordinator* getPlayerEventCoordinator();
     // virtual MoveInputHandler& getMoveInputHandler();
@@ -122,7 +122,7 @@ class LocalPlayer : public Player {
     void removeRegionListener(RegionListener*);
     void clearMovementState();
     void setPortalEffectTime(float);
-    void chat(const std::__ndk1::string&);
+    void chat(const stl::string&);
     void setInventoryOptions(const InventoryOptions&);
     void* _getClientPlayerEventCoordinator();
     void localPlayerTurn(const Vec2&);
@@ -168,7 +168,7 @@ class LocalPlayer : public Player {
     void setLeavingLevel(bool);
     void sendEmotes();
     void startPaddling(Side);
-    void setAllEmoteTelemetryData(const std::__ndk1::string&, int);
+    void setAllEmoteTelemetryData(const stl::string&, int);
     InventoryOptions* getInventoryOptions() const;
     bool _hasLoadedEnoughChunksToView() const;
     void addRegionListener(RegionListener*);

@@ -27,8 +27,8 @@ class ServerPlayer : public Player {
     // virtual void aiStep();
     // virtual void hurtArmor(const ActorDamageSource&, int);
     // virtual void setDamagedArmor(ArmorSlot, const ItemStack&);
-    // virtual void sendArmorDamage(std::__ndk1::bitset<4u> const&);
-    // virtual void sendArmor(std::__ndk1::bitset<4u> const&);
+    // virtual void sendArmorDamage(stl::bitset<4u> const&);
+    // virtual void sendArmor(stl::bitset<4u> const&);
     // virtual void clearVanishEnchantedItemsOnDeath();
     // virtual void sendInventory(bool);
     // virtual void prepareRegion(ChunkSource&);
@@ -45,8 +45,8 @@ class ServerPlayer : public Player {
     // virtual void openNpcInteractScreen(Actor&);
     // virtual void openInventory();
     // virtual void displayTextObjectMessage(const TextObjectRoot&);
-    // virtual void displayTextObjectWhisperMessage(const ResolvedTextObject&, const std::__ndk1::string&, const std::__ndk1::string&);
-    // virtual void displayWhisperMessage(const std::__ndk1::string&, const std::__ndk1::string&, const std::__ndk1::string&, const std::__ndk1::string&);
+    // virtual void displayTextObjectWhisperMessage(const ResolvedTextObject&, const stl::string&, const stl::string&);
+    // virtual void displayWhisperMessage(const stl::string&, const stl::string&, const stl::string&, const stl::string&);
     // virtual void stopSleepInBed(bool, bool);
     // virtual bool isHostingPlayer() const;
     // virtual bool isLoading() const;
@@ -57,7 +57,7 @@ class ServerPlayer : public Player {
     // virtual void onSuspension();
     // virtual void onLinkedSlotsChanged();
     // virtual void* sendInventoryTransaction(const InventoryTransaction&) const;
-    // virtual void* sendComplexInventoryTransaction(std::__ndk1::unique_ptr<ComplexInventoryTransaction>) const;
+    // virtual void* sendComplexInventoryTransaction(stl::unique_ptr<ComplexInventoryTransaction>) const;
     // virtual void* sendNetworkPacket(Packet&) const;
     // virtual PlayerEventCoordinator* getPlayerEventCoordinator() const;
     // virtual MoveInputHandler* getMoveInputHandler();
@@ -95,7 +95,7 @@ class ServerPlayer : public Player {
     void setPlayerInput(float, float, bool, bool);
     void openUnmanagedContainer();
     void setTeacher();
-    void setLostDataTag(std::__ndk1::unique_ptr<CompoundTag>);
+    void setLostDataTag(stl::unique_ptr<CompoundTag>);
     void setInputMode(const InputMode&);
 };
 

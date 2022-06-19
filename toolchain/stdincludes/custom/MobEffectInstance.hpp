@@ -1,4 +1,5 @@
 #include <stl/string>
+#include <stl.h>
 
 #include <enums.hpp>
 
@@ -42,11 +43,11 @@ class MobEffectInstance {
     bool isAmbient() const;
     int getAmplifier() const;
     //areAllEffectsAmbient
-    std::__ndk1::string getDisplayName() const;
+    stl::string getDisplayName() const;
     void _tickDownDuration();
     void setNoCounter(bool);
     bool operator!=(const MobEffectInstance&) const;
-    std::__ndk1::string getDescriptionId() const;
+    stl::string getDescriptionId() const;
     int getSplashDuration() const;
     void setDifficulityDuration(Difficulty, int);
     void* applyEffects(Actor*) const;

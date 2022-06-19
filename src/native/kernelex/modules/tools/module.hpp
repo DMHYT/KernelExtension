@@ -90,7 +90,7 @@ class KEXToolsModule : public Module {
         static inline bool hurtActor(Item*, ItemStack&, Actor&, Mob&) { return true; }
         static inline bool mineBlock__instance(Item*, ItemInstance&, const Block&, int, int, int, Actor*) { return true; }
         static inline bool mineBlock__stack(Item*, ItemStack&, const Block&, int, int, int, Actor*) { return true; }
-        static void appendFormattedHovertext(Item*, const ItemStackBase&, Level&, std::__ndk1::string&, bool);
+        static void appendFormattedHovertext(Item*, const ItemStackBase&, Level&, stl::string&, bool);
         static float _shearsTieredGetDestroySpeed(ShearsItem*, const ItemStackBase&, const Block&);
     };
     KEXToolsModule(Module* parent): Module(parent, "kex.tools") {};

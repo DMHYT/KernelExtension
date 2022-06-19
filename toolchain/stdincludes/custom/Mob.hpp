@@ -66,7 +66,7 @@ class Mob : public Actor {
     // virtual bool canBePulledIntoVehicle() const;
     // virtual bool inCaravan() const;
     // virtual void stopRiding(bool, bool, bool);
-    // virtual void* buildDebugInfo(std::__ndk1::string&) const;
+    // virtual void* buildDebugInfo(stl::string&) const;
     // virtual int getDeathTime() const;
     // virtual void swing();
     // virtual float getYHeadRot() const;
@@ -133,11 +133,11 @@ class Mob : public Actor {
     // virtual int getArmorValue();
     // virtual float getArmorCoverPercentage() const;
     // virtual void hurtArmor(const ActorDamageSource&, int);
-    // virtual void hurtArmor(const ActorDamageSource&, int, std::__ndk1::bitset<4u> const&);
+    // virtual void hurtArmor(const ActorDamageSource&, int, stl::bitset<4u> const&);
     // virtual void hurtArmorSlot(const ActorDamageSource&, int, ArmorSlot);
     // virtual void setDamagedArmor(ArmorSlot, const ItemStack&);
-    // virtual void sendArmorDamage(std::__ndk1::bitset<4u> const&);
-    // virtual void sendArmor(std::__ndk1::bitset<4u> const&);
+    // virtual void sendArmorDamage(stl::bitset<4u> const&);
+    // virtual void sendArmor(stl::bitset<4u> const&);
     // virtual void containerChanged(int);
     // virtual void updateEquipment();
     // virtual void clearEquipment();
@@ -194,7 +194,7 @@ class Mob : public Actor {
     bool canPickUpLoot(const ItemStack&) const;
     float getJumpMultiplier(const IMobMovementProxy&);
     bool _shouldDropItem(const ItemStack&, bool, bool, int, float) const;
-    void _addSpeedBonus(const mce::UUID&, const std::__ndk1::string&, float);
+    void _addSpeedBonus(const mce::UUID&, const stl::string&, float);
     bool hasBeenHurtByMobInLastTicks(int) const;
     void _saveArmor();
     ItemStack* getItemSlot(EquipmentSlot) const;
@@ -252,7 +252,7 @@ class Mob : public Actor {
     void resetAttributes();
     void _travel(IMobMovementProxy&, float, float, float);
     ActorDamageCause getLastHurtCause() const;
-    void createAI(std::__ndk1::vector<GoalDefinition>);
+    void createAI(stl::vector<GoalDefinition>);
     void setZza(float);
     TravelType getTravelType();
     void tickEffects();

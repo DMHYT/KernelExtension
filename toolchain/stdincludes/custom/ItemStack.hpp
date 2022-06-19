@@ -1,4 +1,5 @@
 #include <stl/string>
+#include <stl.h>
 
 #ifndef KEX_ITEMSTACK_HPP
 #define KEX_ITEMSTACK_HPP
@@ -27,8 +28,8 @@ class ItemStack : public ItemStackBase {
     // virtual void reinit(const BlockLegacy&, int);
     // here these three pure virtual methods are overloaded
     // virtual void setNull();
-    // virtual const std::__ndk1::string& toString() const;
-    // virtual const std::__ndk1::string& toDebugString() const;
+    // virtual const stl::string& toString() const;
+    // virtual const stl::string& toDebugString() const;
     ItemStack(const ItemInstance&);
     ItemStack(const Block&, int, const CompoundTag*);
     ItemStack(const ItemStack&);

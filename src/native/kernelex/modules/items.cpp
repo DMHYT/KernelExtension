@@ -1,4 +1,5 @@
 #include <stl/string>
+#include <stl.h>
 
 #include <jni.h>
 #include <math.h>
@@ -80,7 +81,7 @@ void KEXItemsModule::initialize() {
 
     HookManager::addCallback(
         SYMBOL("mcpe", "_Z24FoodSaturationFromStringRKNSt6__ndk112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEE"),
-        LAMBDA((HookManager::CallbackController* controller, const std::__ndk1::string& str), {
+        LAMBDA((HookManager::CallbackController* controller, const stl::string& str), {
             controller->replace();
             float defaultResult = controller->call<float>(str);
             if(roundf(defaultResult * 100) / 100 == 0.6f && str != "normal") {
@@ -108,7 +109,7 @@ void KEXItemsModule::initialize() {
         HookManager::CALL | HookManager::LISTENER | HookManager::CONTROLLER | HookManager::RESULT
     );
     
-    // HookManager::addCallback(SYMBOL("mcpe", "_ZNK4Item24appendFormattedHovertextERK13ItemStackBaseR5LevelRNSt6__ndk112basic_stringIcNS5_11char_traitsIcEENS5_9allocatorIcEEEEb"), LAMBDA((Item* item, const ItemStackBase& stack, Level& level, std::__ndk1::string& text, bool b), {
+    // HookManager::addCallback(SYMBOL("mcpe", "_ZNK4Item24appendFormattedHovertextERK13ItemStackBaseR5LevelRNSt6__ndk112basic_stringIcNS5_11char_traitsIcEENS5_9allocatorIcEEEEb"), LAMBDA((Item* item, const ItemStackBase& stack, Level& level, stl::string& text, bool b), {
     //     JNIEnv* env = KEXJavaUtils::attach();
     //     jstring jText = KEXJavaBridge::ItemsModule::appendFormattedHovertext((jlong) &stack, (jlong) &level, text.c_str());
     //     const char* cText = env->GetStringUTFChars(jText, 0);

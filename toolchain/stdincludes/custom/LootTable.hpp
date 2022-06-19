@@ -1,5 +1,6 @@
 #include <stl/string>
 #include <stl/vector>
+#include <stl.h>
 
 #include <ItemStackBase.hpp>
 #include <ItemStack.hpp>
@@ -20,27 +21,27 @@ class ResourcePackManager;
 
 class LootTable {
     public:
-    LootTable(std::__ndk1::string);
+    LootTable(stl::string);
     LootTable();
     ~LootTable();
-    std::__ndk1::vector<ItemStack> getRandomItems(Random&, LootTableContext&) const;
+    stl::vector<ItemStack> getRandomItems(Random&, LootTableContext&) const;
     void* getAvailableSlots(Container&, Random&);
-    std::__ndk1::string getDir() const;
+    stl::string getDir() const;
     // void deserialize(Json::Value);
-    // void shuffleAndSplitItems(std::__ndk1::vector<ItemStack>&, int, Random&);
+    // void shuffleAndSplitItems(stl::vector<ItemStack>&, int, Random&);
     void fill(Container&, Random&, LootTableContext&);
 };
 
 class LootTables {
     public:
-    LootTable* lookupByName(const std::__ndk1::string&, ResourcePackManager&);
+    LootTable* lookupByName(const stl::string&, ResourcePackManager&);
 };
 
 class Util {
     public:
     class LootTableUtils {
         public:
-        static void fillContainer(Level&, Container&, Random&, const std::__ndk1::string&, Actor*);
+        static void fillContainer(Level&, Container&, Random&, const stl::string&, Actor*);
     };
 };
 

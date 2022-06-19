@@ -67,7 +67,7 @@ extern "C" {
     }
     __EXPORT__(void, BuilderItemName, jstring itemName) {
         const char* cName = env->GetStringUTFChars(itemName, 0);
-        std::__ndk1::string cppName(cName);
+        stl::string cppName(cName);
         ((LootTableContext::Builder*) ptr)->withOriginalItemName(cppName);
         env->ReleaseStringUTFChars(itemName, cName);
     }

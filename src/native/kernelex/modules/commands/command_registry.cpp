@@ -22,7 +22,7 @@ std::unordered_set<std::string> KEXCommandRegistry::usedNamesAndAliases {
 
 std::unordered_map<std::string, KEXCommandRegistry::NativeCommandFactoryBase*> KEXCommandRegistry::registeredFactories;
 std::vector<std::pair<std::string, std::string>> KEXCommandRegistry::staticAliases;
-std::unordered_map<std::string, std::__ndk1::vector<std::__ndk1::pair<std::__ndk1::string, int>>> KEXCommandRegistry::customEnums;
+std::unordered_map<std::string, stl::vector<stl::pair<stl::string, int>>> KEXCommandRegistry::customEnums;
 
 
 void KEXCommandRegistry::registerNativeCommandFactory(const std::string& commandName, KEXCommandRegistry::NativeCommandFactoryBase* factory) {
@@ -80,7 +80,7 @@ void KEXCommandRegistry::NonNativeCommandFactory::setCustomParsed(bool customPar
     props.customParsed = customParsed;
 }
 
-std::__ndk1::vector<CommandParameterData>* KEXCommandRegistry::NonNativeCommandFactory::addOverload(int overloadIndex) {
+stl::vector<CommandParameterData>* KEXCommandRegistry::NonNativeCommandFactory::addOverload(int overloadIndex) {
     if(overloadIndex < props.overloads.size()) {
         return &props.overloads.at(overloadIndex);
     } else if(overloadIndex == props.overloads.size()) {
@@ -88,7 +88,7 @@ std::__ndk1::vector<CommandParameterData>* KEXCommandRegistry::NonNativeCommandF
         return &props.overloads.at(overloadIndex);
     }
     Logger::debug("KEX-WARNING", "Overload index %d for command %s is too big, maximum index at the moment is %d. Returning dummy vector reference...", overloadIndex, props.name.c_str(), props.overloads.size());
-    return new std::__ndk1::vector<CommandParameterData>();
+    return new stl::vector<CommandParameterData>();
 }
 
 

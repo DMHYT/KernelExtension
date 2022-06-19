@@ -1,4 +1,5 @@
 #include <stl/string>
+#include <stl.h>
 
 #include <enums.hpp>
 
@@ -77,7 +78,7 @@ class Item {
     // virtual void tearDown();
     // virtual int getMaxUseDuration(const ItemStack*) const;
     // virtual bool isMusicDisk() const;
-    // virtual void* executeEvent(ItemStackBase&, const std::__ndk1::string&, RenderParams&) const;
+    // virtual void* executeEvent(ItemStackBase&, const stl::string&, RenderParams&) const;
     // virtual bool isComponentBased() const;
     // virtual bool isArmor() const;
     // virtual bool isBlockPlanterItem() const;
@@ -123,7 +124,7 @@ class Item {
     // virtual bool isLiquidClipItem(int) const;
     // virtual bool shouldInteractionWithBlockBypassLiquid(const Block&) const;
     // virtual bool requiresInteract() const;
-    // virtual void* appendFormattedHovertext(const ItemStackBase&, Level&, std::__ndk1::string&, bool) const;
+    // virtual void* appendFormattedHovertext(const ItemStackBase&, Level&, stl::string&, bool) const;
     // virtual bool isValidRepairItem(const ItemStackBase&, const ItemStackBase&) const;
     // virtual void* getEnchantSlot() const;
     // virtual int getEnchantValue() const;
@@ -180,11 +181,11 @@ class Item {
     // virtual void* getAnimationFrameFor(Mob*, bool, const ItemStack*, bool) const;
     // virtual bool isEmissive(int) const;
     // virtual int getLightEmission(int) const;
-    // virtual const std::__ndk1::string& getIcon(const ItemStackBase&, int, bool) const;
+    // virtual const stl::string& getIcon(const ItemStackBase&, int, bool) const;
     // virtual int getIconYOffset() const;
-    // virtual void setIcon(const std::__ndk1::string&, int);
+    // virtual void setIcon(const stl::string&, int);
     // virtual void setIcon(const TextureUVCoordinateSet&);
-    // virtual void setIconAtlas(const std::__ndk1::string&, int);
+    // virtual void setIconAtlas(const stl::string&, int);
     // virtual bool canBeCharged() const;
     // virtual void* playSoundIncrementally(const ItemInstance&, Mob&) const;
     // virtual float getFurnaceBurnIntervalMultipler(const ItemStackBase&) const;
@@ -193,19 +194,19 @@ class Item {
     // virtual void* _checkUseOnPermissions(Actor&, ItemStackBase&, unsigned const char&, const BlockPos&) const;
     // virtual void* _calculatePlacePos(ItemStackBase&, Actor&, unsigned char&, BlockPos&) const;
     // virtual void* _useOn(ItemStack&, Actor&, BlockPos, unsigned char, float, float, float) const;
-    Item(const std::__ndk1::string&, short);
+    Item(const stl::string&, short);
     void setIsMirroredArt(bool);
     void resetId(short);
     void* getCommandName() const;
     int getFrameCount() const;
-    void setCreativeGroup(const std::__ndk1::string&);
+    void setCreativeGroup(const stl::string&);
     void reloadIcon();
     HashedString& getFullNameHash() const;
     bool allowOffhand() const;
-    void beginCreativeGroup(const std::__ndk1::string&, const ItemInstance&);
+    void beginCreativeGroup(const stl::string&, const ItemInstance&);
     void addCreativeItem(const ItemInstance&);
     void _addLooseCreativeItemsClient();
-    const std::__ndk1::string& getDescriptionId() const;
+    const stl::string& getDescriptionId() const;
     void addCreativeItem(Item*, short);
     void* fixupOnLoad(ItemStackBase&) const;
     bool isAnimatedInToolbar() const;
@@ -214,7 +215,7 @@ class Item {
     TextureUVCoordinateSet* getIconTextureUVSet(const TextureAtlasItem&, int, int);
     void* useOn(ItemStack&, Actor&, int, int, int, unsigned char, float, float, float) const;
     void* getRenderingRotAdjustment() const;
-    void addOnResetBAIcallback(std::__ndk1::function<void()> const&);
+    void addOnResetBAIcallback(stl::function<void()> const&);
     bool usesRenderingAdjustment() const;
     bool isNameTag() const;
     bool canUseSeed(Actor&, BlockPos, unsigned char) const;
@@ -222,10 +223,10 @@ class Item {
     void* getIconTexture() const;
     short toBlockId(short);
     void* fixupOnLoad(ItemStackBase&, Level&) const;
-    void* getTextureItem(const std::__ndk1::string&);
-    TextureUVCoordinateSet* getTextureUVCoordinateSet(const std::__ndk1::string&, int);
-    void setDescriptionId(const std::__ndk1::string&);
-    const std::__ndk1::string& getCreativeGroup() const;
+    void* getTextureItem(const stl::string&);
+    TextureUVCoordinateSet* getTextureUVCoordinateSet(const stl::string&, int);
+    void setDescriptionId(const stl::string&);
+    const stl::string& getCreativeGroup() const;
     void setCategory(CreativeItemCategory);
     float /*?*/ destroySpeedBonus(const ItemStackBase&) const;
     void* executeOnResetBAIcallbacks() const;
@@ -234,7 +235,7 @@ class Item {
     void setFurnaceBurnIntervalMultiplier(float);
     bool shouldDespawn() const;
     void* _tryCorrectAnyAuxValue(ItemStackBase&) const;
-    void beginCreativeGroup(const std::__ndk1::string&, const Block*, const CompoundTag*);
+    void beginCreativeGroup(const stl::string&, const Block*, const CompoundTag*);
     bool isElytra(const ItemDescriptor&);
     void* getSeed() const;
     bool isExplodable() const;
@@ -248,7 +249,7 @@ class Item {
     bool isMirroredArt() const;
     void* getRenderingPosAdjustment() const;
     HashedString& getRawNameHash() const;
-    const std::__ndk1::string& getRawNameId() const;
+    const stl::string& getRawNameId() const;
     BaseGameVersion* getRequiredBaseGameVersion() const;
     void setFurnaceXPmultiplier(float);
     void _addLooseCreativeItemsServer(const BaseGameVersion&);
@@ -258,12 +259,12 @@ class Item {
     void setAllowOffhand(bool);
     void endCreativeItemDefinitions(bool);
     bool isFireResistant() const;
-    bool _textMatch(const std::__ndk1::string&, const std::__ndk1::string&, bool);
-    const std::__ndk1::string& getSerializedName() const;
-    const std::__ndk1::string& getNamespace() const;
+    bool _textMatch(const stl::string&, const stl::string&, bool);
+    const stl::string& getSerializedName() const;
+    const stl::string& getNamespace() const;
     void addTag(const HashedString&);
-    void setAtlasItemManager(std::__ndk1::shared_ptr<AtlasItemManager>);
-    void beginCreativeGroup(const std::__ndk1::string&, Item*, short, const CompoundTag*);
+    void setAtlasItemManager(stl::shared_ptr<AtlasItemManager>);
+    void beginCreativeGroup(const stl::string&, Item*, short, const CompoundTag*);
     void addCreativeItem(const ItemStack&);
     int getId() const;
     void* updateCustomBlockEntityTag(BlockSource&, ItemStackBase&, const BlockPos&) const;
@@ -271,7 +272,7 @@ class Item {
     bool hasTag(const HashedString&) const;
     bool isElytra() const;
     void* getRendererId() const;
-    void beginCreativeGroup(const std::__ndk1::string&, short, short, const CompoundTag*);
+    void beginCreativeGroup(const stl::string&, short, short, const CompoundTag*);
     void* _helpChangeInventoryItemInPlace(Actor&, ItemStack&, ItemStack&, ItemAcquisitionMethod) const;
     public:
     class Tier {
