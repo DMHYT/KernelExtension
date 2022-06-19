@@ -1,8 +1,8 @@
 #include <jni.h>
 
-#include <innercore/vtable.h>
+#include <static_symbol.h>
 
-#include <static_symbol.hpp>
+#include <innercore/vtable.h>
 
 #include <Mob.hpp>
 #include <Player.hpp>

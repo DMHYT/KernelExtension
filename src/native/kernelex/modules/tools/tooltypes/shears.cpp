@@ -1,8 +1,9 @@
+#include <cstdlib>
 #include <jni.h>
 
-#include <innercore/id_conversion_map.h>
+#include <static_symbol.h>
 
-#include <static_symbol.hpp>
+#include <innercore/id_conversion_map.h>
 
 #include <items/ShearsItem.hpp>
 
@@ -16,10 +17,10 @@ void ShearsFactory::registerItem() {
         IdPool* pool = ItemRegistry::getItemIdPool();
         id = pool->allocateId(nameId, id, IdPool::FLAG_ID_USED);
         if(id != INVALID_ID) {
-            void* alloc = operator new(300);
-            STATIC_SYMBOL(ShearsConstructor, "_ZN10ShearsItemC2ERKNSt6__ndk112basic_stringIcNS0_11char_traitsIcEENS0_9allocatorIcEEEEi", (ShearsItem*, const stl_string&, int));
-            ShearsConstructor((ShearsItem*) alloc, to_stl(nameId), id);
-            ItemRegistry::registerItem((Item*) alloc, new ShearsProvider(this));
+            Item* item = (Item*) malloc(300);
+            STATIC_SYMBOL(ShearsConstructor, "_ZN10ShearsItemC2ERKNSt6__ndk112basic_stringIcNS0_11char_traitsIcEENS0_9allocatorIcEEEEi", (Item*, const stl_string&, int), void);
+            ShearsConstructor(item, to_stl(nameId), id);
+            ItemRegistry::registerItem(item, new ShearsProvider(this));
         } else {
             Logger::error("InnerCore-ItemRegistry", "failed to register item for id '%s': cannot allocate id for some reason", nameId.data());
         }

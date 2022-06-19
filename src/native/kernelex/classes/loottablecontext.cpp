@@ -2,7 +2,7 @@
 #include <cstring>
 #include <jni.h>
 
-#include <static_symbol.hpp>
+#include <static_symbol.h>
 
 #include <LootTableContext.hpp>
 
@@ -82,7 +82,7 @@ extern "C" {
         return (jlong) result;
     }
     __EXPORT__(void, FinalizeContext) {
-        STATIC_SYMBOL(LootTableContextDestructor, "_ZN16LootTableContextD2Ev", (LootTableContext*));
+        STATIC_SYMBOL(LootTableContextDestructor, "_ZN16LootTableContextD2Ev", (LootTableContext*), void);
         LootTableContextDestructor((LootTableContext*) ptr);
     }
     __EXPORT__(void, FinalizeBuilder) {

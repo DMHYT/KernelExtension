@@ -1,6 +1,6 @@
-#include <innercore/id_conversion_map.h>
+#include <static_symbol.h>
 
-#include <static_symbol.hpp>
+#include <innercore/id_conversion_map.h>
 
 #include <BlockLegacy.hpp>
 
@@ -15,9 +15,8 @@ float KEXToolsModule::LastDestroyedBlock::getOrCalculateSpeed(const ItemStackBas
         calculatedForX = x;
         calculatedForY = y;
         calculatedForZ = z;
-        STATIC_SYMBOL(WeaponItem_getDestroySpeed, "_ZNK10WeaponItem15getDestroySpeedERK13ItemStackBaseRK5Block", (WeaponItem*, const ItemStackBase&, const Block&));
-        void* output = WeaponItem_getDestroySpeed(item, stack, block);
-        float result = *(float*)&output;
+        STATIC_SYMBOL(WeaponItem_getDestroySpeed, "_ZNK10WeaponItem15getDestroySpeedERK13ItemStackBaseRK5Block", (WeaponItem*, const ItemStackBase&, const Block&), float);
+        float result = WeaponItem_getDestroySpeed(item, stack, block);
         float blockDestroyTime = block.legacy->getDestroySpeed();
         result = blockDestroyTime / KEXJavaBridge::CustomToolEvents::calcDestroyTime(IdConversion::dynamicToStatic(block.legacy->id, IdConversion::BLOCK), block.data, x, y, z, side, blockDestroyTime, 1.0f, 1.0f, blockDestroyTime);
         result = result == 0.0f ? 1.0f : result;
@@ -34,9 +33,8 @@ float KEXToolsModule::LastDestroyedBlock::getOrCalculateSpeed(const ItemStackBas
         calculatedForX = x;
         calculatedForY = y;
         calculatedForZ = z;
-        STATIC_SYMBOL(DiggerItem_getDestroySpeed, "_ZNK10DiggerItem15getDestroySpeedERK13ItemStackBaseRK5Block", (DiggerItem*, const ItemStackBase&, const Block&));
-        void* output = DiggerItem_getDestroySpeed(item, stack, block);
-        float result = *(float*)&output;
+        STATIC_SYMBOL(DiggerItem_getDestroySpeed, "_ZNK10DiggerItem15getDestroySpeedERK13ItemStackBaseRK5Block", (DiggerItem*, const ItemStackBase&, const Block&), float);
+        float result = DiggerItem_getDestroySpeed(item, stack, block);
         int staticId = IdConversion::dynamicToStatic(block.legacy->id, IdConversion::BLOCK);
         float blockDestroyTime = block.legacy->getDestroySpeed();
         float materialDivider = item->speed;

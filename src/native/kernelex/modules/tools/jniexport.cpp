@@ -1,13 +1,14 @@
 #include <jni.h>
 #include <string>
 
+#include <static_symbol.h>
+
 #include <innercore/block_registry.h>
 #include <innercore/id_conversion_map.h>
 #include <innercore/legacy_item_registry.h>
 #include <innercore/vtable.h>
 
 #include <commontypes.hpp>
-#include <static_symbol.hpp>
 
 #include <Actor.hpp>
 #include <BlockLegacy.hpp>
@@ -203,7 +204,7 @@ extern "C" {
                 Item* item = stack->getItem();
                 if(item != nullptr) {
                     VTABLE_FIND_OFFSET(_checkUseOnPermissions, _ZTV4Item, _ZNK4Item22_checkUseOnPermissionsER5ActorR13ItemStackBaseRKhRK8BlockPos);
-                    STATIC_SYMBOL(_useOn, "_ZNK10ShearsItem6_useOnER9ItemStackR5Actor8BlockPoshfff", (Item*, ItemStack*, Actor*, BlockPos*, unsigned char, float, float, float));
+                    STATIC_SYMBOL(_useOn, "_ZNK10ShearsItem6_useOnER9ItemStackR5Actor8BlockPoshfff", (Item*, ItemStack*, Actor*, BlockPos*, unsigned char, float, float, float), void);
                     BlockPos pos(x, y, z);
                     if(VTABLE_CALL<bool>(_checkUseOnPermissions, item, actor, stack, &side, &pos)) {
                         _useOn(item, stack, actor, &pos, side, relX, relY, relZ);
@@ -222,7 +223,7 @@ extern "C" {
                 Item* item = stack->getItem();
                 if(item != nullptr) {
                     VTABLE_FIND_OFFSET(_checkUseOnPermissions, _ZTV4Item, _ZNK4Item22_checkUseOnPermissionsER5ActorR13ItemStackBaseRKhRK8BlockPos);
-                    STATIC_SYMBOL(_useOn, "_ZNK17FlintAndSteelItem6_useOnER9ItemStackR5Actor8BlockPoshfff", (Item*, ItemStack*, Actor*, BlockPos*, unsigned char, float, float, float));
+                    STATIC_SYMBOL(_useOn, "_ZNK17FlintAndSteelItem6_useOnER9ItemStackR5Actor8BlockPoshfff", (Item*, ItemStack*, Actor*, BlockPos*, unsigned char, float, float, float), void);
                     BlockPos pos(x, y, z);
                     if(VTABLE_CALL<bool>(_checkUseOnPermissions, item, actor, stack, &side, &pos)) {
                         _useOn(item, stack, actor, &pos, side, relX, relY, relZ);

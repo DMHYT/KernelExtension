@@ -1,7 +1,6 @@
 #include <hook.h>
 #include <symbol.h>
-
-#include <static_symbol.hpp>
+#include <static_symbol.h>
 
 #include <commands/commands.hpp>
 #include <commands/CommandContext.hpp>
@@ -76,7 +75,7 @@ void KEXCommandsModule::setupCustom(CommandRegistry& registry) {
 
 
 Command* KEXCommandsModule::onCreateAPICommand(CommandRegistry* registry, const CommandRegistry::ParseToken& token, const CommandOrigin& origin, int version, std::__ndk1::string& str, std::__ndk1::vector<std::__ndk1::string>& strvec) {
-    STATIC_SYMBOL(CommandRegistry_isParseMatch, "_ZN15CommandRegistry12isParseMatchERK20CommandParameterDataNS_6SymbolE", (const CommandParameterData&, CommandRegistry::Symbol*))
+    STATIC_SYMBOL(CommandRegistry_isParseMatch, "_ZN15CommandRegistry12isParseMatchERK20CommandParameterDataNS_6SymbolE", (const CommandParameterData&, CommandRegistry::Symbol*), bool)
     CommandRegistry::Signature* signature = registry->findCommand(token.child->toString());
     if(signature != nullptr) {
         CommandRegistry::ParseToken* startToken = token.child->next.get();
@@ -90,7 +89,7 @@ Command* KEXCommandsModule::onCreateAPICommand(CommandRegistry* registry, const 
                         if(!param.optional) parseResult = false;
                         break;
                     }
-                    if(!( (bool) CommandRegistry_isParseMatch(param, &tokenToUse->tokenType) )) {
+                    if(!CommandRegistry_isParseMatch(param, &tokenToUse->tokenType)) {
                         parseResult = false;
                         break;
                     }
