@@ -24,21 +24,38 @@ float KEXMiscReachDistModule::apply(float defaultValue) {
 }
 
 void KEXMiscReachDistModule::initialize() {
+
     DLHandleManager::initializeHandle("libminecraftpe.so", "mcpe");
-    HookManager::addCallback(SYMBOL("mcpe", "_ZN8GameMode12getPickRangeERK9InputModeb"), LAMBDA((HookManager::CallbackController* controller, void* gamemode, void* inputmode, bool b), {
-        float output = controller->callAndReplace<float>(gamemode, inputmode, b);
-        float result = apply(output);
-        last = result;
-        return result;
-    }, ), HookManager::CALL | HookManager::LISTENER | HookManager::CONTROLLER | HookManager::RESULT);
-    HookManager::addCallback(SYMBOL("mcpe", "_ZN8GameMode15getMaxPickRangeEv"), LAMBDA((HookManager::CallbackController* controller, void* gamemode), {
-        controller->replace();
-        return last + 1.0f;
-    }, ), HookManager::CALL | HookManager::LISTENER | HookManager::CONTROLLER | HookManager::RESULT);
-    HookManager::addCallback(SYMBOL("mcpe", "_ZN8GameMode18getMaxPickRangeSqrEv"), LAMBDA((HookManager::CallbackController* controller, void* gamemode), {
-        controller->replace();
-        return last * last + 1.0f;
-    }, ), HookManager::CALL | HookManager::LISTENER | HookManager::CONTROLLER | HookManager::RESULT);
+
+    HookManager::addCallback(
+        SYMBOL("mcpe", "_ZN8GameMode12getPickRangeERK9InputModeb"),
+        LAMBDA((HookManager::CallbackController* controller, void* gamemode, void* inputmode, bool b), {
+            float output = controller->callAndReplace<float>(gamemode, inputmode, b);
+            float result = apply(output);
+            last = result;
+            return result;
+        }, ),
+        HookManager::CALL | HookManager::LISTENER | HookManager::CONTROLLER | HookManager::RESULT
+    );
+
+    HookManager::addCallback(
+        SYMBOL("mcpe", "_ZN8GameMode15getMaxPickRangeEv"),
+        LAMBDA((HookManager::CallbackController* controller, void* gamemode), {
+            controller->replace();
+            return last + 1.0f;
+        }, ),
+        HookManager::CALL | HookManager::LISTENER | HookManager::CONTROLLER | HookManager::RESULT
+    );
+
+    HookManager::addCallback(
+        SYMBOL("mcpe", "_ZN8GameMode18getMaxPickRangeSqrEv"),
+        LAMBDA((HookManager::CallbackController* controller, void* gamemode), {
+            controller->replace();
+            return last * last + 1.0f;
+        }, ),
+        HookManager::CALL | HookManager::LISTENER | HookManager::CONTROLLER | HookManager::RESULT
+    );
+
 }
 
 

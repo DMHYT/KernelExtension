@@ -37,35 +37,47 @@ void KEXToolInteractionsModule::initialize() {
             return true; \
         }
 
-    HookManager::addCallback(SYMBOL("mcpe", "_ZNK21ActorHasEquipmentTest8evaluateERK13FilterContext"), LAMBDA((HookManager::CallbackController* controller, ActorHasEquipmentTest* test, const FilterContext& ctx), {
-        int dynamicTestId = test->id;
-        int testId = IdConversion::dynamicToStatic(dynamicTestId, IdConversion::ITEM);
-        if(testId == 359) { // for custom shears to shear sheep, snowmen, mooshrooms etc.
-            HAS_EQUIPMENT_REPLACER(359, isShears)
-        } else if(testId == 259) { // for custom flint&steel's to lit creepers
-            HAS_EQUIPMENT_REPLACER(259, isFlintAndSteel)
-        }
-    }, ), HookManager::CALL | HookManager::LISTENER | HookManager::CONTROLLER | HookManager::RESULT);
+    HookManager::addCallback(
+        SYMBOL("mcpe", "_ZNK21ActorHasEquipmentTest8evaluateERK13FilterContext"),
+        LAMBDA((HookManager::CallbackController* controller, ActorHasEquipmentTest* test, const FilterContext& ctx), {
+            int dynamicTestId = test->id;
+            int testId = IdConversion::dynamicToStatic(dynamicTestId, IdConversion::ITEM);
+            if(testId == 359) { // for custom shears to shear sheep, snowmen, mooshrooms etc.
+                HAS_EQUIPMENT_REPLACER(359, isShears)
+            } else if(testId == 259) { // for custom flint&steel's to lit creepers
+                HAS_EQUIPMENT_REPLACER(259, isFlintAndSteel)
+            }
+        }, ),
+        HookManager::CALL | HookManager::LISTENER | HookManager::CONTROLLER | HookManager::RESULT
+    );
 
-    HookManager::addCallback(SYMBOL("mcpe", "_ZNK13ItemStackBase10isInstanceERK12HashedStringb"), LAMBDA((HookManager::CallbackController* controller, ItemStackBase* stack, const HashedString& str), {
-        const std::__ndk1::string& cppstr = str.getString();
-        if(cppstr == "shears") { // for custom shears to carve pumpkins, gather honey from beehives etc.
-            IS_INSTANCE_REPLACER(359, isShears)
-        } else if(cppstr == "flint_and_steel") { // for custom flint&steel's to lit campfires
-            IS_INSTANCE_REPLACER(259, isFlintAndSteel)
-        }
-    }, ), HookManager::CALL | HookManager::LISTENER | HookManager::CONTROLLER | HookManager::RESULT);
+    HookManager::addCallback(
+        SYMBOL("mcpe", "_ZNK13ItemStackBase10isInstanceERK12HashedStringb"),
+        LAMBDA((HookManager::CallbackController* controller, ItemStackBase* stack, const HashedString& str), {
+            const std::__ndk1::string& cppstr = str.getString();
+            if(cppstr == "shears") { // for custom shears to carve pumpkins, gather honey from beehives etc.
+                IS_INSTANCE_REPLACER(359, isShears)
+            } else if(cppstr == "flint_and_steel") { // for custom flint&steel's to lit campfires
+                IS_INSTANCE_REPLACER(259, isFlintAndSteel)
+            }
+        }, ),
+        HookManager::CALL | HookManager::LISTENER | HookManager::CONTROLLER | HookManager::RESULT
+    );
 
     #undef HAS_EQUIPMENT_REPLACER
     #undef IS_INSTANCE_REPLACER
 
     // for custom shovels to douse campfires on click
-    HookManager::addCallback(SYMBOL("mcpe", "_ZNK13CampfireBlock13canUseToDouseER9ItemStack"), LAMBDA((HookManager::CallbackController* controller, void* campfire, ItemStack& stack), {
-        int id = IdConversion::dynamicToStatic(stack.getId(), IdConversion::ITEM);
-        if(KEXToolsModule::SimpleTests::isShovel(id)) {
-            controller->replace();
-            return true;
-        }
-    }, ), HookManager::CALL | HookManager::LISTENER | HookManager::CONTROLLER | HookManager::RESULT);
+    HookManager::addCallback(
+        SYMBOL("mcpe", "_ZNK13CampfireBlock13canUseToDouseER9ItemStack"),
+        LAMBDA((HookManager::CallbackController* controller, void* campfire, ItemStack& stack), {
+            int id = IdConversion::dynamicToStatic(stack.getId(), IdConversion::ITEM);
+            if(KEXToolsModule::SimpleTests::isShovel(id)) {
+                controller->replace();
+                return true;
+            }
+        }, ),
+        HookManager::CALL | HookManager::LISTENER | HookManager::CONTROLLER | HookManager::RESULT
+    );
 
 }

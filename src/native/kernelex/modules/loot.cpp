@@ -38,38 +38,50 @@ std::string KEXLootModule::getLootTableName(LootTable* table) {
 }
 
 void KEXLootModule::initialize() {
+
     DLHandleManager::initializeHandle("libminecraftpe.so", "mcpe");
-    HookManager::addCallback(SYMBOL("mcpe", "_ZN9LootTable11deserializeEN4Json5ValueE"), LAMBDA((HookManager::CallbackController* controller, LootTable* table, Json::Value* json), {
-        std::string tableName = getLootTableName(table);
-        auto search = cachedModifiedTables.find(tableName);
-        if(search != cachedModifiedTables.end()) {
-            Json::Value newJson(0);
-            jsonReader->parse(std::__ndk1::string(search->second.c_str()), newJson, true);
-            void* result = controller->callAndReplace<void*>(table, &newJson);
-            return result;
-        } else {
-            JNIEnv* env = KEXJavaUtils::attach();
-            Json::Value newJson = nullptr;
-            jstring modified = KEXJavaBridge::LootModule::modify(tableName.c_str(), json->toStyledString().c_str());
-            if(modified != NULL) {
-                const char* cModified = env->GetStringUTFChars(modified, 0);
-                cachedModifiedTables.emplace(tableName, std::string(cModified));
-                newJson = Json::Value(0);
-                jsonReader->parse(std::__ndk1::string(cModified), newJson, true);
-                env->ReleaseStringUTFChars(modified, cModified);
-            }
-            if(newJson != nullptr) {
+
+    HookManager::addCallback(
+        SYMBOL("mcpe", "_ZN9LootTable11deserializeEN4Json5ValueE"),
+        LAMBDA((HookManager::CallbackController* controller, LootTable* table, Json::Value* json), {
+            std::string tableName = getLootTableName(table);
+            auto search = cachedModifiedTables.find(tableName);
+            if(search != cachedModifiedTables.end()) {
+                Json::Value newJson(0);
+                jsonReader->parse(std::__ndk1::string(search->second.c_str()), newJson, true);
                 void* result = controller->callAndReplace<void*>(table, &newJson);
                 return result;
+            } else {
+                JNIEnv* env = KEXJavaUtils::attach();
+                Json::Value newJson = nullptr;
+                jstring modified = KEXJavaBridge::LootModule::modify(tableName.c_str(), json->toStyledString().c_str());
+                if(modified != NULL) {
+                    const char* cModified = env->GetStringUTFChars(modified, 0);
+                    cachedModifiedTables.emplace(tableName, std::string(cModified));
+                    newJson = Json::Value(0);
+                    jsonReader->parse(std::__ndk1::string(cModified), newJson, true);
+                    env->ReleaseStringUTFChars(modified, cModified);
+                }
+                if(newJson != nullptr) {
+                    void* result = controller->callAndReplace<void*>(table, &newJson);
+                    return result;
+                }
             }
-        }
-    }, ), HookManager::CALL | HookManager::LISTENER | HookManager::CONTROLLER | HookManager::RESULT);
-    HookManager::addCallback(SYMBOL("mcpe", "_ZNK9LootTable14getRandomItemsER6RandomR16LootTableContext"), LAMBDA((std::__ndk1::vector<ItemStack>* items, LootTable* table, Random& rnd, LootTableContext& ctx), {
-        std::string tableName = getLootTableName(table);
-        if(KEXLootModule::tablesWithDropCallbacks.find(tableName) != KEXLootModule::tablesWithDropCallbacks.end()) {
-            KEXJavaBridge::LootModule::onDrop(tableName.c_str(), (jlong) items, items->size(), (jlong) &ctx);
-        }
-    }, ), HookManager::RETURN | HookManager::LISTENER);
+        }, ),
+        HookManager::CALL | HookManager::LISTENER | HookManager::CONTROLLER | HookManager::RESULT
+    );
+
+    HookManager::addCallback(
+        SYMBOL("mcpe", "_ZNK9LootTable14getRandomItemsER6RandomR16LootTableContext"),
+        LAMBDA((std::__ndk1::vector<ItemStack>* items, LootTable* table, Random& rnd, LootTableContext& ctx), {
+            std::string tableName = getLootTableName(table);
+            if(KEXLootModule::tablesWithDropCallbacks.find(tableName) != KEXLootModule::tablesWithDropCallbacks.end()) {
+                KEXJavaBridge::LootModule::onDrop(tableName.c_str(), (jlong) items, items->size(), (jlong) &ctx);
+            }
+        }, ),
+        HookManager::RETURN | HookManager::LISTENER
+    );
+
 }
 
 

@@ -113,20 +113,32 @@ Command* KEXCommandsModule::onCreateAPICommand(CommandRegistry* registry, const 
 
 
 void KEXCommandsModule::initialize() {
+
     DLHandleManager::initializeHandle("libminecraftpe.so", "mcpe");
-    // CommandMessage, std::__ndk1::string, bool, float, int, CommandSelector<Actor>, CommandSelector<Player>, CommandPosition, CommandPositionFloat, Json::Value, std::__ndk1::unique_ptr<Command>, RelativeFloat, const Block*, const MobEffect*, CommandItem, WildcardCommandSelector<Actor>, const ActorDefinitionIdentifier*
-    HookManager::addCallback(SYMBOL("mcpe", "_ZN14ServerCommands19setupStandardServerER9MinecraftRKNSt6__ndk112basic_stringIcNS2_11char_traitsIcEENS2_9allocatorIcEEEESA_P15PermissionsFile"), LAMBDA((Minecraft* mc), {
-        CommandRegistry* registry = mc->getCommands()->getRegistry();
-        if(registry != nullptr) {
-            setupCustom(*registry);
-        }
-    }, ), HookManager::RETURN | HookManager::LISTENER);
-    HookManager::addCallback(SYMBOL("mcpe", "_ZNK15CommandRegistry13createCommandERKNS_10ParseTokenERK13CommandOriginiRNSt6__ndk112basic_stringIcNS6_11char_traitsIcEENS6_9allocatorIcEEEERNS6_6vectorISC_NSA_ISC_EEEE"), LAMBDA((HookManager::CallbackController* controller, Command** result, CommandRegistry* registry, const CommandRegistry::ParseToken& token, const CommandOrigin& origin, int version, std::__ndk1::string& str, std::__ndk1::vector<std::__ndk1::string>& strvec), {
-        auto found = KEXCommandRegistry::registeredFactories.find(token.child->toString().c_str());
-        if(found != KEXCommandRegistry::registeredFactories.end() && !found->second->isNative()) {
-            controller->prevent();
-            *result = onCreateAPICommand(registry, token, origin, version, str, strvec);
-        }
-    }, ), HookManager::CALL | HookManager::LISTENER | HookManager::CONTROLLER);
+    
+    HookManager::addCallback(
+        SYMBOL("mcpe", "_ZN14ServerCommands19setupStandardServerER9MinecraftRKNSt6__ndk112basic_stringIcNS2_11char_traitsIcEENS2_9allocatorIcEEEESA_P15PermissionsFile"),
+        LAMBDA((Minecraft* mc), {
+            CommandRegistry* registry = mc->getCommands()->getRegistry();
+            if(registry != nullptr) {
+                setupCustom(*registry);
+            }
+        }, ),
+        HookManager::RETURN | HookManager::LISTENER
+    );
+
+    HookManager::addCallback(
+        SYMBOL("mcpe", "_ZNK15CommandRegistry13createCommandERKNS_10ParseTokenERK13CommandOriginiRNSt6__ndk112basic_stringIcNS6_11char_traitsIcEENS6_9allocatorIcEEEERNS6_6vectorISC_NSA_ISC_EEEE"),
+        LAMBDA((HookManager::CallbackController* controller, Command** result, CommandRegistry* registry, const CommandRegistry::ParseToken& token, const CommandOrigin& origin, int version, std::__ndk1::string& str, std::__ndk1::vector<std::__ndk1::string>& strvec), {
+            auto found = KEXCommandRegistry::registeredFactories.find(token.child->toString().c_str());
+            if(found != KEXCommandRegistry::registeredFactories.end() && !found->second->isNative()) {
+                controller->prevent();
+                *result = onCreateAPICommand(registry, token, origin, version, str, strvec);
+            }
+        }, ),
+        HookManager::CALL | HookManager::LISTENER | HookManager::CONTROLLER
+    );
+
     KEXCommandRegistry::registerNativeCommandFactory("kextest", new KEXTestCommandFactory());
+
 }

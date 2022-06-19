@@ -81,51 +81,77 @@ std::unordered_set<int> KEXDamageModule::fireCauses { 6, 7, 8, 22 };
 std::unordered_set<int> KEXDamageModule::customTranslationCallbacks;
 int KEXDamageModule::nextCustomCauseId = 100;
 
-#include <logger.h>
 
 void KEXDamageModule::initialize() {
+
     DLHandleManager::initializeHandle("libminecraftpe.so", "mcpe");
-    HookManager::addCallback(SYMBOL("mcpe", "_ZN17ActorDamageSource11lookupCauseERKNSt6__ndk112basic_stringIcNS0_11char_traitsIcEENS0_9allocatorIcEEEE"), LAMBDA((HookManager::CallbackController* controller, const std::__ndk1::string& causeName), {
-        controller->replace();
-        auto found = causeNameToCause.find(causeName.c_str());
-        if(found == causeNameToCause.end()) return -1;
-        return found->second;
-    }, ), HookManager::CALL | HookManager::LISTENER | HookManager::CONTROLLER | HookManager::RESULT);
-    HookManager::addCallback(SYMBOL("mcpe", "_ZN17ActorDamageSource15lookupCauseNameE16ActorDamageCause"), LAMBDA((HookManager::CallbackController* controller, std::__ndk1::string* result, int cause), {
-        controller->replace();
-        auto found = causeToCauseName.find(cause);
-        if(found == causeToCauseName.end()) *result = "none";
-        *result = found->second.c_str();
-    }, ), HookManager::CALL | HookManager::LISTENER | HookManager::CONTROLLER | HookManager::RESULT);
-    HookManager::addCallback(SYMBOL("mcpe", "_ZNK17ActorDamageSource6isFireEv"), LAMBDA((HookManager::CallbackController* controller, ActorDamageSource* source), {
-        controller->replace();
-        return fireCauses.find((int) source->getCause()) != fireCauses.end();
-    }, ), HookManager::CALL | HookManager::LISTENER | HookManager::CONTROLLER | HookManager::RESULT);
-    HookManager::addCallback(SYMBOL("mcpe", "_ZNK17ActorDamageSource15getDeathMessageENSt6__ndk112basic_stringIcNS0_11char_traitsIcEENS0_9allocatorIcEEEEP5Actor"), LAMBDA((std::__ndk1::pair<std::__ndk1::string, std::__ndk1::vector<std::__ndk1::string>>* result, ActorDamageSource* source, std::__ndk1::string str, Actor* actor), {
-        int cause = (int) source->getCause();
-        if(cause >= 100) {
-            if(customTranslationCallbacks.find(cause) != customTranslationCallbacks.end()) {
+
+    HookManager::addCallback(
+        SYMBOL("mcpe", "_ZN17ActorDamageSource11lookupCauseERKNSt6__ndk112basic_stringIcNS0_11char_traitsIcEENS0_9allocatorIcEEEE"),
+        LAMBDA((HookManager::CallbackController* controller, const std::__ndk1::string& causeName), {
+            controller->replace();
+            auto found = causeNameToCause.find(causeName.c_str());
+            if(found == causeNameToCause.end()) return -1;
+            return found->second;
+        }, ),
+        HookManager::CALL | HookManager::LISTENER | HookManager::CONTROLLER | HookManager::RESULT
+    );
+
+    HookManager::addCallback(
+        SYMBOL("mcpe", "_ZN17ActorDamageSource15lookupCauseNameE16ActorDamageCause"),
+        LAMBDA((HookManager::CallbackController* controller, std::__ndk1::string* result, int cause), {
+            controller->replace();
+            auto found = causeToCauseName.find(cause);
+            if(found == causeToCauseName.end()) *result = "none";
+            *result = found->second.c_str();
+        }, ),
+        HookManager::CALL | HookManager::LISTENER | HookManager::CONTROLLER | HookManager::RESULT
+    );
+
+    HookManager::addCallback(
+        SYMBOL("mcpe", "_ZNK17ActorDamageSource6isFireEv"),
+        LAMBDA((HookManager::CallbackController* controller, ActorDamageSource* source), {
+            controller->replace();
+            return fireCauses.find((int) source->getCause()) != fireCauses.end();
+        }, ),
+        HookManager::CALL | HookManager::LISTENER | HookManager::CONTROLLER | HookManager::RESULT
+    );
+
+    HookManager::addCallback(
+        SYMBOL("mcpe", "_ZNK17ActorDamageSource15getDeathMessageENSt6__ndk112basic_stringIcNS0_11char_traitsIcEENS0_9allocatorIcEEEEP5Actor"),
+        LAMBDA((std::__ndk1::pair<std::__ndk1::string, std::__ndk1::vector<std::__ndk1::string>>* result, ActorDamageSource* source, std::__ndk1::string str, Actor* actor), {
+            int cause = (int) source->getCause();
+            if(cause >= 100) {
+                if(customTranslationCallbacks.find(cause) != customTranslationCallbacks.end()) {
+                    JNIEnv* env = KEXJavaUtils::attach();
+                    jstring output = KEXJavaBridge::DamageModule::getDeathMessage((jlong) source, str.c_str(), (jlong) actor->getUniqueID()->id);
+                    const char* cOutput = env->GetStringUTFChars(output, 0);
+                    result->first = cOutput;
+                    env->ReleaseStringUTFChars(output, cOutput);
+                    env->DeleteLocalRef(output);
+                } else {
+                    result->first = "death.kex." + ActorDamageSource::lookupCauseName((ActorDamageCause) cause);
+                }
+            }
+        }, ),
+        HookManager::RETURN | HookManager::LISTENER
+    );
+
+    HookManager::addCallback(
+        SYMBOL("mcpe", "_ZN4I18n3getERKNSt6__ndk112basic_stringIcNS0_11char_traitsIcEENS0_9allocatorIcEEEERKNS0_6vectorIS6_NS4_IS6_EEEE"),
+        LAMBDA((std::__ndk1::string* result, const std::__ndk1::string& key, std::__ndk1::vector<std::__ndk1::string> const& values), {
+            if(key.rfind("death.kex.", 0) == 0 && *result == key) {
                 JNIEnv* env = KEXJavaUtils::attach();
-                jstring output = KEXJavaBridge::DamageModule::getDeathMessage((jlong) source, str.c_str(), (jlong) actor->getUniqueID()->id);
+                jstring output = KEXJavaBridge::DamageModule::translateAndFormatDeathMessage(key.substr(10).c_str(), values);
                 const char* cOutput = env->GetStringUTFChars(output, 0);
-                result->first = cOutput;
+                *result = cOutput;
                 env->ReleaseStringUTFChars(output, cOutput);
                 env->DeleteLocalRef(output);
-            } else {
-                result->first = "death.kex." + ActorDamageSource::lookupCauseName((ActorDamageCause) cause);
             }
-        }
-    }, ), HookManager::RETURN | HookManager::LISTENER);
-    HookManager::addCallback(SYMBOL("mcpe", "_ZN4I18n3getERKNSt6__ndk112basic_stringIcNS0_11char_traitsIcEENS0_9allocatorIcEEEERKNS0_6vectorIS6_NS4_IS6_EEEE"), LAMBDA((std::__ndk1::string* result, const std::__ndk1::string& key, std::__ndk1::vector<std::__ndk1::string> const& values), {
-        if(key.rfind("death.kex.", 0) == 0 && *result == key) {
-            JNIEnv* env = KEXJavaUtils::attach();
-            jstring output = KEXJavaBridge::DamageModule::translateAndFormatDeathMessage(key.substr(10).c_str(), values);
-            const char* cOutput = env->GetStringUTFChars(output, 0);
-            *result = cOutput;
-            env->ReleaseStringUTFChars(output, cOutput);
-            env->DeleteLocalRef(output);
-        }
-    }, ), HookManager::RETURN | HookManager::LISTENER);
+        }, ),
+        HookManager::RETURN | HookManager::LISTENER
+    );
+    
 }
 
 

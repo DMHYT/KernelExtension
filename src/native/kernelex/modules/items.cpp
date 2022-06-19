@@ -75,27 +75,39 @@ FoodItemComponentLegacy* KEXItemsModule::getOrCreateDynamicFoodValues(int id, It
 }
 
 void KEXItemsModule::initialize() {
+
     DLHandleManager::initializeHandle("libminecraftpe.so", "mcpe");
-    HookManager::addCallback(SYMBOL("mcpe", "_Z24FoodSaturationFromStringRKNSt6__ndk112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEE"), LAMBDA((HookManager::CallbackController* controller, const std::__ndk1::string& str), {
-        controller->replace();
-        float defaultResult = controller->call<float>(str);
-        if(roundf(defaultResult * 100) / 100 == 0.6f && str != "normal") {
-            auto found = customFoodSaturationModifiers.find(std::string(str.c_str()));
-            if(found != customFoodSaturationModifiers.end()) {
-                return found->second;
+
+    HookManager::addCallback(
+        SYMBOL("mcpe", "_Z24FoodSaturationFromStringRKNSt6__ndk112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEE"),
+        LAMBDA((HookManager::CallbackController* controller, const std::__ndk1::string& str), {
+            controller->replace();
+            float defaultResult = controller->call<float>(str);
+            if(roundf(defaultResult * 100) / 100 == 0.6f && str != "normal") {
+                auto found = customFoodSaturationModifiers.find(std::string(str.c_str()));
+                if(found != customFoodSaturationModifiers.end()) {
+                    return found->second;
+                }
             }
-        }
-        return defaultResult;
-    }, ), HookManager::CALL | HookManager::LISTENER | HookManager::CONTROLLER | HookManager::RESULT);
-    HookManager::addCallback(SYMBOL("mcpe", "_ZN6Player14startUsingItemERK9ItemStacki"), LAMBDA((HookManager::CallbackController* controller, Player* player, const ItemStack& stack, int time), {
-        Item* item = stack.getItem();
-        if(item != nullptr) {
-            ItemParamsModifier* mod = getModifierOrNull(IdConversion::dynamicToStatic(item->id, IdConversion::ITEM));
-            if(mod != nullptr && mod->dynamicUseDuration) {
-                return controller->callAndReplace<void*>(player, stack, ItemParamsModifier::_getMaxUseDurationPatch(item, &stack));
+            return defaultResult;
+        }, ),
+        HookManager::CALL | HookManager::LISTENER | HookManager::CONTROLLER | HookManager::RESULT
+    );
+
+    HookManager::addCallback(
+        SYMBOL("mcpe", "_ZN6Player14startUsingItemERK9ItemStacki"),
+        LAMBDA((HookManager::CallbackController* controller, Player* player, const ItemStack& stack, int time), {
+            Item* item = stack.getItem();
+            if(item != nullptr) {
+                ItemParamsModifier* mod = getModifierOrNull(IdConversion::dynamicToStatic(item->id, IdConversion::ITEM));
+                if(mod != nullptr && mod->dynamicUseDuration) {
+                    return controller->callAndReplace<void*>(player, stack, ItemParamsModifier::_getMaxUseDurationPatch(item, &stack));
+                }
             }
-        }
-    }, ), HookManager::CALL | HookManager::LISTENER | HookManager::CONTROLLER | HookManager::RESULT);
+        }, ),
+        HookManager::CALL | HookManager::LISTENER | HookManager::CONTROLLER | HookManager::RESULT
+    );
+    
     // HookManager::addCallback(SYMBOL("mcpe", "_ZNK4Item24appendFormattedHovertextERK13ItemStackBaseR5LevelRNSt6__ndk112basic_stringIcNS5_11char_traitsIcEENS5_9allocatorIcEEEEb"), LAMBDA((Item* item, const ItemStackBase& stack, Level& level, std::__ndk1::string& text, bool b), {
     //     JNIEnv* env = KEXJavaUtils::attach();
     //     jstring jText = KEXJavaBridge::ItemsModule::appendFormattedHovertext((jlong) &stack, (jlong) &level, text.c_str());
@@ -124,11 +136,15 @@ void KEXItemsModule::initialize() {
     //         return dynamicFood;
     //     }
     // }, ), HookManager::CALL | HookManager::LISTENER | HookManager::CONTROLLER | HookManager::RESULT);
-    Callbacks::addCallback("postModItemsInit", CALLBACK([], (), {
-        for(std::unordered_map<int, ItemParamsModifier*>::iterator iter = itemParamsModifiers.begin(); iter != itemParamsModifiers.end(); iter++) {
-            iter->second->applyTo(iter->first);
-        }
-    }));
+
+    Callbacks::addCallback("postModItemsInit", 
+        CALLBACK([], (), {
+            for(std::unordered_map<int, ItemParamsModifier*>::iterator iter = itemParamsModifiers.begin(); iter != itemParamsModifiers.end(); iter++) {
+                iter->second->applyTo(iter->first);
+            }
+        })
+    );
+
 }
 
 

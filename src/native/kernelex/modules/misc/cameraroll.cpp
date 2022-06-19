@@ -39,12 +39,19 @@ float KEXMiscCameraRollModule::apply(float defaultValue) {
 
 
 void KEXMiscCameraRollModule::initialize() {
+
     DLHandleManager::initializeHandle("libminecraftpe.so", "mcpe");
-    HookManager::addCallback(SYMBOL("mcpe", "_ZN14CameraDirector6updateER15IClientInstanceff"), LAMBDA((CameraDirector* director), {
-        Camera* camera = director->getCamera();
-        Vec3 angles = camera->getEulerAngles();
-        camera->setOrientation(-angles.y, -angles.x, apply(angles.z));
-    }, ), HookManager::RETURN | HookManager::LISTENER);
+
+    HookManager::addCallback(
+        SYMBOL("mcpe", "_ZN14CameraDirector6updateER15IClientInstanceff"),
+        LAMBDA((CameraDirector* director), {
+            Camera* camera = director->getCamera();
+            Vec3 angles = camera->getEulerAngles();
+            camera->setOrientation(-angles.y, -angles.x, apply(angles.z));
+        }, ),
+        HookManager::RETURN | HookManager::LISTENER
+    );
+
 }
 
 
