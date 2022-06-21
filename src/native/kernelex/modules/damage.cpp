@@ -79,7 +79,6 @@ std::unordered_map<std::string, int> KEXDamageModule::causeNameToCause {
 
 std::unordered_set<int> KEXDamageModule::fireCauses { 6, 7, 8, 22 };
 std::unordered_set<int> KEXDamageModule::customTranslationCallbacks;
-int KEXDamageModule::nextCustomCauseId = 100;
 
 
 void KEXDamageModule::initialize() {
@@ -156,16 +155,15 @@ void KEXDamageModule::initialize() {
 
 
 extern "C" {
-    JNIEXPORT jint JNICALL Java_vsdum_kex_modules_DamageModule_nativeNewCause
-    (JNIEnv* env, jclass, jstring name) {
+    JNIEXPORT void JNICALL Java_vsdum_kex_modules_DamageModule_nativeNewCause
+    (JNIEnv* env, jclass, jstring name, jint id) {
         const char* cName = env->GetStringUTFChars(name, 0);
         std::string cppName(cName);
         env->ReleaseStringUTFChars(name, cName);
-        if(KEXDamageModule::causeNameToCause.find(cppName) != KEXDamageModule::causeNameToCause.end()) return -1;
-        int id = KEXDamageModule::nextCustomCauseId++;
-        KEXDamageModule::causeNameToCause.emplace(cppName, id);
-        KEXDamageModule::causeToCauseName.emplace(id, cppName);
-        return id;
+        if(KEXDamageModule::causeNameToCause.find(cppName) == KEXDamageModule::causeNameToCause.end()) {
+            KEXDamageModule::causeNameToCause.emplace(cppName, id);
+            KEXDamageModule::causeToCauseName.emplace(id, cppName);
+        }
     }
     JNIEXPORT void JNICALL Java_vsdum_kex_modules_DamageModule_nativeSetFire
     (JNIEnv*, jclass, jint id) {

@@ -19,7 +19,6 @@ class KEXDamageModule : public Module {
     static std::unordered_map<std::string, int> causeNameToCause;
     static std::unordered_set<int> fireCauses;
     static std::unordered_set<int> customTranslationCallbacks;
-    static int nextCustomCauseId;
     KEXDamageModule(Module* parent): Module(parent, "kex.damage") {}
     virtual void initialize();
 };

@@ -6,6 +6,8 @@ import java.util.Map;
 import org.mozilla.javascript.ScriptableObject;
 
 import com.zhekasmirnov.apparatus.mcpe.NativeBlockSource;
+import com.zhekasmirnov.apparatus.mod.ContentIdScope;
+import com.zhekasmirnov.apparatus.mod.ContentIdSource;
 import com.zhekasmirnov.innercore.api.mod.ScriptableObjectHelper;
 import com.zhekasmirnov.innercore.api.runtime.other.NameTranslation;
 
@@ -15,7 +17,7 @@ import vsdum.kex.util.CommonTypes;
 
 public class DamageModule {
 
-    protected static native int nativeNewCause(String name);
+    protected static native void nativeNewCause(String name, int id);
     protected static native void nativeSetFire(int id);
     protected static native boolean nativeIsFire(int id);
     protected static native void nativeEnableCustomTranslationCallbackFor(int id);
@@ -69,14 +71,18 @@ public class DamageModule {
     
     public static class CustomCause {
 
+        private static final ContentIdScope idSource = ContentIdSource.getGlobal().getOrCreateScope("kex-damagecauses");
+
         public final String name;
         public final int id;
 
         public CustomCause(String name)
         {
+            if(idSource.isNameIdUsed(name))
+                throw new IllegalArgumentException("Custom damage cause \"" + name + "\" has already been registered before! Try using another name!");
             this.name = name;
-            this.id = nativeNewCause(this.name);
-            if(this.id == -1) throw new IllegalArgumentException("Custom damage cause \"" + name + "\" has already been registered before! Try using another name!");
+            this.id = idSource.getOrGenerateId(this.name, 100, Integer.MAX_VALUE, true);
+            nativeNewCause(this.name, this.id);
         }
 
         public CustomCause setFire()
