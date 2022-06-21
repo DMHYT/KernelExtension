@@ -2,6 +2,9 @@
 
 #include <static_symbol.h>
 
+#include <innercore/id_conversion_map.h>
+#include <innercore/item_extra.h>
+#include <innercore/item_registry.h>
 #include <innercore/vtable.h>
 
 #include <Mob.hpp>
@@ -142,10 +145,16 @@ extern "C" {
         if(stack == nullptr || stack->isNull()) return 0;
         return (jlong) stack;
     }
-    __EXPORT__(void, SetItemSlot, jint slot, jlong stackptr) {
-        VTABLE_FIND_OFFSET(Mob_setItemSlot, _ZTV3Mob, _ZN3Mob11setItemSlotE13EquipmentSlotRK9ItemStack);
-        ItemStack* stack = (ItemStack*) stackptr;
-        VTABLE_CALL<void>(Mob_setItemSlot, (Mob*) ptr, (EquipmentSlot) slot, *stack);
+    __EXPORT__(void, SetItemSlot, jint slot, jint id, jint count, jint data, jlong extra) {
+        Item* item = ItemRegistry::getItemById(IdConversion::staticToDynamic(id, IdConversion::ITEM));
+        if(item != nullptr && count > 0) {
+            ItemStack stack(*item, count, data);
+            if(extra != 0) {
+                ((ItemInstanceExtra*) extra)->apply(&stack);
+            }
+            VTABLE_FIND_OFFSET(Mob_setItemSlot, _ZTV3Mob, _ZN3Mob11setItemSlotE13EquipmentSlotRK9ItemStack);
+            VTABLE_CALL<void>(Mob_setItemSlot, (Mob*) ptr, slot, &stack);
+        }
     }
     __EXPORT__(jboolean, IsTransitioningSitting) {
         return ((Mob*) ptr)->isTransitioningSitting();
@@ -198,8 +207,16 @@ extern "C" {
     __EXPORT__(void, IncrementArrowCount, jint incr) {
         ((Mob*) ptr)->incrementArrowCount(incr);
     }
-    __EXPORT__(jboolean, CanPickUpLoot, jlong stackptr) {
-        return ((Mob*) ptr)->canPickUpLoot(*((ItemStack*) stackptr));
+    __EXPORT__(jboolean, CanPickUpLoot, jint id, jint count, jint data, jlong extra) {
+        Item* item = ItemRegistry::getItemById(IdConversion::staticToDynamic(id, IdConversion::ITEM));
+        if(item != nullptr && count > 0) {
+            ItemStack stack(*item, count, data);
+            if(extra != 0) {
+                ((ItemInstanceExtra*) extra)->apply(&stack);
+            }
+            return ((Mob*) ptr)->canPickUpLoot(stack);
+        }
+        return false;
     }
     __EXPORT__(jfloat, GetJumpMultiplier) {
         return ((Mob*) ptr)->getJumpMultiplier();

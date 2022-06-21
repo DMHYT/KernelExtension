@@ -1,7 +1,7 @@
 package vsdum.kex.natives;
 
 import com.zhekasmirnov.apparatus.adapter.innercore.game.item.ItemStack;
-import com.zhekasmirnov.innercore.api.NativeItemInstance;
+import com.zhekasmirnov.innercore.api.NativeItemInstanceExtra;
 
 import android.support.annotation.Nullable;
 
@@ -36,7 +36,7 @@ public class Mob extends Actor {
     protected static native int nativeGetArmorValue(long ptr);
     protected static native float nativeGetArmorCoverPercentage(long ptr);
     protected static native long nativeGetItemSlot(long ptr, int slot);
-    protected static native void nativeSetItemSlot(long ptr, int slot, long stackptr);
+    protected static native void nativeSetItemSlot(long ptr, int slot, int id, int count, int data, long extra);
     protected static native boolean nativeIsTransitioningSitting(long ptr);
     protected static native void nativeSetTransitioningSitting(long ptr, boolean ts);
     protected static native boolean nativeCanExistWhenDisallowMob(long ptr);
@@ -53,7 +53,7 @@ public class Mob extends Actor {
     protected static native void nativeSnapToYBodyRot(long ptr, float rot);
     protected static native void nativeSnapToYHeadRot(long ptr, float rot);
     protected static native void nativeIncrementArrowCount(long ptr, int incr);
-    protected static native boolean nativeCanPickUpLoot(long ptr, long stackptr);
+    protected static native boolean nativeCanPickUpLoot(long ptr, int id, int count, int data, long extra);
     protected static native float nativeGetJumpMultiplier(long ptr);
     protected static native boolean nativeHasBeenHurtByMobInLastTicks(long ptr, int ticks);
     protected static native boolean nativeIsHeadInWater(long ptr);
@@ -270,9 +270,14 @@ public class Mob extends Actor {
         return ItemStack.fromPtr(stackptr);
     }
 
-    public void setItemSlot(int slot, NativeItemInstance instance)
+    public void setItemSlot(int slot, int id, int count, int data)
     {
-        nativeSetItemSlot(this.pointer, slot, instance.getPointer());
+        this.setItemSlot(slot, id, count, data, null);
+    }
+
+    public void setItemSlot(int slot, int id, int count, int data, NativeItemInstanceExtra extra)
+    {
+        nativeSetItemSlot(this.pointer, slot, id, count, data, extra != null ? extra.getValue() : 0L);
     }
 
     public boolean isTransitioningSitting()
@@ -355,9 +360,14 @@ public class Mob extends Actor {
         nativeIncrementArrowCount(this.pointer, increment);
     }
 
-    public boolean canPickUpLoot(NativeItemInstance item)
+    public boolean canPickUpLoot(int id, int count, int data)
     {
-        return nativeCanPickUpLoot(this.pointer, item.getPointer());
+        return this.canPickUpLoot(id, count, data, null);
+    }
+
+    public boolean canPickUpLoot(int id, int count, int data, NativeItemInstanceExtra extra)
+    {
+        return nativeCanPickUpLoot(this.pointer, id, count, data, extra != null ? extra.getValue() : 0L);
     }
 
     public float getJumpMultiplier()

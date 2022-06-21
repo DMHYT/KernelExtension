@@ -2,7 +2,7 @@ package vsdum.kex.natives;
 
 import com.zhekasmirnov.apparatus.adapter.innercore.game.item.ItemStack;
 import com.zhekasmirnov.apparatus.mcpe.NativeBlockSource;
-import com.zhekasmirnov.innercore.api.NativeItemInstance;
+import com.zhekasmirnov.innercore.api.NativeItemInstanceExtra;
 
 import android.support.annotation.Nullable;
 import vsdum.kex.common.INativeInterface;
@@ -140,7 +140,7 @@ public class Actor implements INativeInterface {
     protected static native void nativeSetLayingDown(long ptr, boolean laying);
     protected static native boolean nativeGetTempted(long ptr);
     protected static native void nativeSetTempted(long ptr, boolean tempted);
-    protected static native void nativeDropTowards(long ptr, long stackptr, float x, float y, float z);
+    protected static native void nativeDropTowards(long ptr, int id, int count, int data, long extra, float x, float y, float z);
     protected static native boolean nativeIsTrading(long ptr);
     protected static native boolean nativeInDownwardFlowingLiquid(long ptr);
     protected static native int nativeGetJumpDuration(long ptr);
@@ -256,14 +256,14 @@ public class Actor implements INativeInterface {
     protected static native void nativeFeed(long ptr, int amount);
     protected static native float nativeGetPickRadius(long ptr);
     protected static native long nativeGetArmor(long ptr, int slot);
-    protected static native void nativeSetArmor(long ptr, int slot, long stack);
+    protected static native void nativeSetArmor(long ptr, int slot, int id, int count, int data, long extra);
     protected static native int nativeGetArmorMaterialTypeInSlot(long ptr, int slot);
     protected static native int nativeGetArmorMaterialTextureTypeInSlot(long ptr, int slot);
     protected static native long nativeGetEquippedSlot(long ptr, int slot);
-    protected static native void nativeSetEquippedSlot(long ptr, int slot, long stack);
+    protected static native void nativeSetEquippedSlot(long ptr, int slot, int id, int count, int data, long extra);
     protected static native long nativeGetCarriedItem(long ptr);
-    protected static native void nativeSetCarriedItem(long ptr, long stackptr);
-    protected static native void nativeSetOffhandSlot(long ptr, long stackptr);
+    protected static native void nativeSetCarriedItem(long ptr, int id, int count, int data, long extra);
+    protected static native void nativeSetOffhandSlot(long ptr, int id, int count, int data, long extra);
     protected static native void nativeConsumeTotem(long ptr);
     protected static native int nativeGetEntityTypeId(long ptr);
     protected static native int nativeGetPortalCooldown(long ptr);
@@ -282,8 +282,8 @@ public class Actor implements INativeInterface {
     protected static native boolean nativeIsWorldBuilder(long ptr);
     protected static native boolean nativeIsCreative(long ptr);
     protected static native boolean nativeIsAdventure(long ptr);
-    protected static native void nativeAdd(long ptr, long stackptr);
-    protected static native void nativeDrop(long ptr, long stackptr, boolean someBool);
+    protected static native void nativeAdd(long ptr, int id, int count, int data, long extra);
+    protected static native void nativeDrop(long ptr, int id, int count, int data, long extra, boolean someBool);
     protected static native void nativeSetAuxValue(long ptr, int aux);
     protected static native void nativeWobble(long ptr);
     protected static native boolean nativeHasHurt(long ptr);
@@ -1001,9 +1001,14 @@ public class Actor implements INativeInterface {
         nativeSetTempted(this.pointer, tempted);
     }
 
-    public void dropTowards(NativeItemInstance stack, float x, float y, float z)
+    public void dropTowards(float x, float y, float z, int id, int count, int data)
     {
-        nativeDropTowards(this.pointer, stack.getPointer(), x, y, z);
+        this.dropTowards(x, y, z, id, count, data, null);
+    }
+
+    public void dropTowards(float x, float y, float z, int id, int count, int data, NativeItemInstanceExtra extra)
+    {
+        nativeDropTowards(this.pointer, id, count, data, extra != null ? extra.getValue() : 0L, x, y, z);
     }
 
     public boolean isTrading()
@@ -1580,9 +1585,14 @@ public class Actor implements INativeInterface {
         return ItemStack.fromPtr(stackptr);
     }
 
-    public void setArmor(int slot, NativeItemInstance stack)
+    public void setArmor(int slot, int id, int count, int data)
     {
-        nativeSetArmor(this.pointer, slot, stack.getPointer());
+        this.setArmor(slot, id, count, data, null);
+    }
+
+    public void setArmor(int slot, int id, int count, int data, NativeItemInstanceExtra extra)
+    {
+        nativeSetArmor(this.pointer, slot, id, count, data, extra != null ? extra.getValue() : 0L);
     }
 
     public int getArmorMaterialTypeInSlot(int slot)
@@ -1602,9 +1612,14 @@ public class Actor implements INativeInterface {
         return ItemStack.fromPtr(stackptr);
     }
 
-    public void setEquippedSlot(int slot, NativeItemInstance stack)
+    public void setEquippedSlot(int slot, int id, int count, int data)
     {
-        nativeSetEquippedSlot(this.pointer, slot, stack.getPointer());
+        this.setEquippedSlot(slot, id, count, data, null);
+    }
+
+    public void setEquippedSlot(int slot, int id, int count, int data, NativeItemInstanceExtra extra)
+    {
+        nativeSetEquippedSlot(this.pointer, slot, id, count, data, extra != null ? extra.getValue() : 0L);
     }
 
     @Nullable public ItemStack getCarriedItem()
@@ -1614,14 +1629,24 @@ public class Actor implements INativeInterface {
         return ItemStack.fromPtr(stackptr);
     }
 
-    public void setCarriedItem(NativeItemInstance stack)
+    public void setCarriedItem(int id, int count, int data)
     {
-        nativeSetCarriedItem(this.pointer, stack.getPointer());
+        this.setCarriedItem(id, count, data, null);
     }
 
-    public void setOffhandSlot(NativeItemInstance stack)
+    public void setCarriedItem(int id, int count, int data, NativeItemInstanceExtra extra)
     {
-        nativeSetOffhandSlot(this.pointer, stack.getPointer());
+        nativeSetCarriedItem(this.pointer, id, count, data, extra != null ? extra.getValue() : 0L);
+    }
+
+    public void setOffhandSlot(int id, int count, int data)
+    {
+        this.setOffhandSlot(id, count, data, null);
+    }
+
+    public void setOffhandSlot(int id, int count, int data, NativeItemInstanceExtra extra)
+    {
+        nativeSetOffhandSlot(this.pointer, id, count, data, extra != null ? extra.getValue() : 0L);
     }
 
     public void consumeTotem()
@@ -1714,14 +1739,19 @@ public class Actor implements INativeInterface {
         return nativeIsAdventure(this.pointer);
     }
 
-    public void add(NativeItemInstance stack)
+    public void add(int id, int count, int data)
     {
-        nativeAdd(this.pointer, stack.getPointer());
+        this.add(id, count, data, null);
     }
 
-    public void drop(NativeItemInstance stack, boolean someBool)
+    public void add(int id, int count, int data, NativeItemInstanceExtra extra)
     {
-        nativeDrop(this.pointer, stack.getPointer(), someBool);
+        nativeAdd(this.pointer, id, count, data, extra != null ? extra.getValue() : 0L);
+    }
+
+    public void drop(int id, int count, int data, NativeItemInstanceExtra extra, boolean someBool)
+    {
+        nativeDrop(this.pointer, id, count, data, extra != null ? extra.getValue() : 0L, someBool);
     }
 
     public void setAuxValue(int aux)

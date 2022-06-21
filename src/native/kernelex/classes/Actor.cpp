@@ -1,5 +1,8 @@
 #include <jni.h>
 
+#include <innercore/id_conversion_map.h>
+#include <innercore/item_extra.h>
+#include <innercore/item_registry.h>
 #include <innercore/vtable.h>
 
 #include <commontypes.hpp>
@@ -7,6 +10,7 @@
 #include <ActorUniqueID.hpp>
 #include <Actor.hpp>
 #include <BreathableComponent.hpp>
+#include <ItemStack.hpp>
 #include <MobEffect.hpp>
 #include <MobEffectInstance.hpp>
 
@@ -463,8 +467,15 @@ extern "C" {
     __EXPORT__(void, SetTempted, jboolean tempted) {
         ((Actor*) ptr)->setTempted(tempted);
     }
-    __EXPORT__(void, DropTowards, jlong stackptr, jfloat x, jfloat y, jfloat z) {
-        ((Actor*) ptr)->dropTowards(*(ItemStack*) stackptr, Vec3(x, y, z));
+    __EXPORT__(void, DropTowards, jint id, jint count, jint data, jlong extra, jfloat x, jfloat y, jfloat z) {
+        Item* item = ItemRegistry::getItemById(IdConversion::staticToDynamic(id, IdConversion::ITEM));
+        if(item != nullptr && count > 0) {
+            ItemStack stack(*item, count, data);
+            if(extra != 0) {
+                ((ItemInstanceExtra*) extra)->apply(&stack);
+            }
+            ((Actor*) ptr)->dropTowards(stack, Vec3(x, y, z));
+        }
     }
     __EXPORT__(jboolean, IsTrading) {
         return ((Actor*) ptr)->isTrading();
@@ -679,11 +690,11 @@ extern "C" {
     }
     __EXPORT__(void, StartRiding, jlong riddenPtr) {
         VTABLE_FIND_OFFSET(Actor_startRiding, _ZTV5Actor, _ZN5Actor11startRidingER5Actor);
-        VTABLE_CALL<void>(Actor_startRiding, (Actor*) ptr, (int) riddenPtr);
+        VTABLE_CALL<void>(Actor_startRiding, (Actor*) ptr, (Actor*) riddenPtr);
     }
     __EXPORT__(void, AddRider, jlong riderPtr) {
         VTABLE_FIND_OFFSET(Actor_addRider, _ZTV5Actor, _ZN5Actor8addRiderER5Actor);
-        VTABLE_CALL<void>(Actor_addRider, (Actor*) ptr, (int) riderPtr);
+        VTABLE_CALL<void>(Actor_addRider, (Actor*) ptr, (Actor*) riderPtr);
     }
     __EXPORT__(jboolean, Intersects, jfloat x1, jfloat y1, jfloat z1, jfloat x2, jfloat y2, jfloat z2) {
         VTABLE_FIND_OFFSET(Actor_intersects, _ZTV5Actor, _ZNK5Actor10intersectsERK4Vec3S2_);
@@ -835,11 +846,11 @@ extern "C" {
     }
     __EXPORT__(void, Attack, jlong victim) {
         VTABLE_FIND_OFFSET(Actor_attack, _ZTV5Actor, _ZN5Actor6attackER5Actor);
-        VTABLE_CALL<void>(Actor_attack, (Actor*) ptr, (int) victim);
+        VTABLE_CALL<void>(Actor_attack, (Actor*) ptr, (Actor*) victim);
     }
     __EXPORT__(void, PerformRangedAttack, jlong victim, jfloat distanceFactor) {
         VTABLE_FIND_OFFSET(Actor_performRangedAttack, _ZTV5Actor, _ZN5Actor19performRangedAttackER5Actorf);
-        VTABLE_CALL<void>(Actor_performRangedAttack, (Actor*) ptr, (int) victim, distanceFactor);
+        VTABLE_CALL<void>(Actor_performRangedAttack, (Actor*) ptr, (Actor*) victim, distanceFactor);
     }
     __EXPORT__(jint, GetEquipmentCount) {
         VTABLE_FIND_OFFSET(Actor_getEquipmentCount, _ZTV5Actor, _ZNK5Actor17getEquipmentCountEv);
@@ -891,9 +902,16 @@ extern "C" {
         if(stack == nullptr) return 0;
         return (jlong) stack;
     }
-    __EXPORT__(void, SetArmor, jint slot, jlong stack) {
-        VTABLE_FIND_OFFSET(Actor_setArmor, _ZTV5Actor, _ZN5Actor8setArmorE9ArmorSlotRK9ItemStack);
-        VTABLE_CALL<void>(Actor_setArmor, (Actor*) ptr, (ArmorSlot) slot, (int) stack);
+    __EXPORT__(void, SetArmor, jint slot, jint id, jint count, jint data, jlong extra) {
+        Item* item = ItemRegistry::getItemById(IdConversion::staticToDynamic(id, IdConversion::ITEM));
+        if(item != nullptr && count > 0) {
+            ItemStack stack(*item, count, data);
+            if(extra != 0) {
+                ((ItemInstanceExtra*) extra)->apply(&stack);
+            }
+            VTABLE_FIND_OFFSET(Actor_setArmor, _ZTV5Actor, _ZN5Actor8setArmorE9ArmorSlotRK9ItemStack);
+            VTABLE_CALL<void>(Actor_setArmor, (Actor*) ptr, slot, &stack);
+        }
     }
     __EXPORT__(jint, GetArmorMaterialTypeInSlot, jint slot) {
         VTABLE_FIND_OFFSET(Actor_getArmorMaterialTypeInSlot, _ZTV5Actor, _ZNK5Actor26getArmorMaterialTypeInSlotE9ArmorSlot);
@@ -909,9 +927,16 @@ extern "C" {
         if(stack == nullptr) return 0;
         return (jlong) stack;
     }
-    __EXPORT__(void, SetEquippedSlot, jint slot, jlong stack) {
-        VTABLE_FIND_OFFSET(Actor_setEquippedSlot, _ZTV5Actor, _ZN5Actor15setEquippedSlotE13EquipmentSlotRK9ItemStack);
-        VTABLE_CALL<void>(Actor_setEquippedSlot, (Actor*) ptr, (EquipmentSlot) slot, (int) stack);
+    __EXPORT__(void, SetEquippedSlot, jint slot, jint id, jint count, jint data, jlong extra) {
+        Item* item = ItemRegistry::getItemById(IdConversion::staticToDynamic(id, IdConversion::ITEM));
+        if(item != nullptr && count > 0) {
+            ItemStack stack(*item, count, data);
+            if(extra != 0) {
+                ((ItemInstanceExtra*) extra)->apply(&stack);
+            }
+            VTABLE_FIND_OFFSET(Actor_setEquippedSlot, _ZTV5Actor, _ZN5Actor15setEquippedSlotE13EquipmentSlotRK9ItemStack);
+            VTABLE_CALL<void>(Actor_setEquippedSlot, (Actor*) ptr, slot, &stack);
+        }
     }
     __EXPORT__(jlong, GetCarriedItem) {
         VTABLE_FIND_OFFSET(Actor_getCarriedItem, _ZTV5Actor, _ZNK5Actor14getCarriedItemEv);
@@ -919,13 +944,27 @@ extern "C" {
         if(stack == nullptr) return 0;
         return (jlong) stack;
     }
-    __EXPORT__(void, SetCarriedItem, jlong stackptr) {
-        VTABLE_FIND_OFFSET(Actor_setCarriedItem, _ZTV5Actor, _ZN5Actor14setCarriedItemERK9ItemStack);
-        VTABLE_CALL<void>(Actor_setCarriedItem, (Actor*) ptr, (int) stackptr);
+    __EXPORT__(void, SetCarriedItem, jint id, jint count, jint data, jlong extra) {
+        Item* item = ItemRegistry::getItemById(IdConversion::staticToDynamic(id, IdConversion::ITEM));
+        if(item != nullptr && count > 0) {
+            ItemStack stack(*item, count, data);
+            if(extra != 0) {
+                ((ItemInstanceExtra*) extra)->apply(&stack);
+            }
+            VTABLE_FIND_OFFSET(Actor_setCarriedItem, _ZTV5Actor, _ZN5Actor14setCarriedItemERK9ItemStack);
+            VTABLE_CALL<void>(Actor_setCarriedItem, (Actor*) ptr, &stack);
+        }
     }
-    __EXPORT__(void, SetOffhandSlot, jlong stackptr) {
-        VTABLE_FIND_OFFSET(Actor_setOffhandSlot, _ZTV5Actor, _ZN5Actor14setOffhandSlotERK9ItemStack);
-        VTABLE_CALL<void>(Actor_setOffhandSlot, (Actor*) ptr, (int) stackptr);
+    __EXPORT__(void, SetOffhandSlot, jint id, jint count, jint data, jlong extra) {
+        Item* item = ItemRegistry::getItemById(IdConversion::staticToDynamic(id, IdConversion::ITEM));
+        if(item != nullptr && count > 0) {
+            ItemStack stack(*item, count, data);
+            if(extra != 0) {
+                ((ItemInstanceExtra*) extra)->apply(&stack);
+            }
+            VTABLE_FIND_OFFSET(Actor_setOffhandSlot, _ZTV5Actor, _ZN5Actor14setOffhandSlotERK9ItemStack);
+            VTABLE_CALL<void>(Actor_setOffhandSlot, (Actor*) ptr, &stack);
+        }
     }
     __EXPORT__(void, ConsumeTotem) {
         VTABLE_FIND_OFFSET(Actor_consumeTotem, _ZTV5Actor, _ZN5Actor12consumeTotemEv);
@@ -965,11 +1004,11 @@ extern "C" {
     }
     __EXPORT__(jboolean, CanBeAffected__JJ, jlong mei) {
         VTABLE_FIND_OFFSET(Actor_canBeAffectedMEI, _ZTV5Actor, _ZNK5Actor13canBeAffectedERK17MobEffectInstance);
-        return VTABLE_CALL<bool>(Actor_canBeAffectedMEI, (Actor*) ptr, (int) mei);
+        return VTABLE_CALL<bool>(Actor_canBeAffectedMEI, (Actor*) ptr, (MobEffectInstance*) mei);
     }
     __EXPORT__(jboolean, CanBeAffectedByArrow, jlong mei) {
         VTABLE_FIND_OFFSET(Actor_canBeAffectedByArrow, _ZTV5Actor, _ZNK5Actor20canBeAffectedByArrowERK17MobEffectInstance);
-        return VTABLE_CALL<bool>(Actor_canBeAffectedByArrow, (Actor*) ptr, (int) mei);
+        return VTABLE_CALL<bool>(Actor_canBeAffectedByArrow, (Actor*) ptr, (MobEffectInstance*) mei);
     }
     __EXPORT__(void, Swing) {
         VTABLE_FIND_OFFSET(Actor_swing, _ZTV5Actor, _ZN5Actor5swingEv);
@@ -985,7 +1024,7 @@ extern "C" {
     }
     __EXPORT__(jfloat, GetRiderYRotation, jlong rider) {
         VTABLE_FIND_OFFSET(Actor_getRiderYRotation, _ZTV5Actor, _ZNK5Actor17getRiderYRotationERK5Actor);
-        return VTABLE_CALL<float>(Actor_getRiderYRotation, (Actor*) ptr, (int) rider);
+        return VTABLE_CALL<float>(Actor_getRiderYRotation, (Actor*) ptr, (Actor*) rider);
     }
     __EXPORT__(jboolean, IsWorldBuilder) {
         VTABLE_FIND_OFFSET(Actor_isWorldBuilder, _ZTV5Actor, _ZNK5Actor14isWorldBuilderEv);
@@ -999,13 +1038,27 @@ extern "C" {
         VTABLE_FIND_OFFSET(Actor_isAdventure, _ZTV5Actor, _ZNK5Actor11isAdventureEv);
         return VTABLE_CALL<bool>(Actor_isAdventure, (Actor*) ptr);
     }
-    __EXPORT__(void, Add, jlong stackptr) {
-        VTABLE_FIND_OFFSET(Actor_add, _ZTV5Actor, _ZN5Actor3addER9ItemStack);
-        VTABLE_CALL<void>(Actor_add, (Actor*) ptr, (int) stackptr);
+    __EXPORT__(void, Add, jint id, jint count, jint data, jlong extra) {
+        Item* item = ItemRegistry::getItemById(IdConversion::staticToDynamic(id, IdConversion::ITEM));
+        if(item != nullptr && count > 0) {
+            ItemStack stack(*item, count, data);
+            if(extra != 0) {
+                ((ItemInstanceExtra*) extra)->apply(&stack);
+            }
+            VTABLE_FIND_OFFSET(Actor_add, _ZTV5Actor, _ZN5Actor3addER9ItemStack);
+            VTABLE_CALL<void>(Actor_add, (Actor*) ptr, &stack);
+        }
     }
-    __EXPORT__(void, Drop, jlong stackptr, jboolean someBool) {
-        VTABLE_FIND_OFFSET(Actor_drop, _ZTV5Actor, _ZN5Actor4dropERK9ItemStackb);
-        VTABLE_CALL<void>(Actor_drop, (Actor*) ptr, (int) stackptr, someBool);
+    __EXPORT__(void, Drop, jint id, jint count, jint data, jlong extra, jboolean someBool) {
+        Item* item = ItemRegistry::getItemById(IdConversion::staticToDynamic(id, IdConversion::ITEM));
+        if(item != nullptr && count > 0) {
+            ItemStack stack(*item, count, data);
+            if(extra != 0) {
+                ((ItemInstanceExtra*) extra)->apply(&stack);
+            }
+            VTABLE_FIND_OFFSET(Actor_drop, _ZTV5Actor, _ZN5Actor4dropERK9ItemStackb);
+            VTABLE_CALL<void>(Actor_drop, (Actor*) ptr, &stack, someBool);
+        }
     }
     __EXPORT__(void, SetAuxValue, jint value) {
         VTABLE_FIND_OFFSET(Actor_setAuxValue, _ZTV5Actor, _ZN5Actor11setAuxValueEi);

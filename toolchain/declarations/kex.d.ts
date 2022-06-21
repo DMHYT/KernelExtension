@@ -4,28 +4,6 @@
 declare type jstring = java.lang.String;
 declare type any_string = string | jstring;
 
-declare module com {
-    export module zhekasmirnov {
-        export module innercore {
-            export module api {
-                export class NativeItemInstance extends java.lang.Object {
-                    static class: java.lang.Class<NativeItemInstance>;
-                    count: number;
-                    data: number;
-                    extra: Nullable<NativeItemInstanceExtra>;
-                    id: number;
-                    isValid: boolean;
-                    constructor(ptr: number);
-                    constructor(id: number, count: number, data: number);
-                    getPointer(): number;
-                    destroy(): void;
-                    toString(): string;
-                }
-            }
-        }
-    }
-}
-
 
 declare module vsdum {
     export module kex {
@@ -197,7 +175,7 @@ declare module vsdum {
                 setLayingDown(laying: boolean): void;
                 getTempted(): boolean;
                 setTempted(tempted: boolean): void;
-                dropTowards(stack: com.zhekasmirnov.innercore.api.NativeItemInstance, x: number, y: number, z: number): void;
+                dropTowards(x: number, y: number, z: number, id: number, count: number, data: number, extra?: Nullable<com.zhekasmirnov.innercore.api.NativeItemInstanceExtra>): void;
                 isTrading(): boolean;
                 inDownwardFlowingLiquid(): boolean;
                 getJumpDuration(): number;
@@ -313,14 +291,14 @@ declare module vsdum {
                 feed(amount: number): void;
                 getPickRadius(): number;
                 getArmor(slot: number): Nullable<ItemInstance>;
-                setArmor(slot: number, stack: com.zhekasmirnov.innercore.api.NativeItemInstance): void;
+                setArmor(slot: number, id: number, count: number, data: number, extra?: Nullable<com.zhekasmirnov.innercore.api.NativeItemInstanceExtra>): void;
                 getArmorMaterialTypeInSlot(slot: number): number;
                 getArmorMaterialTextureTypeInSlot(slot: number): number;
                 getEquippedSlot(slot: number): Nullable<ItemInstance>;
-                setEquippedSlot(slot: number, stack: com.zhekasmirnov.innercore.api.NativeItemInstance): void;
+                setEquippedSlot(slot: number, id: number, count: number, data: number, extra?: Nullable<com.zhekasmirnov.innercore.api.NativeItemInstanceExtra>): void;
                 getCarriedItem(): Nullable<ItemInstance>;
-                setCarriedItem(stack: com.zhekasmirnov.innercore.api.NativeItemInstance): void;
-                setOffhandSlot(stack: com.zhekasmirnov.innercore.api.NativeItemInstance): void;
+                setCarriedItem(id: number, count: number, data: number, extra?: Nullable<com.zhekasmirnov.innercore.api.NativeItemInstanceExtra>): void;
+                setOffhandSlot(id: number, count: number, data: number, extra?: Nullable<com.zhekasmirnov.innercore.api.NativeItemInstanceExtra>): void;
                 consumeTotem(): void;
                 getPortalCooldown(): number;
                 getPortalWaitTime(): number;
@@ -338,8 +316,8 @@ declare module vsdum {
                 isWorldBuilder(): boolean;
                 isCreative(): boolean;
                 isAdventure(): boolean;
-                add(stack: com.zhekasmirnov.innercore.api.NativeItemInstance): void;
-                drop(stack: com.zhekasmirnov.innercore.api.NativeItemInstance, someBool: boolean): void;
+                add(id: number, count: number, data: number, extra?: Nullable<com.zhekasmirnov.innercore.api.NativeItemInstanceExtra>): void;
+                drop(id: number, count: number, data: number, extra: Nullable<com.zhekasmirnov.innercore.api.NativeItemInstanceExtra>, someBool: boolean): void;
                 setAuxValue(aux: number): void;
                 wobble(): void;
                 hasHurt(): boolean;
@@ -407,7 +385,7 @@ declare module vsdum {
                 getArmorValue(): number;
                 getArmorCoverPercentage(): number;
                 getItemSlot(slot: number): Nullable<ItemInstance>;
-                setItemSlot(slot: number, instance: com.zhekasmirnov.innercore.api.NativeItemInstance): void;
+                setItemSlot(slot: number, id: number, count: number, data: number, extra?: Nullable<com.zhekasmirnov.innercore.api.NativeItemInstanceExtra>): void;
                 isTransitioningSitting(): boolean;
                 setTransitioningSitting(transitioningSitting: boolean): void;
                 canExistWhenDisallowMob(): boolean;
@@ -424,7 +402,7 @@ declare module vsdum {
                 snapToYBodyRot(rot: number): void;
                 snapToYHeadRot(rot: number): void;
                 incrementArrowCount(increment: number): void;
-                canPickUpLoot(item: com.zhekasmirnov.innercore.api.NativeItemInstance): boolean;
+                canPickUpLoot(id: number, count: number, data: number, extra?: Nullable<com.zhekasmirnov.innercore.api.NativeItemInstanceExtra>): boolean;
                 getJumpMultiplier(): number;
                 hasBeenHurtByMobInLastTicks(ticks: number): boolean;
                 isHeadInWater(): boolean;
