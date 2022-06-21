@@ -19,10 +19,9 @@ public class CustomToolEvents {
     public static float calcDestroyTime(int id, int data, int x, int y, int z, byte side, float baseDestroyTime, float divider, float modifier, float defaultTime)
     {
         ItemInstance stack = Entity.getCarriedItem(NativeAPI.getLocalPlayer());
-        Integer idO = Integer.valueOf(stack.getId());
-        if(DataSets.toolData.containsKey(idO))
+        if(DataSets.toolData.containsKey(id))
         {
-            ScriptableObject obj = DataSets.toolData.get(idO);
+            ScriptableObject obj = DataSets.toolData.get(id);
             if(ScriptableObject.hasProperty(obj, "calcDestroyTime"))
             {
                 return CommonTypes.callFloatJSFunction(obj, "calcDestroyTime", new Object[]{
@@ -41,10 +40,9 @@ public class CustomToolEvents {
     {
         Pair<Integer, Integer> block = CommonTypes.deserializeFullBlockOrBlockState(tile);
         if(block == null) return false;
-        Integer idO = Integer.valueOf(item.getId());
-        if(DataSets.toolData.containsKey(idO))
+        if(DataSets.toolData.containsKey(item.getId()))
         {
-            ScriptableObject obj = DataSets.toolData.get(idO);
+            ScriptableObject obj = DataSets.toolData.get(item.getId());
             if(ScriptableObject.hasProperty(obj, "onDestroy"))
             {
                 boolean result = CommonTypes.callBooleanJSFunction(obj, "onDestroy", new Object[]{
@@ -59,10 +57,9 @@ public class CustomToolEvents {
 
     public static boolean onAttack(long victim, long attacker, ItemInstance item)
     {
-        Integer idO = Integer.valueOf(item.getId());
-        if(DataSets.toolData.containsKey(idO))
+        if(DataSets.toolData.containsKey(item.getId()))
         {
-            ScriptableObject obj = DataSets.toolData.get(idO);
+            ScriptableObject obj = DataSets.toolData.get(item.getId());
             if(ScriptableObject.hasProperty(obj, "onAttack"))
             {
                 boolean result = CommonTypes.callBooleanJSFunction(obj, "onAttack", new Object[]{
@@ -78,10 +75,9 @@ public class CustomToolEvents {
     public static boolean onBroke()
     {
         ItemInstance stack = Entity.getCarriedItem(NativeAPI.getLocalPlayer());
-        Integer idO = Integer.valueOf(stack.getId());
-        if(DataSets.toolData.containsKey(idO))
+        if(DataSets.toolData.containsKey(stack.getId()))
         {
-            ScriptableObject obj = DataSets.toolData.get(idO);
+            ScriptableObject obj = DataSets.toolData.get(stack.getId());
             if(ScriptableObject.hasProperty(obj, "onBroke"))
             {
                 return CommonTypes.callBooleanJSFunction(obj, "onBroke", new Object[]{ stack }, false);
@@ -95,10 +91,9 @@ public class CustomToolEvents {
         Pair<Integer, Integer> block = CommonTypes.deserializeFullBlockOrBlockState(tile);
         if(block != null)
         {
-            Integer idO = Integer.valueOf(item.getId());
-            if(DataSets.toolData.containsKey(idO))
+            if(DataSets.toolData.containsKey(item.getId()))
             {
-                ScriptableObject obj = DataSets.toolData.get(idO);
+                ScriptableObject obj = DataSets.toolData.get(item.getId());
                 if(ScriptableObject.hasProperty(obj, "modifyEnchant"))
                 {
                     NativeItemInstanceExtra extra = CommonTypes.getExtraFromInstance(item);
@@ -120,10 +115,9 @@ public class CustomToolEvents {
     public static void onMineBlock(int x, int y, int z, byte side, int id, int data, long player)
     {
         ItemInstance stack = Entity.getCarriedItem(player);
-        int idO = Integer.valueOf(stack.getId());
-        if(DataSets.toolData.containsKey(idO))
+        if(DataSets.toolData.containsKey(stack.getId()))
         {
-            ScriptableObject obj = DataSets.toolData.get(idO);
+            ScriptableObject obj = DataSets.toolData.get(stack.getId());
             if(ScriptableObject.hasProperty(obj, "onMineBlock"))
             {
                 CommonTypes.callVoidJSFunction(obj, "onMineBlock", new Object[]{
@@ -138,11 +132,10 @@ public class CustomToolEvents {
 
     public static int getAttackDamageBonus(int id, int count, int data, long extraPtr, int defaultValue)
     {
-        ItemInstance stack = new ItemInstance(id, count, data, new NativeItemInstanceExtra(extraPtr));
-        int idO = Integer.valueOf(id);
-        if(DataSets.toolData.containsKey(idO))
+        if(DataSets.toolData.containsKey(id))
         {
-            ScriptableObject obj = DataSets.toolData.get(idO);
+            ItemInstance stack = new ItemInstance(id, count, data, new NativeItemInstanceExtra(extraPtr));
+            ScriptableObject obj = DataSets.toolData.get(id);
             if(ScriptableObject.hasProperty(obj, "getAttackDamageBonus"))
             {
                 return CommonTypes.callIntJSFunction(obj, "getAttackDamageBonus", new Object[]{ stack }, defaultValue);

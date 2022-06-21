@@ -5,6 +5,8 @@ import java.util.Map;
 
 import org.mozilla.javascript.ScriptableObject;
 
+import com.zhekasmirnov.innercore.api.mod.ScriptableObjectHelper;
+
 import android.support.annotation.Nullable;
 import vsdum.kex.modules.ToolsModule.ItemTier;
 
@@ -53,17 +55,9 @@ public class DataSets {
 
     public static final Map<Integer, ScriptableObject> toolData = new HashMap<>();
 
-    public static boolean isWeapon(int id) {
-        ScriptableObject obj = toolData.get(Integer.valueOf(id));
-        if(ScriptableObject.hasProperty(obj, "isWeapon"))
-        {
-            Object isWeapon = ScriptableObject.getProperty(obj, "isWeapon");
-            if(isWeapon instanceof Boolean)
-            {
-                return ((Boolean) isWeapon).booleanValue();
-            }
-        }
-        return false;
+    public static boolean isWeapon(int id)
+    {
+        return toolData.containsKey(id) ? ScriptableObjectHelper.getBooleanProperty(toolData.get(id), "isWeapon", false) : false;
     }
     
 }

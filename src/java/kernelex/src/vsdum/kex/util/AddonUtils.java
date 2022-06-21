@@ -37,10 +37,9 @@ public final class AddonUtils {
                     {
                         numericId = 255 - numericId;
                     }
-                    Integer numericIdO = Integer.valueOf(numericId);
-                    if(!vanillaNumericToStringIdMap.containsKey(numericIdO))
+                    if(!vanillaNumericToStringIdMap.containsKey(numericId))
                     {
-                        vanillaNumericToStringIdMap.put(numericIdO, stringId);
+                        vanillaNumericToStringIdMap.put(numericId, stringId);
                     }
                 }
             }
@@ -62,10 +61,7 @@ public final class AddonUtils {
     
     public static String getAddonItemIdentifier(int id)
     {
-        if(IDRegistry.isVanilla(id))
-        {
-            return "minecraft:" + vanillaNumericToStringIdMap.get(Integer.valueOf(id));
-        } else return "minecraft:" + NativeAPI.convertNameId(IDRegistry.getNameByID(id));
+        return IDRegistry.isVanilla(id) ? "minecraft:" + vanillaNumericToStringIdMap.get(id) : "minecraft:" + NativeAPI.convertNameId(IDRegistry.getNameByID(id));
     }
 
     public static String getAddonItemIdentifier(String namespace, String identifier)
@@ -78,9 +74,8 @@ public final class AddonUtils {
         if(IDRegistry.isVanilla(id))
         {
             if(id > 255) id = 255 - id;
-            Integer idO = Integer.valueOf(id);
-            if(!vanillaNumericToStringIdMap.containsKey(idO)) return null;
-            return vanillaNumericToStringIdMap.get(idO);
+            if(!vanillaNumericToStringIdMap.containsKey(id)) return null;
+            return vanillaNumericToStringIdMap.get(id);
         } else return NativeAPI.convertNameId(IDRegistry.getNameByID(id));
     }
 

@@ -85,7 +85,7 @@ public class ItemsModule {
     public static void setMaxUseDurationDynamic(int id, UseDurationCallback callback)
     {
         nativeEnableDynamicUseDuration(id);
-        itemUseDurationCallbacks.put(Integer.valueOf(id), callback);
+        itemUseDurationCallbacks.put(id, callback);
     }
 
     public static int getUseDurationDynamic(long stackPtr)
@@ -137,7 +137,7 @@ public class ItemsModule {
     public static void setDynamicFoodValues(int id, FoodValuesCallback callback)
     {
         nativeEnableDynamicFoodValues(id);
-        foodValuesCallbacks.put(Integer.valueOf(id), callback);
+        foodValuesCallbacks.put(id, callback);
     }
 
     public static void getDynamicFoodValues(long stackPtr, long foodPtr)

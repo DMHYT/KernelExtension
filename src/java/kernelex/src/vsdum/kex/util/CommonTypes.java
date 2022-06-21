@@ -22,14 +22,11 @@ public final class CommonTypes {
     
     public static final Pair<Integer, Integer> deserializeMinMaxScriptable(ScriptableObject scr)
     {
-        if(!scr.has("min", scr) || !scr.has("max", scr))
+        if(!ScriptableObject.hasProperty(scr, "min") || !ScriptableObject.hasProperty(scr, "max"))
             throw new IllegalArgumentException();
-        Object minO = scr.get("min");
-        Object maxO = scr.get("max");
-        if(!(minO instanceof Number) || !(maxO instanceof Number))
-            throw new IllegalArgumentException();
-        int min = ((Number) minO).intValue();
-        int max = ((Number) maxO).intValue();
+        int min = ScriptableObjectHelper.getIntProperty(scr, "min", -1);
+        int max = ScriptableObjectHelper.getIntProperty(scr, "max", -1);
+        if(min == -1 || max == -1) throw new IllegalArgumentException();
         return new Pair<>(min, max);
     }
 
@@ -91,16 +88,12 @@ public final class CommonTypes {
 
     public static final short[] enchantDataScriptableToArray(ScriptableObject scr)
     {
-        short[] result = new short[]{ 0, 0, 0, 0 };
-        Object obj = scr.get("silk", scr);
-        if(obj instanceof Boolean) result[0] = (short)( ((Boolean) obj).booleanValue() ? 1 : 0 );
-        obj = scr.get("fortune", scr);
-        if(obj instanceof Number) result[1] = ((Number) obj).shortValue();
-        obj = scr.get("efficiency", scr);
-        if(obj instanceof Number) result[2] = ((Number) obj).shortValue();
-        obj = scr.get("unbreaking", scr);
-        if(obj instanceof Number) result[3] = ((Number) obj).shortValue();
-        return result;
+        return new short[] {
+            ScriptableObjectHelper.getBooleanProperty(scr, "silk", false) ? (short) 1 : (short) 0,
+            (short) ScriptableObjectHelper.getIntProperty(scr, "fortune", 0),
+            (short) ScriptableObjectHelper.getIntProperty(scr, "efficiency", 0),
+            (short) ScriptableObjectHelper.getIntProperty(scr, "unbreaking", 0)
+        };
     }
 
     @Nullable private static Function getFunctionFromScriptable(ScriptableObject scr, String functionName)
@@ -188,22 +181,11 @@ public final class CommonTypes {
         if(block instanceof ScriptableObject)
         {
             ScriptableObject scr = (ScriptableObject) block;
-            if(scr.has("id", scr))
+            if(ScriptableObject.hasProperty(scr, "id"))
             {
-                int id, data;
-                Object o = scr.get("id", scr);
-                if(o instanceof Number)
-                {
-                    id = ((Number) o).intValue();
-                } else return null;
-                if(scr.has("data", scr))
-                {
-                    o = scr.get("data", scr);
-                    if(o instanceof Number)
-                    {
-                        data = ((Number) o).intValue();
-                    } else data = 0;
-                } else data = 0;
+                int id = ScriptableObjectHelper.getIntProperty(scr, "id", -1000);
+                int data = ScriptableObjectHelper.getIntProperty(scr, "data", 0);
+                if(id == -1000) throw new IllegalArgumentException();
                 return new Pair<>(id, data);
             }
         }
