@@ -139,7 +139,7 @@ void KEXDamageModule::initialize() {
 
     HookManager::addCallback(
         SYMBOL("mcpe", "_ZN4I18n3getERKNSt6__ndk112basic_stringIcNS0_11char_traitsIcEENS0_9allocatorIcEEEERKNS0_6vectorIS6_NS4_IS6_EEEE"),
-        LAMBDA((stl::string* result, const stl::string& key, stl::vector<stl::string> const& values), {
+        LAMBDA((stl::string* result, const stl::string& key, const stl::vector<stl::string>& values), {
             if(key.rfind("death.kex.", 0) == 0 && *result == key) {
                 JNIEnv* env = KEXJavaUtils::attach();
                 jstring output = KEXJavaBridge::DamageModule::translateAndFormatDeathMessage(key.substr(10).c_str(), values);

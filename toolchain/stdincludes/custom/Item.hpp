@@ -215,7 +215,7 @@ class Item {
     TextureUVCoordinateSet* getIconTextureUVSet(const TextureAtlasItem&, int, int);
     void* useOn(ItemStack&, Actor&, int, int, int, unsigned char, float, float, float) const;
     void* getRenderingRotAdjustment() const;
-    void addOnResetBAIcallback(stl::function<void()> const&);
+    void addOnResetBAIcallback(const stl::function<void()>&);
     bool usesRenderingAdjustment() const;
     bool isNameTag() const;
     bool canUseSeed(Actor&, BlockPos, unsigned char) const;

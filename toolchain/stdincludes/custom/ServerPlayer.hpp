@@ -27,8 +27,8 @@ class ServerPlayer : public Player {
     // virtual void aiStep();
     // virtual void hurtArmor(const ActorDamageSource&, int);
     // virtual void setDamagedArmor(ArmorSlot, const ItemStack&);
-    // virtual void sendArmorDamage(stl::bitset<4u> const&);
-    // virtual void sendArmor(stl::bitset<4u> const&);
+    // virtual void sendArmorDamage(const stl::bitset<4u>&);
+    // virtual void sendArmor(const stl::bitset<4u>&);
     // virtual void clearVanishEnchantedItemsOnDeath();
     // virtual void sendInventory(bool);
     // virtual void prepareRegion(ChunkSource&);

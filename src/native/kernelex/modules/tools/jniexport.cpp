@@ -105,7 +105,7 @@ extern "C" {
             found = KEXToolsModule::Data::blockData.find(id);
         }
         auto iface = found->second;
-        jclass dataClass = env->FindClass("vsdum/kex/modules/ToolsModule$BlockData");
+        jclass dataClass = env->FindClass("vsdum/kex/modules/tools/DataSets$BlockData");
         jstring jMaterialName = env->NewStringUTF(iface->materialName.c_str());
         jobject result = env->NewObject(dataClass, env->GetMethodID(dataClass, "<init>", "(Ljava/lang/String;IZ)V"), env->GetStringUTFLength(jMaterialName) != 0 ? jMaterialName : NULL, iface->destroyLevel, iface->isNative);
         env->DeleteLocalRef(dataClass);

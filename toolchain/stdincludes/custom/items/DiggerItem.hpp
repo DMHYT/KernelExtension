@@ -20,9 +20,9 @@ class DiggerItem : public Item {
     // virtual int getEnchantValue() const;
     // virtual float getDestroySpeed(const ItemStackBase&, const Block&) const;
     // virtual bool mineBlock(ItemStack&, const Block&, int, int, int, Actor*) const;
-    DiggerItem(const stl::string&, int, int, const Item::Tier&, stl::vector<const Block*> const&);
+    DiggerItem(const stl::string&, int, int, const Item::Tier&, const stl::vector<const Block*>&);
     bool hasBlock(const Block&) const;
-    void setBlocks(stl::vector<const Block*> const&);
+    void setBlocks(const stl::vector<const Block*>&);
 };
 
 

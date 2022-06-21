@@ -34,7 +34,7 @@ class typeid_t {
     public:
     static constexpr unsigned short count = 0;
     unsigned short value;
-    typeid_t<T>(typeid_t<T> const& id): value(id.value) {}
+    typeid_t<T>(const typeid_t<T>& id): value(id.value) {}
     typeid_t<T>(unsigned short value): value(value) {}
 };
 
@@ -43,7 +43,7 @@ class typeid_t<CommandRegistry> {
     public:
     static unsigned short count;
     unsigned short value;
-    typeid_t<CommandRegistry>(typeid_t<CommandRegistry> const& id): value(id.value) {}
+    typeid_t<CommandRegistry>(const typeid_t<CommandRegistry>& id): value(id.value) {}
     typeid_t<CommandRegistry>(unsigned short value): value(value) {}
 };
 
@@ -133,7 +133,7 @@ class CommandRegistry {
     void registerAlias(stl::string, stl::string);
     void registerOverloadInternal(Signature&, Overload&);
     Signature* findCommand(const stl::string&);
-    template<typename Type, typename IDConverter = DefaultIdConverter<Type>> int addEnumValues(const stl::string& name, stl::vector<stl::pair<stl::string, Type>> const& values);
+    template<typename Type, typename IDConverter = DefaultIdConverter<Type>> int addEnumValues(const stl::string& name, const stl::vector<stl::pair<stl::string, Type>>& values);
     template<typename Type> bool parse(void*, const ParseToken&, const CommandOrigin&, int, stl::string&, stl::vector<stl::string>&) const;
     template<typename Type, typename IDConverter = DefaultIdConverter<Type>> bool parseEnum(void*, const ParseToken&, const CommandOrigin&, int, stl::string&, stl::vector<stl::string>&) const;
     bool parseParameter(Command*, const CommandParameterData&, const ParseToken&, const CommandOrigin&, int, stl::string&, stl::vector<stl::string>&) const;

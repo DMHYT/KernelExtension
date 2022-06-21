@@ -133,11 +133,11 @@ class Mob : public Actor {
     // virtual int getArmorValue();
     // virtual float getArmorCoverPercentage() const;
     // virtual void hurtArmor(const ActorDamageSource&, int);
-    // virtual void hurtArmor(const ActorDamageSource&, int, stl::bitset<4u> const&);
+    // virtual void hurtArmor(const ActorDamageSource&, int, const stl::bitset<4u>&);
     // virtual void hurtArmorSlot(const ActorDamageSource&, int, ArmorSlot);
     // virtual void setDamagedArmor(ArmorSlot, const ItemStack&);
-    // virtual void sendArmorDamage(stl::bitset<4u> const&);
-    // virtual void sendArmor(stl::bitset<4u> const&);
+    // virtual void sendArmorDamage(const stl::bitset<4u>&);
+    // virtual void sendArmor(const stl::bitset<4u>&);
     // virtual void containerChanged(int);
     // virtual void updateEquipment();
     // virtual void clearEquipment();

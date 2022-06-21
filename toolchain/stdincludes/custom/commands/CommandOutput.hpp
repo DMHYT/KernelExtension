@@ -25,18 +25,18 @@ class CommandOutputParameter {
     public:
     stl::string _text; // 12
     int _count; // 16
-    CommandOutputParameter(stl::vector<const Actor*> const&);
+    CommandOutputParameter(const stl::vector<const Actor*>&);
     CommandOutputParameter(const Actor&);
     CommandOutputParameter(bool);
     CommandOutputParameter(float);
     CommandOutputParameter(int);
-    CommandOutputParameter(stl::vector<stl::string> const&);
+    CommandOutputParameter(const stl::vector<stl::string>&);
     CommandOutputParameter(const Actor*);
     CommandOutputParameter(Vec3);
     CommandOutputParameter(const char*);
     CommandOutputParameter(const stl::string&, int);
     CommandOutputParameter(const stl::string&);
-    CommandOutputParameter(stl::vector<const Player*> const&);
+    CommandOutputParameter(const stl::vector<const Player*>&);
     CommandOutputParameter(BlockPos);
     stl::string getText() const;
     int count() const;
@@ -50,9 +50,9 @@ class CommandOutput {
     CommandOutputType getType() const;
     void addToResultList(const stl::string&, const stl::string&);
     void addToResultList(const stl::string&, const Actor&);
-    void success(const stl::string&, stl::vector<CommandOutputParameter> const&);
+    void success(const stl::string&, const stl::vector<CommandOutputParameter>&);
     void success();
-    void error(const stl::string&, stl::vector<CommandOutputParameter> const&);
+    void error(const stl::string&, const stl::vector<CommandOutputParameter>&);
 };
 
 
