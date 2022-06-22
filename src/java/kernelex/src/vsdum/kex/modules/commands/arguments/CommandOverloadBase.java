@@ -1,9 +1,10 @@
-package vsdum.kex.modules.commands;
+package vsdum.kex.modules.commands.arguments;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import android.support.annotation.Nullable;
+import vsdum.kex.modules.commands.CommandExecuteCallback;
 
 public class CommandOverloadBase implements ICommandNode {
     
@@ -11,7 +12,7 @@ public class CommandOverloadBase implements ICommandNode {
     public final int permissionLevel;
     public final List<String> aliases = new ArrayList<>();
     @Nullable public CommandExecuteCallback callback = null;
-    public final List<CommandArgument> children = new ArrayList<>();
+    public final List<ArgumentBase> children = new ArrayList<>();
 
     public CommandOverloadBase(String commandName, int permissionLevel)
     {
@@ -19,12 +20,10 @@ public class CommandOverloadBase implements ICommandNode {
         this.permissionLevel = permissionLevel;
     }
 
-    @Override public CommandOverloadBase then(ICommandNode child)
+    public CommandOverloadBase then(ArgumentBase child)
     {
-        if(!(child instanceof CommandArgument))
-            throw new IllegalArgumentException("Anything except CommandArgument cannot be passed in CommandOverloadBase.then!");
-        this.children.add((CommandArgument) child);
-        child.setParent(this);
+        this.children.add((ArgumentBase) child);
+        child.parent = this;
         return this;
     }
 
@@ -39,8 +38,6 @@ public class CommandOverloadBase implements ICommandNode {
         return this.callback;
     }
 
-    @Override public void setParent(ICommandNode parent) {}
-
     public CommandOverloadBase addAlias(String alias)
     {
         this.aliases.add(alias);
@@ -53,44 +50,44 @@ public class CommandOverloadBase implements ICommandNode {
         return this;
     }
 
-    private static void listLeaves(List<CommandArgument> result, List<CommandArgument> children)
+    private static void listLeaves(List<ArgumentBase> result, List<ArgumentBase> children)
     {
         for(int i = 0; i < children.size(); i++)
         {
-            CommandArgument node = (CommandArgument) children.get(i);
+            ArgumentBase node = (ArgumentBase) children.get(i);
             if(node.children.isEmpty()) result.add(node);
             else listLeaves(result, node.children);
         }
     }
 
-    private static List<CommandArgument> leafToRoot(CommandArgument node)
+    private static List<ArgumentBase> leafToRoot(ArgumentBase node)
     {
-        List<CommandArgument> result = new ArrayList<>();
+        List<ArgumentBase> result = new ArrayList<>();
         result.add(node);
         ICommandNode parent = node.parent;
-        while(parent instanceof CommandArgument)
+        while(parent instanceof ArgumentBase)
         {
-            CommandArgument arg = (CommandArgument) parent;
+            ArgumentBase arg = (ArgumentBase) parent;
             result.add(arg);
             parent = arg.parent;
         }
         return result;
     }
 
-    public List<List<CommandArgument>> listOverloads()
+    public List<List<ArgumentBase>> listOverloads()
     {
-        List<List<CommandArgument>> result = new ArrayList<>();
+        List<List<ArgumentBase>> result = new ArrayList<>();
         if(this.children.isEmpty())
         {
             result.add(new ArrayList<>());
             return result;
         }
-        List<CommandArgument> leaves = new ArrayList<>();
+        List<ArgumentBase> leaves = new ArrayList<>();
         listLeaves(leaves, this.children);
         for(int i = 0; i < leaves.size(); i++)
         {
-            List<CommandArgument> path = leafToRoot(leaves.get(i));
-            List<CommandArgument> overload = new ArrayList<>();
+            List<ArgumentBase> path = leafToRoot(leaves.get(i));
+            List<ArgumentBase> overload = new ArrayList<>();
             for(int j = path.size() - 1; j >= 0; j--)
             {
                 overload.add(path.get(j));

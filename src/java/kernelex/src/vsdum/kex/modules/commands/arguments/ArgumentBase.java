@@ -1,11 +1,12 @@
-package vsdum.kex.modules.commands;
+package vsdum.kex.modules.commands.arguments;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import android.support.annotation.Nullable;
+import vsdum.kex.modules.commands.CommandExecuteCallback;
 
-public class CommandArgument implements ICommandNode {
+public abstract class ArgumentBase implements ICommandNode {
     
     public final String name;
     public final CommandArgumentType type;
@@ -13,24 +14,24 @@ public class CommandArgument implements ICommandNode {
     public int fieldOffset = -1;
     @Nullable public CommandExecuteCallback callback = null;
     @Nullable public ICommandNode parent = null;
-    public final List<CommandArgument> children = new ArrayList<>();
+    public final List<ArgumentBase> children = new ArrayList<>();
 
-    public CommandArgument(String name, CommandArgumentType type)
+    public ArgumentBase(String name, CommandArgumentType type)
     {
         this.name = name;
         this.type = type;
     }
 
-    @Override public CommandArgument then(ICommandNode child)
+    public ArgumentBase then(ArgumentBase child)
     {
-        if(!(child instanceof CommandArgument))
+        if(!(child instanceof ArgumentBase))
             throw new IllegalArgumentException("Anything except CommandArgument cannot be passed in CommandArgument.then!");
-        this.children.add((CommandArgument) child);
-        child.setParent(this);
+        this.children.add((ArgumentBase) child);
+        child.parent = this;
         return this;
     }
 
-    @Override public CommandArgument executes(CommandExecuteCallback callback)
+    @Override public ArgumentBase executes(CommandExecuteCallback callback)
     {
         this.callback = callback;
         return this;
@@ -38,16 +39,7 @@ public class CommandArgument implements ICommandNode {
 
     @Override @Nullable public CommandExecuteCallback getCallback()
     {
-        return this.callback;
-    }
-
-    @Override public void setParent(ICommandNode parent)
-    {
-        this.parent = parent;
-        if(this.parent.getCallback() != null)
-        {
-            this.mandatory = false;
-        }
+        return this.callback == null ? this.parent == null ? null : this.parent.getCallback() : this.callback;
     }
 
 }

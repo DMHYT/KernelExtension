@@ -45,6 +45,8 @@ namespace KEXJavaBridge {
         JAVA_CLASS(DamageModule, "vsdum/kex/modules/DamageModule")
         JAVA_METHOD(DamageModule, getDeathMessage, "(JLjava/lang/String;J)Ljava/lang/String;")
         JAVA_METHOD(DamageModule, translateAndFormatDeathMessage, "(Ljava/lang/String;[Ljava/lang/String;)Ljava/lang/String;")
+        JAVA_CLASS(CommandsModule, "vsdum/kex/modules/CommandsModule")
+        JAVA_METHOD(CommandsModule, callAPICommand, "(Ljava/lang/String;JIJJ[Z)V")
     }
     namespace KernelExtension {
         void setMinecraftTextboxText(const char* text) {
@@ -124,6 +126,21 @@ namespace KEXJavaBridge {
             env->DeleteLocalRef(jCauseName);
             env->DeleteLocalRef(arr);
             return result;
+        }
+    }
+    namespace CommandsModule {
+        void callAPICommand(const char* commandName, jlong commandPointer, jint overloadIndex, jlong originPtr, jlong outputPtr, int paramsCount) {
+            JNIEnv* env = KEXJavaUtils::attach();
+            jstring jCommandName = env->NewStringUTF(commandName);
+            jbooleanArray paramsPresence = env->NewBooleanArray(paramsCount);
+            jboolean fill[paramsCount];
+            for(int i = 0; i < paramsCount; i++) {
+                fill[i] = *(bool*) ((char*) commandPointer + 2047 - i);
+            }
+            env->SetBooleanArrayRegion(paramsPresence, 0, paramsCount, fill);
+            env->CallStaticVoidMethod(Cache::CommandsModule(), Cache::CommandsModule_callAPICommand(), jCommandName, commandPointer, overloadIndex, originPtr, outputPtr, paramsPresence);
+            env->DeleteLocalRef(jCommandName);
+            env->DeleteLocalRef(paramsPresence);
         }
     }
 }

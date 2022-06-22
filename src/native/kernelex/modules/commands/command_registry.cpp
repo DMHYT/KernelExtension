@@ -1,5 +1,6 @@
 #include <symbol.h>
 
+#include "../../utils/java_utils.hpp"
 #include "command_registry.hpp"
 
 
@@ -23,6 +24,7 @@ std::unordered_set<std::string> KEXCommandRegistry::usedNamesAndAliases {
 std::unordered_map<std::string, KEXCommandRegistry::NativeCommandFactoryBase*> KEXCommandRegistry::registeredFactories;
 std::vector<std::pair<std::string, std::string>> KEXCommandRegistry::staticAliases;
 std::unordered_map<std::string, stl::vector<stl::pair<stl::string, int>>> KEXCommandRegistry::customEnums;
+std::unordered_map<std::string, stl::vector<stl::string>> KEXCommandRegistry::customStringEnums;
 
 
 void KEXCommandRegistry::registerNativeCommandFactory(const std::string& commandName, KEXCommandRegistry::NativeCommandFactoryBase* factory) {
@@ -50,7 +52,11 @@ void KEXCommandRegistry::NonNativeCommandFactory::setup(CommandRegistry& registr
             }
         }
         for(const auto& overload : props.overloads) {
-            registry.registerOverloadParamsVec<KEXAPICommand>(props.name.c_str(), overload);
+            stl::vector<CommandParameterData> params;
+            for(const auto& param : overload) {
+                params.push_back(param->paramData);
+            }
+            registry.registerOverloadParamsVec<KEXAPICommand>(props.name.c_str(), params);
         }
     }
 }
@@ -80,16 +86,29 @@ void KEXCommandRegistry::NonNativeCommandFactory::setCustomParsed(bool customPar
     props.customParsed = customParsed;
 }
 
-stl::vector<CommandParameterData>* KEXCommandRegistry::NonNativeCommandFactory::addOverload(int overloadIndex) {
+std::vector<KEXCommandRegistry::ArgumentTypes::Base*>* KEXCommandRegistry::NonNativeCommandFactory::addOverload(int overloadIndex) {
     if(overloadIndex < props.overloads.size()) {
         return &props.overloads.at(overloadIndex);
     } else if(overloadIndex == props.overloads.size()) {
         props.overloads.push_back({});
         return &props.overloads.at(overloadIndex);
     }
-    Logger::debug("KEX-WARNING", "Overload index %d for command %s is too big, maximum index at the moment is %d. Returning dummy vector reference...", overloadIndex, props.name.c_str(), props.overloads.size());
-    return new stl::vector<CommandParameterData>();
+    Logger::debug("KEX-WARNING", "Overload index %d for command %s is too big, maximum index at the moment is %d. Returning dummy vector...", overloadIndex, props.name.c_str(), props.overloads.size());
+    return new std::vector<KEXCommandRegistry::ArgumentTypes::Base*>();
 }
 
 
-void KEXCommandRegistry::KEXAPICommand::execute(const CommandOrigin& origin, CommandOutput& output) const {}
+KEXCommandRegistry::KEXAPICommand::~KEXAPICommand() {
+    KEXCommandRegistry::NonNativeCommandFactory* factory = (KEXCommandRegistry::NonNativeCommandFactory*) KEXCommandRegistry::registeredFactories.find(commandName.c_str())->second;
+    for(const auto& param : factory->props.overloads.at(overloadIndex)) {
+        param->destructIn(this);
+    }
+}
+
+void KEXCommandRegistry::KEXAPICommand::execute(const CommandOrigin& origin, CommandOutput& output) const {
+    KEXCommandRegistry::NonNativeCommandFactory* factory = (KEXCommandRegistry::NonNativeCommandFactory*) KEXCommandRegistry::registeredFactories.find(commandName.c_str())->second;
+    KEXJavaBridge::CommandsModule::callAPICommand(commandName.c_str(), (jlong) this, overloadIndex, (jlong) &origin, (jlong) &output, factory->props.overloads.at(overloadIndex).size());
+    if(output.wantsData()) {
+        output.success();
+    }
+}

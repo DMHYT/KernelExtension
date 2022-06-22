@@ -11,13 +11,10 @@
 
 class CommandMessage {
     public:
-    struct MessageComponent {
-        stl::string msg; // 12
-        stl::unique_ptr<CommandSelector<Actor>> actor; // 16
-    };
-    stl::vector<MessageComponent> components; // 12
+    char filler[12];
     CommandMessage();
     stl::string getMessage(const CommandOrigin&) const;
+    ~CommandMessage();
 };
 
 

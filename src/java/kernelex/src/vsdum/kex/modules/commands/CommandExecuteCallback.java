@@ -2,6 +2,6 @@ package vsdum.kex.modules.commands;
 
 public interface CommandExecuteCallback {
     
-    public void execute();
+    public void execute(CommandContext ctx);
 
 }

@@ -134,6 +134,7 @@ class CommandRegistry {
     void registerOverloadInternal(Signature&, Overload&);
     Signature* findCommand(const stl::string&);
     template<typename Type, typename IDConverter = DefaultIdConverter<Type>> int addEnumValues(const stl::string& name, const stl::vector<stl::pair<stl::string, Type>>& values);
+    int addEnumValues(const stl::string& name, const stl::vector<stl::string>& values);
     template<typename Type> bool parse(void*, const ParseToken&, const CommandOrigin&, int, stl::string&, stl::vector<stl::string>&) const;
     template<typename Type, typename IDConverter = DefaultIdConverter<Type>> bool parseEnum(void*, const ParseToken&, const CommandOrigin&, int, stl::string&, stl::vector<stl::string>&) const;
     bool parseParameter(Command*, const CommandParameterData&, const ParseToken&, const CommandOrigin&, int, stl::string&, stl::vector<stl::string>&) const;
@@ -182,6 +183,11 @@ class CommandParameterData {
     unsigned char options; // 46 + 2
     CommandParameterData(typeid_t<CommandRegistry> tid, CommandRegistry::ParseFn parser, const char* paramName, CommandParameterDataType type, const char* enumName, int offset, bool optional, int flagOffset);
     CommandParameterData& addOptions(CommandParameterOption);
+    inline CommandParameterData& operator=(const CommandParameterData& other) {
+        tid = other.tid; parser = other.parser; name = other.name; description = other.description;
+        something = other.something; type = other.type; offset = other.offset; flag_offset = other.flag_offset;
+        optional = other.optional; options = other.options;
+    }
 };
 
 

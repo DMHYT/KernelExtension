@@ -30,14 +30,14 @@ class KEXTestCommandFactory : public KEXCommandRegistry::NativeCommandFactoryBas
         });
         registry.registerCommand("kextest", "commands.kextest.description", CommandPermissionLevel::GAMEMASTERS, CommandFlag::CFLAG_NONE, CommandFlag::CFLAG_NONE);
         registry.registerOverloadParamsVec<KEXTestCommand>("kextest", {
-            commands::mandatory<CommandParameterDataType::ENUM, KEXTestCommand, int>(568, "customEnum", "KEXTestEnum", -1),
+            commands::mandatoryEnum<KEXTestCommand>(568, "customEnum", "KEXTestEnum", -1),
             commands::mandatory<KEXTestCommand, CommandSelector<Actor>>(280, "actor", -1),
             commands::mandatory<KEXTestCommand, CommandSelector<Player>>(420, "player", -1),
-            commands::mandatory<CommandParameterDataType::ENUM, KEXTestCommand, const Block*>(560, "block", "Block", -1),
-            commands::mandatory<CommandParameterDataType::ENUM, KEXTestCommand, const MobEffect*>(564, "effect", "Effect", -1),
+            commands::mandatoryEnum<KEXTestCommand, const Block*>(560, "block", "Block", -1),
+            commands::mandatoryEnum<KEXTestCommand, const MobEffect*>(564, "effect", "Effect", -1),
             commands::mandatory<KEXTestCommand, int>(256, "int", -1),
             commands::mandatory<KEXTestCommand, float>(260, "float", -1),
-            commands::mandatory<CommandParameterDataType::ENUM, KEXTestCommand, bool>(268, "bool", "Boolean", -1),
+            commands::mandatoryEnum<KEXTestCommand, bool>(268, "bool", "Boolean", -1),
             commands::mandatory<KEXTestCommand, CommandPosition>(264, "pos", -1),
         });
     }
@@ -46,8 +46,8 @@ class KEXTestCommandFactory : public KEXCommandRegistry::NativeCommandFactoryBas
 
 void KEXCommandsModule::setupCustom(CommandRegistry& registry) {
     Logger::debug("KEX-CommandRegistry", "Setup started...");
-    if(!KEXCommandRegistry::customEnums.empty()) {
-        Logger::debug("KEX-CommandRegistry", "Registering %d custom command enums and literals...", KEXCommandRegistry::customEnums.size());
+    if(!KEXCommandRegistry::customEnums.empty() || !KEXCommandRegistry::customStringEnums.empty()) {
+        Logger::debug("KEX-CommandRegistry", "Registering %d custom command enums and literals...", KEXCommandRegistry::customEnums.size() + KEXCommandRegistry::customStringEnums.size());
         for(auto iter = KEXCommandRegistry::customEnums.begin(); iter != KEXCommandRegistry::customEnums.end(); iter++) {
             registry.addEnumValues<int>(iter->first.c_str(), iter->second);
             if(iter->first.rfind("KEXLITERAL-", 0) == 0) {
@@ -55,6 +55,10 @@ void KEXCommandsModule::setupCustom(CommandRegistry& registry) {
             } else {
                 Logger::debug("KEX-CommandRegistry", "Successfully registered custom command enum: %s", iter->first.c_str());
             }
+        }
+        for(auto iter = KEXCommandRegistry::customStringEnums.begin(); iter != KEXCommandRegistry::customStringEnums.end(); iter++) {
+            registry.addEnumValues(iter->first.c_str(), iter->second);
+            Logger::debug("KEX-CommandRegistry", "Successfully registered custom command enum: %s", iter->first.c_str());
         }
     }
     if(!KEXCommandRegistry::registeredFactories.empty()) {
@@ -76,7 +80,8 @@ void KEXCommandsModule::setupCustom(CommandRegistry& registry) {
 
 Command* KEXCommandsModule::onCreateAPICommand(CommandRegistry* registry, const CommandRegistry::ParseToken& token, const CommandOrigin& origin, int version, stl::string& str, stl::vector<stl::string>& strvec) {
     STATIC_SYMBOL(CommandRegistry_isParseMatch, "_ZN15CommandRegistry12isParseMatchERK20CommandParameterDataNS_6SymbolE", (const CommandParameterData&, CommandRegistry::Symbol*), bool)
-    auto signature = registry->findCommand(token.child->toString());
+    auto commandName = token.child->toString();
+    auto signature = registry->findCommand(commandName);
     if(signature != nullptr) {
         auto startToken = token.child->next.get();
         for(int overloadIndex = 0; overloadIndex < signature->overloads.size(); overloadIndex++) {
@@ -96,12 +101,19 @@ Command* KEXCommandsModule::onCreateAPICommand(CommandRegistry* registry, const 
                     tokenToUse = tokenToUse->next.get();
                 }
                 if(parseResult) {
-                    auto command = new KEXCommandRegistry::KEXAPICommand(version, registry, signature->mainSymbol, signature->perm, signature->flag, overloadIndex);
+                    auto command = new KEXCommandRegistry::KEXAPICommand(version, registry, signature->mainSymbol, signature->perm, signature->flag, commandName.c_str(), overloadIndex);
+                    KEXCommandRegistry::NonNativeCommandFactory* factory = (KEXCommandRegistry::NonNativeCommandFactory*) KEXCommandRegistry::registeredFactories.find(commandName.c_str())->second;
+                    for(const auto& param : factory->props.overloads.at(overloadIndex)) {
+                        param->constructIn(command);
+                    }
                     tokenToUse = startToken;
                     for(const auto& param : overload.params) {
-                        bool paramParseResult = registry->parseParameter(command, param, *tokenToUse, origin, version, str, strvec);
-                        if(param.flag_offset >= 0) *(bool*) ((char*) command + param.flag_offset) = paramParseResult;
-                        if(tokenToUse->next != nullptr) tokenToUse = tokenToUse->next.get();
+                        bool& flag = *(bool*) ((char*) command + param.flag_offset);
+                        flag = false;
+                        if(tokenToUse != nullptr) {
+                            flag = registry->parseParameter(command, param, *tokenToUse, origin, version, str, strvec);
+                            tokenToUse = tokenToUse->next.get();
+                        }
                     }
                     return command;
                 }

@@ -105,10 +105,7 @@ template<typename T>
 class CommandSelectorResults {
     public:
     stl::shared_ptr<stl::vector<T*>> data;
-    typename stl::vector<T*>::const_iterator begin() { return data->begin(); }
-    typename stl::vector<T*>::const_iterator end() { return data->end(); }
-    unsigned int count() const { return data->size(); }
-    bool empty() const { return data->empty(); }
+    unsigned int size() const;
 };
 
 
