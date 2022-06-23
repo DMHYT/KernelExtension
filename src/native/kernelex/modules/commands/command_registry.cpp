@@ -82,10 +82,6 @@ void KEXCommandRegistry::NonNativeCommandFactory::setFlags(int first, int last) 
     props.flag2 = (CommandFlag) last;
 }
 
-void KEXCommandRegistry::NonNativeCommandFactory::setCustomParsed(bool customParsed) {
-    props.customParsed = customParsed;
-}
-
 std::vector<KEXCommandRegistry::ArgumentTypes::Base*>* KEXCommandRegistry::NonNativeCommandFactory::addOverload(int overloadIndex) {
     if(overloadIndex < props.overloads.size()) {
         return &props.overloads.at(overloadIndex);
