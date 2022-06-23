@@ -99,14 +99,14 @@ std::vector<KEXCommandRegistry::ArgumentTypes::Base*>* KEXCommandRegistry::NonNa
 
 
 KEXCommandRegistry::KEXAPICommand::~KEXAPICommand() {
-    KEXCommandRegistry::NonNativeCommandFactory* factory = (KEXCommandRegistry::NonNativeCommandFactory*) KEXCommandRegistry::registeredFactories.find(commandName.c_str())->second;
+    KEXCommandRegistry::NonNativeCommandFactory* factory = (KEXCommandRegistry::NonNativeCommandFactory*) KEXCommandRegistry::getFactoryByName(commandName);
     for(const auto& param : factory->props.overloads.at(overloadIndex)) {
         param->destructIn(this);
     }
 }
 
 void KEXCommandRegistry::KEXAPICommand::execute(const CommandOrigin& origin, CommandOutput& output) const {
-    KEXCommandRegistry::NonNativeCommandFactory* factory = (KEXCommandRegistry::NonNativeCommandFactory*) KEXCommandRegistry::registeredFactories.find(commandName.c_str())->second;
+    KEXCommandRegistry::NonNativeCommandFactory* factory = (KEXCommandRegistry::NonNativeCommandFactory*) KEXCommandRegistry::getFactoryByName(commandName);
     KEXJavaBridge::CommandsModule::callAPICommand(commandName.c_str(), (jlong) this, overloadIndex, (jlong) &origin, (jlong) &output, factory->props.overloads.at(overloadIndex).size());
     if(output.wantsData()) {
         output.success();

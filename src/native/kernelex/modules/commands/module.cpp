@@ -102,7 +102,7 @@ Command* KEXCommandsModule::onCreateAPICommand(CommandRegistry* registry, const 
                 }
                 if(parseResult) {
                     auto command = new KEXCommandRegistry::KEXAPICommand(version, registry, signature->mainSymbol, signature->perm, signature->flag, commandName.c_str(), overloadIndex);
-                    KEXCommandRegistry::NonNativeCommandFactory* factory = (KEXCommandRegistry::NonNativeCommandFactory*) KEXCommandRegistry::registeredFactories.find(commandName.c_str())->second;
+                    KEXCommandRegistry::NonNativeCommandFactory* factory = (KEXCommandRegistry::NonNativeCommandFactory*) KEXCommandRegistry::getFactoryByName(commandName.c_str());
                     for(const auto& param : factory->props.overloads.at(overloadIndex)) {
                         param->constructIn(command);
                     }
@@ -142,8 +142,8 @@ void KEXCommandsModule::initialize() {
     HookManager::addCallback(
         SYMBOL("mcpe", "_ZNK15CommandRegistry13createCommandERKNS_10ParseTokenERK13CommandOriginiRNSt6__ndk112basic_stringIcNS6_11char_traitsIcEENS6_9allocatorIcEEEERNS6_6vectorISC_NSA_ISC_EEEE"),
         LAMBDA((HookManager::CallbackController* controller, Command** result, CommandRegistry* registry, const CommandRegistry::ParseToken& token, const CommandOrigin& origin, int version, stl::string& str, stl::vector<stl::string>& strvec), {
-            auto found = KEXCommandRegistry::registeredFactories.find(token.child->toString().c_str());
-            if(found != KEXCommandRegistry::registeredFactories.end() && !found->second->isNative()) {
+            auto factory = KEXCommandRegistry::getFactoryByName(token.child->toString().c_str());
+            if(factory != nullptr && !factory->isNative()) {
                 controller->prevent();
                 *result = onCreateAPICommand(registry, token, origin, version, str, strvec);
             }
