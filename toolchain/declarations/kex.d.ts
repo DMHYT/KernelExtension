@@ -1191,6 +1191,89 @@ declare function WRAP_JAVA(clazz: "vsdum.kex.modules.DamageModule"): typeof vsdu
 
 declare module vsdum {
     export module kex {
+        export module modules {
+            export module CommandsModule {
+                export interface CommandContext {
+                    getInt(name: any_string): number;
+                    getFloat(name: any_string): number;
+                    getBool(name: any_string): boolean;
+                    getRelativeFloat(name: any_string, center: number): number;
+                    getPosition(name: any_string): Vector;
+                    getPosition(name: any_string, centerX: number, centerY: number, centerZ: number): Vector;
+                    getFloatPosition(name: any_string): Vector;
+                    getFloatPosition(name: any_string, centerX: number, centerY: number, centerZ: number): Vector;
+                    getString(name: any_string): jstring;
+                    getMessage(name: any_string): jstring;
+                    getJson(name: any_string): Nullable<org.json.JSONObject>;
+                    getEntities(name: any_string): java.util.List<natives.Actor>;
+                    getPlayers(name: any_string): java.util.List<natives.Player>;
+                    getPlayer(name: any_string): Nullable<natives.Player>;
+                    getSourceBlockPosition(): Vector;
+                    getSourceWorldPosition(): Vector;
+                    getSourceLevel(): Nullable<natives.Level>;
+                    getSourceDimension(): Nullable<natives.Dimension>;
+                    getSourceEntity(): Nullable<natives.Actor>;
+                    getSourcePlayer(): Nullable<natives.Player>;
+                    success(msg?: any_string): void;
+                    error(msg: any_string): void;
+                }
+                export interface CommandExecuteCallback {
+                    (ctx: CommandContext): void;
+                }
+                export interface CommandArgument {
+                    then(child: CommandArgument): CommandArgument;
+                    executes(callback: CommandExecuteCallback): CommandArgument;
+                    getCallback(): Nullable<CommandExecuteCallback>;
+                }
+                export interface CommandOverloadBase {
+                    then(child: CommandArgument): CommandOverloadBase;
+                    executes(callback: CommandExecuteCallback): CommandOverloadBase;
+                    getCallback(): Nullable<CommandExecuteCallback>;
+                    addAlias(alias: any_string): CommandOverloadBase;
+                    addAliases(aliases: any_string[]): CommandOverloadBase;
+                    listOverloads(): java.util.List<java.util.List<CommandArgument>>;
+                }
+                export interface EnumBuilder {
+                    add(key: any_string, value: number): EnumBuilder;
+                    register(): void;
+                }
+                export interface StringEnumBuilder {
+                    add(value: any_string): StringEnumBuilder;
+                    register(): void;
+                }
+                export function newCommand(name: any_string, permissionLevel?: number): CommandOverloadBase;
+                export function registerCommand(base: CommandOverloadBase): void;
+                export function intArg(name: any_string, defaultValue?: number): CommandArgument;
+                export function floatArg(name: any_string, defaultValue?: number): CommandArgument;
+                export function boolArg(name: any_string, defaultValue?: boolean): CommandArgument;
+                export function relativeFloatArg(name: any_string, defaultValue?: number): CommandArgument;
+                export function positionArg(name: any_string): CommandArgument;
+                export function positionArg(name: any_string, defaultX: number, defaultY: number, defaultZ: number): CommandArgument;
+                export function floatPositionArg(name: any_string): CommandArgument;
+                export function floatPositionArg(name: any_string, defaultX: number, defaultY: number, defaultZ: number): CommandArgument;
+                export function stringArg(name: any_string, defaultValue?: any_string): CommandArgument;
+                export function messageArg(name: any_string): CommandArgument;
+                export function jsonArg(name: any_string): CommandArgument;
+                export function entityArg(name: any_string): CommandArgument;
+                export function playerArg(name: any_string): CommandArgument;
+                export function enumArg(name: any_string, enumName: any_string, defaultValue?: number): CommandArgument;
+                export function stringEnumArg(name: any_string, enumName: any_string, defaultValue: any_string): CommandArgument;
+                export function literal(l: any_string): CommandArgument;
+                export function registerAlias(name: any_string, alias: any_string): void;
+                export function addEnum(name: any_string, values: java.util.Map<any_string, number>): void;
+                export function addEnum(name: any_string, values: {[key: string]: number}): void;
+                export function addStringEnum(name: any_string, values: java.util.Set<any_string>): void;
+                export function addStringEnum(name: any_string, values: any_string[]): void;
+                export function newEnum(name: any_string): EnumBuilder;
+                export function newStringEnum(name: any_string): StringEnumBuilder;
+            }
+        }
+    }
+}
+declare function WRAP_JAVA(clazz: "vsdum.kex.modules.CommandsModule"): typeof vsdum.kex.modules.CommandsModule;
+
+declare module vsdum {
+    export module kex {
         export class KernelExtension extends java.lang.Object {
             static class: java.lang.Class<KernelExtension>;
             static getVersion(): [number, number, number];
@@ -1272,15 +1355,15 @@ declare namespace Item {
             chance?: number
         }[]
     }
-    function createFoodItem(nameID: any_string, name: any_string, texture: TextureData, params: FoodParamsDescription): NativeItem;
-    function createSwordItem(id: any_string, name: any_string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: any_string | ToolAPI.ToolMaterial }): void;
-    function createAxeItem(id: any_string, name: any_string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: any_string | ToolAPI.ToolMaterial }): void;
-    function createPickaxeItem(id: any_string, name: any_string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: any_string | ToolAPI.ToolMaterial }): void;
-    function createShovelItem(id: any_string, name: any_string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: any_string | ToolAPI.ToolMaterial }): void;
-    function createHoeItem(id: any_string, name: any_string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: any_string | ToolAPI.ToolMaterial }): void;
-    function createShearsItem(id: any_string, name: any_string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: any_string | ToolAPI.ToolMaterial, durability?: number }): void;
-    function createFlintAndSteelItem(id: any_string, name: any_string, texture: TextureData, params: { stack?: number, isTech?: boolean, durability?: number }): void;
-    function createCustomTool(id: any_string, name: any_string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: any_string | ToolAPI.ToolMaterial }, toolParams?: vsdum.kex.modules.ExtendedToolParams, numericId?: number): void;
+    function createFoodItem(nameID: string, name: string, texture: TextureData, params: FoodParamsDescription): NativeItem;
+    function createSwordItem(id: string, name: string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: string | ToolAPI.ToolMaterial }): void;
+    function createAxeItem(id: string, name: string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: string | ToolAPI.ToolMaterial }): void;
+    function createPickaxeItem(id: string, name: string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: string | ToolAPI.ToolMaterial }): void;
+    function createShovelItem(id: string, name: string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: string | ToolAPI.ToolMaterial }): void;
+    function createHoeItem(id: string, name: string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: string | ToolAPI.ToolMaterial }): void;
+    function createShearsItem(id: string, name: string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: string | ToolAPI.ToolMaterial, durability?: number }): void;
+    function createFlintAndSteelItem(id: string, name: string, texture: TextureData, params: { stack?: number, isTech?: boolean, durability?: number }): void;
+    function createCustomTool(id: string, name: string, texture: TextureData, params: { stack?: number, isTech?: boolean, tier?: string | ToolAPI.ToolMaterial }, toolParams?: vsdum.kex.modules.ExtendedToolParams, numericId?: number): void;
 }
 
 
@@ -1362,6 +1445,7 @@ declare enum ETileEntityType {
     LootModule: typeof vsdum.kex.modules.LootModule,
     ToolsModule: typeof vsdum.kex.modules.ToolsModule,
     DamageModule: typeof vsdum.kex.modules.DamageModule,
+    CommandsModule: typeof vsdum.kex.modules.CommandsModule,
     LootTableContext: typeof vsdum.kex.natives.LootTableContext,
     MobEffect: typeof vsdum.kex.natives.MobEffect,
     MobEffectInstance: typeof vsdum.kex.natives.MobEffectInstance,
