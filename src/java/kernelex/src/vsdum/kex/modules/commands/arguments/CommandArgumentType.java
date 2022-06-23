@@ -1,8 +1,6 @@
 package vsdum.kex.modules.commands.arguments;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import android.support.annotation.Nullable;
@@ -52,10 +50,7 @@ public final class CommandArgumentType {
         String literalEnum = "KEXLITERAL-" + literal;
         if(!literals.contains(literal))
         {
-            literals.add(literal);
-            Map<String, Integer> enumValues = new HashMap<>();
-            enumValues.put(literal, 0);
-            CommandsModule.addEnum(literalEnum, enumValues);
+            CommandsModule.newEnum(literalEnum).add(literal, 0).register();
         }
         return new CommandArgumentType(11, 4, literalEnum, "Literal");
     }
