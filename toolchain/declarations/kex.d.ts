@@ -1379,6 +1379,62 @@ declare namespace Callback {
 }
 
 
+declare namespace Commands {
+    interface Argument<T, D> {
+        label: string,
+        type: T,
+        default?: D,
+        optional?: boolean;
+    }
+    type IntArgument = Argument<"int" | "integer", number>;
+    type FloatArgument = Argument<"float", number>;
+    type BoolArgument = Argument<"bool" | "boolean", boolean>;
+    type RelativeFloatArgument = Argument<"relfloat" | "relativefloat", number>;
+    type PositionArgument = Argument<"pos" | "position", Vector>;
+    type FloatPositionArgument = Argument<"floatpos" | "floatposition", Vector>;
+    type StringArgument = Argument<"str" | "string", string>;
+    type MessageArgument = Argument<"msg" | "message", never>;
+    type JsonArgument = Argument<"json", never>;
+    type EntityArgument = Argument<"entity", never>;
+    type PlayerArgument = Argument<"player", never>;
+    interface EnumArgument extends Argument<"enum", number> {
+        name: string;
+    }
+    interface StringEnumArgument extends Argument<"strenum" | "stringenum", string> {
+        name: string,
+        default: string;
+    }
+    type LiteralArgument = Argument<"literal", never>;
+    type Arguments =
+        IntArgument |
+        FloatArgument |
+        BoolArgument |
+        RelativeFloatArgument |
+        PositionArgument |
+        FloatPositionArgument |
+        StringArgument |
+        MessageArgument |
+        JsonArgument |
+        EntityArgument |
+        PlayerArgument |
+        EnumArgument |
+        StringEnumArgument |
+        LiteralArgument;
+    interface ExecuteCallback {
+        (args: {
+            [key: string]: number | boolean | Vector | string | org.json.JSONObject | vsdum.kex.natives.Actor[] | vsdum.kex.natives.Player[]
+        }, context: vsdum.kex.modules.CommandsModule.CommandContext): void;
+    }
+    interface CustomCommandBuilder<T = any> {
+        addOverload(args: Arguments[], callback: ExecuteCallback): T;
+        register(): void;
+    }
+    export function newEnum(enumName: string): vsdum.kex.modules.CommandsModule.EnumBuilder;
+    export function newStringEnum(enumName: string): vsdum.kex.modules.CommandsModule.StringEnumBuilder;
+    export function create(commandName: string, permissionLevel?: number): CustomCommandBuilder;
+}
+
+
 declare enum EItemAnimation {
     NONE = 0,
     EAT = 1,

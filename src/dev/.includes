@@ -3,5 +3,6 @@ other/enums.ts
 modules/items.ts
 modules/tools.ts
 modules/callback.ts
+modules/commands.ts
 
 api.ts

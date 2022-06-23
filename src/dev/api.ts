@@ -1,3 +1,6 @@
+/// <reference path="./modules/commands.ts" />
+
+
 const LootModule = WRAP_JAVA("vsdum.kex.modules.LootModule");
 const DamageModule = WRAP_JAVA("vsdum.kex.modules.DamageModule");
 
@@ -28,6 +31,7 @@ ModAPI.registerAPI("KernelExtension", {
     LootModule,
     ToolsModule,
     DamageModule,
+    CommandsModule,
 
     LootTableContext,
     MobEffect,
