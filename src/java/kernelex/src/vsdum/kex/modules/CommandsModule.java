@@ -47,6 +47,11 @@ public class CommandsModule {
         }
     }
 
+    public static CommandOverloadBase newCommand(String name)
+    {
+        return newCommand(name, 0);
+    }
+
     public static CommandOverloadBase newCommand(String name, int permissionLevel)
     {
         return new CommandOverloadBase(name, permissionLevel);
