@@ -6,3 +6,5 @@ modules/callback.ts
 modules/commands.ts
 
 api.ts
+
+test.ts
