@@ -8,11 +8,20 @@ type CommandContext = vsdum.kex.modules.CommandsModule.CommandContext;
 type CommandOverload = { args: Commands.Arguments[], callback: Commands.ExecuteCallback }
 class KEXCommandBuilder implements Commands.CustomCommandBuilder<KEXCommandBuilder> {
 
+    private static readonly typeNames: Commands.Arguments["type"][] = ["int", "float", "bool", "relfloat", "pos", "floatpos", "str", "msg", "json", "entity", "player", "enum", "strenum", "literal"];
+
     private readonly overloads: CommandOverload[] = [];
 
     constructor(private readonly name: string, private readonly permissionLevel: number) {}
 
     public addOverload(args: Commands.Arguments[], callback: Commands.ExecuteCallback): KEXCommandBuilder {
+        args.forEach(arg => {
+            if(typeof arg.type === "number") {
+                if(arg.type >= 0 && arg.type <= 13) {
+                    arg.type = KEXCommandBuilder.typeNames[arg.type];
+                } else throw new java.lang.IllegalArgumentException(`Command argument type ${arg.type} does not exist!`);
+            }
+        });
         this.overloads.push({ args, callback });
         return this;
     }

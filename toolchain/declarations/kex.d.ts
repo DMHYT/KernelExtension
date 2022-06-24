@@ -1380,31 +1380,31 @@ declare namespace Callback {
 
 
 declare namespace Commands {
-    interface Argument<T, D> {
+    interface Argument<T, D, I> {
         label: string,
-        type: T,
+        type: T | I,
         default?: D,
         optional?: boolean;
     }
-    type IntArgument = Argument<"int" | "integer", number>;
-    type FloatArgument = Argument<"float", number>;
-    type BoolArgument = Argument<"bool" | "boolean", boolean>;
-    type RelativeFloatArgument = Argument<"relfloat" | "relativefloat", number>;
-    type PositionArgument = Argument<"pos" | "position", Vector>;
-    type FloatPositionArgument = Argument<"floatpos" | "floatposition", Vector>;
-    type StringArgument = Argument<"str" | "string", string>;
-    type MessageArgument = Argument<"msg" | "message", never>;
-    type JsonArgument = Argument<"json", never>;
-    type EntityArgument = Argument<"entity", never>;
-    type PlayerArgument = Argument<"player", never>;
-    interface EnumArgument extends Argument<"enum", number> {
+    type IntArgument = Argument<"int" | "integer", number, 0>;
+    type FloatArgument = Argument<"float", number, 1>;
+    type BoolArgument = Argument<"bool" | "boolean", boolean ,2>;
+    type RelativeFloatArgument = Argument<"relfloat" | "relativefloat", number, 3>;
+    type PositionArgument = Argument<"pos" | "position", Vector, 4>;
+    type FloatPositionArgument = Argument<"floatpos" | "floatposition", Vector, 5>;
+    type StringArgument = Argument<"str" | "string", string, 6>;
+    type MessageArgument = Argument<"msg" | "message", never, 7>;
+    type JsonArgument = Argument<"json", never, 8>;
+    type EntityArgument = Argument<"entity", never, 9>;
+    type PlayerArgument = Argument<"player", never, 10>;
+    interface EnumArgument extends Argument<"enum", number, 11> {
         name: string;
     }
-    interface StringEnumArgument extends Argument<"strenum" | "stringenum", string> {
+    interface StringEnumArgument extends Argument<"strenum" | "stringenum", string, 12> {
         name: string,
         default: string;
     }
-    type LiteralArgument = Argument<"literal", never>;
+    type LiteralArgument = Argument<"literal", never, 13>;
     type Arguments =
         IntArgument |
         FloatArgument |

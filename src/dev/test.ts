@@ -21,10 +21,10 @@ Commands.newStringEnum("HorizonersS")
 
 Commands.create("kexjstest")
     .addOverload([
-        { type: "literal", label: "choose" },
-        { type: "enum", label: "choice", name: "Horizoners" },
-        { type: "stringenum", label: "strchoice", name: "HorizonersS", default: "zheka" },
-        { type: "player", label: "caller", optional: true }
+        { type: EArgumentType.LITERAL, label: "choose" },
+        { type: EArgumentType.ENUM, label: "choice", name: "Horizoners" },
+        { type: EArgumentType.STRING_ENUM, label: "strchoice", name: "HorizonersS", default: "zheka" },
+        { type: EArgumentType.PLAYER, label: "caller", optional: true }
     ], (args: KEXJSTestParams, ctx) => {
         ctx.success(`Called kexjstest, horizoner ID is ${args.choice}, name is ${args.strchoice}`);
         var playerUID: number = 0;

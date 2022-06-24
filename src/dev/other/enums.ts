@@ -41,6 +41,24 @@ enum EDamageCause {
 }
 
 
+enum EArgumentType {
+    INT = 0,
+    FLOAT = 1,
+    BOOL = 2,
+    RELATIVE_FLOAT = 3,
+    POSITION = 4,
+    FLOAT_POSITION = 5,
+    STRING = 6,
+    MESSAGE = 7,
+    JSON = 8,
+    ENTITY = 9,
+    PLAYER = 10,
+    ENUM = 11,
+    STRING_ENUM = 12,
+    LITERAL = 13
+}
+
+
 // @ts-ignore
 EItemAnimation.NONE = 0;
 // @ts-ignore
