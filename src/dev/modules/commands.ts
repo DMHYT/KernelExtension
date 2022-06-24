@@ -30,9 +30,13 @@ class KEXCommandBuilder implements Commands.CustomCommandBuilder {
         const commandBase = CommandsModule.newCommand(this.name, this.permissionLevel);
         this.overloads.forEach(overload => {
             var node: CommandOverloadBase | CommandArgument = commandBase;
+            var optionalFound: boolean = false;
             overload.args.forEach((arg, index) => {
                 if(arg.optional == true) {
+                    if(!optionalFound) optionalFound = true;
                     node.executes(KEXCommandBuilder.buildExecuteCallback(overload, index));
+                } else if(optionalFound) {
+                    throw new java.lang.IllegalArgumentException(`Detected mandatory argument ${arg.label} after optional argument ${overload.args[index - 1].label}`);
                 }
                 const next = KEXCommandBuilder.buildArgument(arg);
                 node.then(next);
