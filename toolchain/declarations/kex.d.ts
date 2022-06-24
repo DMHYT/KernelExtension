@@ -1429,8 +1429,8 @@ declare namespace Commands {
     interface ExecuteCallback {
         (args: object, context: vsdum.kex.modules.CommandsModule.CommandContext): void;
     }
-    interface CustomCommandBuilder<T = any> {
-        addOverload(args: Arguments[], callback: ExecuteCallback): T;
+    interface CustomCommandBuilder {
+        addOverload(args: Arguments[], callback: ExecuteCallback): CustomCommandBuilder;
         register(): void;
     }
     export function newEnum(enumName: string): vsdum.kex.modules.CommandsModule.EnumBuilder;

@@ -6,7 +6,7 @@ type CommandContext = vsdum.kex.modules.CommandsModule.CommandContext;
 
 
 type CommandOverload = { args: Commands.Arguments[], callback: Commands.ExecuteCallback }
-class KEXCommandBuilder implements Commands.CustomCommandBuilder<KEXCommandBuilder> {
+class KEXCommandBuilder implements Commands.CustomCommandBuilder {
 
     private static readonly typeNames: Commands.Arguments["type"][] = ["int", "float", "bool", "relfloat", "pos", "floatpos", "str", "msg", "json", "entity", "player", "enum", "strenum", "literal"];
 
