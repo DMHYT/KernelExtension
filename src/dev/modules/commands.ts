@@ -9,7 +9,7 @@ class KEXCommandBuilder implements Commands.CustomCommandBuilder<KEXCommandBuild
 
     private readonly overloads: CommandOverload[] = [];
 
-    constructor(private readonly name: string, private readonly permissionLevel) {}
+    constructor(private readonly name: string, private readonly permissionLevel: number) {}
 
     public addOverload(args: Commands.Arguments[], callback: Commands.ExecuteCallback): KEXCommandBuilder {
         this.overloads.push({ args, callback });
@@ -24,7 +24,9 @@ class KEXCommandBuilder implements Commands.CustomCommandBuilder<KEXCommandBuild
                 if(arg.optional == true) {
                     node.executes(KEXCommandBuilder.buildExecuteCallback(overload, index));
                 }
-                node = KEXCommandBuilder.buildArgument(arg);
+                const next = KEXCommandBuilder.buildArgument(arg);
+                node.then(next);
+                node = next;
             });
             node.executes(KEXCommandBuilder.buildExecuteCallback(overload, overload.args.length));
         });

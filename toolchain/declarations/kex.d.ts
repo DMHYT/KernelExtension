@@ -1421,9 +1421,7 @@ declare namespace Commands {
         StringEnumArgument |
         LiteralArgument;
     interface ExecuteCallback {
-        (args: {
-            [key: string]: number | boolean | Vector | string | org.json.JSONObject | vsdum.kex.natives.Actor[] | vsdum.kex.natives.Player[]
-        }, context: vsdum.kex.modules.CommandsModule.CommandContext): void;
+        (args: object, context: vsdum.kex.modules.CommandsModule.CommandContext): void;
     }
     interface CustomCommandBuilder<T = any> {
         addOverload(args: Arguments[], callback: ExecuteCallback): T;
