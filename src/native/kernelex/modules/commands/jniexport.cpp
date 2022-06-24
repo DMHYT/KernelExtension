@@ -265,8 +265,8 @@ extern "C" {
         env->ReleaseStringUTFChars(enumName, cEnumNameTemp);
         vec->push_back(
             new KEXCommandRegistry::ArgumentTypes::String(
-                mandatory ? commands::mandatory<KEXCommandRegistry::KEXAPICommand, stl::string>(fieldOffset, cParamName, cEnumName, isSetOffset)
-                : commands::optional<KEXCommandRegistry::KEXAPICommand, stl::string>(fieldOffset, cParamName, cEnumName, isSetOffset),
+                mandatory ? commands::mandatoryEnum<KEXCommandRegistry::KEXAPICommand, stl::string, (CommandRegistry::ParseFn) &CommandRegistry::parse<stl::string>>(fieldOffset, cParamName, cEnumName, isSetOffset)
+                : commands::optionalEnum<KEXCommandRegistry::KEXAPICommand, stl::string, (CommandRegistry::ParseFn) &CommandRegistry::parse<stl::string>>(fieldOffset, cParamName, cEnumName, isSetOffset),
                 cDefaultValue == nullptr ? "" : cDefaultValue, true
             )
         );

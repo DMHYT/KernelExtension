@@ -44,19 +44,18 @@ namespace commands {
         return mandatory<CommandClass, FieldType>(getFieldOffset(valueFieldOffset), paramName, enumName, getFieldOffset(isSetFieldOffset));
     }
 
-    template<typename CommandClass, typename FieldType = int>
+    template<typename CommandClass, typename FieldType = int, CommandRegistry::ParseFn Parser = (CommandRegistry::ParseFn) &CommandRegistry::parseEnum<FieldType>>
     inline CommandParameterData mandatoryEnum(int valueFieldOffset, const char* paramName, const char* enumName, int isSetFieldOffset) {
         return CommandParameterData(
-            type_id<CommandRegistry, FieldType>(),
-            (CommandRegistry::ParseFn) &CommandRegistry::parseEnum<FieldType>,
+            type_id<CommandRegistry, FieldType>(), Parser,
             paramName, CommandParameterDataType::ENUM, enumName,
             valueFieldOffset, false, isSetFieldOffset
         );
     }
 
-    template<typename CommandClass, typename FieldType = int>
+    template<typename CommandClass, typename FieldType = int, CommandRegistry::ParseFn Parser = (CommandRegistry::ParseFn) &CommandRegistry::parseEnum<FieldType>>
     inline CommandParameterData mandatoryEnum(FieldType CommandClass::* valueFieldOffset, const char* paramName, const char* enumName, bool CommandClass::* isSetFieldOffset) {
-        return mandatoryEnum<CommandClass, FieldType>(getFieldOffset(valueFieldOffset), paramName, enumName, getFieldOffset(isSetFieldOffset));
+        return mandatoryEnum<CommandClass, FieldType, Parser>(getFieldOffset(valueFieldOffset), paramName, enumName, getFieldOffset(isSetFieldOffset));
     }
 
     // optional
@@ -86,19 +85,18 @@ namespace commands {
         return optional<CommandClass, FieldType>(getFieldOffset(valueFieldOffset), paramName, enumName, getFieldOffset(isSetFieldOffset));
     }
 
-    template<typename CommandClass, typename FieldType = int>
+    template<typename CommandClass, typename FieldType = int, CommandRegistry::ParseFn Parser = (CommandRegistry::ParseFn) &CommandRegistry::parseEnum<FieldType>>
     inline CommandParameterData optionalEnum(int valueFieldOffset, const char* paramName, const char* enumName, int isSetFieldOffset) {
         return CommandParameterData(
-            type_id<CommandRegistry, FieldType>(),
-            (CommandRegistry::ParseFn) &CommandRegistry::parseEnum<FieldType>,
+            type_id<CommandRegistry, FieldType>(), Parser,
             paramName, CommandParameterDataType::ENUM, enumName,
             valueFieldOffset, true, isSetFieldOffset
         );
     }
 
-    template<typename CommandClass, typename FieldType = int>
+    template<typename CommandClass, typename FieldType = int, CommandRegistry::ParseFn Parser = (CommandRegistry::ParseFn) &CommandRegistry::parseEnum<FieldType>>
     inline CommandParameterData optionalEnum(FieldType CommandClass::* valueFieldOffset, const char* paramName, const char* enumName, bool CommandClass::* isSetFieldOffset) {
-        return optionalEnum<CommandClass, FieldType>(getFieldOffset(valueFieldOffset), paramName, enumName, getFieldOffset(isSetFieldOffset));
+        return optionalEnum<CommandClass, FieldType, Parser>(getFieldOffset(valueFieldOffset), paramName, enumName, getFieldOffset(isSetFieldOffset));
     }
     
 
