@@ -2,6 +2,7 @@ const CommandsModule = WRAP_JAVA("vsdum.kex.modules.CommandsModule");
 type CommandOverloadBase = vsdum.kex.modules.CommandsModule.CommandOverloadBase;
 type CommandArgument = vsdum.kex.modules.CommandsModule.CommandArgument;
 type CommandExecuteCallback = vsdum.kex.modules.CommandsModule.CommandExecuteCallback;
+type CommandContext = vsdum.kex.modules.CommandsModule.CommandContext;
 
 
 type CommandOverload = { args: Commands.Arguments[], callback: Commands.ExecuteCallback }
@@ -28,7 +29,7 @@ class KEXCommandBuilder implements Commands.CustomCommandBuilder<KEXCommandBuild
                 node.then(next);
                 node = next;
             });
-            node.executes(KEXCommandBuilder.buildExecuteCallback(overload, overload.args.length));
+            node.executes(KEXCommandBuilder.buildExecuteCallback(overload));
         });
         CommandsModule.registerCommand(commandBase);
     }
@@ -82,7 +83,7 @@ class KEXCommandBuilder implements Commands.CustomCommandBuilder<KEXCommandBuild
         }
     }
 
-    private static buildExecuteCallback(overload: CommandOverload, paramsCount: number): CommandExecuteCallback {
+    private static buildExecuteCallback(overload: CommandOverload, paramsCount: number = overload.args.length): CommandExecuteCallback {
         return ctx => {
             const obj = {};
             for(let i = 0; i < paramsCount; i++) {
@@ -92,12 +93,14 @@ class KEXCommandBuilder implements Commands.CustomCommandBuilder<KEXCommandBuild
                         obj[arg.label] = ctx.getInt(arg.label); break;
                     case "float":
                         obj[arg.label] = ctx.getFloat(arg.label); break;
+                    case "relfloat": case "relativefloat":
+                        obj[arg.label] = this.buildRelativeFloat(ctx, arg.label); break;
                     case "bool": case "boolean":
                         obj[arg.label] = ctx.getBool(arg.label); break;
                     case "pos": case "position":
-                        obj[arg.label] = ctx.getPosition(arg.label); break;
+                        obj[arg.label] = this.buildPosition(ctx, arg.label, false); break;
                     case "floatpos": case "floatposition":
-                        obj[arg.label] = ctx.getFloatPosition(arg.label); break;
+                        obj[arg.label] = this.buildPosition(ctx, arg.label, true); break;
                     case "str": case "string": case "strenum": case "stringenum":
                         obj[arg.label] = ctx.getString(arg.label); break;
                     case "msg": case "message":
@@ -118,6 +121,17 @@ class KEXCommandBuilder implements Commands.CustomCommandBuilder<KEXCommandBuild
             }
             overload.callback(obj, ctx);
         }
+    }
+
+    private static buildRelativeFloat(ctx: CommandContext, label: string): Commands.RelativeFloat {
+        return center => ctx.getRelativeFloat(label, typeof center === "number" ? center : 0.0);
+    }
+
+    private static buildPosition(ctx: CommandContext, label: string, isFloat: boolean): Commands.CommandPosition {
+        const method = isFloat ? "getFloatPosition" : "getPosition";
+        return (centerX, centerY, centerZ) =>
+            typeof centerX === "number" && typeof centerY === "number" && typeof centerZ === "number" ?
+                ctx[method](label, centerX, centerY, centerZ) : ctx[method](label);
     }
 
 }

@@ -1420,6 +1420,8 @@ declare namespace Commands {
         EnumArgument |
         StringEnumArgument |
         LiteralArgument;
+    type RelativeFloat = (center?: number) => number;
+    type CommandPosition = (centerX?: number, centerY?: number, centerZ?: number) => Vector;
     interface ExecuteCallback {
         (args: object, context: vsdum.kex.modules.CommandsModule.CommandContext): void;
     }
