@@ -1220,6 +1220,9 @@ declare module vsdum {
                 export interface CommandExecuteCallback {
                     (ctx: CommandContext): void;
                 }
+                export interface CustomParserCommandExecuteCallback {
+                    (text: jstring, ctx: CommandContext): void;
+                }
                 export interface CommandArgument {
                     then(child: CommandArgument): CommandArgument;
                     executes(callback: CommandExecuteCallback): CommandArgument;
@@ -1243,6 +1246,7 @@ declare module vsdum {
                 }
                 export function newCommand(name: any_string, permissionLevel?: number): CommandOverloadBase;
                 export function registerCommand(base: CommandOverloadBase): void;
+                export function registerCustomParserCommand(name: any_string, callback: CustomParserCommandExecuteCallback, permissionLevel?: number): void;
                 export function intArg(name: any_string, defaultValue?: number): CommandArgument;
                 export function floatArg(name: any_string, defaultValue?: number): CommandArgument;
                 export function boolArg(name: any_string, defaultValue?: boolean): CommandArgument;

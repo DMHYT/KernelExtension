@@ -16,6 +16,7 @@ import vsdum.kex.modules.commands.CommandContext;
 import vsdum.kex.modules.commands.CommandExecuteCallback;
 import vsdum.kex.modules.commands.CommandOverload;
 import vsdum.kex.modules.commands.CommandsNativeAPI;
+import vsdum.kex.modules.commands.CustomParserCommandExecuteCallback;
 import vsdum.kex.modules.commands.arguments.*;
 import vsdum.kex.modules.commands.enums.*;
 
@@ -45,6 +46,25 @@ public class CommandsModule {
             }
             Logger.debug("KEX-CommandRegistry", String.format("Overload %d for command %s built, used %d bytes out of %d possible.", new Object[]{ Integer.valueOf(i), base.commandName, Integer.valueOf(offset - 36), Integer.valueOf((2012 - overload.size()) / 4 * 4) }));
         }
+    }
+
+    public static void registerCustomParserCommand(String name, CustomParserCommandExecuteCallback callback)
+    {
+        registerCustomParserCommand(name, callback, 0);
+    }
+
+    public static void registerCustomParserCommand(String name, CustomParserCommandExecuteCallback callback, int permissionLevel)
+    {
+        registerCommand(newCommand(name, permissionLevel)
+            .then(messageArg("{...}")
+                .executes(new CommandExecuteCallback() {
+                    public void execute(CommandContext ctx)
+                    {
+                        callback.execute(ctx.getMessage("{...}"), ctx);
+                    }
+                })
+            )
+        );
     }
 
     public static CommandOverloadBase newCommand(String name)
