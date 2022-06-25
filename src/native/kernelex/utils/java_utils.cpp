@@ -35,6 +35,7 @@ namespace KEXJavaBridge {
         JAVA_CLASS(LootModule, "vsdum/kex/modules/LootModule")
         JAVA_METHOD(LootModule, modify, "(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;")
         JAVA_METHOD(LootModule, onDrop, "(Ljava/lang/String;JIJ)V")
+        JAVA_METHOD(LootModule, applyCustomLootFunction, "(Ljava/lang/String;Ljava/lang/String;JJ)V")
         JAVA_CLASS(CallbacksModule, "vsdum/kex/modules/CallbacksModule")
         JAVA_METHOD(CallbacksModule, onPlayerJump, "(J)V")
         JAVA_METHOD(CallbacksModule, onGameModeChanged, "(I)V")
@@ -82,6 +83,14 @@ namespace KEXJavaBridge {
             jstring jTableName = env->NewStringUTF(tableName);
             env->CallStaticVoidMethod(Cache::LootModule(), Cache::LootModule_onDrop(), jTableName, vectorPtr, vectorSize, contextPtr);
             env->DeleteLocalRef(jTableName);
+        }
+        void applyCustomLootFunction(const char* functionName, const char* jsonString, jlong stackPtr, jlong contextPtr) {
+            JNIEnv* env = KEXJavaUtils::attach();
+            jstring jFunctionName = env->NewStringUTF(functionName);
+            jstring jJsonString = env->NewStringUTF(jsonString);
+            env->CallStaticVoidMethod(Cache::LootModule(), Cache::LootModule_applyCustomLootFunction(), jFunctionName, jJsonString, stackPtr, contextPtr);
+            env->DeleteLocalRef(jFunctionName);
+            env->DeleteLocalRef(jJsonString);
         }
     }
     namespace CallbacksModule {

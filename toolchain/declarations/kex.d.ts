@@ -893,6 +893,9 @@ declare namespace LootTableTypes {
     } | {
         function: "specific_enchants",
         enchants?: { id?: EnchantTypes, level?: number }[];
+    } | {
+        function: string,
+        [key: string]: any;
     }
     export type LootPoolEntry = { type: "empty" } | { type: "loot_table", pools?: LootPool[] } | {
         type: "item",
@@ -955,6 +958,14 @@ declare module vsdum {
                 static fillContainer(region: BlockSource, x: number, y: number, z: number, tableName: any_string, actor: Nullable<natives.Actor>): void;
                 static getRandomItems(tableName: any_string, context: natives.LootTableContext): java.util.List<ItemInstance>;
                 static forceLoad(tableName: any_string): void;
+                static registerCustomLootFunction(functionName: any_string, callback: CustomLootFunctionCallback): void;
+                static registerCustomLootFunctionJS(functionName: any_string, callback: CustomLootFunctionCallbackJS): void;
+            }
+            export interface CustomLootFunctionCallback {
+                (json: org.json.JSONObject, stack: ItemInstance, context: natives.LootTableContext): void;
+            }
+            export interface CustomLootFunctionCallbackJS {
+                (json: object, stack: ItemInstance, context: natives.LootTableContext): void;
             }
             export interface OnDropCallback {
                 (drops: RandomItemsList, context: natives.LootTableContext): void;
@@ -1044,6 +1055,8 @@ declare module vsdum {
                 addLoreFunction(lore: any_string[]): LootEntryFunctions;
                 addSpecificEnchantsFunction(enchants: java.util.Map<jstring, number>): LootEntryFunctions;
                 addTraderMaterialTypeFunction(): LootEntryFunctions;
+                addCustomFunction(functionName: any_string, json: org.json.JSONObject): LootEntryFunctions;
+                addCustomFunction(functionName: any_string, json: object): LootEntryFunctions;
                 endFunctions(): LootEntry;
             }
         }

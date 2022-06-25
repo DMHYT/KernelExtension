@@ -7,7 +7,9 @@ import java.util.Map;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.mozilla.javascript.ScriptableObject;
 
+import vsdum.kex.util.CommonTypes;
 import vsdum.kex.util.JsonUtils;
 
 public class LootPoolEntryFunctions {
@@ -294,6 +296,20 @@ public class LootPoolEntryFunctions {
                     .put("function", "trader_material_type"));
         } catch(JSONException ex) {}
         return this;
+    }
+
+    public LootPoolEntryFunctions addCustomFunction(String functionName, JSONObject json)
+    {
+        try {
+            if(json.optString("function") != functionName) json.put("function", functionName);
+            this.entry.obj.getJSONArray("functions").put(json);
+        } catch(JSONException ex) {}
+        return this;
+    }
+
+    public LootPoolEntryFunctions addCustomFunction(String functionName, ScriptableObject json)
+    {
+        return this.addCustomFunction(functionName, CommonTypes.scriptableToJson(json));
     }
 
     public LootPoolEntry endFunctions()

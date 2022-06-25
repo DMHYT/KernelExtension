@@ -17,6 +17,7 @@ import com.zhekasmirnov.innercore.api.NativeTileEntity;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.mozilla.javascript.ScriptableObject;
 
 import android.support.annotation.Nullable;
 import vsdum.kex.common.CallbackFunction;
@@ -26,6 +27,7 @@ import vsdum.kex.modules.loot.LootPoolEntry;
 import vsdum.kex.modules.loot.RandomItemsList;
 import vsdum.kex.natives.Actor;
 import vsdum.kex.natives.LootTableContext;
+import vsdum.kex.util.CommonTypes;
 
 public class LootModule {
 
@@ -35,6 +37,8 @@ public class LootModule {
     protected static native int nativeGetVectorSize(long vectorPtr);
     protected static native void nativeDeleteVector(long vectorPtr);
     protected static native void nativeForceLoad(String tableName);
+    protected static native void nativeNewCustomLootFunction(String functionName);
+    protected static native void nativeModifyStack(long stackPointer, int id, int count, int data, long extra);
     
     private static final Map<String, LootModifier> modifiers = new HashMap<>();
 
@@ -214,6 +218,44 @@ public class LootModule {
             while(iter.hasNext()) nativeForceLoad(iter.next());
             Logger.debug("KEX", String.format("Finished in %d ms!", new Object[]{ Long.valueOf(System.currentTimeMillis() - start) }));
         } else Logger.debug("KEX", "The level has been displayed, no loot tables to force load.");
+    }
+
+    public static interface CustomLootFunctionCallback {
+        public void apply(JSONObject json, ItemStack stack, LootTableContext context);
+    }
+
+    public static interface CustomLootFunctionCallbackJS {
+        public void apply(ScriptableObject json, ItemStack stack, LootTableContext context);
+    }
+
+    private static final Map<String, CustomLootFunctionCallback> customLootFunctions = new HashMap<>();
+    private static final Map<String, CustomLootFunctionCallbackJS> customLootFunctionsJS = new HashMap<>();
+
+    public static void registerCustomLootFunction(String functionName, CustomLootFunctionCallback callback)
+    {
+        customLootFunctions.put(functionName, callback);
+        nativeNewCustomLootFunction(functionName);
+    }
+
+    public static void registerCustomLootFunctionJS(String functionName, CustomLootFunctionCallbackJS callback)
+    {
+        customLootFunctionsJS.put(functionName, callback);
+        nativeNewCustomLootFunction(functionName);
+    }
+
+    public static void applyCustomLootFunction(String functionName, String jsonString, long stackPointer, long contextPointer)
+    {
+        ItemStack stack = ItemStack.fromPtr(stackPointer);
+        LootTableContext context = new LootTableContext(contextPointer);
+        try {
+            if(customLootFunctions.containsKey(functionName))
+            {
+                customLootFunctions.get(functionName).apply(new JSONObject(jsonString), stack, context);
+            } else if(customLootFunctionsJS.containsKey(functionName)) {
+                customLootFunctionsJS.get(functionName).apply(CommonTypes.jsonToScriptable(new JSONObject(jsonString)), stack, context);
+            }
+        } catch(JSONException ex) { ex.printStackTrace(); }
+        nativeModifyStack(stackPointer, stack.id, stack.count, stack.data, stack.extra == null ? 0L : stack.extra.getValue());
     }
 
 }

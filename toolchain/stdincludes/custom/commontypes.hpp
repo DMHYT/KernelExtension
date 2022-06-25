@@ -1,5 +1,6 @@
 #include <stl/memory>
 #include <stl/string>
+#include <stl/utility>
 #include <stl/vector>
 #include <stl.h>
 
@@ -56,6 +57,7 @@ class AABB {
 #ifndef KEX_HASHEDSTRING_HPP
 #define KEX_HASHEDSTRING_HPP
 
+
 class HashedString {
     public:
     unsigned long long hash; // 8
@@ -79,6 +81,8 @@ class HashedString {
     static HashedString defaultErrorValue;
     static const HashedString& getEmptyString();
 };
+struct HashedStringHasher { size_t operator()(const HashedString& h) const { return static_cast<size_t>(h.getHash()); } };
+
 
 #endif //KEX_HASHEDSTRING_HPP
 

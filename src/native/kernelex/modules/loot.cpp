@@ -26,9 +26,30 @@
 #include "loot.hpp"
 
 
+void KEXLootModule::CustomLootFunction::apply(ItemStack& stack, Random&, LootTableContext& ctx) {
+    KEXJavaBridge::LootModule::applyCustomLootFunction(functionName.c_str(), json.toStyledString().c_str(), (jlong) &stack, (jlong) &ctx);
+}
+
+void KEXLootModule::CustomLootFunction::apply(ItemInstance& instance, Random&, LootTableContext& ctx) {
+    ItemStack stack(instance);
+    KEXJavaBridge::LootModule::applyCustomLootFunction(functionName.c_str(), json.toStyledString().c_str(), (jlong) &stack, (jlong) &ctx);
+    instance = ItemInstance(stack);
+}
+
+
 Json::Reader* KEXLootModule::jsonReader = new Json::Reader();
 std::unordered_map<std::string, std::string> KEXLootModule::cachedModifiedTables;
 std::unordered_set<std::string> KEXLootModule::tablesWithDropCallbacks;
+std::unordered_set<std::string> KEXLootModule::vanillaLootFunctions {
+    "set_count", "set_data", "set_damage", "looting_enchant",
+    "enchant_with_levels", "enchant_book_for_trading", "enchant_randomly",
+    "furnace_smelt", "set_data_from_color_index", "enchant_random_gear",
+    "random_aux_value", "random_block_state", "random_dye", "exploration_map",
+    "explosion_decay", "set_name", "set_lore", "specific_enchants", "fill_container",
+    "set_actor_id", "set_book_contents", "trader_material_type"
+};
+std::unordered_set<std::string> KEXLootModule::customLootFunctions;
+
 
 std::string KEXLootModule::getLootTableName(LootTable* table) {
     auto tableDir = table->getDir();
@@ -36,6 +57,7 @@ std::string KEXLootModule::getLootTableName(LootTable* table) {
     tableName = std::regex_replace(tableName, std::regex(".json"), "");
     return tableName;
 }
+
 
 void KEXLootModule::initialize() {
 
@@ -80,6 +102,18 @@ void KEXLootModule::initialize() {
             }
         }, ),
         HookManager::RETURN | HookManager::LISTENER
+    );
+
+    HookManager::addCallback(
+        SYMBOL("mcpe", "_ZN16LootItemFunction11deserializeEN4Json5ValueE"),
+        LAMBDA((HookManager::CallbackController* controller, LootItemFunction** result, Json::Value* json), {
+            const char* functionName = json->operator[]("function").asCString();
+            if(KEXLootModule::customLootFunctions.find(functionName) != KEXLootModule::customLootFunctions.end()) {
+                controller->prevent();
+                *result = new KEXLootModule::CustomLootFunction({}, functionName, Json::Value(*json));
+            }
+        }, ),
+        HookManager::CALL | HookManager::LISTENER | HookManager::CONTROLLER | HookManager::RESULT
     );
 
 }
@@ -203,6 +237,29 @@ extern "C" {
                 const char* cTableName = env->GetStringUTFChars(tableName, 0);
                 lootTables->lookupByName(cTableName, *rpManager);
                 env->ReleaseStringUTFChars(tableName, cTableName);
+            }
+        }
+    }
+    JNIEXPORT void JNICALL Java_vsdum_kex_modules_LootModule_nativeNewCustomLootFunction
+    (JNIEnv* env, jclass, jstring functionName) {
+        const char* cFunctionName = env->GetStringUTFChars(functionName, 0);
+        if(KEXLootModule::vanillaLootFunctions.find(cFunctionName) == KEXLootModule::vanillaLootFunctions.end()) {
+            if(KEXLootModule::customLootFunctions.find(cFunctionName) == KEXLootModule::customLootFunctions.end()) {
+                KEXLootModule::customLootFunctions.emplace(cFunctionName);
+            }
+        } else {
+            Logger::debug("KEX-WARNING", "Loot function %s already exists in vanilla, cannot register custom loot function with this name, skipping...", cFunctionName);
+        }
+        env->ReleaseStringUTFChars(functionName, cFunctionName);
+    }
+    JNIEXPORT void JNICALL Java_vsdum_kex_modules_LootModule_nativeModifyStack
+    (JNIEnv* env, jclass, jlong stackPtr, jint id, jint count, jint data, jlong extraPtr) {
+        ItemStack* stack = (ItemStack*) stackPtr;
+        Item* item = ItemRegistry::getItemById(IdConversion::staticToDynamic(id, IdConversion::ITEM));
+        if(item != nullptr && count > 0) {
+            *stack = ItemStack(*item, count, data);
+            if(extraPtr != 0) {
+                ((ItemInstanceExtra*) extraPtr)->apply(stack);
             }
         }
     }
