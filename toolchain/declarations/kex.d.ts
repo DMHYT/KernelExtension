@@ -1263,7 +1263,7 @@ declare module vsdum {
                 export function literal(l: any_string): CommandArgument;
                 export function registerAlias(name: any_string, alias: any_string): void;
                 export function addEnum(name: any_string, values: java.util.Map<any_string, number>): void;
-                export function addEnum(name: any_string, values: {[key: string]: number}): void;
+                export function addEnum(name: any_string, values: { [key: string]: number }): void;
                 export function addStringEnum(name: any_string, values: java.util.Set<any_string>): void;
                 export function addStringEnum(name: any_string, values: any_string[]): void;
                 export function newEnum(name: any_string): EnumBuilder;
@@ -1347,7 +1347,7 @@ declare namespace Item {
         can_always_eat?: boolean,
         cooldown_time?: number,
         cooldown_type?: "chorusfruit" | "none",
-        on_use_range?: [ number, number, number ],
+        on_use_range?: [number, number, number],
         on_use_action?: "chorus_teleport" | "suspicious_stew_effect" | "none",
         using_converts_to?: any_string,
         effects?: {
@@ -1390,7 +1390,7 @@ declare namespace Commands {
     }
     type IntArgument = Argument<"int" | "integer", number, 0>;
     type FloatArgument = Argument<"float", number, 1>;
-    type BoolArgument = Argument<"bool" | "boolean", boolean ,2>;
+    type BoolArgument = Argument<"bool" | "boolean", boolean, 2>;
     type RelativeFloatArgument = Argument<"relfloat" | "relativefloat", number, 3>;
     type PositionArgument = Argument<"pos" | "position", Vector, 4>;
     type FloatPositionArgument = Argument<"floatpos" | "floatposition", Vector, 5>;
@@ -1497,7 +1497,7 @@ declare enum ETileEntityType {
  * // and then access like `KEX.LootModule.createLootTableModifier(...)`
  * ```
  */
- declare interface KEXAPI {
+declare interface KEXAPI {
     ItemsModule: typeof vsdum.kex.modules.ItemsModule,
     LootModule: typeof vsdum.kex.modules.LootModule,
     ToolsModule: typeof vsdum.kex.modules.ToolsModule,
@@ -1556,6 +1556,87 @@ declare enum ETileEntityType {
         readonly TEMPERATURE: 26,
         readonly ALL: 31
     },
-    getKEXVersion: () => [ number, number, number ],
+    getKEXVersion: () => [number, number, number],
     getKEXVersionCode: () => number;
+}
+
+
+
+declare module vsdum.kex.modules.commands.arguments {
+    export class CommandArgumentType<V, D = never> {
+        /**
+         * Used for "hack" TS compiler. Object not have this field
+         * @depricated
+         */
+        private __hack_ts_for_default_value: D;
+
+        constructor(type: number, sizeof: number, enumName: string | null, typeName: string);
+
+        public static INT: CommandArgumentType<number, number>;
+        public static FLOAT: CommandArgumentType<number, number>;
+        public static BOOL: CommandArgumentType<boolean, boolean>;
+        public static RELATIVE_FLOAT: CommandArgumentType<number, number>;
+        public static POSITION: CommandArgumentType<Vector, Vector>;
+        public static FLOAT_POSITION: CommandArgumentType<Vector, Vector>;
+        public static STRING: CommandArgumentType<string, string>;
+        public static MESSAGE: CommandArgumentType<string>;
+        public static JSON: CommandArgumentType<Object>;
+        public static ENTITY: CommandArgumentType<vsdum.kex.natives.Actor[]>;
+        public static PLAYER: CommandArgumentType<vsdum.kex.natives.Actor[]>;
+    }
+}
+declare function WRAP_JAVA(clazz: "vsdum.kex.modules.commands.arguments.CommandArgumentType"): typeof vsdum.kex.modules.commands.arguments.CommandArgumentType;
+
+declare namespace Commands {
+    export namespace ArgumentType {
+        export const INT: vsdum.kex.modules.commands.arguments.CommandArgumentType<number, number>;
+        export const FLOAT: vsdum.kex.modules.commands.arguments.CommandArgumentType<number, number>;
+        export const BOOL: vsdum.kex.modules.commands.arguments.CommandArgumentType<boolean, boolean>;
+        export const RELATIVE_FLOAT: vsdum.kex.modules.commands.arguments.CommandArgumentType<number, number>;
+        export const POSITION: vsdum.kex.modules.commands.arguments.CommandArgumentType<Vector, Vector>;
+        export const FLOAT_POSITION: vsdum.kex.modules.commands.arguments.CommandArgumentType<Vector, Vector>;
+        export const STRING: vsdum.kex.modules.commands.arguments.CommandArgumentType<string, string>;
+        export const MESSAGE: vsdum.kex.modules.commands.arguments.CommandArgumentType<string>;
+        export const JSON: vsdum.kex.modules.commands.arguments.CommandArgumentType<object>;
+        export const ENTITY: vsdum.kex.modules.commands.arguments.CommandArgumentType<vsdum.kex.natives.Actor[]>;
+        export const PLAYER: vsdum.kex.modules.commands.arguments.CommandArgumentType<vsdum.kex.natives.Actor[]>;
+    }
+
+    export namespace EnumBuilder {
+        export class String {
+            constructor(name: string);
+            public put(value: string): this;
+            public register(): CommandArgumentType<string, string>;
+        }
+        export class Int {
+            constructor(name: string);
+            public put(label: string, value: number): this;
+            public register(): CommandArgumentType<number, number>;
+        }
+    }
+
+    interface ArgumentDescription<V, D = never, T extends CommandArgumentType<V, D> = CommandArgumentType<V, D>> {
+        type: T,
+        default?: D
+    }
+    type Actor = vsdum.kex.natives.Actor;
+    type MapArgument = {
+        [label: string]:
+        ArgumentDescription<number, number> |
+        ArgumentDescription<string, string> |
+        ArgumentDescription<string> |
+        ArgumentDescription<boolean, boolean> |
+        ArgumentDescription<Vector, Vector> |
+        ArgumentDescription<Object> |
+        ArgumentDescription<Actor[]>
+    }
+    type ArgumentList<T extends MapArgument> = {
+        [P in keyof T]: T[P]["type"] extends CommandArgumentType<infer V, any> ? V : never;
+    }
+
+    export class Builder {
+        constructor(name: string, permissionLevel?: number);
+        public addOverload<T extends MapArgument>(args: T, call: (args: ArgumentList<T>) => void): this;
+        public register(): void;
+    }
 }

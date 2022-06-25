@@ -4,6 +4,11 @@ type CommandArgument = vsdum.kex.modules.CommandsModule.CommandArgument;
 type CommandExecuteCallback = vsdum.kex.modules.CommandsModule.CommandExecuteCallback;
 type CommandContext = vsdum.kex.modules.CommandsModule.CommandContext;
 
+type CommandArgumentType<TT, T = never> = vsdum.kex.modules.commands.arguments.CommandArgumentType<TT, T>;
+type StringEnumBuild = vsdum.kex.modules.CommandsModule.StringEnumBuilder
+type IntEnumBuild = vsdum.kex.modules.CommandsModule.EnumBuilder
+const CommandArgumentType = WRAP_JAVA("vsdum.kex.modules.commands.arguments.CommandArgumentType");
+
 
 type CommandOverload = { args: Commands.Arguments[], callback: Commands.ExecuteCallback }
 class KEXCommandBuilder implements Commands.CustomCommandBuilder {
@@ -12,12 +17,12 @@ class KEXCommandBuilder implements Commands.CustomCommandBuilder {
 
     private readonly overloads: CommandOverload[] = [];
 
-    constructor(private readonly name: string, private readonly permissionLevel: number) {}
+    constructor(private readonly name: string, private readonly permissionLevel: number) { }
 
     public addOverload(args: Commands.Arguments[], callback: Commands.ExecuteCallback): KEXCommandBuilder {
         args.forEach(arg => {
-            if(typeof arg.type === "number") {
-                if(arg.type >= 0 && arg.type <= 13) {
+            if (typeof arg.type === "number") {
+                if (arg.type >= 0 && arg.type <= 13) {
                     arg.type = KEXCommandBuilder.typeNames[arg.type];
                 } else throw new java.lang.IllegalArgumentException(`Command argument type ${arg.type} does not exist!`);
             }
@@ -32,10 +37,10 @@ class KEXCommandBuilder implements Commands.CustomCommandBuilder {
             var node: CommandOverloadBase | CommandArgument = commandBase;
             var optionalFound: boolean = false;
             overload.args.forEach((arg, index) => {
-                if(arg.optional == true) {
-                    if(!optionalFound) optionalFound = true;
+                if (arg.optional == true) {
+                    if (!optionalFound) optionalFound = true;
                     node.executes(KEXCommandBuilder.buildExecuteCallback(overload, index));
-                } else if(optionalFound) {
+                } else if (optionalFound) {
                     throw new java.lang.IllegalArgumentException(`Detected mandatory argument ${arg.label} after optional argument ${overload.args[index - 1].label}`);
                 }
                 const next = KEXCommandBuilder.buildArgument(arg);
@@ -48,7 +53,7 @@ class KEXCommandBuilder implements Commands.CustomCommandBuilder {
     }
 
     private static buildArgument(arg: Commands.Arguments): CommandArgument {
-        switch(arg.type) {
+        switch (arg.type) {
             case "int": case "integer":
                 return typeof arg.default !== "number" ?
                     CommandsModule.intArg(arg.label) :
@@ -99,9 +104,9 @@ class KEXCommandBuilder implements Commands.CustomCommandBuilder {
     private static buildExecuteCallback(overload: CommandOverload, paramsCount: number = overload.args.length): CommandExecuteCallback {
         return ctx => {
             const obj = {};
-            for(let i = 0; i < paramsCount; i++) {
+            for (let i = 0; i < paramsCount; i++) {
                 const arg = overload.args[i];
-                switch(arg.type) {
+                switch (arg.type) {
                     case "int": case "integer": case "enum":
                         obj[arg.label] = ctx.getInt(arg.label); break;
                     case "float":
@@ -123,12 +128,12 @@ class KEXCommandBuilder implements Commands.CustomCommandBuilder {
                     case "entity":
                         const entitiesArr = [];
                         const entitiesIter = ctx.getEntities(arg.label).iterator();
-                        while(entitiesIter.hasNext()) entitiesArr.push(entitiesIter.next());
+                        while (entitiesIter.hasNext()) entitiesArr.push(entitiesIter.next());
                         obj[arg.label] = entitiesArr; break;
                     case "player":
                         const playersArr = [];
                         const playersIter = ctx.getPlayers(arg.label).iterator();
-                        while(playersIter.hasNext()) playersArr.push(playersIter.next());
+                        while (playersIter.hasNext()) playersArr.push(playersIter.next());
                         obj[arg.label] = playersArr; break;
                 }
             }
@@ -146,3 +151,74 @@ class KEXCommandBuilder implements Commands.CustomCommandBuilder {
 Commands.newEnum = enumName => CommandsModule.newEnum(enumName);
 Commands.newStringEnum = enumName => CommandsModule.newStringEnum(enumName);
 Commands.create = (commandName: string, permissionLevel: number = 0) => new KEXCommandBuilder(commandName, permissionLevel);
+
+
+
+
+Commands.ArgumentType = {
+    INT: CommandArgumentType.INT,
+    FLOAT: CommandArgumentType.FLOAT,
+    BOOL: CommandArgumentType.BOOL,
+    RELATIVE_FLOAT: CommandArgumentType.RELATIVE_FLOAT,
+    POSITION: CommandArgumentType.POSITION,
+    FLOAT_POSITION: CommandArgumentType.FLOAT_POSITION,
+    STRING: CommandArgumentType.STRING,
+    MESSAGE: CommandArgumentType.MESSAGE,
+    JSON: CommandArgumentType.JSON,
+    ENTITY: CommandArgumentType.ENTITY,
+    PLAYER: CommandArgumentType.PLAYER,
+};
+
+const StringEnum = {
+    type: 12,
+    size: 12,
+    typeName: "StringEnum"
+};
+const IntEnum = {
+    type: 12,
+    size: 12,
+    typeName: "StringEnum"
+};
+Commands.EnumBuilder = {
+    String: class {
+        private enum: StringEnumBuild;
+        constructor(private readonly name: string) {
+            this.enum = CommandsModule.newStringEnum(name);
+        }
+        public put(value: string): this {
+            this.enum.add(value);
+            return this;
+        }
+        public register(): CommandArgumentType<string> {
+            this.enum.register();
+            return new CommandArgumentType<string>(StringEnum.type, StringEnum.size, this.name, StringEnum.typeName);
+        }
+    },
+    Int: class {
+        private enum: IntEnumBuild;
+        constructor(private readonly name: string) {
+            this.enum = CommandsModule.newEnum(name);
+        }
+        public put(label: string, value: number): this {
+            if (Math.floor(value) != value) throw new ReferenceError("Value was been INTEGER");
+
+
+            this.enum.add(label, value);
+            return this;
+        }
+        public register(): CommandArgumentType<number> {
+            this.enum.register();
+            return new CommandArgumentType<number>(IntEnum.type, IntEnum.size, this.name, IntEnum.typeName);
+        }
+    }
+}
+
+Commands.Builder = class {
+    constructor(private readonly name: string, private readonly permissionLevel: number = 0) { }
+    public addOverload<T extends Commands.MapArgument>(args: T, call: (args: Commands.ArgumentList<T>) => void): this {
+        return this;
+    }
+    public register(): void {
+
+    }
+}
