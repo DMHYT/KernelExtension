@@ -352,7 +352,11 @@ public class LootModifier implements IJSONSerializable {
             ScriptableObject scr = CommonTypes.jsonToScriptable(obj);
             iterJS = this.jsCallbacks.iterator();
             while(iterJS.hasNext()) iterJS.next().function.onModify(scr);
-            obj = CommonTypes.scriptableToJson(scr);
+            JSONObject modifiedObj = CommonTypes.scriptableToJson(scr);
+            try {
+                obj.remove("pools");
+                obj.put("pools", modifiedObj.getJSONArray("pools"));
+            } catch (JSONException e) {}
         }
         if(!this.jsonPostCallbacks.isEmpty())
         {
