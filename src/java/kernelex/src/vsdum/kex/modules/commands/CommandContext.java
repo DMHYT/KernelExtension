@@ -103,28 +103,18 @@ public class CommandContext {
 
     public Vector3 getPosition(String name)
     {
-        return this.getPosition(name, this.sourceBlockPosition.x, this.sourceBlockPosition.y, this.sourceBlockPosition.z);
-    }
-
-    public Vector3 getPosition(String name, float centerX, float centerY, float centerZ)
-    {
         checkArgumentPresence(name);
         ArgumentBase arg = argsByName.get(name);
         checkArgumentType(arg, CommandArgumentType.POSITION);
-        return new Vector3(CommandsNativeAPI.nativeGetPosition(this.commandPtr, arg.fieldOffset, this.originPtr, centerX, centerY, centerZ));
+        return new Vector3(CommandsNativeAPI.nativeGetPosition(this.commandPtr, arg.fieldOffset, this.originPtr));
     }
 
     public Vector3 getFloatPosition(String name)
     {
-        return this.getFloatPosition(name, this.sourceWorldPosition.x, this.sourceWorldPosition.y, this.sourceWorldPosition.z);
-    }
-
-    public Vector3 getFloatPosition(String name, float centerX, float centerY, float centerZ)
-    {
         checkArgumentPresence(name);
         ArgumentBase arg = argsByName.get(name);
         checkArgumentType(arg, CommandArgumentType.FLOAT_POSITION);
-        return new Vector3(CommandsNativeAPI.nativeGetFloatPosition(this.commandPtr, arg.fieldOffset, this.originPtr, centerX, centerY, centerZ));
+        return new Vector3(CommandsNativeAPI.nativeGetFloatPosition(this.commandPtr, arg.fieldOffset, this.originPtr));
     }
 
     public String getString(String name)

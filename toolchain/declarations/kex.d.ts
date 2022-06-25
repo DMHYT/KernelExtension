@@ -1199,9 +1199,7 @@ declare module vsdum {
                     getBool(name: any_string): boolean;
                     getRelativeFloat(name: any_string, center: number): number;
                     getPosition(name: any_string): Vector;
-                    getPosition(name: any_string, centerX: number, centerY: number, centerZ: number): Vector;
                     getFloatPosition(name: any_string): Vector;
-                    getFloatPosition(name: any_string, centerX: number, centerY: number, centerZ: number): Vector;
                     getString(name: any_string): jstring;
                     getMessage(name: any_string): jstring;
                     getJson(name: any_string): Nullable<org.json.JSONObject>;
@@ -1425,7 +1423,6 @@ declare namespace Commands {
         StringEnumArgument |
         LiteralArgument;
     type RelativeFloat = (center?: number) => number;
-    type CommandPosition = (centerX?: number, centerY?: number, centerZ?: number) => Vector;
     interface ExecuteCallback {
         (args: object, context: vsdum.kex.modules.CommandsModule.CommandContext): void;
     }

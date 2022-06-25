@@ -289,20 +289,20 @@ extern "C" {
         auto cmd = (KEXCommandRegistry::KEXAPICommand*) ptr;
         return ((RelativeFloat*) ((char*) cmd + offset))->getValue(center);
     }
-    __EXPORT__(jfloatArray, GetPosition, jint offset, jlong originPtr, jfloat centerX, jfloat centerY, jfloat centerZ) {
+    __EXPORT__(jfloatArray, GetPosition, jint offset, jlong originPtr) {
         auto cmd = (KEXCommandRegistry::KEXAPICommand*) ptr;
         auto origin = (CommandOrigin*) originPtr;
-        BlockPos pos = ((CommandPosition*) ((char*) cmd + offset))->getBlockPos(*origin, Vec3(centerX, centerY, centerZ));
+        BlockPos pos = ((CommandPosition*) ((char*) cmd + offset))->getBlockPos(*origin, Vec3(0.0f, 0.0f, 0.0f));
         jfloatArray result = env->NewFloatArray(3);
         jfloat fill[3];
         fill[0] = (float) pos.x; fill[1] = (float) pos.y; fill[2] = (float) pos.z;
         env->SetFloatArrayRegion(result, 0, 3, fill);
         return result;
     }
-    __EXPORT__(jfloatArray, GetFloatPosition, jint offset, jlong originPtr, jfloat centerX, jfloat centerY, jfloat centerZ) {
+    __EXPORT__(jfloatArray, GetFloatPosition, jint offset, jlong originPtr) {
         auto cmd = (KEXCommandRegistry::KEXAPICommand*) ptr;
         auto origin = (CommandOrigin*) originPtr;
-        Vec3 pos = ((CommandPositionFloat*) ((char*) cmd + offset))->getPosition(*origin, Vec3(centerX, centerY, centerZ));
+        Vec3 pos = ((CommandPositionFloat*) ((char*) cmd + offset))->getPosition(*origin, Vec3(0.0f, 0.0f, 0.0f));
         jfloatArray result = env->NewFloatArray(3);
         jfloat fill[3];
         fill[0] = pos.x; fill[1] = pos.y; fill[2] = pos.z;

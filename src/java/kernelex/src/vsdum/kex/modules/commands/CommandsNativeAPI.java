@@ -23,8 +23,8 @@ public class CommandsNativeAPI {
     public static native float nativeGetFloat(long ptr, int offset);
     public static native boolean nativeGetBool(long ptr, int offset);
     public static native float nativeGetRelativeFloat(long ptr, int offset, float center);
-    public static native float[] nativeGetPosition(long ptr, int offset, long originPtr, float centerX, float centerY, float centerZ);
-    public static native float[] nativeGetFloatPosition(long ptr, int offset, long originPtr, float centerX, float centerY, float centerZ);
+    public static native float[] nativeGetPosition(long ptr, int offset, long originPtr);
+    public static native float[] nativeGetFloatPosition(long ptr, int offset, long originPtr);
     public static native String nativeGetString(long ptr, int offset);
     public static native String nativeGetMessage(long ptr, int offset, long originPtr);
     public static native String nativeGetJson(long ptr, int offset);

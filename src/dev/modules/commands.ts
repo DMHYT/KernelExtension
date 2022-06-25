@@ -111,9 +111,9 @@ class KEXCommandBuilder implements Commands.CustomCommandBuilder {
                     case "bool": case "boolean":
                         obj[arg.label] = ctx.getBool(arg.label); break;
                     case "pos": case "position":
-                        obj[arg.label] = this.buildPosition(ctx, arg.label, false); break;
+                        obj[arg.label] = ctx.getPosition(arg.label); break;
                     case "floatpos": case "floatposition":
-                        obj[arg.label] = this.buildPosition(ctx, arg.label, true); break;
+                        obj[arg.label] = ctx.getFloatPosition(arg.label); break;
                     case "str": case "string": case "strenum": case "stringenum":
                         obj[arg.label] = ctx.getString(arg.label); break;
                     case "msg": case "message":
@@ -138,13 +138,6 @@ class KEXCommandBuilder implements Commands.CustomCommandBuilder {
 
     private static buildRelativeFloat(ctx: CommandContext, label: string): Commands.RelativeFloat {
         return center => ctx.getRelativeFloat(label, typeof center === "number" ? center : 0.0);
-    }
-
-    private static buildPosition(ctx: CommandContext, label: string, isFloat: boolean): Commands.CommandPosition {
-        const method = isFloat ? "getFloatPosition" : "getPosition";
-        return (centerX, centerY, centerZ) =>
-            typeof centerX === "number" && typeof centerY === "number" && typeof centerZ === "number" ?
-                ctx[method](label, centerX, centerY, centerZ) : ctx[method](label);
     }
 
 }
