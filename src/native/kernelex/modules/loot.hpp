@@ -3,7 +3,7 @@
 
 #include <mod.h>
 
-#include <LootTable.hpp>
+#include <loot/LootTable.hpp>
 
 #include <json/reader.h>
 

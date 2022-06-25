@@ -19,8 +19,8 @@
 #include <BlockActor.hpp>
 #include <BlockSource.hpp>
 #include <Level.hpp>
-#include <LootTableContext.hpp>
-#include <LootTable.hpp>
+#include <loot/LootTableContext.hpp>
+#include <loot/LootTable.hpp>
 
 #include "../utils/java_utils.hpp"
 #include "loot.hpp"

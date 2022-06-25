@@ -4,7 +4,7 @@
 
 #include <static_symbol.h>
 
-#include <LootTableContext.hpp>
+#include <loot/LootTableContext.hpp>
 
 
 #define __EXPORT__(RET, NAME, ...) JNIEXPORT RET JNICALL Java_vsdum_kex_natives_LootTableContext_native##NAME (JNIEnv* env, jclass clazz, jlong ptr, ##__VA_ARGS__)
