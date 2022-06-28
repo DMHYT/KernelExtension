@@ -1,6 +1,7 @@
 package vsdum.kex.modules;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.mozilla.javascript.ScriptableObject;
@@ -109,6 +110,18 @@ public class DamageModule {
                     String str = (String) obj;
                     translationsMap.put(str, new StringBuilder().append("").append(translations.get(str, translations)).toString());
                 }
+            }
+            return this;
+        }
+
+        public CustomCause setDeathMessageMap(Map<String, String> translations)
+        {
+            Iterator<Map.Entry<String, String>> iter = translations.entrySet().iterator();
+            Map<String, String> translationsMap = getTranslationsMapForCause(this.name);
+            while(iter.hasNext())
+            {
+                Map.Entry<String, String> entry = iter.next();
+                translationsMap.putIfAbsent(entry.getKey(), entry.getValue());
             }
             return this;
         }
