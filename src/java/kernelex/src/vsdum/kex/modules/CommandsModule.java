@@ -11,6 +11,7 @@ import org.mozilla.javascript.ScriptableObject;
 
 import com.zhekasmirnov.horizon.runtime.logger.Logger;
 import com.zhekasmirnov.innercore.api.mod.ScriptableObjectHelper;
+import com.zhekasmirnov.innercore.api.runtime.other.NameTranslation;
 
 import vsdum.kex.modules.commands.CommandContext;
 import vsdum.kex.modules.commands.CommandExecuteCallback;
@@ -19,10 +20,12 @@ import vsdum.kex.modules.commands.CommandsNativeAPI;
 import vsdum.kex.modules.commands.CustomParserCommandExecuteCallback;
 import vsdum.kex.modules.commands.arguments.*;
 import vsdum.kex.modules.commands.enums.*;
+import vsdum.kex.util.CommonTypes;
 
 public class CommandsModule {
 
     private static final Map<String, List<CommandOverload>> executableData = new HashMap<>();
+    private static final Map<String, Map<String, String>> descriptionTranslations = new HashMap<>();
 
     public static void registerCommand(CommandOverloadBase base)
     {
@@ -46,6 +49,7 @@ public class CommandsModule {
             }
             Logger.debug("KEX-CommandRegistry", String.format("Overload %d for command %s built, used %d bytes out of %d possible.", new Object[]{ Integer.valueOf(i), base.commandName, Integer.valueOf(offset - 36), Integer.valueOf((2012 - overload.size()) / 4 * 4) }));
         }
+        descriptionTranslations.putIfAbsent(base.commandName, base.descriptionTranslations);
     }
 
     public static void registerCustomParserCommand(String name, CustomParserCommandExecuteCallback callback)
@@ -252,6 +256,19 @@ public class CommandsModule {
                 lastCallbackFound.execute(new CommandContext(commandPtr, originPtr, outputPtr, overload.argumentsByName));
             } catch(Throwable ex) { ex.printStackTrace(); }
         }
+    }
+
+    public static String translateCommandDescription(String commandName)
+    {
+        if(!descriptionTranslations.containsKey(commandName)) return "commands." + commandName + ".description";
+        Map<String, String> translations = descriptionTranslations.get(commandName);
+        String language = CommonTypes.getShortLanguageName(NameTranslation.getLanguage());
+        if(!translations.containsKey(language))
+        {
+            if(!translations.containsKey("en")) return "commands." + commandName + ".description";
+            return translations.get("en");
+        }
+        return translations.get(language);
     }
 
     private static void buildArgument(long vectorPtr, ArgumentBase arg)

@@ -1,7 +1,12 @@
 package vsdum.kex.modules.commands.arguments;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+
+import org.mozilla.javascript.ScriptableObject;
 
 import android.support.annotation.Nullable;
 import vsdum.kex.modules.commands.CommandExecuteCallback;
@@ -13,6 +18,7 @@ public class CommandOverloadBase implements ICommandNode {
     public final List<String> aliases = new ArrayList<>();
     @Nullable public CommandExecuteCallback callback = null;
     public final List<ArgumentBase> children = new ArrayList<>();
+    public final Map<String, String> descriptionTranslations = new HashMap<>();
 
     public CommandOverloadBase(String commandName, int permissionLevel)
     {
@@ -47,6 +53,38 @@ public class CommandOverloadBase implements ICommandNode {
     public CommandOverloadBase addAliases(String[] aliasesArr)
     {
         for(int i = 0; i < aliasesArr.length; ++i) this.aliases.add(aliasesArr[i]);
+        return this;
+    }
+
+    public CommandOverloadBase setDescription(String description)
+    {
+        this.descriptionTranslations.putIfAbsent("en", description);
+        return this;
+    }
+
+    public CommandOverloadBase setDescription(ScriptableObject translations)
+    {
+        Object[] keys = translations.getAllIds();
+        for(int i = 0; i < keys.length; i++)
+        {
+            Object obj = keys[i];
+            if(obj instanceof String)
+            {
+                String str = (String) obj;
+                this.descriptionTranslations.putIfAbsent(str, new StringBuilder().append("").append(translations.get(str, translations)).toString());
+            }
+        }
+        return this;
+    }
+
+    public CommandOverloadBase setDescriptionMap(Map<String, String> translations)
+    {
+        Iterator<Map.Entry<String, String>> iter = translations.entrySet().iterator();
+        while(iter.hasNext())
+        {
+            Map.Entry<String, String> entry = iter.next();
+            this.descriptionTranslations.putIfAbsent(entry.getKey(), entry.getValue());
+        }
         return this;
     }
 

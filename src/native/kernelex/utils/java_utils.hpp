@@ -52,6 +52,7 @@ namespace KEXJavaBridge {
     }
     namespace CommandsModule {
         void callAPICommand(const char* commandName, jlong commandPointer, jint overloadIndex, jlong originPtr, jlong outputPtr, int paramsCount);
+        jstring translateCommandDescription(const char* commandName);
     }
 }
 

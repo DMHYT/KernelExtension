@@ -1245,6 +1245,8 @@ declare module vsdum {
                     getCallback(): Nullable<CommandExecuteCallback>;
                     addAlias(alias: any_string): CommandOverloadBase;
                     addAliases(aliases: any_string[]): CommandOverloadBase;
+                    setDescription(description: any_string): CommandOverloadBase;
+                    setDescription(translations: object): CommandOverloadBase;
                     listOverloads(): java.util.List<java.util.List<CommandArgument>>;
                 }
                 export interface EnumBuilder {

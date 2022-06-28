@@ -48,6 +48,7 @@ namespace KEXJavaBridge {
         JAVA_METHOD(DamageModule, translateAndFormatDeathMessage, "(Ljava/lang/String;[Ljava/lang/String;)Ljava/lang/String;")
         JAVA_CLASS(CommandsModule, "vsdum/kex/modules/CommandsModule")
         JAVA_METHOD(CommandsModule, callAPICommand, "(Ljava/lang/String;JIJJ[Z)V")
+        JAVA_METHOD(CommandsModule, translateCommandDescription, "(Ljava/lang/String;)Ljava/lang/String;")
     }
     namespace KernelExtension {
         void setMinecraftTextboxText(const char* text) {
@@ -150,6 +151,13 @@ namespace KEXJavaBridge {
             env->CallStaticVoidMethod(Cache::CommandsModule(), Cache::CommandsModule_callAPICommand(), jCommandName, commandPointer, overloadIndex, originPtr, outputPtr, paramsPresence);
             env->DeleteLocalRef(jCommandName);
             env->DeleteLocalRef(paramsPresence);
+        }
+        jstring translateCommandDescription(const char* commandName) {
+            JNIEnv* env = KEXJavaUtils::attach();
+            jstring jCommandName = env->NewStringUTF(commandName);
+            jstring result = (jstring) env->CallStaticObjectMethod(Cache::CommandsModule(), Cache::CommandsModule_translateCommandDescription(), jCommandName);
+            env->DeleteLocalRef(jCommandName);
+            return result;
         }
     }
 }
