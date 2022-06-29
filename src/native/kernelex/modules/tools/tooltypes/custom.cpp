@@ -65,7 +65,7 @@ extern "C" JNIEXPORT void JNICALL Java_vsdum_kex_modules_tools_ToolsNativeAPI_na
     factory->tier = (Item::Tier*) tierPtr;
     if(brokenId != 0) KEXToolsModule::Data::toolsToBrokenIds.emplace(id, brokenId);
     if(blockMaterials != NULL && !isWeapon) {
-        std::set<std::string> materials;
+        std::unordered_set<std::string> materials;
         jsize l = env->GetArrayLength(blockMaterials);
         if(l > 0) {
             for(int i = 0; i < l; ++i) {

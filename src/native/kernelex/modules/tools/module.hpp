@@ -71,7 +71,7 @@ class KEXToolsModule : public Module {
         static inline bool isCustomTool(int id) {
             return KEXToolsModule::Data::customTools.find(id) != KEXToolsModule::Data::customTools.end();
         }
-        static const char* getBlockMaterialName(int id);
+        static std::string getBlockMaterialName(int id);
         static int getBlockDestroyLevel(int id);
         static bool getBlockIsNative(int id);
         static void setBlockMaterialName(int id, const char* materialName);

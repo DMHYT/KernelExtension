@@ -41,6 +41,10 @@ float KEXToolsModule::LastDestroyedBlock::getOrCalculateSpeed(const ItemStackBas
         materialDivider = materialDivider == 0.0f ? 1.0f : materialDivider;
         float efficiencyModifier = item->destroySpeedBonus(stack);
         efficiencyModifier = efficiencyModifier == 0.0f ? 1.0f : result;
+        if(!item->hasBlock(block)) {
+            materialDivider = 1.0f;
+            efficiencyModifier = 1.0f;
+        }
         float calc = KEXJavaBridge::CustomToolEvents::calcDestroyTime(staticId, block.data, x, y, z, side, blockDestroyTime, materialDivider, efficiencyModifier, blockDestroyTime / materialDivider / efficiencyModifier);
         result = blockDestroyTime / calc;
         result = result == 0.0f ? 1.0f : result;

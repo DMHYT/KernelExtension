@@ -4,17 +4,14 @@
 #include "../module.hpp"
 
 
-const char* KEXToolsModule::ToolAPI::getBlockMaterialName(int id) {
+std::string KEXToolsModule::ToolAPI::getBlockMaterialName(int id) {
     auto found = KEXToolsModule::Data::blockData.find(id);
     if(found != KEXToolsModule::Data::blockData.end()) {
-        auto materialName = found->second->materialName;
-        if(!materialName.empty()) {
-            return materialName.c_str();
-        }
+        return found->second->materialName;
     } else {
         KEXToolsModule::Data::blockData.emplace(id, new KEXToolsModule::BlockDataInterface());
     }
-    return nullptr;
+    return "";
 }
 
 

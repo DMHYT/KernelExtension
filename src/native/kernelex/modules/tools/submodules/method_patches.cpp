@@ -1,5 +1,3 @@
-#include <string.h>
-
 #include <hook.h>
 #include <symbol.h>
 
@@ -32,14 +30,14 @@ bool KEXToolPatchesModule::canDestroySpecial(DiggerItem* _this, const Block& blo
 
 bool KEXToolPatchesModule::hasBlock(DiggerItem* _this, const Block& block) {
     int staticId = IdConversion::dynamicToStatic(block.legacy->id, IdConversion::BLOCK);
-    const char* materialName = KEXToolsModule::ToolAPI::getBlockMaterialName(staticId);
-    if(materialName == nullptr) return false;
+    std::string materialName = KEXToolsModule::ToolAPI::getBlockMaterialName(staticId);
+    if(materialName.empty()) return false;
     if(_this->hasTag(*isAxeTag)) {
-        return strcmp(materialName, "wood") == 0;
+        return materialName == "wood";
     } else if(_this->hasTag(*isPickaxeTag)) {
-        return strcmp(materialName, "stone") == 0;
+        return materialName == "stone";
     } else if(_this->hasTag(*isShovelTag)) {
-        return strcmp(materialName, "dirt") == 0;
+        return materialName == "dirt";
     } else {
         staticId = IdConversion::dynamicToStatic(_this->id, IdConversion::ITEM);
         auto factory = LegacyItemRegistry::findFactoryById(staticId);

@@ -1,4 +1,4 @@
-#include <set>
+#include <unordered_set>
 #include <string>
 
 #include "base.hpp"
@@ -10,7 +10,7 @@
 class CustomToolFactory : public ToolFactory {
     public:
     bool isWeapon = false;
-    std::set<std::string> blockMaterials;
+    std::unordered_set<std::string> blockMaterials;
     int baseAttackDamage = 0;
     bool dynamicDamageEnabled = false;
     virtual void registerItem();

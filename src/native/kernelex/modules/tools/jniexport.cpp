@@ -71,9 +71,9 @@ extern "C" {
     }
     JNIEXPORT jstring JNICALL Java_vsdum_kex_modules_tools_ToolsNativeAPI_nativeGetBlockMaterialName
     (JNIEnv* env, jclass, jint id) {
-        const char* materialName = KEXToolsModule::ToolAPI::getBlockMaterialName(id);
-        if(materialName == nullptr) return NULL;
-        return env->NewStringUTF(materialName);
+        std::string materialName = KEXToolsModule::ToolAPI::getBlockMaterialName(id);
+        if(materialName.empty()) return NULL;
+        return env->NewStringUTF(materialName.c_str());
     }
     JNIEXPORT jint JNICALL Java_vsdum_kex_modules_tools_ToolsNativeAPI_nativeGetBlockDestroyLevel
     (JNIEnv*, jclass, jint id) {
