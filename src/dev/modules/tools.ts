@@ -387,7 +387,6 @@ Block.setDestroyLevelForID = (blockID, level) => ToolAPI.registerBlockDiggingLev
     for(let materialName in json.materials) ToolAPI.registerBlockMaterialAsArray(materialName, json.materials[materialName].map(val => typeof val === "number" ? val : VanillaTileID[val]), true);
     json.destroy_levels.forEach((el, level) => el.forEach(id => {
         id = typeof id === "number" ? id : VanillaTileID[id];
-        typeof Block.dropFunctions[id] !== "undefined" && delete Block.dropFunctions[id];
         Block.setDestroyLevelForID(id as number, level + 1);
     }));
     Object.keys(json.tool_block_types).forEach((toolType: StandardTools | "shears") => json.tool_block_types[toolType].forEach(material => ToolAPI.toolBlockTypes[toolType][material] = true));
