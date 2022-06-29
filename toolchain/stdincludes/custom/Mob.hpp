@@ -8,7 +8,9 @@ class BaseAttributeMap;
 #ifndef KEX_BLOCK_HPP
     class Block;
 #endif
-class CompoundTag;
+#ifndef KEX_COMPOUNDTAG_HPP
+    class CompoundTag;
+#endif
 class DataLoadHelper;
 class GoalDefinition;
 class IMobMovementProxy;

@@ -1,3 +1,4 @@
+#include <stl/memory>
 #include <stl/string>
 #include <stl.h>
 
@@ -14,7 +15,9 @@
 #ifndef KEX_BLOCKLEGACY_HPP
     class BlockLegacy;
 #endif
-class CompoundTag;
+#ifndef KEX_COMPOUNDTAG_HPP
+    class CompoundTag;
+#endif
 #ifndef KEX_ITEM_HPP
     class Item;
 #endif
@@ -42,6 +45,12 @@ class ItemStackBase {
     ItemStackBase& operator=(const ItemStackBase&);
     ~ItemStackBase();
     void hurtAndBreak(int, Actor*);
+    operator bool() const;
+    bool hasUserData() const;
+    CompoundTag* getUserData() const;
+    void setUserData(stl::unique_ptr<CompoundTag>);
+    // Added by InnerCore
+    unsigned short getCount() const;
 };
 
 

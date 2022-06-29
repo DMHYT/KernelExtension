@@ -10,6 +10,7 @@
 #include "modules/damage.hpp"
 #include "modules/misc/reachdist.hpp"
 #include "modules/misc/cameraroll.hpp"
+#include "modules/misc/smithing.hpp"
 
 #include "utils/java_utils.hpp"
 
@@ -38,6 +39,7 @@ extern "C" JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *) {
 	Module* damage = new KEXDamageModule(main);
 	Module* reachdist = new KEXMiscReachDistModule(main);
 	Module* cameraroll = new KEXMiscCameraRollModule(main);
+	Module* smithing = new KEXMiscSmithingModule(main);
 }
 
 

@@ -11,7 +11,9 @@
 #ifndef KEX_BLOCKLEGACY_HPP
     class BlockLegacy;
 #endif
-class CompoundTag;
+#ifndef KEX_COMPOUNDTAG_HPP
+    class CompoundTag;
+#endif
 #ifndef KEX_ITEM_HPP
     class Item;
 #endif

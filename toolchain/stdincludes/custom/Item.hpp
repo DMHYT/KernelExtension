@@ -23,7 +23,9 @@ class BaseGameVersion;
     class BlockPos;
 #endif
 class BlockSource;
-class CompoundTag;
+#ifndef KEX_COMPOUNDTAG_HPP
+    class CompoundTag;
+#endif
 class Container;
 class CreativeItemRegistry;
 #ifndef KEX_HASHEDSTRING_HPP

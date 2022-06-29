@@ -10,7 +10,9 @@
 #ifndef KEX_ACTOR_HPP
     class Actor;
 #endif
-class CompoundTag;
+#ifndef KEX_COMPOUNDTAG_HPP
+    class CompoundTag;
+#endif
 
 class MobEffectInstance {
     public:

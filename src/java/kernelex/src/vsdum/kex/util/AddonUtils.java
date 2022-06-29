@@ -14,6 +14,7 @@ import org.json.JSONObject;
 
 import android.support.annotation.Nullable;
 import vsdum.kex.modules.LootModule;
+import vsdum.kex.modules.misc.SmithingTableRecipes;
 
 public final class AddonUtils {
 
@@ -115,6 +116,7 @@ public final class AddonUtils {
             Callback.invokeAPICallback("KEX-InnerCoreIdsCached", new Object[]{});
         } catch(Throwable ex) {}
         LootModule.onLevelDisplayed();
+        SmithingTableRecipes.printRecipesCount();
     }
 
     public static int getNumericIdFromIdentifier(String identifier)

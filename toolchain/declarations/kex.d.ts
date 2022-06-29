@@ -1351,6 +1351,29 @@ declare function WRAP_JAVA(clazz: "vsdum.kex.modules.misc.ReachDistanceModifier"
 declare function WRAP_JAVA(clazz: "vsdum.kex.modules.misc.CameraRollModifier"): typeof vsdum.kex.modules.misc.CameraRollModifier;
 
 
+declare module vsdum {
+    export module kex {
+        export module modules {
+            export module misc {
+                export module SmithingTableRecipes {
+                    interface SmithingTableRecipe {
+                        readonly baseID: number;
+                        readonly additionID: number;
+                        readonly resultID: number;
+                    }
+                    export function addRecipe(baseID: number, additionID: number, resultID: number): void;
+                    export function removeRecipe(baseID: number, additionID: number): void;
+                    export function getRecipesByResult(resultID: number): java.util.Set<SmithingTableRecipe>;
+                    export function getRecipesByBase(baseID: number): java.util.Set<SmithingTableRecipe>;
+                    export function getAllRecipes(): java.util.Set<SmithingTableRecipe>;
+                }
+            }
+        }
+    }
+}
+declare function WRAP_JAVA(clazz: "vsdum.kex.modules.misc.SmithingTableRecipes"): typeof vsdum.kex.modules.misc.SmithingTableRecipes;
+
+
 declare namespace Item {
     interface FoodParamsDescription {
         stack?: number,
@@ -1448,6 +1471,16 @@ declare namespace Commands {
     export function newEnum(enumName: string): vsdum.kex.modules.CommandsModule.EnumBuilder;
     export function newStringEnum(enumName: string): vsdum.kex.modules.CommandsModule.StringEnumBuilder;
     export function create(commandName: string, permissionLevel?: number): CustomCommandBuilder;
+}
+
+
+declare namespace Recipes {
+    type SmithingTableRecipe = vsdum.kex.modules.misc.SmithingTableRecipes.SmithingTableRecipe;
+    export function addSmithingTableRecipe(baseID: number, additionID: number, resultID: number): void;
+    export function removeSmithingTableRecipe(baseID: number, additionID: number): void;
+    export function getSmithingTableRecipesByResult(resultID: number): SmithingTableRecipe[];
+    export function getSmithingTableRecipesByBase(baseID: number): SmithingTableRecipe[];
+    export function getAllSmithingTableRecipes(): SmithingTableRecipe[];
 }
 
 
