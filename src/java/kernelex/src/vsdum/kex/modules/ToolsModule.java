@@ -173,8 +173,6 @@ public class ToolsModule {
         ToolsNativeAPI.nativeRegisterFlintAndSteel(id, nameId, name, textureName, textureMeta, isTech, durability);
     }
 
-    
-
     public static void addBlockMaterial(String name, float breakingMultiplier)
     {
         if(!DataSets.materialNameToBreakingMultiplier.containsKey(name))

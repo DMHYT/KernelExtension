@@ -5,7 +5,8 @@
         "dirt": [ 2, 3, 12, 13, 60, 78, 80, 82, 88, 110, 198, 237, 243, "soul_soil" ],
         "fibre": [ 30 ],
         "plant": [ 6, 18, 161, 31, 32, 111, 175, "nether_wart_block", "warped_wart_block", "shroomlight", "hay_block", "target", "dried_kelp_block", "sponge" ],
-        "unbreaking": [ 8, 9, 10, 11, 7, 95, 90, 119, 120, 137, 188, 189 ]
+        "unbreaking": [ 8, 9, 10, 11, 7, 95, 90, 119, 120, 137, 188, 189 ],
+        "wool": [ 35 ]
     },
     "destroy_levels": [
         [ "stone", "cobblestone", "coal_ore", "dispenser", "sandstone", "web", "double_stone_slab", "stone_slab", "brick_block", "mossy_cobblestone", "furnace", "lit_furnace", "stone_stairs", "stone_pressure_plate", "iron_door", "snow_layer", "snow", "netherrack", "stonebrick", "iron_bars", "brick_stairs", "stone_brick_stairs", "nether_brick", "nether_brick_fence", "nether_brick_stairs", "enchanting_table", "brewing_stand", "cauldron", "end_stone", "dropper", "sandstone_stairs", "ender_chest", "cobblestone_wall", "anvil", "light_weighted_pressure_plate", "heavy_weighted_pressure_plate", "redstone_block", "hopper", "quartz_block", "quartz_stairs", "prismarine", "hardened_clay", "coal_block", "red_sandstone", "red_sandstone_stairs", "double_stone_slab2", "stone_slab2", "packed_ice", "purpur_block", "purpur_stairs", "end_bricks", "magma", "red_nether_brick", "bone_block", 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, "concrete", "stonecutter", "observer", "prismarine_stairs", "dark_prismarine_stairs", "prismarine_bricks_stairs", "blue_ice", "coral", "coral_block", "coral_fan", "coral_fan_dead", "coral_fan_hang", "coral_fan_hang2", "coral_fan_hang3", "stone_slab3", "stone_slab4", "double_stone_slab3", "double_stone_slab4", "granite_stairs", "diorite_stairs", "andesite_stairs", "polished_granite_stairs", "polished_diorite_stairs", "polished_andesite_stairs", "mossy_stone_brick_stairs", "smooth_red_sandstone_stairs", "smooth_sandstone_stairs", "end_brick_stairs", "mossy_cobblestone_stairs", "normal_stone_stairs", "smooth_stone", "red_nether_brick_stairs", "smooth_quartz_stairs", "grindstone", "blast_furnace", "stonecutter", "smoker", "lit_smoker", "bell", "lantern", "lava_cauldron", "lit_blast_furnace", "basalt", "blackstone", "blackstone_double_slab", "blackstone_slab", "blackstone_stairs", "blackstone_wall", "chain", "chiseled_nether_bricks", "chiseled_polished_blackstone", "cracked_nether_bricks", "cracked_polished_blackstone_bricks", "gilded_blackstone", "lodestone", "nether_gold_ore", "polished_basalt", "polished_blackstone", "polished_blackstone_brick_double_slab", "polished_blackstone_brick_slab", "polished_blackstone_brick_stairs", "polished_blackstone_brick_wall", "polished_blackstone_bricks", "polished_blackstone_button", "polished_blackstone_double_slab", "polished_blackstone_pressure_plate", "polished_blackstone_slab", "polished_blackstone_stairs", "polished_blackstone_wall", "quartz_bricks", "soul_lantern", "web","ice"],
@@ -27,5 +28,6 @@
         "pickaxe": [ "stone" ],
         "shovel": [ "dirt" ], "hoe": [],
         "shears": [ "plant", "fibre", "wool" ]
-    }
+    },
+    "tool_types_base_damage": { "sword": 4, "axe": 3, "pickaxe": 2, "shovel": 2, "hoe": 2 }
 }

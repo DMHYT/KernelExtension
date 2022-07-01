@@ -4,10 +4,14 @@ type ItemTier = vsdum.kex.modules.ToolsModule.ItemTier;
 
 
 declare namespace ToolAPI {
-    export var blockMaterials: any;
+    interface BlockMaterial {
+        name: string,
+        multiplier: number;
+    }
+    export var blockMaterials: { [materialName: string]: BlockMaterial };
     export var toolMaterials: { [materialName: string]: ToolMaterial };
     export var toolData: { [numericId: number]: ToolParams };
-    export var blockData: { [numericId: number]: { material: string, level: number, isNative: boolean } };
+    export var blockData: { [numericId: number]: { material: BlockMaterial, level: number, isNative: boolean } };
     export var unnamedMaterialNum: number;
     export var ToolType: {
         readonly sword: {},
@@ -207,7 +211,8 @@ namespace Item {
         let blockMaterialsArr: Nullable<string[]> = null;
         if(typeof toolParams === "object" && typeof toolParams.blockMaterials === "object") {
             blockMaterialsArr = [];
-            Object.keys(toolParams.blockMaterials).forEach(k => toolParams.blockMaterials[k] && blockMaterialsArr.push(k));
+            for(let blockMaterial in toolParams.blockMaterials)
+                toolParams.blockMaterials[blockMaterial] == true && blockMaterialsArr.push(blockMaterial);
         }
         numericId = typeof numericId !== "undefined" ? numericId : ItemID[id];
         ToolsModule.registerCustomTool(
@@ -245,7 +250,7 @@ namespace ToolAPI {
     }
 }
 
-ToolAPI.blockData = {};
+
 ToolAPI.unnamedMaterialNum = 0;
 ToolAPI.ToolType = {
     sword: { __flag: "__sword" },
@@ -264,12 +269,13 @@ ToolAPI.addToolMaterial = (name, material) => {
             material.damage || 0, 
             material.enchantability || 14);
         ToolAPI.toolMaterials[name] = material;
-        ToolAPI.toolMaterials[name].level = tier.getLevel();
-        ToolAPI.toolMaterials[name].durability = tier.getUses();
-        ToolAPI.toolMaterials[name].efficiency = tier.getSpeed();
-        ToolAPI.toolMaterials[name].damage = tier.getAttackDamageBonus();
-        ToolAPI.toolMaterials[name].enchantability = tier.getEnchantmentValue();
-        ToolAPI.toolMaterials[name].name = name;
+        const materialObj = ToolAPI.toolMaterials[name];
+        materialObj.name = name;
+        materialObj.level = tier.getLevel();
+        materialObj.durability = tier.getUses();
+        materialObj.efficiency = tier.getSpeed();
+        materialObj.damage = tier.getAttackDamageBonus();
+        materialObj.enchantability = tier.getEnchantmentValue();
     } else Logger.Log(`Tool material with name \'${name}\' has already been registered before! Skipping...`, "KEX-WARNING");
 }
 ToolAPI.dropExpOrbs = (x, y, z, value, blockSource?: BlockSource) => (blockSource || BlockSource.getCurrentClientRegion()).spawnExpOrbs(x, y, z, value);
@@ -284,12 +290,8 @@ ToolAPI.getBlockMaterial = blockID => {
     return materialName == null ? null : { name: String(materialName), multiplier: ToolsModule.getBlockMaterialBreakingMultiplier(materialName) }
 }
 ToolAPI.getBlockMaterialName = blockID => String(ToolsModule.getBlockMaterialName(blockID));
-ToolAPI.registerBlockDiggingLevel = (blockID, level) => {
-    ToolsModule.setBlockDestroyLevel(blockID, level);
-}
-ToolAPI.registerBlockMaterial = (blockID, materialName, level, isNative) => {
-    ToolsModule.setBlockData(blockID, materialName, level || 0, isNative || false);
-}
+ToolAPI.registerBlockDiggingLevel = (blockID, level) => ToolsModule.setBlockDestroyLevel(blockID, level);
+ToolAPI.registerBlockMaterial = (blockID, materialName, level, isNative) => ToolsModule.setBlockData(blockID, materialName, level || 0, isNative || false);
 ToolAPI.resetEngine = () => {}
 ToolAPI.registerTool = (id, toolMaterial, blockMaterials, params) => {
     let materialName: string = "";
@@ -356,42 +358,55 @@ Block.setDestroyLevelForID = (blockID, level) => ToolAPI.registerBlockDiggingLev
 
 
 (() => {
-    for(let k in ToolAPI.blockMaterials) ToolAPI.addBlockMaterial(k, ToolAPI.blockMaterials[k].multiplier);
-    const materialsToDelete = [ "wood", "stone", "iron", "diamond", "golden", "netherite" ];
-    for(let materialName in ToolAPI.toolMaterials) {
-        const copy = { ...ToolAPI.toolMaterials[materialName] };
-        if(!!~materialsToDelete.indexOf(materialName)) delete ToolAPI.toolMaterials[materialName];
-        else ToolAPI.addToolMaterial(materialName, copy);
-    }
-    for(let id in ToolAPI.toolData) {
-        const copy = { ...ToolAPI.toolData[id] };
-        delete ToolAPI.toolData[id];
-        const numericId = parseInt(id);
-        if(!IDRegistry.isVanilla(numericId)) {
-            ToolAPI.registerTool(numericId, copy.toolMaterial, [], copy);
-        }
-    }
-    for(let id in ToolAPI.blockData) {
-        const numericId = parseInt(id);
-        ToolAPI.registerBlockMaterial(numericId, ToolAPI.blockData[id].material, ToolAPI.blockData[id].level, typeof ToolAPI.blockData[id].isNative === "boolean" ? ToolAPI.blockData[id].isNative : false);
-    }
-    ToolAPI.blockData = {};
+
     type StandardTools = "sword" | "axe" | "pickaxe" | "shovel" | "hoe";
     interface JSONToolAPIData {
         materials: { [key: string]: (number | string)[] },
         destroy_levels: (number | string)[][],
         vanilla_tools: { [key: string]: { [key in StandardTools]: number } },
-        tool_block_types: { [key in (StandardTools | "shears")]: string[] };
+        tool_block_types: { [key in (StandardTools | "shears")]: string[] },
+        tool_types_base_damage: { [key in StandardTools]: number };
     }
+
+    for(let materialName in ToolAPI.blockMaterials)
+        ToolAPI.addBlockMaterial(materialName, ToolAPI.blockMaterials[materialName].multiplier);
+    for(let materialName in ToolAPI.toolMaterials)
+        ToolAPI.addToolMaterial(materialName, ToolAPI.toolMaterials[materialName]);
+    for(let id in ToolAPI.toolData) {
+        const copy = { ...ToolAPI.toolData[id] };
+        delete ToolAPI.toolData[id];
+        const numericId = Number(id);
+        if(!IDRegistry.isVanilla(numericId))
+            ToolAPI.registerTool(numericId, copy.toolMaterial, null, copy);
+    }
+    for(let id in ToolAPI.blockData) {
+        const copy = { ...ToolAPI.blockData[id] };
+        delete ToolAPI.blockData[id];
+        const numericId = Number(id);
+        if(!IDRegistry.isVanilla(numericId))
+            ToolAPI.registerBlockMaterial(numericId, copy.material.name, copy.level, typeof copy.isNative === "boolean" ? copy.isNative : false);
+    }
+
     const json = FileTools.ReadJSON(`${__dir__}/data/toolapi_data.json`) as JSONToolAPIData;
-    for(let materialName in json.materials) ToolAPI.registerBlockMaterialAsArray(materialName, json.materials[materialName].map(val => typeof val === "number" ? val : VanillaTileID[val]), true);
-    json.destroy_levels.forEach((el, level) => el.forEach(id => {
-        id = typeof id === "number" ? id : VanillaTileID[id];
-        Block.setDestroyLevelForID(id as number, level + 1);
-    }));
-    Object.keys(json.tool_block_types).forEach((toolType: StandardTools | "shears") => json.tool_block_types[toolType].forEach(material => ToolAPI.toolBlockTypes[toolType][material] = true));
-    Object.keys(json.vanilla_tools).forEach(tier => {
-        const tierObj = ToolAPI.objectFromTier(ToolsModule.getTierByName(tier), tier);
-        Object.keys(json.vanilla_tools[tier]).forEach(toolType => ToolAPI.toolData[json.vanilla_tools[tier][toolType]] = { toolMaterial: tierObj, isWeapon: toolType === "sword", blockMaterials: ToolAPI.toolBlockTypes[toolType] });
+    for(let materialName in json.materials)
+        ToolAPI.registerBlockMaterialAsArray(materialName, json.materials[materialName].map(val => typeof val === "number" ? val : VanillaTileID[val]), true);
+    json.destroy_levels.forEach((ids, level) => {
+        ids.forEach(id => {
+            const numericId = typeof id === "number" ? id : VanillaTileID[id];
+            Block.setDestroyLevelForID(numericId, level + 1);
+        });
     });
+    for(let toolType in json.tool_block_types)
+        for(let materialName in json.tool_block_types[toolType])
+            ToolAPI.toolBlockTypes[toolType][materialName] = true;
+    for(let tier in json.vanilla_tools)
+        for(let toolType in json.vanilla_tools[tier])
+            ToolAPI.toolData[json.vanilla_tools[tier][toolType]] = {
+                toolMaterial: ToolAPI.objectFromTier(ToolsModule.getTierByName(tier), tier),
+                isWeapon: toolType === "sword",
+                blockMaterials: ToolAPI.toolBlockTypes[toolType],
+                damage: json.tool_types_base_damage[toolType],
+                isNative: true
+            }
+
 })();
