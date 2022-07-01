@@ -25,7 +25,12 @@
         "pushTo": "storage/emulated/0/games/horizon/packs/Inner_Core_Test/modpacks/Sky_Factory/mods/KernelExtension",
         "ndkPath": null
     },
-    "resources": [],
+    "resources": [
+        {
+            "path": "src/assets/res",
+            "type": "resource_directory"
+        }
+    ],
     "sources": [
         {
             "source": "src/dev",
@@ -44,9 +49,9 @@
             "language": "javascript"
         },
         {
-            "source": "src/preloader/*",
+            "source": "src/preloader",
             "type": "preloader",
-            "language": "javascript"
+            "language": "typescript"
         }
     ],
     "compile": [
