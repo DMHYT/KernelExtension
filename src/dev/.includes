@@ -1,5 +1,6 @@
 header.ts
 other/enums.ts
+other/events.ts
 modules/items.ts
 modules/tools.ts
 modules/callback.ts
