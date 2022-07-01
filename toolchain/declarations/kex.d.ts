@@ -1317,6 +1317,56 @@ declare function WRAP_JAVA(clazz: "vsdum.kex.util.AddonUtils"): typeof vsdum.kex
 
 declare module vsdum {
     export module kex {
+        export module util {
+            export module TextureWorker {
+                interface OverlaidTextureBuilder {
+                    bitmap(width: number, height: number, config?: android.graphics.Bitmap.Config): OverlaidTextureBuilder;
+                    overlay(path: any_string, name: any_string): OverlaidTextureBuilder;
+                    overlay(path: any_string, name: any_string, colorR: number, colorG: number, colorB: number): OverlaidTextureBuilder;
+                    overlay(bitmap: android.graphics.Bitmap): OverlaidTextureBuilder;
+                    overlay(bitmap: android.graphics.Bitmap, colorR: number, colorG: number, colorB: number): OverlaidTextureBuilder;
+                    result(path: any_string, name: any_string): OverlaidTextureBuilder;
+                    create(): Nullable<android.graphics.Bitmap>;
+                }
+                interface PaintedTextureBuilder {
+                    bitmap(width: number, height: number, config?: android.graphics.Bitmap.Config): PaintedTextureBuilder;
+                    source(path: any_string, name: any_string): PaintedTextureBuilder;
+                    source(bitmap: android.graphics.Bitmap): PaintedTextureBuilder;
+                    color(r: number, g: number, b: number): PaintedTextureBuilder;
+                    result(path: any_string, name: any_string): PaintedTextureBuilder;
+                    create(): Nullable<android.graphics.Bitmap>;
+                }
+                interface GrayscaledTextureBuilder {
+                    source(path: any_string, name: any_string): GrayscaledTextureBuilder;
+                    source(src: android.graphics.Bitmap): GrayscaledTextureBuilder;
+                    result(path: any_string, name: any_string): GrayscaledTextureBuilder;
+                    create(): Nullable<android.graphics.Bitmap>;
+                }
+                export function changeBitmapColor(source: android.graphics.Bitmap, colorR: number, colorG: number, colorB: number): android.graphics.Bitmap;
+                export function createTextureWithOverlays(): OverlaidTextureBuilder;
+                export function createPaintedTexture(): PaintedTextureBuilder;
+                export function createGrayscaledTexture(): GrayscaledTextureBuilder;
+            }
+        }
+    }
+}
+declare function WRAP_JAVA(clazz: "vsdum.kex.util.TextureWorker"): typeof vsdum.kex.util.TextureWorker;
+
+declare module vsdum {
+    export module kex {
+        export module util {
+            export module ItemAnimHelper {
+                export function convertTexture(sourcePath: any_string, resultPath: any_string): void;
+                export function makeCommonAnim(id: number, textureName: any_string, ticks: number, frames: number): void;
+                export function makeAdvancedAnim(id: number, textureName: any_string, interval: number, frames: number[]): void;
+            }
+        }
+    }
+}
+declare function WRAP_JAVA(clazz: "vsdum.kex.util.ItemAnimHelper"): typeof vsdum.kex.util.ItemAnimHelper;
+
+declare module vsdum {
+    export module kex {
         export module modules {
             export module misc {
                 export class ReachDistanceModifier extends java.lang.Object {
@@ -1565,6 +1615,8 @@ declare enum ETileEntityType {
     FoodItemComponent: typeof vsdum.kex.natives.FoodItemComponent,
     ReachDistanceModifier: typeof vsdum.kex.modules.misc.ReachDistanceModifier,
     CameraRollModifier: typeof vsdum.kex.modules.misc.CameraRollModifier,
+    TextureWorker: typeof vsdum.kex.util.TextureWorker,
+    ItemAnimHelper: typeof vsdum.kex.util.ItemAnimHelper,
     ESaturationModifier: {
         readonly POOR: 0.2,
         readonly LOW: 0.6,

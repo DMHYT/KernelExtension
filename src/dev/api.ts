@@ -19,6 +19,9 @@ const CameraRollModifier = WRAP_JAVA("vsdum.kex.modules.misc.CameraRollModifier"
 const GlobalContext = WRAP_JAVA("vsdum.kex.natives.GlobalContext");
 const I18n = WRAP_JAVA("vsdum.kex.natives.I18n");
 
+const TextureWorker = WRAP_JAVA("vsdum.kex.util.TextureWorker");
+const ItemAnimHelper = WRAP_JAVA("vsdum.kex.util.ItemAnimHelper");
+
 // ItemsModule.setDynamicFoodValues(VanillaItemID.sweet_berries, (stack) => {
 //     return new FoodItemComponent.Builder()
 //         .nutrition(Math.floor(Math.random() * 3) + 1)
@@ -49,6 +52,8 @@ ModAPI.registerAPI("KernelExtension", {
     I18n,
 
     AddonUtils,
+    TextureWorker,
+    ItemAnimHelper,
 
     ESaturationModifier,
     EDamageCause,
