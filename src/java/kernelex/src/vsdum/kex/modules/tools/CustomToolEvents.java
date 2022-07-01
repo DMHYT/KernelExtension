@@ -112,24 +112,6 @@ public class CustomToolEvents {
         }
     }
 
-    public static void onMineBlock(int x, int y, int z, byte side, int id, int data, long player)
-    {
-        ItemInstance stack = Entity.getCarriedItem(player);
-        if(DataSets.toolData.containsKey(stack.getId()))
-        {
-            ScriptableObject obj = DataSets.toolData.get(stack.getId());
-            if(ScriptableObject.hasProperty(obj, "onMineBlock"))
-            {
-                CommonTypes.callVoidJSFunction(obj, "onMineBlock", new Object[]{
-                    new Coords(x, y, z, side),
-                    stack,
-                    new FullBlock(id, data)
-                });
-                Entity.setCarriedItem(player, stack.getId(), stack.getCount(), stack.getData(), CommonTypes.getExtraFromInstance(stack));
-            }
-        }
-    }
-
     public static int getAttackDamageBonus(int id, int count, int data, long extraPtr, int defaultValue)
     {
         if(DataSets.toolData.containsKey(id))
