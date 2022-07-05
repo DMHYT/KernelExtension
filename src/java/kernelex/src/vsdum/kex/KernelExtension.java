@@ -2,6 +2,7 @@ package vsdum.kex;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.Random;
 
 import com.mojang.minecraftpe.MainActivity;
 import com.mojang.minecraftpe.TextInputProxyEditTextbox;
@@ -9,6 +10,7 @@ import com.zhekasmirnov.horizon.runtime.logger.Logger;
 import com.zhekasmirnov.innercore.utils.UIUtils;
 
 import android.support.annotation.Nullable;
+import vsdum.kex.network.PacketPipeline;
 
 public class KernelExtension {
 
@@ -18,6 +20,7 @@ public class KernelExtension {
     {
         Logger.debug("KEX", "Loading java...");
         defineCallbackClasses();
+        PacketPipeline.getSingleton().initPackets();
     }
 
     public static final byte[] getVersion()
@@ -29,6 +32,8 @@ public class KernelExtension {
     {
         return 300;
     }
+
+    public static final Random rand = new Random();
 
     @Nullable private static Runnable onSignOpenFunc = null;
 
