@@ -183,17 +183,6 @@ extern "C" {
             }
         }
     }
-    JNIEXPORT void JNICALL Java_vsdum_kex_modules_tools_ToolsNativeAPI_nativeDamageToolInHand
-    (JNIEnv*, jclass, jlong player, jint damage) {
-        Actor* actor = Actor::wrap(player);
-        if(actor != nullptr) {
-            VTABLE_FIND_OFFSET(Actor_getCarriedItem, _ZTV5Actor, _ZNK5Actor14getCarriedItemEv);
-            ItemStack* stack = VTABLE_CALL<ItemStack*>(Actor_getCarriedItem, actor);
-            if(stack != nullptr) {
-                stack->hurtAndBreak(damage, actor);
-            }
-        }
-    }
     JNIEXPORT void JNICALL Java_vsdum_kex_modules_ToolsModule_useCustomShearsOn
     (JNIEnv*, jclass, jint x, jint y, jint z, jbyte side, jfloat relX, jfloat relY, jfloat relZ, jlong actorUID) {
         Actor* actor = Actor::wrap(actorUID);
