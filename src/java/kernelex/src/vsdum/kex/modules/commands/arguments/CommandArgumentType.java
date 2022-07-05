@@ -51,6 +51,7 @@ public final class CommandArgumentType {
         if(!literals.contains(literal))
         {
             CommandsModule.newEnum(literalEnum).add(literal, 0).register();
+            literals.add(literal);
         }
         return new CommandArgumentType(11, 4, literalEnum, "Literal");
     }
