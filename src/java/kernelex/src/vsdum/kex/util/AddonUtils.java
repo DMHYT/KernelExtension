@@ -36,10 +36,7 @@ public final class AddonUtils {
                     {
                         numericId = 255 - numericId;
                     }
-                    if(!vanillaNumericToStringIdMap.containsKey(numericId))
-                    {
-                        vanillaNumericToStringIdMap.put(numericId, stringId);
-                    }
+                    vanillaNumericToStringIdMap.putIfAbsent(numericId, stringId);
                 }
             }
         } catch(Throwable ex) {}
@@ -73,8 +70,7 @@ public final class AddonUtils {
         if(IDRegistry.isVanilla(id))
         {
             if(id > 255) id = 255 - id;
-            if(!vanillaNumericToStringIdMap.containsKey(id)) return null;
-            return vanillaNumericToStringIdMap.get(id);
+            return vanillaNumericToStringIdMap.getOrDefault(id, null);
         } else return NativeAPI.convertNameId(IDRegistry.getNameByID(id));
     }
 

@@ -9,34 +9,30 @@ import com.zhekasmirnov.innercore.api.mod.ScriptableObjectHelper;
 
 import android.support.annotation.Nullable;
 import vsdum.kex.modules.ToolsModule.ItemTier;
+import vsdum.kex.util.MapBuilder;
 
 public class DataSets {
     
-    public static final Map<String, ItemTier> tiersByName = new HashMap<>();
+    private static final long[] vanillaTierPointers = ToolsNativeAPI.nativeGrabVanillaItemTiers();
+    public static final Map<String, ItemTier> tiersByName = new MapBuilder<String, ItemTier>()
+        .add("wood", new ItemTier(vanillaTierPointers[0]))
+        .add("stone", new ItemTier(vanillaTierPointers[1]))
+        .add("iron", new ItemTier(vanillaTierPointers[2]))
+        .add("diamond", new ItemTier(vanillaTierPointers[3]))
+        .add("gold", new ItemTier(vanillaTierPointers[4]))
+        .add("golden", new ItemTier(vanillaTierPointers[4]))
+        .add("netherite", new ItemTier(vanillaTierPointers[5]))
+        .build();
 
-    static {
-        long[] vanillaTiers = ToolsNativeAPI.nativeGrabVanillaItemTiers();
-        tiersByName.put("wood", new ItemTier(vanillaTiers[0]));
-        tiersByName.put("stone", new ItemTier(vanillaTiers[1]));
-        tiersByName.put("iron", new ItemTier(vanillaTiers[2]));
-        tiersByName.put("diamond", new ItemTier(vanillaTiers[3]));
-        ItemTier gold = new ItemTier(vanillaTiers[4]);
-        tiersByName.put("gold", gold);
-        tiersByName.put("golden", gold);
-        tiersByName.put("netherite", new ItemTier(vanillaTiers[5]));
-    }
-
-    public static final Map<String, Float> materialNameToBreakingMultiplier = new HashMap<>();
-
-    static {
-        materialNameToBreakingMultiplier.put("stone", Float.valueOf(10/3));
-        materialNameToBreakingMultiplier.put("wood", Float.valueOf(1.0f));
-        materialNameToBreakingMultiplier.put("dirt", Float.valueOf(1.0f));
-        materialNameToBreakingMultiplier.put("plant", Float.valueOf(1.0f));
-        materialNameToBreakingMultiplier.put("fibre", Float.valueOf(1.0f));
-        materialNameToBreakingMultiplier.put("cobweb", Float.valueOf(10/3));
-        materialNameToBreakingMultiplier.put("unbreaking", Float.valueOf(999999999));
-    }
+    public static final Map<String, Float> materialNameToBreakingMultiplier = new MapBuilder<String, Float>()
+        .add("stone", 10.0f / 3.0f)
+        .add("wood", 1.0f)
+        .add("dirt", 1.0f)
+        .add("plant", 1.0f)
+        .add("fibre", 1.0f)
+        .add("cobweb", 10.0f / 3.0f)
+        .add("unbreaking", 999999999f)
+        .build();
 
     public static final class BlockData {
 

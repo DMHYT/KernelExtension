@@ -48,7 +48,7 @@ public class CustomToolEvents {
                 boolean result = CommonTypes.callBooleanJSFunction(obj, "onDestroy", new Object[]{
                     item, coords, new FullBlock(block.first.intValue(), block.second.intValue()), Long.valueOf(player)
                 }, false);
-                Entity.setCarriedItem(player, item.getId(), item.getCount(), item.getData(), CommonTypes.getExtraFromInstance(item));
+                Entity.setCarriedItem(player, item.getId(), item.getCount(), item.getData(), item.getExtra());
                 return result;
             }
         }
@@ -65,7 +65,7 @@ public class CustomToolEvents {
                 boolean result = CommonTypes.callBooleanJSFunction(obj, "onAttack", new Object[]{
                     item, Long.valueOf(victim), Long.valueOf(attacker)
                 }, false);
-                Entity.setCarriedItem(attacker, item.getId(), item.getCount(), item.getData(), CommonTypes.getExtraFromInstance(item));
+                Entity.setCarriedItem(attacker, item.getId(), item.getCount(), item.getData(), item.getExtra());
                 return result;
             }
         }
@@ -74,13 +74,18 @@ public class CustomToolEvents {
 
     public static boolean onBroke()
     {
-        ItemInstance stack = Entity.getCarriedItem(NativeAPI.getLocalPlayer());
+        return onBroke(NativeAPI.getLocalPlayer());
+    }
+
+    public static boolean onBroke(long player)
+    {
+        ItemInstance stack = Entity.getCarriedItem(player);
         if(DataSets.toolData.containsKey(stack.getId()))
         {
             ScriptableObject obj = DataSets.toolData.get(stack.getId());
             if(ScriptableObject.hasProperty(obj, "onBroke"))
             {
-                return CommonTypes.callBooleanJSFunction(obj, "onBroke", new Object[]{ stack }, false);
+                return CommonTypes.callBooleanJSFunction(obj, "onBroke", new Object[]{ stack, Long.valueOf(player) }, false);
             }
         }
         return false;
@@ -96,7 +101,7 @@ public class CustomToolEvents {
                 ScriptableObject obj = DataSets.toolData.get(item.getId());
                 if(ScriptableObject.hasProperty(obj, "modifyEnchant"))
                 {
-                    NativeItemInstanceExtra extra = CommonTypes.getExtraFromInstance(item);
+                    NativeItemInstanceExtra extra = item.getExtra();
                     if(extra == null) extra = new NativeItemInstanceExtra();
                     extra.removeAllEnchants();
                     ScriptableObject enchantData = CommonTypes.createEnchantDataScriptable(new ItemStack(item));

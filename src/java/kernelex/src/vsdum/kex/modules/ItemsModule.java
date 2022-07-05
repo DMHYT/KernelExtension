@@ -15,6 +15,7 @@ import vsdum.kex.modules.misc.ReachDistanceModifier;
 import vsdum.kex.natives.FoodItemComponent;
 import vsdum.kex.natives.Level;
 import vsdum.kex.natives.MobEffectInstance;
+import vsdum.kex.util.MapBuilder;
 
 public class ItemsModule {
 
@@ -47,16 +48,14 @@ public class ItemsModule {
         return component;
     }
 
-    private static final Map<String, Float> foodSaturationModifiers = new HashMap<>();
-
-    static {
-        foodSaturationModifiers.put("poor", 0.2f);
-        foodSaturationModifiers.put("low", 0.6f);
-        foodSaturationModifiers.put("normal", 1.2f);
-        foodSaturationModifiers.put("good", 1.6f);
-        foodSaturationModifiers.put("max", 2.0f);
-        foodSaturationModifiers.put("supernatural", 2.4f);
-    }
+    private static final Map<String, Float> foodSaturationModifiers = new MapBuilder<String, Float>()
+        .add("poor", 0.2f)
+        .add("low", 0.6f)
+        .add("normal", 1.2f)
+        .add("good", 1.6f)
+        .add("max", 2.0f)
+        .add("supernatural", 2.4f)
+        .build();
     
     public static void newFoodSaturationModifier(String name, float value)
     {
@@ -124,7 +123,7 @@ public class ItemsModule {
 
     public static void addTooltip(int id, OnTooltipCallback cb, int priority)
     {
-        if(!itemOnTooltipCallbacks.containsKey(id)) itemOnTooltipCallbacks.put(id, new ArrayList<>());
+        itemOnTooltipCallbacks.putIfAbsent(id, new ArrayList<>());
         CallbackFunction.addToList(new CallbackFunction<OnTooltipCallback>(cb, priority), itemOnTooltipCallbacks.get(id));
     }
 
@@ -163,7 +162,7 @@ public class ItemsModule {
 
     public static void registerReachDistanceModifierFor(int id, ReachDistanceModifier modifier)
     {
-        if(!reachDistanceModifiers.containsKey(id)) reachDistanceModifiers.put(id, new ArrayList<>());
+        reachDistanceModifiers.putIfAbsent(id, new ArrayList<>());
         reachDistanceModifiers.get(id).add(modifier);
     }
 

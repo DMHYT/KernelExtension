@@ -46,7 +46,7 @@ public class DamageModule {
 
     private static Map<String, String> getTranslationsMapForCause(String causeName)
     {
-        if(!deathMessageTranslations.containsKey(causeName)) deathMessageTranslations.put(causeName, new HashMap<>());
+        deathMessageTranslations.putIfAbsent(causeName, new HashMap<>());
         return deathMessageTranslations.get(causeName);
     }
 
@@ -55,12 +55,7 @@ public class DamageModule {
         if(!deathMessageTranslations.containsKey(causeName)) return "death.kex." + causeName;
         Map<String, String> translations = deathMessageTranslations.get(causeName);
         String language = CommonTypes.getShortLanguageName(NameTranslation.getLanguage());
-        if(!translations.containsKey(language))
-        {
-            if(!translations.containsKey("en")) return "death.kex." + causeName;
-            return translations.get("en");
-        }
-        return translations.get(language);
+        return translations.getOrDefault(language, translations.getOrDefault("en", "death.kex." + causeName));
     }
 
     public static String translateAndFormatDeathMessage(String causeName, String[] formatData)

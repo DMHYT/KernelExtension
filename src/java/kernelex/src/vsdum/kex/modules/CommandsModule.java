@@ -263,12 +263,7 @@ public class CommandsModule {
         if(!descriptionTranslations.containsKey(commandName)) return "commands." + commandName + ".description";
         Map<String, String> translations = descriptionTranslations.get(commandName);
         String language = CommonTypes.getShortLanguageName(NameTranslation.getLanguage());
-        if(!translations.containsKey(language))
-        {
-            if(!translations.containsKey("en")) return "commands." + commandName + ".description";
-            return translations.get("en");
-        }
-        return translations.get(language);
+        return translations.getOrDefault(language, translations.getOrDefault("en", "commands." + commandName + ".description"));
     }
 
     private static void buildArgument(long vectorPtr, ArgumentBase arg)

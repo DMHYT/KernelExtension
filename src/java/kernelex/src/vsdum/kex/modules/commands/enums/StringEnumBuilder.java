@@ -17,7 +17,7 @@ public class StringEnumBuilder {
 
     public StringEnumBuilder add(String value)
     {
-        if(!this.values.contains(value)) this.values.add(value);
+        this.values.add(value);
         return this;
     }
 

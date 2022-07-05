@@ -77,12 +77,12 @@ public class SmithingTableRecipes {
 
     public static Set<SmithingTableRecipe> getRecipesByResult(int resultID)
     {
-        return recipesByResult.containsKey(resultID) ? recipesByResult.get(resultID) : new HashSet<>();
+        return recipesByResult.getOrDefault(resultID, new HashSet<>());
     }
 
     public static Set<SmithingTableRecipe> getRecipesByBase(int baseID)
     {
-        return recipesByBase.containsKey(baseID) ? recipesByBase.get(baseID) : new HashSet<>();
+        return recipesByBase.getOrDefault(baseID, new HashSet<>());
     }
 
     public static Set<SmithingTableRecipe> getAllRecipes()

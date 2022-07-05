@@ -9,7 +9,7 @@ public class SetBuilder<T> {
 
     public SetBuilder<T> add(T entry)
     {
-        if(!this.result.contains(entry)) this.result.add(entry);
+        this.result.add(entry);
         return this;
     }
 

@@ -1,10 +1,10 @@
 package vsdum.kex.util;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.zhekasmirnov.horizon.runtime.logger.Logger;
 import com.zhekasmirnov.innercore.api.NativeItem;
@@ -22,7 +22,7 @@ public class ItemAnimHelper {
     }
 
     private static final Map<Integer, AnimationContainer> animationTickingData = new HashMap<>();
-    private static final List<Runnable> animationTickers = new ArrayList<>();
+    private static final Set<Runnable> animationTickers = new HashSet<>();
     
     public static void convertTexture(String sourcePath, String resultPath)
     {

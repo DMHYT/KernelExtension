@@ -63,14 +63,8 @@ public class LootModule {
 
     public static final LootModifier createLootTableModifier(String tableName)
     {
-        if(modifiers.containsKey(tableName))
-        {
-            return modifiers.get(tableName);
-        } else {
-            LootModifier modifier = new LootModifier();
-            modifiers.put(tableName, modifier);
-            return modifier;
-        }
+        modifiers.putIfAbsent(tableName, new LootModifier());
+        return modifiers.get(tableName);
     }
 
     public static final LootConditions createConditionsList()
@@ -86,7 +80,7 @@ public class LootModule {
     public static void addOnDropCallbackFor(String tableName, OnDropCallback cb, int priority)
     {
         enableOnDropCallbackFor(tableName);
-        if(!onDropCallbacks.containsKey(tableName)) onDropCallbacks.put(tableName, new ArrayList<>());
+        onDropCallbacks.putIfAbsent(tableName, new ArrayList<>());
         CallbackFunction.addToList(new CallbackFunction<OnDropCallback>(cb, priority), onDropCallbacks.get(tableName));
     }
 
@@ -125,7 +119,7 @@ public class LootModule {
     {
         String tableDir = validateTableName(tableName);
         if(NativeCallback.isLevelDisplayed()) nativeForceLoad(tableDir);
-        if(!forceLoaded.contains(tableName)) forceLoaded.add(tableDir);
+        forceLoaded.add(tableDir);
     }
 
     public static void registerCustomLootFunction(String functionName, CustomLootFunctionCallback callback)
