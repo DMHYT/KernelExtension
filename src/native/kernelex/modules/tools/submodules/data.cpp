@@ -1,5 +1,3 @@
-#include <static_symbol.h>
-
 #include <innercore/id_conversion_map.h>
 
 #include <BlockLegacy.hpp>
@@ -15,10 +13,8 @@ float KEXToolsModule::LastDestroyedBlock::getOrCalculateSpeed(const ItemStackBas
         calculatedForX = x;
         calculatedForY = y;
         calculatedForZ = z;
-        STATIC_SYMBOL(WeaponItem_getDestroySpeed, "_ZNK10WeaponItem15getDestroySpeedERK13ItemStackBaseRK5Block", (WeaponItem*, const ItemStackBase&, const Block&), float);
-        float result = WeaponItem_getDestroySpeed(item, stack, block);
         float blockDestroyTime = block.legacy->getDestroySpeed();
-        result = blockDestroyTime / KEXJavaBridge::CustomToolEvents::calcDestroyTime(IdConversion::dynamicToStatic(block.legacy->id, IdConversion::BLOCK), block.data, x, y, z, side, blockDestroyTime, 1.0f, 1.0f, blockDestroyTime);
+        float result = blockDestroyTime / KEXJavaBridge::CustomToolEvents::calcDestroyTime(IdConversion::dynamicToStatic(block.legacy->id, IdConversion::BLOCK), block.data, x, y, z, side, blockDestroyTime, 1.0f, 1.0f, blockDestroyTime);
         result = result == 0.0f ? 1.0f : result;
         destroySpeed = result;
         return result;
@@ -33,20 +29,18 @@ float KEXToolsModule::LastDestroyedBlock::getOrCalculateSpeed(const ItemStackBas
         calculatedForX = x;
         calculatedForY = y;
         calculatedForZ = z;
-        STATIC_SYMBOL(DiggerItem_getDestroySpeed, "_ZNK10DiggerItem15getDestroySpeedERK13ItemStackBaseRK5Block", (DiggerItem*, const ItemStackBase&, const Block&), float);
-        float result = DiggerItem_getDestroySpeed(item, stack, block);
         int staticId = IdConversion::dynamicToStatic(block.legacy->id, IdConversion::BLOCK);
         float blockDestroyTime = block.legacy->getDestroySpeed();
         float materialDivider = item->speed;
         materialDivider = materialDivider == 0.0f ? 1.0f : materialDivider;
         float efficiencyModifier = item->destroySpeedBonus(stack);
-        efficiencyModifier = efficiencyModifier == 0.0f ? 1.0f : result;
+        efficiencyModifier = efficiencyModifier == 0.0f ? 1.0f : efficiencyModifier;
         if(!item->hasBlock(block)) {
             materialDivider = 1.0f;
             efficiencyModifier = 1.0f;
         }
         float calc = KEXJavaBridge::CustomToolEvents::calcDestroyTime(staticId, block.data, x, y, z, side, blockDestroyTime, materialDivider, efficiencyModifier, blockDestroyTime / materialDivider / efficiencyModifier);
-        result = blockDestroyTime / calc;
+        float result = blockDestroyTime / calc;
         result = result == 0.0f ? 1.0f : result;
         destroySpeed = result;
         return result;
