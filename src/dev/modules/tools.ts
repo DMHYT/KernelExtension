@@ -239,7 +239,7 @@ namespace Item {
 
 namespace ToolAPI {
     export const toolBlockTypes = { sword: {}, axe: {}, pickaxe: {}, shovel: {}, hoe: {}, shears: {} };
-    export function objectFromTier(tier: ItemTier, name: string): ToolAPI.ToolMaterial {
+    export function objectFromTier(tier: ItemTier, name: string): ToolMaterial {
         return {
             damage: tier.getAttackDamageBonus(),
             durability: tier.getUses(),
@@ -262,20 +262,13 @@ ToolAPI.ToolType = {
 ToolAPI.addBlockMaterial = (name, breakingMultiplier) => ToolsModule.addBlockMaterial(name, breakingMultiplier);
 ToolAPI.addToolMaterial = (name, material) => {
     if(ToolsModule.getTierByName(name) == null) {
-        const tier = new ToolsModule.ItemTier(name,
+        ToolAPI.toolMaterials[name] = ToolAPI.objectFromTier(new ToolsModule.ItemTier(name, 
             material.level || 0, 
             material.durability || 1, 
             material.efficiency || 1, 
             material.damage || 0, 
-            material.enchantability || 14);
-        ToolAPI.toolMaterials[name] = material;
-        const materialObj = ToolAPI.toolMaterials[name];
-        materialObj.name = name;
-        materialObj.level = tier.getLevel();
-        materialObj.durability = tier.getUses();
-        materialObj.efficiency = tier.getSpeed();
-        materialObj.damage = tier.getAttackDamageBonus();
-        materialObj.enchantability = tier.getEnchantmentValue();
+            material.enchantability || 14
+        ), name);
     } else Logger.Log(`Tool material with name \'${name}\' has already been registered before! Skipping...`, "KEX-WARNING");
 }
 ToolAPI.dropExpOrbs = (x, y, z, value, blockSource?: BlockSource) => (blockSource || BlockSource.getCurrentClientRegion()).spawnExpOrbs(x, y, z, value);
@@ -294,6 +287,12 @@ ToolAPI.registerBlockDiggingLevel = (blockID, level) => ToolsModule.setBlockDest
 ToolAPI.registerBlockMaterial = (blockID, materialName, level, isNative) => ToolsModule.setBlockData(blockID, materialName, level || 0, isNative || false);
 ToolAPI.resetEngine = () => {}
 ToolAPI.registerTool = (id, toolMaterial, blockMaterials, params) => {
+    params ??= {};
+    params.brokenId ??= 0;
+    params.damage ??= 0;
+    params.blockMaterials ??= {};
+    if(Array.isArray(blockMaterials))
+        blockMaterials.forEach(materialName => params.blockMaterials[materialName] = true);
     let materialName: string = "";
     if(typeof toolMaterial === "object") {
         materialName = `__unnamedToolMaterial${ToolAPI.unnamedMaterialNum++}`;
@@ -304,38 +303,32 @@ ToolAPI.registerTool = (id, toolMaterial, blockMaterials, params) => {
         materialName = "wood";
         tier = ToolsModule.getTierByName(materialName);
     }
-    if(typeof params !== "undefined") {
-        if(typeof params.toolMaterial === "undefined") {
-            params.toolMaterial = {
-                level: tier.getLevel(),
-                durability: tier.getUses(),
-                efficiency: tier.getSpeed(),
-                damage: tier.getAttackDamageBonus(),
-                enchantability: tier.getEnchantmentValue(),
-                name: materialName
-            }
-        }
-        ToolAPI.toolData[id] = params;
-        const factory = ItemFactoryHelper.killItem(id);
-        if(factory == null) throw new java.lang.IllegalStateException("You cannot call ToolAPI.registerTool before creating the item itself!");
-        switch(params.__flag) {
-            case "__sword": ToolsModule.registerSword(id, factory.nameId, factory.nameToDisplay, factory.iconName, factory.iconIndex, tier); break;
-            case "__axe": ToolsModule.registerAxe(id, factory.nameId, factory.nameToDisplay, factory.iconName, factory.iconIndex, tier); break;
-            case "__pickaxe": ToolsModule.registerPickaxe(id, factory.nameId, factory.nameToDisplay, factory.iconName, factory.iconIndex, tier); break;
-            case "__shovel": ToolsModule.registerShovel(id, factory.nameId, factory.nameToDisplay, factory.iconName, factory.iconIndex, tier); break;
-            case "__hoe": ToolsModule.registerHoe(id, factory.nameId, factory.nameToDisplay, factory.iconName, factory.iconIndex, tier); break;
-            case "__shears": ToolsModule.registerShears(id, factory.nameId, factory.nameToDisplay, factory.iconName, factory.iconIndex, tier); break;
-            default:
-                if(typeof params.blockMaterials === "undefined" && Array.isArray(blockMaterials)) {
-                    params.blockMaterials = {};
-                    blockMaterials.forEach(material => params.blockMaterials[material] = true);
-                }
-                Item.createCustomTool(String(factory.nameId), String(factory.nameToDisplay), { name: String(factory.iconName), meta: factory.iconIndex }, { stack: factory.stack, tier: materialName }, params, id);
-        }
-        factory.applyOldFactoryProperties(id);
+    params.toolMaterial = {
+        level: tier.getLevel(),
+        durability: tier.getUses(),
+        efficiency: tier.getSpeed(),
+        damage: tier.getAttackDamageBonus(),
+        enchantability: tier.getEnchantmentValue(),
+        name: materialName
     }
+    params.calcDestroyTime ??= (to, c, b, ti, defaultTime) => defaultTime;
+    ToolAPI.toolData[id] = params;
+    const factory = ItemFactoryHelper.killItem(id);
+    if(factory == null) throw new java.lang.IllegalStateException("You cannot call ToolAPI.registerTool before creating the item itself!");
+    switch(params.__flag) {
+        case "__sword": ToolsModule.registerSword(id, factory.nameId, factory.nameToDisplay, factory.iconName, factory.iconIndex, tier); break;
+        case "__axe": ToolsModule.registerAxe(id, factory.nameId, factory.nameToDisplay, factory.iconName, factory.iconIndex, tier); break;
+        case "__pickaxe": ToolsModule.registerPickaxe(id, factory.nameId, factory.nameToDisplay, factory.iconName, factory.iconIndex, tier); break;
+        case "__shovel": ToolsModule.registerShovel(id, factory.nameId, factory.nameToDisplay, factory.iconName, factory.iconIndex, tier); break;
+        case "__hoe": ToolsModule.registerHoe(id, factory.nameId, factory.nameToDisplay, factory.iconName, factory.iconIndex, tier); break;
+        case "__shears": ToolsModule.registerShears(id, factory.nameId, factory.nameToDisplay, factory.iconName, factory.iconIndex, tier); break;
+        default: Item.createCustomTool(String(factory.nameId), String(factory.nameToDisplay), { name: String(factory.iconName), meta: factory.iconIndex }, { stack: factory.stack, tier: materialName }, params, id);
+    }
+    factory.applyOldFactoryProperties(id);
 }
 ToolAPI.registerSword = (id, toolMaterial, params) => {
+    params ??= {};
+    params.isWeapon = true;
     let materialName: string = "";
     if(typeof toolMaterial === "object") {
         materialName = `__unnamedToolMaterial${ToolAPI.unnamedMaterialNum++}`;
@@ -343,7 +336,7 @@ ToolAPI.registerSword = (id, toolMaterial, params) => {
     }
     const tier = ToolsModule.getTierByName(materialName) ?? ToolsModule.getTierByName("wood");
     const factory = ItemFactoryHelper.killItem(id);
-    if(typeof params === "object" && Object.keys(params).length - Number(typeof params.__flag !== "undefined") > 0) {
+    if(Object.keys(params).length - Number(typeof params.__flag !== "undefined") > 1) {
         Item.createCustomTool(String(factory.nameId), String(factory.nameToDisplay), { name: String(factory.iconName), meta: factory.iconIndex }, { stack: factory.stack, tier: materialName }, params);
     } else ToolsModule.registerSword(id, factory.nameId, factory.nameToDisplay, factory.iconName, factory.iconIndex, tier);
 }
@@ -373,18 +366,18 @@ Block.setDestroyLevelForID = (blockID, level) => ToolAPI.registerBlockDiggingLev
     for(let materialName in ToolAPI.toolMaterials)
         ToolAPI.addToolMaterial(materialName, ToolAPI.toolMaterials[materialName]);
     for(let id in ToolAPI.toolData) {
-        const copy = { ...ToolAPI.toolData[id] };
+        const data = ToolAPI.toolData[id];
         delete ToolAPI.toolData[id];
         const numericId = Number(id);
         if(!IDRegistry.isVanilla(numericId))
-            ToolAPI.registerTool(numericId, copy.toolMaterial, null, copy);
+            ToolAPI.registerTool(numericId, data.toolMaterial, null, data);
     }
     for(let id in ToolAPI.blockData) {
-        const copy = { ...ToolAPI.blockData[id] };
+        const data = ToolAPI.blockData[id];
         delete ToolAPI.blockData[id];
         const numericId = Number(id);
         if(!IDRegistry.isVanilla(numericId))
-            ToolAPI.registerBlockMaterial(numericId, copy.material.name, copy.level, typeof copy.isNative === "boolean" ? copy.isNative : false);
+            ToolAPI.registerBlockMaterial(numericId, data.material.name, data.level, typeof data.isNative === "boolean" ? data.isNative : false);
     }
 
     const json = FileTools.ReadJSON(`${__dir__}/data/toolapi_data.json`) as JSONToolAPIData;

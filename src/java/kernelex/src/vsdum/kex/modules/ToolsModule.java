@@ -3,20 +3,23 @@ package vsdum.kex.modules;
 import java.util.Random;
 
 import com.zhekasmirnov.innercore.api.NativeAPI;
+import com.zhekasmirnov.innercore.api.NativeBlock;
+import com.zhekasmirnov.innercore.api.NativeItem;
 import com.zhekasmirnov.innercore.api.NativeItemInstanceExtra;
 import com.zhekasmirnov.innercore.api.commontypes.Coords;
 import com.zhekasmirnov.innercore.api.commontypes.ItemInstance;
 import com.zhekasmirnov.innercore.api.constants.Enchantment;
+import com.zhekasmirnov.innercore.api.mod.ScriptableObjectHelper;
+import com.zhekasmirnov.innercore.api.mod.adaptedscript.AdaptedScriptAPI.Entity;
 
 import org.mozilla.javascript.ScriptableObject;
 
 import android.support.annotation.Nullable;
 import android.util.Pair;
 import vsdum.kex.common.INativeInterface;
-import vsdum.kex.modules.tools.CustomToolEvents;
-import vsdum.kex.modules.tools.DataSets;
-import vsdum.kex.modules.tools.ToolsNativeAPI;
+import vsdum.kex.modules.tools.*;
 import vsdum.kex.util.CommonTypes;
+import vsdum.kex.util.SoundEffect;
 
 public class ToolsModule {
 
@@ -38,8 +41,7 @@ public class ToolsModule {
 
     @Nullable public static final ItemTier getTierByName(String name)
     {
-        if(!DataSets.tiersByName.containsKey(name)) return null;
-        return DataSets.tiersByName.get(name);
+        return DataSets.tiersByName.getOrDefault(name, null);
     }
 
     public static class ItemTier implements INativeInterface {
@@ -175,25 +177,23 @@ public class ToolsModule {
 
     public static void addBlockMaterial(String name, float breakingMultiplier)
     {
-        if(!DataSets.materialNameToBreakingMultiplier.containsKey(name))
-        {
-            DataSets.materialNameToBreakingMultiplier.put(name, Float.valueOf(breakingMultiplier));
-        }
+        DataSets.materialNameToBreakingMultiplier.putIfAbsent(name, breakingMultiplier);
     }
 
     public static float getBlockMaterialBreakingMultiplier(String name)
     {
-        if(!DataSets.materialNameToBreakingMultiplier.containsKey(name)) return 0.0f;
-        return DataSets.materialNameToBreakingMultiplier.get(name).floatValue();
+        return DataSets.materialNameToBreakingMultiplier.getOrDefault(name, 0.0f).floatValue();
     }
 
     public static DataSets.BlockData getBlockData(int blockID)
     {
+        blockID = blockID < 0 ? 255 - blockID : blockID;
         return (DataSets.BlockData) ToolsNativeAPI.nativeGetBlockData(blockID);
     }
 
     @Nullable public static String getBlockMaterialName(int blockID)
     {
+        blockID = blockID < 0 ? 255 - blockID : blockID;
         return ToolsNativeAPI.nativeGetBlockMaterialName(blockID);
     }
 
@@ -240,6 +240,17 @@ public class ToolsModule {
         DataSets.toolData.put(id, data);
     }
 
+    public static void breakCarriedTool(long player, int damageValue, ItemInstance item)
+    {
+        if(item.getData() + damageValue >= NativeItem.getMaxDamageForId(item.getId(), item.getData()))
+        {
+            ScriptableObject toolData = DataSets.toolData.get(item.getId());
+            int brokenId = toolData != null ? ScriptableObjectHelper.getIntProperty(toolData, "brokenId", 0) : 0;
+            Entity.setCarriedItem(player, brokenId, brokenId == 0 ? 0 : 1, 0, brokenId == 0 ? null : item.getExtra());
+            SoundEffect.create("random.break").playAt(player, 1.0f);
+        } else Entity.setCarriedItem(player, item.getId(), item.getCount(), item.getData() + damageValue, item.getExtra());
+    }
+
     public static void destroyBlockHook(Coords coords, Object tile, ItemInstance item, long player)
     {
         Pair<Integer, Integer> block = CommonTypes.deserializeFullBlockOrBlockState(tile);
@@ -248,12 +259,18 @@ public class ToolsModule {
             if(!CustomToolEvents.onDestroy(coords, item, tile, player))
             {
                 CustomToolEvents.modifyEnchant(coords, item, tile, player);
-                NativeItemInstanceExtra extra = CommonTypes.getExtraFromInstance(item);
+                NativeItemInstanceExtra extra = item.getExtra();
                 if(extra == null) extra = new NativeItemInstanceExtra();
                 int unbreaking = extra.getEnchantLevel(Enchantment.UNBREAKING);
-                if((getBlockDestroyTime(block.first.intValue()) > 0 || getToolLevelViaBlock(item.getId(), block.first.intValue()) > 0) && rand.nextFloat() < 1.0f / (unbreaking + 1))
-                {
-                    ToolsNativeAPI.nativeDamageToolInHand(player, DataSets.isWeapon(item.getId()) ? 2 : 1);
+                if(
+                    NativeBlock.getDestroyTime(block.first.intValue()) > 0.0f && (
+                        getBlockDestroyTime(block.first.intValue()) > 0 ||
+                        getToolLevelViaBlock(item.getId(), block.first.intValue()) > 0
+                    ) &&
+                    rand.nextFloat() < 1.0f / (unbreaking + 1) &&
+                    !CustomToolEvents.onBroke(player)
+                ) {
+                    breakCarriedTool(player, DataSets.isWeapon(item.getId()) ? 2 : 1, item);
                 }
             }
         }
@@ -264,12 +281,12 @@ public class ToolsModule {
         if(!CustomToolEvents.onAttack(victim, attacker, item))
         {
             CustomToolEvents.modifyEnchant(null, item, null, attacker);
-            NativeItemInstanceExtra extra = CommonTypes.getExtraFromInstance(item);
+            NativeItemInstanceExtra extra = item.getExtra();
             if(extra == null) extra = new NativeItemInstanceExtra();
             int unbreaking = extra.getEnchantLevel(Enchantment.UNBREAKING);
-            if(rand.nextFloat() < 1.0f / (unbreaking + 1))
+            if(rand.nextFloat() < 1.0f / (unbreaking + 1) && !CustomToolEvents.onBroke(attacker))
             {
-                ToolsNativeAPI.nativeDamageToolInHand(attacker, DataSets.isWeapon(item.getId()) ? 1 : 2);
+                breakCarriedTool(attacker, DataSets.isWeapon(item.getId()) ? 1 : 2, item);
             }
         }
     }
