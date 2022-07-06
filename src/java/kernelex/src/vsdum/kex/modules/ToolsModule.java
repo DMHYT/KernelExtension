@@ -182,7 +182,7 @@ public class ToolsModule {
 
     public static float getBlockMaterialBreakingMultiplier(String name)
     {
-        return DataSets.materialNameToBreakingMultiplier.getOrDefault(name, 0.0f).floatValue();
+        return DataSets.materialNameToBreakingMultiplier.getOrDefault(name, 1.0f).floatValue();
     }
 
     public static DataSets.BlockData getBlockData(int blockID)
@@ -227,13 +227,6 @@ public class ToolsModule {
         ToolsNativeAPI.nativeSetBlockIsNative(blockID, isNative);
     }
 
-    public static float getDestroyTimeViaTool(Object tile, int x, int y, int z, int side, int id, int count, int data, NativeItemInstanceExtra extra)
-    {
-        Pair<Integer, Integer> block = CommonTypes.deserializeFullBlockOrBlockState(tile);
-        if(block == null) return 0.0f;
-        return ToolsNativeAPI.nativeGetDestroyTimeViaTool(block.first.intValue(), block.second.intValue(), id, count, data, extra != null ? extra.getValue() : 0L, x, y, z, side);
-    }
-
     public static void registerCustomTool(int id, String nameId, String name, String textureName, int textureMeta, ItemTier tier, boolean isTech, boolean isWeapon, String[] blockMaterials, int brokenId, int baseAttackDamage, int enchantType, ScriptableObject data)
     {
         ToolsNativeAPI.nativeRegisterCustomTool(id, NativeAPI.convertNameId(nameId), name, textureName, textureMeta, tier.getPointer(), isTech, isWeapon, blockMaterials, brokenId, baseAttackDamage, enchantType);
@@ -253,24 +246,27 @@ public class ToolsModule {
 
     public static void destroyBlockHook(Coords coords, Object tile, ItemInstance item, long player)
     {
-        Pair<Integer, Integer> block = CommonTypes.deserializeFullBlockOrBlockState(tile);
-        if(block != null)
+        if(DataSets.toolData.containsKey(item.getId()))
         {
-            if(!CustomToolEvents.onDestroy(coords, item, tile, player))
+            Pair<Integer, Integer> block = CommonTypes.deserializeFullBlockOrBlockState(tile);
+            if(block != null)
             {
-                CustomToolEvents.modifyEnchant(coords, item, tile, player);
-                NativeItemInstanceExtra extra = item.getExtra();
-                if(extra == null) extra = new NativeItemInstanceExtra();
-                int unbreaking = extra.getEnchantLevel(Enchantment.UNBREAKING);
-                if(
-                    NativeBlock.getDestroyTime(block.first.intValue()) > 0.0f && (
-                        getBlockDestroyTime(block.first.intValue()) > 0 ||
-                        getToolLevelViaBlock(item.getId(), block.first.intValue()) > 0
-                    ) &&
-                    rand.nextFloat() < 1.0f / (unbreaking + 1) &&
-                    !CustomToolEvents.onBroke(player)
-                ) {
-                    breakCarriedTool(player, DataSets.isWeapon(item.getId()) ? 2 : 1, item);
+                if(!CustomToolEvents.onDestroy(coords, item, tile, player))
+                {
+                    CustomToolEvents.modifyEnchant(coords, item, tile, player);
+                    NativeItemInstanceExtra extra = item.getExtra();
+                    if(extra == null) extra = new NativeItemInstanceExtra();
+                    int unbreaking = extra.getEnchantLevel(Enchantment.UNBREAKING);
+                    if(
+                        NativeBlock.getDestroyTime(block.first.intValue()) > 0.0f && (
+                            getBlockDestroyTime(block.first.intValue()) > 0 ||
+                            getToolLevelViaBlock(item.getId(), block.first.intValue()) > 0
+                        ) &&
+                        rand.nextFloat() < 1.0f / (unbreaking + 1) &&
+                        !CustomToolEvents.onBroke(player)
+                    ) {
+                        breakCarriedTool(player, DataSets.isWeapon(item.getId()) ? 2 : 1, item);
+                    }
                 }
             }
         }
@@ -278,7 +274,7 @@ public class ToolsModule {
 
     public static void playerAttackHook(long attacker, long victim, ItemInstance item)
     {
-        if(!CustomToolEvents.onAttack(victim, attacker, item))
+        if(DataSets.toolData.containsKey(item.getId()) && !CustomToolEvents.onAttack(victim, attacker, item))
         {
             CustomToolEvents.modifyEnchant(null, item, null, attacker);
             NativeItemInstanceExtra extra = item.getExtra();

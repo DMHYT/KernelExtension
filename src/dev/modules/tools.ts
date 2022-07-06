@@ -346,7 +346,6 @@ ToolAPI.playerAttackHook = (a, v, i) => ToolsModule.playerAttackHook(a, v, i);
 ToolAPI.getToolData = itemID => typeof ToolAPI.toolData[itemID] !== "undefined" ? ToolAPI.toolData[itemID] : null;
 ToolAPI.getToolLevel = itemID => typeof ToolAPI.toolData[itemID] !== "undefined" && !ToolAPI.toolData[itemID].isWeapon ? ToolsModule.getToolLevel(itemID) : 0;
 ToolAPI.getToolLevelViaBlock = (itemID, blockID) => typeof ToolAPI.toolData[itemID] !== "undefined" && !ToolAPI.toolData[itemID].isWeapon ? ToolsModule.getToolLevelViaBlock(itemID, blockID) : 0;
-ToolAPI.getDestroyTimeViaTool = (fullBlock, toolItem, coords) => typeof ToolAPI.toolData[toolItem.id] !== "undefined" && !ToolAPI.toolData[toolItem.id].isWeapon ? ToolsModule.getDestroyTimeViaTool(fullBlock, coords.x, coords.y, coords.z, coords.side, toolItem.id, toolItem.count, toolItem.data, toolItem.extra ?? null) : Block.getDestroyTime(fullBlock.id);
 Block.setDestroyLevelForID = (blockID, level) => ToolAPI.registerBlockDiggingLevel(blockID, level);
 
 
@@ -357,7 +356,7 @@ Block.setDestroyLevelForID = (blockID, level) => ToolAPI.registerBlockDiggingLev
         materials: { [key: string]: (number | string)[] },
         destroy_levels: (number | string)[][],
         vanilla_tools: { [key: string]: { [key in StandardTools]: number } },
-        tool_block_types: { [key in (StandardTools | "shears")]: string[] },
+        tool_block_types: { [key: string]: string[] },
         tool_types_base_damage: { [key in StandardTools]: number };
     }
 
@@ -390,8 +389,7 @@ Block.setDestroyLevelForID = (blockID, level) => ToolAPI.registerBlockDiggingLev
         });
     });
     for(let toolType in json.tool_block_types)
-        for(let materialName in json.tool_block_types[toolType])
-            ToolAPI.toolBlockTypes[toolType][materialName] = true;
+        json.tool_block_types[toolType].forEach(materialName => ToolAPI.toolBlockTypes[toolType][materialName] = true);
     for(let tier in json.vanilla_tools)
         for(let toolType in json.vanilla_tools[tier])
             ToolAPI.toolData[json.vanilla_tools[tier][toolType]] = {
@@ -399,7 +397,8 @@ Block.setDestroyLevelForID = (blockID, level) => ToolAPI.registerBlockDiggingLev
                 isWeapon: toolType === "sword",
                 blockMaterials: ToolAPI.toolBlockTypes[toolType],
                 damage: json.tool_types_base_damage[toolType],
-                isNative: true
+                isNative: true, brokenId: 0,
+                calcDestroyTime: (to, c, b, ti, defaultTime) => defaultTime
             }
 
 })();
