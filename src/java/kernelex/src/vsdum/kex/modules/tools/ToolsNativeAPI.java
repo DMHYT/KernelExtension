@@ -25,7 +25,6 @@ public class ToolsNativeAPI {
     public static native Object nativeGetBlockData(int id);
     public static native void nativeSetBlockData(int id, String materialName, int destroyLevel, boolean isNative);
     public static native void nativeRegisterCustomTool(int id, String nameId, String name, String textureName, int textureMeta, long tierPtr, boolean isTech, boolean isWeapon, String[] blockMaterials, int brokenId, int baseAttackDamage, int enchantType);
-    public static native float nativeGetDestroyTimeViaTool(int id, int data, int itemID, int itemCount, int itemData, long itemExtra, int x, int y, int z, int side);
     public static native void nativeRegisterShears(int id, String nameId, String name, String textureName, int textureMeta, long tierPtr, boolean isTech, int durabilityIfWithoutTier);
     public static native void nativeRegisterFlintAndSteel(int id, String nameId, String name, String textureName, int textureMeta, boolean isTech, int durability);
 

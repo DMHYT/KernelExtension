@@ -1135,7 +1135,6 @@ declare module vsdum {
                 static setBlockMaterialName(id: number, materialName: any_string): void;
                 static setBlockDestroyLevel(id: number, destroyLevel: number): void;
                 static setBlockIsNative(id: number, isNative: boolean): void;
-                static getDestroyTimeViaTool(block: Tile, x: number, y: number, z: number, side: number, itemID: number, itemCount: number, itemData: number, itemExtra: Nullable<com.zhekasmirnov.innercore.api.NativeItemInstanceExtra>): number;
                 static registerCustomTool(id: number, nameId: any_string, name: any_string, textureName: any_string, textureMeta: number, tier: ToolsModule.ItemTier, isTech: boolean, isWeapon: boolean, blockMaterials: Nullable<any_string[]>, brokenId: number, baseAttackDamage: number, enchantType: number, toolData: ExtendedToolParams): void;
                 static destroyBlockHook(coords: Callback.ItemUseCoordinates, block: Tile, item: ItemInstance, player: number): void;
                 static playerAttackHook(attacker: number, victim: number, item: ItemInstance): void;

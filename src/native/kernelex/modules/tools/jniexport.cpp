@@ -148,27 +148,6 @@ extern "C" {
         int toolLevel = tier->getLevel() + 1;
         return toolLevel >= iface->destroyLevel ? toolLevel : 0;
     }
-    JNIEXPORT jfloat JNICALL Java_vsdum_kex_modules_tools_ToolsNativeAPI_nativeGetDestroyTimeViaTool
-    (JNIEnv* env, jclass, jint id, jint data, jint itemID, jint itemCount, jint itemData, jlong itemExtra, jint x, jint y, jint z, jint side) {
-        BlockLegacy* block = BlockRegistry::getBlockById(IdConversion::staticToDynamic(id, IdConversion::BLOCK));
-        if(block != nullptr) {
-            float baseDestroyTime = block->getDestroySpeed();
-            Item* item = ItemRegistry::getItemById(IdConversion::staticToDynamic(itemID, IdConversion::ITEM));
-            if(item != nullptr) {
-                VTABLE_FIND_OFFSET(Item_getDestroySpeed, _ZTV4Item, _ZNK4Item15getDestroySpeedERK13ItemStackBaseRK5Block);
-                ItemStack stack(*item, itemCount, itemData);
-                if(itemExtra != 0L) ((ItemInstanceExtra*) itemExtra)->apply(&stack);
-                float speed = VTABLE_CALL<float>(Item_getDestroySpeed, item, &stack, BlockRegistry::getBlockStateForIdData(id, data));
-                float materialDivider = 1.0f;
-                auto itemTier = KEXToolsModule::ToolAPI::getItemTier((DiggerItem*) item);
-                if(itemTier != nullptr) materialDivider = itemTier->getSpeed();
-                float bonus = item->destroySpeedBonus(stack);
-                return KEXJavaBridge::CustomToolEvents::calcDestroyTime(id, data, x, y, z, (char) side, baseDestroyTime, materialDivider, bonus, baseDestroyTime / speed);
-            }
-            return baseDestroyTime;
-        }
-        return 0.0f;
-    }
     JNIEXPORT void JNICALL Java_vsdum_kex_modules_ToolsModule_enableDynamicDamageFor
     (JNIEnv*, jclass, jint id) {
         auto factory = LegacyItemRegistry::findFactoryById(id);
