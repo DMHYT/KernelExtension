@@ -159,7 +159,7 @@ public class DamageModule {
                 if(world instanceof NativeBlockSource)
                 {
                     nativeDamageEntityWorld(entity, damage, cause, b1, b2, ((NativeBlockSource) world).getPointer());
-                } else throw new IllegalArgumentException("world|region field in DamageModule.dealDamage params object is not an instance of BlockSource!");
+                } else throw new IllegalArgumentException("world|region field in DamageModule.damageEntity params object is not an instance of BlockSource!");
             } else if(source.equals("block")) {
                 Object world;
                 if(ScriptableObject.hasProperty(params, "world"))
@@ -176,19 +176,19 @@ public class DamageModule {
                         {
                             int[] coords = CommonTypes.deserializeIntVec3(pos);
                             nativeDamageEntityBlock(entity, damage, cause, b1, b2, ((NativeBlockSource) world).getPointer(), coords[0], coords[1], coords[2]);
-                        } else throw new IllegalArgumentException("pos field in DamageModule.dealDamage params object is not valid!");
+                        } else throw new IllegalArgumentException("pos field in DamageModule.damageEntity params object is not valid!");
                     } else if(ScriptableObject.hasProperty(params, "position")) {
                         ScriptableObject position = ScriptableObjectHelper.getScriptableObjectProperty(params, "position", null);
                         if(position != null)
                         {
                             int[] coords = CommonTypes.deserializeIntVec3(position);
                             nativeDamageEntityBlock(entity, damage, cause, b1, b2, ((NativeBlockSource) world).getPointer(), coords[0], coords[1], coords[2]);
-                        } else throw new IllegalArgumentException("position field in DamageModule.dealDamage params object is not valid!");
+                        } else throw new IllegalArgumentException("position field in DamageModule.damageEntity params object is not valid!");
                     } else {
                         int[] coords = CommonTypes.deserializeIntVec3(params);
                         nativeDamageEntityBlock(entity, damage, cause, b1, b2, ((NativeBlockSource) world).getPointer(), coords[0], coords[1], coords[2]);
                     }
-                } else throw new IllegalArgumentException("world|region field in DamageModule.dealDamage params object is not an instance of BlockSource!");
+                } else throw new IllegalArgumentException("world|region field in DamageModule.damageEntity params object is not an instance of BlockSource!");
                 
             } else throw new IllegalArgumentException(String.format("DamageModule.damageEntity does not take source type %s, possible sources are: actor|entity, blocksource|world, block!", new Object[]{ source }));
         } else nativeDamageEntityCommon(entity, damage, cause, b1, b2);
