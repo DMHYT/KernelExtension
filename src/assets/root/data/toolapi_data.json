@@ -29,5 +29,5 @@
         "shovel": [ "dirt" ], "hoe": [],
         "shears": [ "plant", "fibre", "wool" ]
     },
-    "tool_types_base_damage": { "sword": 4, "axe": 3, "pickaxe": 2, "shovel": 2, "hoe": 2 }
+    "tool_types_base_damage": { "sword": 4, "axe": 3, "pickaxe": 2, "shovel": 1, "hoe": 2 }
 }
