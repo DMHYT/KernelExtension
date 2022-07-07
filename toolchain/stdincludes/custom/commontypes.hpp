@@ -4,6 +4,8 @@
 #include <stl/vector>
 #include <stl.h>
 
+#include <static_symbol.h>
+
 #ifndef KEX_BLOCKPOS_HPP
 #define KEX_BLOCKPOS_HPP
 
@@ -131,3 +133,26 @@ class AutomaticID {
 
 
 #endif //KEX_AUTOMATICID_HPP
+
+
+#ifndef KEX_BOUNDS_HPP
+#define KEX_BOUNDS_HPP
+
+
+class Bounds {
+    public:
+    enum Option {};
+    int filler[12]; // 48
+    inline Bounds(const Bounds& other) {
+        STATIC_SYMBOL(constructCopyC2, "_ZN6BoundsC2ERKS_", (Bounds*, const Bounds&), void);
+        constructCopyC2(this, other);
+    }
+    bool contains(const Bounds&) const;
+    bool contains(const BlockPos&) const;
+    bool contains2D(const BlockPos&) const;
+    bool operator==(const Bounds&) const;
+    bool isValid() const;
+};
+
+
+#endif //KEX_BOUNDS_HPP

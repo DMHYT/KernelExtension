@@ -38,7 +38,9 @@ class SignBlockActor {
         BlockActor* getBlockEntity(const BlockPos&);
     };
 #endif
-class Dimension;
+#ifndef KEX_DIMENSION_HPP
+    class Dimension;
+#endif
 #ifndef KEX_HASHEDSTRING_HPP
     class HashedString;
 #endif

@@ -3,8 +3,12 @@
 
 
 class Random;
+class LevelStorage;
 #ifndef KEX_LOOTTABLE_HPP
     class LootTables;
+#endif
+#ifndef KEX_TICKINGAREASMANAGER_HPP
+    class TickingAreasManager;
 #endif
 
 class Level {
@@ -12,6 +16,8 @@ class Level {
     bool isClientSide() const;
     Random* getRandom() const;
     LootTables* getLootTables();
+    TickingAreasManager* getTickingAreasMgr();
+    LevelStorage* getLevelStorage() const;
 };
 
 class ServerLevel : public Level {

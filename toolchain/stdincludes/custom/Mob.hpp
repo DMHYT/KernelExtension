@@ -15,9 +15,11 @@ class DataLoadHelper;
 class GoalDefinition;
 class IMobMovementProxy;
 class ListTag;
-namespace mce {
-    class UUID;
-}
+#ifndef KEX_MCEUUID
+    namespace mce {
+        class UUID;
+    }
+#endif
 class SynchedActorData;
 #ifndef KEX_VEC2_HPP
     class Vec2;

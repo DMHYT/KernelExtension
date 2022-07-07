@@ -26,7 +26,9 @@ class Command;
 class CommandOrigin;
 class CommandParameterData;
 class CommandRegistry;
-class Dimension;
+#ifndef KEX_DIMENSION_HPP
+    class Dimension;
+#endif
 
 
 template<typename T>
