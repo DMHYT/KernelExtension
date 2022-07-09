@@ -3,6 +3,7 @@
 
 const LootModule = WRAP_JAVA("vsdum.kex.modules.LootModule");
 const DamageModule = WRAP_JAVA("vsdum.kex.modules.DamageModule");
+const ChunksModule = WRAP_JAVA("vsdum.kex.modules.ChunksModule");
 
 const LootTableContext = WRAP_JAVA("vsdum.kex.natives.LootTableContext");
 const MobEffect = WRAP_JAVA("vsdum.kex.natives.MobEffect");
@@ -13,6 +14,7 @@ const KEXPlayer = WRAP_JAVA("vsdum.kex.natives.Player");
 const LocalPlayer = WRAP_JAVA("vsdum.kex.natives.LocalPlayer");
 const Slime = WRAP_JAVA("vsdum.kex.natives.Slime");
 const FoodItemComponent = WRAP_JAVA("vsdum.kex.natives.FoodItemComponent");
+const KEXBlockSource = WRAP_JAVA("vsdum.kex.natives.ExtendedBlockSource");
 const ReachDistanceModifier = WRAP_JAVA("vsdum.kex.modules.misc.ReachDistanceModifier");
 const CameraRollModifier = WRAP_JAVA("vsdum.kex.modules.misc.CameraRollModifier");
 
@@ -28,6 +30,7 @@ ModAPI.registerAPI("KernelExtension", {
     ToolsModule,
     DamageModule,
     CommandsModule,
+    ChunksModule,
 
     LootTableContext,
     MobEffect,
@@ -38,6 +41,7 @@ ModAPI.registerAPI("KernelExtension", {
     LocalPlayer,
     Slime,
     FoodItemComponent,
+    BlockSource: KEXBlockSource,
     ReachDistanceModifier,
     CameraRollModifier,
 
