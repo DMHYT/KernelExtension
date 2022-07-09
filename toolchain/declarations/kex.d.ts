@@ -130,7 +130,7 @@ declare module vsdum {
                 isInsidePortal(): boolean;
                 hasTeleported(): boolean;
                 moveRelative(strafe: number, up: number, forward: number, friction: number): void;
-                getRegion(): Nullable<BlockSource>;
+                getRegion(): Nullable<ExtendedBlockSource>;
                 isTame(): boolean;
                 isLeashed(): boolean;
                 isLeashableType(): boolean;
@@ -620,6 +620,7 @@ declare module vsdum {
             export class GlobalContext extends java.lang.Object {
                 static class: java.lang.Class<GlobalContext>;
                 static getLocalPlayer(): Nullable<LocalPlayer>;
+                static getLevel(): Nullable<Level>;
             }
         }
     }
@@ -632,6 +633,8 @@ declare module vsdum {
             export class Dimension extends common.INativeInterface {
                 static class: java.lang.Class<Dimension>;
                 constructor(pointer: number);
+                getDimensionId(): number;
+                getLevel(): Nullable<Level>;
             }
         }
     }
@@ -643,6 +646,7 @@ declare module vsdum {
             export class Level extends common.INativeInterface {
                 static class: java.lang.Class<Level>;
                 constructor(pointer: number);
+                getTickingAreasManager(): Nullable<TickingAreasManager>;
             }
         }
     }
@@ -819,6 +823,51 @@ declare module vsdum {
                 getCause(): number;
                 setCause(cause: number): void;
                 getBlock(): Nullable<BlockState>;
+            }
+        }
+    }
+}
+
+declare module vsdum {
+    export module kex {
+        export module natives {
+            export class ExtendedBlockSource extends BlockSource {
+                static class: java.lang.Class<ExtendedBlockSource>;
+                getPointer(): number;
+                constructor(icObj: BlockSource);
+                constructor(ptr: number);
+                static toKEXBlockSource(icObj: BlockSource): ExtendedBlockSource;
+                static getCurrentClientRegion(): Nullable<ExtendedBlockSource>;
+                static getCurrentWorldGenRegion(): Nullable<ExtendedBlockSource>;
+                static getDefaultForActor(entity: Actor): Nullable<ExtendedBlockSource>;
+                static getDefaultForActor(entityUID: number): Nullable<ExtendedBlockSource>;
+                static getDefaultForDimension(dimensionId: number): Nullable<ExtendedBlockSource>;
+                getLevel(): Nullable<Level>;
+                getDimensionObject(): Nullable<Dimension>;
+            }
+        }
+    }
+}
+declare function WRAP_JAVA(clazz: "vsdum.kex.natives.ExtendedBlockSource"): typeof vsdum.kex.natives.ExtendedBlockSource;
+
+declare module vsdum {
+    export module kex {
+        export module natives {
+            type WorldOrDimension = number | BlockSource | Dimension;
+            export class TickingAreasManager extends common.INativeInterface {
+                static class: java.lang.Class<TickingAreasManager>;
+                constructor(ptr: number);
+                hasActiveAreas(): boolean;
+                countAreasIn(worldOrDimension: WorldOrDimension): number;
+                countAllAreas(): number;
+                hasArea(areaName: any_string, worldOrDimension: WorldOrDimension): boolean;
+                addRectangleArea(worldOrDimension: WorldOrDimension, x1: number, z1: number, x2: number, z2: number): void;
+                addRectangleArea(worldOrDimension: WorldOrDimension, name: any_string, x1: number, z1: number, x2: number, z2: number): void;
+                addCircleArea(worldOrDimension: WorldOrDimension, x: number, z: number, radius: number): void;
+                addCircleArea(worldOrDimension: WorldOrDimension, name: any_string, x: number, z: number, radius: number): void;
+                removeAreaByPosition(worldOrDimension: WorldOrDimension, x: number, z: number): void;
+                removeAreaByName(worldOrDimension: WorldOrDimension, name: any_string): void;
+                findUsableDefaultName(worldOrDimension: WorldOrDimension): jstring;
             }
         }
     }
@@ -1287,6 +1336,35 @@ declare module vsdum {
     }
 }
 declare function WRAP_JAVA(clazz: "vsdum.kex.modules.CommandsModule"): typeof vsdum.kex.modules.CommandsModule;
+
+declare module vsdum {
+    export module kex {
+        export module modules {
+            export module ChunksModule {
+                export interface LoadedRectangle {
+                    start(x: number, z: number): LoadedRectangle;
+                    end(x: number, z: number): LoadedRectangle;
+                    load(): LoadedRectangle;
+                    unload(): LoadedRectangle;
+                    isLoaded(): boolean;
+                }
+                export interface LoadedCircle {
+                    center(x: number, z: number): LoadedCircle;
+                    radius(r: number): LoadedCircle;
+                    load(): LoadedCircle;
+                    unload(): LoadedCircle;
+                    isLoaded(): boolean;
+                }
+                export function addLoadedRectangle(worldOrDimension: natives.WorldOrDimension, name?: any_string): LoadedRectangle;
+                export function addLoadedCircle(worldOrDimension: natives.WorldOrDimension, name?: any_string): LoadedCircle;
+                export function addLoadedChunk(worldOrDimension: natives.WorldOrDimension, name: any_string, x: number, z: number): LoadedRectangle;
+                export function addLoadedChunk(worldOrDimension: natives.WorldOrDimension, x: number, z: number): LoadedRectangle;
+                export function areaExists(name: any_string, worldOrDimension: natives.WorldOrDimension): boolean;
+            }
+        }
+    }
+}
+declare function WRAP_JAVA(clazz: "vsdum.kex.modules.ChunksModule"): typeof vsdum.kex.modules.ChunksModule;
 
 declare module vsdum {
     export module kex {
