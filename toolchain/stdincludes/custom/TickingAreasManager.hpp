@@ -22,6 +22,9 @@
 #ifndef KEX_DIMENSION_HPP
     class Dimension;
 #endif
+#ifndef KEX_LEVEL_HPP
+    class Level;
+#endif
 class LevelStorage;
 #ifndef KEX_MCEUUID_HPP
     namespace mce {
@@ -41,15 +44,19 @@ enum TickingAreaAddResult {
 class PendingArea {
     public:
     char filler[96];
-    PendingArea(mce::UUID, ActorUniqueID, const Bounds&, float);
-    PendingArea(mce::UUID, ActorUniqueID, const Bounds&);
-    PendingArea(mce::UUID, const stl::string&, const Bounds&, bool);
     inline PendingArea(const PendingArea& other) {
         STATIC_SYMBOL(constructCopyC2, "_ZN11PendingAreaC2ERKS_", (PendingArea*, const PendingArea*), void);
         constructCopyC2(this, &other);
     }
     PendingArea& operator=(PendingArea&&);
-    static PendingArea createTickingArea(mce::UUID, const stl::string&, const Bounds&, bool);
+    static inline PendingArea* constructArea(const stl::string& name, const Bounds& bounds, bool circle) {
+        STATIC_SYMBOL(generateUUID, "_ZN6Crypto6Random12generateUUIDEv", (), mce::UUID);
+        STATIC_SYMBOL(constructArea, "_ZN11PendingAreaC2EN3mce4UUIDERKNSt6__ndk112basic_stringIcNS2_11char_traitsIcEENS2_9allocatorIcEEEERK6Boundsb", (PendingArea*, const stl::string*, mce::UUID, const stl::string*, const Bounds*, bool), void);
+        auto uuid = generateUUID();
+        PendingArea* result = (PendingArea*) operator new(96);
+        constructArea(result, &name, uuid, &name, &bounds, circle);
+        return result;
+    }
 };
 
 class TickingAreaListBase {
@@ -61,17 +68,23 @@ class TickingAreaList : public TickingAreaListBase { public: };
 
 class TickingAreasManager {
     public:
-    void addArea(Dimension&, const stl::string&, const BlockPos&, const BlockPos&);
-    void addArea(Dimension&, const stl::string&, const BlockPos&, int);
+    TickingAreaAddResult addArea(Dimension&, const stl::string&, const BlockPos&, const BlockPos&);
+    TickingAreaAddResult addArea(Dimension&, const stl::string&, const BlockPos&, int);
     void removePendingAreaByPosition(Dimension&, const BlockPos&);
     void removePendingAreaByName(Dimension&, const stl::string&);
     unsigned int countPendingAreas(const Dimension&) const;
-    unsigned int countStandalonePendingAreas() const;
+    unsigned int countStandaloneTickingAreas() const;
     void removeAllPendingAreas(Dimension&);
     bool hasActiveAreas() const;
+    void update(Level&);
     bool _hasPendingTickingAreaNamed(const stl::string&, const stl::vector<PendingArea>&) const;
     stl::string _findUsableDefaultName(const TickingAreaList&, const stl::vector<PendingArea>&) const;
     void _savePendingArea(LevelStorage&, AutomaticID<Dimension, int>, const PendingArea&);
+    inline stl::vector<PendingArea>& getPendingAreasForDimension(AutomaticID<Dimension, int> dimensionId) const {
+        STATIC_SYMBOL(getAreasVector, "_ZNSt6__ndk113unordered_mapI11AutomaticIDI9DimensioniENS_6vectorI11PendingAreaNS_9allocatorIS5_EEEENS_4hashIS3_EENS_8equal_toIS3_EENS6_INS_4pairIKS3_S8_EEEEEixEOS3_", (void*, const AutomaticID<Dimension, int>&), stl::vector<PendingArea>&);
+        auto& areasVector = getAreasVector( (void*) ((char*) this + 4), dimensionId );
+        return areasVector;
+    }
 };
 
 
