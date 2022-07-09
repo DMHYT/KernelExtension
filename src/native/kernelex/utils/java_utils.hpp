@@ -37,10 +37,6 @@ namespace KEXJavaBridge {
         void onDrop(const char* tableName, jlong vectorPtr, jint vectorSize, jlong contextPtr);
         void applyCustomLootFunction(const char* functionName, const char* jsonString, jlong stackPtr, jlong contextPtr);
     }
-    namespace CallbacksModule {
-        void onPlayerJump(long long uid);
-        void onGameModeChanged(int mode);
-    }
     namespace ItemsModule {
         int getUseDurationDynamic(jlong stackPtr);
         jstring appendFormattedHovertext(jlong stackPtr, jlong levelPtr, const char* text);

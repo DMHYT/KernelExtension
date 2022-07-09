@@ -4,6 +4,7 @@
 
 #include <innercore/vtable.h>
 
+#include <Level.hpp>
 #include <LocalPlayer.hpp>
 #include <ActorUniqueID.hpp>
 #include <ActorDamageSource.hpp>
@@ -20,7 +21,7 @@ void KEXCallbacksModule::initialize() {
     HookManager::addCallback(
         SYMBOL("mcpe", "_ZN6Player14jumpFromGroundEv"),
         LAMBDA((Player* player), {
-            KEXJavaBridge::CallbacksModule::onPlayerJump(player->getUniqueID()->id);
+            JavaCallbacks::invokeCallback(KEXJavaBridge::Cache::CallbacksModule(), "onPlayerJump", "(J)V", player->getUniqueID()->id);
         }, ),
         HookManager::CALL | HookManager::LISTENER
     );
@@ -28,7 +29,7 @@ void KEXCallbacksModule::initialize() {
     HookManager::addCallback(
         SYMBOL("mcpe", "_ZN11LocalPlayer17setPlayerGameTypeE8GameType"),
         LAMBDA((LocalPlayer* player, GameType mode), {
-            KEXJavaBridge::CallbacksModule::onGameModeChanged((int) mode);
+            JavaCallbacks::invokeCallback(KEXJavaBridge::Cache::CallbacksModule(), "onGameModeChanged", "(I)V", (int) mode);
         }, ),
         HookManager::RETURN | HookManager::LISTENER
     );

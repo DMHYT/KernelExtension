@@ -37,8 +37,6 @@ namespace KEXJavaBridge {
         JAVA_METHOD(LootModule, onDrop, "(Ljava/lang/String;JIJ)V")
         JAVA_METHOD(LootModule, applyCustomLootFunction, "(Ljava/lang/String;Ljava/lang/String;JJ)V")
         JAVA_CLASS(CallbacksModule, "vsdum/kex/modules/CallbacksModule")
-        JAVA_METHOD(CallbacksModule, onPlayerJump, "(J)V")
-        JAVA_METHOD(CallbacksModule, onGameModeChanged, "(I)V")
         JAVA_CLASS(ItemsModule, "vsdum/kex/modules/ItemsModule")
         JAVA_METHOD(ItemsModule, getUseDurationDynamic, "(J)I")
         JAVA_METHOD(ItemsModule, appendFormattedHovertext, "(JJLjava/lang/String;)Ljava/lang/String;")
@@ -92,14 +90,6 @@ namespace KEXJavaBridge {
             env->CallStaticVoidMethod(Cache::LootModule(), Cache::LootModule_applyCustomLootFunction(), jFunctionName, jJsonString, stackPtr, contextPtr);
             env->DeleteLocalRef(jFunctionName);
             env->DeleteLocalRef(jJsonString);
-        }
-    }
-    namespace CallbacksModule {
-        void onPlayerJump(long long uid) {
-            KEXJavaUtils::attach()->CallStaticVoidMethod(Cache::CallbacksModule(), Cache::CallbacksModule_onPlayerJump(), (jlong) uid);
-        }
-        void onGameModeChanged(int mode) {
-            KEXJavaUtils::attach()->CallStaticVoidMethod(Cache::CallbacksModule(), Cache::CallbacksModule_onGameModeChanged(), mode);
         }
     }
     namespace ItemsModule {
