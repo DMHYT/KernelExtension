@@ -9,7 +9,7 @@ public class TickingAreasManager implements INativeInterface {
     protected static native boolean nativeHasActiveAreas(long ptr);
     protected static native int nativeCountAreasIn(long ptr, long dimensionPtr);
     protected static native int nativeCountAllAreas(long ptr);
-    protected static native boolean nativeHasArea(long ptr, String areaName, int dimensionId);
+    protected static native boolean nativeHasArea(long ptr, String areaName, long dimensionPtr);
     protected static native void nativeAddRectangleArea(long ptr, long dimensionPtr, String areaName, int x1, int z1, int x2, int z2);
     protected static native void nativeAddCircleArea(long ptr, long dimensionPtr, String areaName, int x, int z, int radius);
     protected static native void nativeRemoveAreaByPosition(long ptr, long dimensionPtr, int x, int z);
@@ -54,19 +54,19 @@ public class TickingAreasManager implements INativeInterface {
         return nativeCountAllAreas(this.pointer);
     }
 
-    public boolean hasArea(String areaName, Dimension dimension)
+    public boolean hasArea(String areaName, int dimension)
     {
-        return this.hasArea(areaName, dimension.getDimensionId());
+        return this.hasArea(areaName, ExtendedBlockSource.getDefaultForDimension(dimension).getDimensionObject());
     }
 
     public boolean hasArea(String areaName, NativeBlockSource world)
     {
-        return this.hasArea(areaName, world.getDimension());
+        return this.hasArea(areaName, ExtendedBlockSource.toKEXBlockSource(world).getDimensionObject());
     }
 
-    public boolean hasArea(String areaName, int dimension)
+    public boolean hasArea(String areaName, Dimension dimension)
     {
-        return nativeHasArea(this.pointer, areaName, dimension);
+        return nativeHasArea(this.pointer, areaName, dimension.getPointer());
     }
 
     public void addRectangleArea(int dimension, int x1, int z1, int x2, int z2)

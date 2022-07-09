@@ -59,9 +59,17 @@ class PendingArea {
     }
 };
 
+class ITickingArea;
+class TickingAreaDescription { public: char filler[44]; };
+
 class TickingAreaListBase {
     public:
+    void add(stl::unique_ptr<ITickingArea>);
     bool hasTickingAreaNamed(const stl::string&) const;
+    stl::vector<stl::shared_ptr<ITickingArea>> findAreasNamed(const stl::string&) const;
+    stl::vector<stl::shared_ptr<ITickingArea>> findAreasContaining(const BlockPos&);
+    stl::vector<TickingAreaDescription> removeAreas(const stl::vector<stl::shared_ptr<ITickingArea>>&);
+    stl::vector<TickingAreaDescription> removeAllAreas();
 };
 
 class TickingAreaList : public TickingAreaListBase { public: };

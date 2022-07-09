@@ -24,11 +24,11 @@ extern "C" {
         TickingAreasManager* mgr = (TickingAreasManager*) ptr;
         return mgr->countStandaloneTickingAreas();
     }
-    __EXPORT__(jboolean, HasArea, jstring areaName, jint dimensionId) {
+    __EXPORT__(jboolean, HasArea, jstring areaName, jlong dimensionPtr) {
         const char* cAreaName = env->GetStringUTFChars(areaName, 0);
         TickingAreasManager* mgr = (TickingAreasManager*) ptr;
-        AutomaticID<Dimension, int> dim(dimensionId);
-        bool result = mgr->_hasPendingTickingAreaNamed(cAreaName, mgr->getPendingAreasForDimension(dim));
+        Dimension* dimension = (Dimension*) dimensionPtr;
+        bool result = dimension->getTickingAreas()->hasTickingAreaNamed(cAreaName);
         env->ReleaseStringUTFChars(areaName, cAreaName);
         return result;
     }
@@ -49,13 +49,24 @@ extern "C" {
     __EXPORT__(void, RemoveAreaByPosition, jlong dimensionPtr, jint x, jint z) {
         TickingAreasManager* mgr = (TickingAreasManager*) ptr;
         Dimension* dimension = (Dimension*) dimensionPtr;
-        mgr->removePendingAreaByPosition(*dimension, BlockPos(x, 0, z));
+        BlockPos pos(x, 0, z);
+        mgr->removePendingAreaByPosition(*dimension, pos);
+        TickingAreaListBase* areas = dimension->getTickingAreas();
+        if(areas != nullptr) {
+            auto found = areas->findAreasContaining(pos);
+            areas->removeAreas(found);
+        }
     }
     __EXPORT__(void, RemoveAreaByName, jlong dimensionPtr, jstring areaName) {
         const char* cAreaName = env->GetStringUTFChars(areaName, 0);
         TickingAreasManager* mgr = (TickingAreasManager*) ptr;
         Dimension* dimension = (Dimension*) dimensionPtr;
         mgr->removePendingAreaByName(*dimension, cAreaName);
+        TickingAreaListBase* areas = dimension->getTickingAreas();
+        if(areas != nullptr) {
+            auto found = areas->findAreasNamed(cAreaName);
+            areas->removeAreas(found);
+        }
         env->ReleaseStringUTFChars(areaName, cAreaName);
     }
     __EXPORT__(jstring, FindUsableDefaultName, jlong dimensionPtr) {
