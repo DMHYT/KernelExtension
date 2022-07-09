@@ -11,6 +11,9 @@
 #ifndef KEX_BLOCKPOS_HPP
     class BlockPos;
 #endif
+#ifndef KEX_DIMENSION_HPP
+    class Dimension;
+#endif
 #ifndef KEX_LEVEL_HPP
     class Level;
 #endif
@@ -20,6 +23,7 @@ class BlockSource {
     Block* getBlock(const BlockPos&) const;
     BlockActor* getBlockEntity(const BlockPos&);
     Level* getLevel() const;
+    Dimension* getDimension() const;
 };
 
 

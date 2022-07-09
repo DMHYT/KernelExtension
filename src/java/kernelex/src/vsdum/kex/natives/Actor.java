@@ -774,11 +774,11 @@ public class Actor implements INativeInterface {
         nativeMoveRelative(this.pointer, strafe, up, forward, friction);
     }
 
-    @Nullable public NativeBlockSource getRegion()
+    @Nullable public ExtendedBlockSource getRegion()
     {
         long bsptr = nativeGetRegion(this.pointer);
         if(bsptr == 0L) return null;
-        return new NativeBlockSource(bsptr, false);
+        return new ExtendedBlockSource(bsptr);
     }
 
     public boolean isTame()
