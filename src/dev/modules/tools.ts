@@ -329,6 +329,7 @@ ToolAPI.registerTool = (id, toolMaterial, blockMaterials, params) => {
 ToolAPI.registerSword = (id, toolMaterial, params) => {
     params ??= {};
     params.isWeapon = true;
+    params.damage ??= 4;
     let materialName: string = "";
     if(typeof toolMaterial === "object") {
         materialName = `__unnamedToolMaterial${ToolAPI.unnamedMaterialNum++}`;
