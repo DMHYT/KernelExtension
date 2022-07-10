@@ -266,7 +266,7 @@ ToolAPI.addToolMaterial = (name, material) => {
             material.level || 0, 
             material.durability || 1, 
             material.efficiency || 1, 
-            material.damage || 0, 
+            material.damage || 1, 
             material.enchantability || 14
         ), name);
     } else Logger.Log(`Tool material with name \'${name}\' has already been registered before! Skipping...`, "KEX-WARNING");

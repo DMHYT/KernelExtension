@@ -57,7 +57,7 @@ public class ToolsModule {
         {
             if(DataSets.tiersByName.containsKey(name))
                 throw new IllegalArgumentException("Item tier with name " + name + " has already been registered! Consider using another name!");
-            this.pointer = ToolsNativeAPI.nativeNewItemTier(level - 1, uses, speed, attackDamageBonus, enchantmentValue);
+            this.pointer = ToolsNativeAPI.nativeNewItemTier(level - 1, uses, speed, attackDamageBonus - 1, enchantmentValue);
             DataSets.tiersByName.put(name, this);
         }
 
@@ -83,7 +83,7 @@ public class ToolsModule {
 
         public final int getAttackDamageBonus()
         {
-            return ToolsNativeAPI.nativeGetItemTierAttackDamageBonus(this.pointer);
+            return ToolsNativeAPI.nativeGetItemTierAttackDamageBonus(this.pointer) + 1;
         }
 
         public final int getEnchantmentValue()
