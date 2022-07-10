@@ -297,7 +297,7 @@ public class Actor implements INativeInterface {
     protected static native void nativeDoWaterSplashEffect(long ptr);
     protected static native void nativeSpawnTrailBubbles(long ptr);
     protected static native boolean nativeIsOnGround(long ptr);
-    protected static native float nativeCalculateAttackDamage(long ptr, long victimPtr);
+    protected static native int nativeCalculateAttackDamage(long ptr, int id, int count, int data, long extra, long victim, boolean useCarriedIfNotSpecified);
     protected static native boolean nativeCanBreatheAir(long ptr);
     protected static native boolean nativeCanBreatheWater(long ptr);
     protected static native boolean nativeCanBreatheLava(long ptr);
@@ -1820,15 +1820,38 @@ public class Actor implements INativeInterface {
         return nativeIsOnGround(this.pointer);
     }
 
-    public float calculateAttackDamage(long victim)
+    public int calculateAttackDamage()
     {
-        long victimPtr = wrap(victim);
-        return victimPtr == 0L ? 0.0f : nativeCalculateAttackDamage(this.pointer, victimPtr);
+        return this.calculateAttackDamage(0L);
     }
 
-    public float calculateAttackDamage(Actor victim)
+    public int calculateAttackDamage(Actor victim)
     {
-        return nativeCalculateAttackDamage(this.pointer, victim.getPointer());
+        return this.calculateAttackDamage(victim.getUniqueID());
+    }
+
+    public int calculateAttackDamage(long victim)
+    {
+        return nativeCalculateAttackDamage(this.pointer, 0, 0, 0, 0L, victim, true);
+    }
+    public int calculateAttackDamage(int id, int count, int data)
+    {
+        return this.calculateAttackDamage(id, count, data, null);
+    }
+
+    public int calculateAttackDamage(int id, int count, int data, NativeItemInstanceExtra extra)
+    {
+        return this.calculateAttackDamage(id, count, data, extra, 0L);
+    }
+
+    public int calculateAttackDamage(int id, int count, int data, NativeItemInstanceExtra extra, Actor victim)
+    {
+        return this.calculateAttackDamage(id, count, data, extra, victim.getUniqueID());
+    }
+
+    public int calculateAttackDamage(int id, int count, int data, NativeItemInstanceExtra extra, long victim)
+    {
+        return nativeCalculateAttackDamage(this.pointer, id, count, data, extra == null ? 0L : extra.getValue(), victim, false);
     }
 
     public boolean canBreatheAir()

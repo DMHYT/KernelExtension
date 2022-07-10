@@ -8,8 +8,12 @@
 #include <commontypes.hpp>
 
 #include <ActorUniqueID.hpp>
-#include <Actor.hpp>
+#include <Attribute.hpp>
+#include <Player.hpp>
 #include <BreathableComponent.hpp>
+#include <Enchant.hpp>
+#include <ItemEnchants.hpp>
+#include <ItemStackBase.hpp>
 #include <ItemStack.hpp>
 #include <MobEffect.hpp>
 #include <MobEffectInstance.hpp>
@@ -1111,8 +1115,55 @@ extern "C" {
     __EXPORT__(jboolean, IsOnGround) {
         return ((Actor*) ptr)->onGround;
     }
-    __EXPORT__(jfloat, CalculateAttackDamage, jlong victim) {
-        return ((Actor*) ptr)->calculateAttackDamage(*(Actor*) victim);
+    __EXPORT__(jint, CalculateAttackDamage, jint id, jint count, jint data, jlong extra, jlong victimUID, jboolean useCarriedIfNotSpecified) {
+        auto actor = (Actor*) ptr;
+        VTABLE_FIND_OFFSET(Actor_getAttribute, _ZTV5Actor, _ZNK5Actor12getAttributeERK9Attribute);
+        auto attackDamage = VTABLE_CALL<AttributeInstance*>(Actor_getAttribute, actor, &SharedAttributes::ATTACK_DAMAGE);
+        int result = (int) attackDamage->getCurrentValue();
+        ItemStack* stack = nullptr;
+        bool toDelete = false;
+        if(id == 0 || count <= 0) {
+            if(useCarriedIfNotSpecified) {
+                VTABLE_FIND_OFFSET(Actor_getCarriedItem, _ZTV5Actor, _ZNK5Actor14getCarriedItemEv);
+                stack = VTABLE_CALL<ItemStack*>(Actor_getCarriedItem, actor);
+            }
+        } else {
+            auto item = ItemRegistry::getItemById(IdConversion::staticToDynamic(id, IdConversion::ITEM));
+            if(item != nullptr) {
+                stack = new ItemStack(*item, count, data);
+                if(extra != 0) {
+                    ((ItemInstanceExtra*) extra)->apply(stack);
+                }
+                toDelete = true;
+            }
+        }
+        if(stack != nullptr) result += stack->getAttackDamage();
+        VTABLE_FIND_OFFSET(Actor_adjustDamageAmount, _ZTV5Actor, _ZNK5Actor18adjustDamageAmountERi);
+        VTABLE_CALL<void>(Actor_adjustDamageAmount, actor, &result);
+        auto damageBoost = MobEffect::getById(5);
+        auto weakness = MobEffect::getById(18);
+        if(damageBoost != nullptr && actor->hasEffect(*damageBoost)) {
+            int amplifier = actor->getEffect(*damageBoost)->getAmplifier() + 1;
+            for(int i = 0; i < amplifier; i++) result = (int) (((float) result * 1.3f) + 1.0f);
+        }
+        if(weakness != nullptr && actor->hasEffect(*weakness)) {
+            int amplifier = actor->getEffect(*weakness)->getAmplifier() + 1;
+            for(int i = 0; i < amplifier; i++) result = (int) (((float) result * 0.8f) - 0.5f);
+        }
+        auto victim = Actor::wrap(victimUID);
+        if(victim != nullptr) {
+            bool someCheck = *((bool*) victim + 292); // idk what's this
+            if(!someCheck && stack != nullptr && stack && stack->isEnchanted()) {
+                auto enchants = stack->constructItemEnchantsFromUserData();
+                auto enchantsVector = enchants.getAllEnchants();
+                VTABLE_FIND_OFFSET(Enchant_getDamageBonus, _ZTV7Enchant, _ZNK7Enchant14getDamageBonusEiRK5Actor);
+                for(const auto& instance : enchantsVector) {
+                    result += (int) VTABLE_CALL<float>(Enchant_getDamageBonus, Enchant::mEnchants.at((unsigned char) instance.type).get(), instance.level, victim);
+                }
+            }
+        }
+        if(stack != nullptr && toDelete) delete stack;
+        return result;
     }
 
     #define GET_BREATHABLE BreathableComponent* b = ((Actor*) ptr)->tryGetComponent<BreathableComponent>();

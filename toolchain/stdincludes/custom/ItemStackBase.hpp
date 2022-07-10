@@ -21,6 +21,9 @@
 #ifndef KEX_ITEM_HPP
     class Item;
 #endif
+#ifndef KEX_ITEMENCHANTS_HPP
+    class ItemEnchants { public: char filler[40]; };
+#endif
 
 class ItemStackBase {
     public:
@@ -49,6 +52,9 @@ class ItemStackBase {
     bool hasUserData() const;
     CompoundTag* getUserData() const;
     void setUserData(stl::unique_ptr<CompoundTag>);
+    int getAttackDamage() const;
+    bool isEnchanted() const;
+    ItemEnchants constructItemEnchantsFromUserData() const;
     // Added by InnerCore
     unsigned short getCount() const;
 };

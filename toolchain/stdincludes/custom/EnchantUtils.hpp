@@ -11,7 +11,7 @@ class ActorDamageSource;
 class BlockSource;
 class Enchant {
     public:
-    enum Type: int {};
+    enum Type: unsigned char {};
 };
 class EnchantmentInstance;
 #ifndef KEX_ITEM_HPP

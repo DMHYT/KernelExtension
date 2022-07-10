@@ -21,7 +21,7 @@
     class ItemInstance;
 #endif
 #ifndef KEX_ITEMSTACKBASE_HPP
-    class ItemStackBase { public: };
+    class ItemStackBase { public: char filler[96]; };
 #endif
 
 class ItemStack : public ItemStackBase {

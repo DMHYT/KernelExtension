@@ -331,8 +331,8 @@ declare module vsdum {
                 doWaterSplashEffect(): void;
                 spawnTrailBubbles(): void;
                 isOnGround(): boolean;
-                calculateAttackDamage(entityUID: number): number;
-                calculateAttackDamage(actor: Actor): number;
+                calculateAttackDamage(victim: number | Actor): number;
+                calculateAttackDamage(id: number, count: number, data: number, extra?: Nullable<com.zhekasmirnov.innercore.api.NativeItemInstanceExtra>, victim?: number | Actor): number;
                 canBreatheAir(): boolean;
                 canBreatheWater(): boolean;
                 canBreatheLava(): boolean;

@@ -6,7 +6,9 @@
 
 class Agent;
 class AnimationComponent;
-class Attribute {public:};
+#ifndef KEX_ATTRIBUTE_HPP
+    class Attribute {public:};
+#endif
 class AttributeBuff { public: };
 class InstantaneousAttributeBuff : public AttributeBuff {
     public:
