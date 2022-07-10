@@ -35,35 +35,3 @@
 //         .saturationMod(ESaturationModifier.NORMAL)
 //         .alwaysEat();
 // });
-
-type LoadedRectangle = vsdum.kex.modules.ChunksModule.LoadedRectangle;
-type LoadedCircle = vsdum.kex.modules.ChunksModule.LoadedCircle;
-
-
-
-
-var testRectangle: LoadedRectangle;
-var testCircle: LoadedCircle;
-var testChunk: LoadedRectangle;
-
-Callback.on("LevelDisplayed", () => {
-    const dimension = Player.getDimension();
-    testRectangle = ChunksModule.addLoadedRectangle(dimension, "test_rectangle")
-        .start(30, 30)
-        .end(50, 50)
-        .load();
-    testCircle = ChunksModule.addLoadedCircle(dimension, "test_circle")
-        .center(8, 8)
-        .radius(128)
-        .load();
-    testChunk = ChunksModule.addLoadedChunk(dimension, "test_chunk", 16, 16)
-        .load();
-});
-
-Callback.on("ItemUse", (coords, item) => {
-    if(item.id == 280) {
-        testRectangle.unload();
-        testCircle.unload();
-        testChunk.unload();
-    }
-});
