@@ -1111,6 +1111,9 @@ extern "C" {
     __EXPORT__(jboolean, IsOnGround) {
         return ((Actor*) ptr)->onGround;
     }
+    __EXPORT__(jfloat, CalculateAttackDamage, jlong victim) {
+        return ((Actor*) ptr)->calculateAttackDamage(*(Actor*) victim);
+    }
 
     #define GET_BREATHABLE BreathableComponent* b = ((Actor*) ptr)->tryGetComponent<BreathableComponent>();
     #define RET_DEFAULT(RET) if(b == nullptr) return RET;

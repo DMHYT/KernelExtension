@@ -470,6 +470,7 @@ class Actor {
     bool isResting() const;
     void setSaddle(bool);
     void hurt(const ActorDamageSource&, int, bool, bool);
+    float calculateAttackDamage(Actor&);
     template<typename Component> Component* tryGetComponent();
 };
 

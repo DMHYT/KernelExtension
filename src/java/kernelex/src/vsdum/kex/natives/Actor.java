@@ -297,6 +297,7 @@ public class Actor implements INativeInterface {
     protected static native void nativeDoWaterSplashEffect(long ptr);
     protected static native void nativeSpawnTrailBubbles(long ptr);
     protected static native boolean nativeIsOnGround(long ptr);
+    protected static native float nativeCalculateAttackDamage(long ptr, long victimPtr);
     protected static native boolean nativeCanBreatheAir(long ptr);
     protected static native boolean nativeCanBreatheWater(long ptr);
     protected static native boolean nativeCanBreatheLava(long ptr);
@@ -1817,6 +1818,17 @@ public class Actor implements INativeInterface {
     public boolean isOnGround()
     {
         return nativeIsOnGround(this.pointer);
+    }
+
+    public float calculateAttackDamage(long victim)
+    {
+        long victimPtr = wrap(victim);
+        return victimPtr == 0L ? 0.0f : nativeCalculateAttackDamage(this.pointer, victimPtr);
+    }
+
+    public float calculateAttackDamage(Actor victim)
+    {
+        return nativeCalculateAttackDamage(this.pointer, victim.getPointer());
     }
 
     public boolean canBreatheAir()
