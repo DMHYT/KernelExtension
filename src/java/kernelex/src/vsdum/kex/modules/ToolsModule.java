@@ -246,7 +246,8 @@ public class ToolsModule {
 
     public static void destroyBlockHook(Coords coords, Object tile, ItemInstance item, long player)
     {
-        if(DataSets.toolData.containsKey(item.getId()))
+        int itemID = item.getId();
+        if(DataSets.toolData.containsKey(itemID))
         {
             Pair<Integer, Integer> block = CommonTypes.deserializeFullBlockOrBlockState(tile);
             if(block != null)
@@ -260,12 +261,12 @@ public class ToolsModule {
                     if(
                         NativeBlock.getDestroyTime(block.first.intValue()) > 0.0f && (
                             getBlockDestroyTime(block.first.intValue()) > 0 ||
-                            getToolLevelViaBlock(item.getId(), block.first.intValue()) > 0
+                            getToolLevelViaBlock(itemID, block.first.intValue()) > 0
                         ) &&
                         rand.nextFloat() < 1.0f / (unbreaking + 1) &&
                         !CustomToolEvents.onBroke(player)
                     ) {
-                        breakCarriedTool(player, DataSets.isWeapon(item.getId()) ? 2 : 1, item);
+                        breakCarriedTool(player, DataSets.isWeapon(itemID) ? 2 : 1, item);
                     }
                 }
             }
@@ -274,7 +275,8 @@ public class ToolsModule {
 
     public static void playerAttackHook(long attacker, long victim, ItemInstance item)
     {
-        if(DataSets.toolData.containsKey(item.getId()) && !CustomToolEvents.onAttack(victim, attacker, item))
+        int itemID = item.getId();
+        if(DataSets.toolData.containsKey(itemID) && !CustomToolEvents.onAttack(victim, attacker, item))
         {
             CustomToolEvents.modifyEnchant(null, item, null, attacker);
             NativeItemInstanceExtra extra = item.getExtra();
@@ -282,7 +284,7 @@ public class ToolsModule {
             int unbreaking = extra.getEnchantLevel(Enchantment.UNBREAKING);
             if(rand.nextFloat() < 1.0f / (unbreaking + 1) && !CustomToolEvents.onBroke(attacker))
             {
-                breakCarriedTool(attacker, DataSets.isWeapon(item.getId()) ? 1 : 2, item);
+                breakCarriedTool(attacker, DataSets.isWeapon(itemID) ? 1 : 2, item);
             }
         }
     }

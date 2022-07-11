@@ -263,11 +263,11 @@ ToolAPI.addBlockMaterial = (name, breakingMultiplier) => ToolsModule.addBlockMat
 ToolAPI.addToolMaterial = (name, material) => {
     if(ToolsModule.getTierByName(name) == null) {
         ToolAPI.toolMaterials[name] = ToolAPI.objectFromTier(new ToolsModule.ItemTier(name, 
-            material.level || 0, 
-            material.durability || 1, 
-            material.efficiency || 1, 
-            material.damage || 1, 
-            material.enchantability || 14
+            Math.floor(material.level) || 0, 
+            Math.floor(material.durability) || 1, 
+            Math.floor(material.efficiency) || 1, 
+            Math.floor(material.damage) || 1, 
+            Math.floor(material.enchantability) || 14
         ), name);
     } else Logger.Log(`Tool material with name \'${name}\' has already been registered before! Skipping...`, "KEX-WARNING");
 }
@@ -295,9 +295,15 @@ ToolAPI.registerTool = (id, toolMaterial, blockMaterials, params) => {
         blockMaterials.forEach(materialName => params.blockMaterials[materialName] = true);
     let materialName: string = "";
     if(typeof toolMaterial === "object") {
-        materialName = `__unnamedToolMaterial${ToolAPI.unnamedMaterialNum++}`;
-        ToolAPI.addToolMaterial(materialName, toolMaterial);
-    }
+        if(typeof toolMaterial.name === "string") {
+            if(ToolsModule.getTierByName(toolMaterial.name) == null)
+                ToolAPI.addToolMaterial(toolMaterial.name, toolMaterial);
+            materialName = toolMaterial.name;
+        } else {
+            materialName = `__unnamedToolMaterial${ToolAPI.unnamedMaterialNum++}`;
+            ToolAPI.addToolMaterial(materialName, toolMaterial);
+        }
+    } else if(typeof toolMaterial === "string") materialName = toolMaterial;
     let tier: vsdum.kex.modules.ToolsModule.ItemTier = ToolsModule.getTierByName(materialName);
     if(tier == null) {
         materialName = "wood";
