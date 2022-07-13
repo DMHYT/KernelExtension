@@ -35,7 +35,31 @@ public class ItemsModule {
 
     public static native boolean isFood(int id);
 
+    public static interface UseDurationCallback {
+        public int getUseDuration(ItemStack stack);
+    }
+
+    public static interface FoodValuesCallback {
+        public FoodItemComponent.Builder onEaten(ItemStack stack);
+    }
+
+    public static interface OnTooltipCallback {
+        public void onTooltip(ItemStack item, StringBuilder textBuilder, Level level);
+    }
+
     private static final Map<Integer, FoodItemComponent> food = new HashMap<>();
+    private static final Map<String, Float> foodSaturationModifiers = new MapBuilder<String, Float>()
+        .add("poor", 0.2f)
+        .add("low", 0.6f)
+        .add("normal", 1.2f)
+        .add("good", 1.6f)
+        .add("max", 2.0f)
+        .add("supernatural", 2.4f)
+        .build();
+    private static final Map<Integer, UseDurationCallback> itemUseDurationCallbacks = new HashMap<>();
+    private static final Map<Integer, List<CallbackFunction<OnTooltipCallback>>> itemOnTooltipCallbacks = new HashMap<>();
+    private static final Map<Integer, FoodValuesCallback> foodValuesCallbacks = new HashMap<>();
+    private static final Map<Integer, List<ReachDistanceModifier>> reachDistanceModifiers = new HashMap<>();
 
     @Nullable public static FoodItemComponent getFood(int id)
     {
@@ -47,15 +71,6 @@ public class ItemsModule {
         food.put(id, component);
         return component;
     }
-
-    private static final Map<String, Float> foodSaturationModifiers = new MapBuilder<String, Float>()
-        .add("poor", 0.2f)
-        .add("low", 0.6f)
-        .add("normal", 1.2f)
-        .add("good", 1.6f)
-        .add("max", 2.0f)
-        .add("supernatural", 2.4f)
-        .build();
     
     public static void newFoodSaturationModifier(String name, float value)
     {
@@ -75,12 +90,6 @@ public class ItemsModule {
         return 1.2f;
     }
 
-    public static interface UseDurationCallback {
-        public int getUseDuration(ItemStack stack);
-    }
-
-    private static final Map<Integer, UseDurationCallback> itemUseDurationCallbacks = new HashMap<>();
-
     public static void setMaxUseDurationDynamic(int id, UseDurationCallback callback)
     {
         nativeEnableDynamicUseDuration(id);
@@ -95,11 +104,28 @@ public class ItemsModule {
         return itemUseDurationCallbacks.get(stack.id).getUseDuration(stack);
     }
 
-    public static interface OnTooltipCallback {
-        public void onTooltip(ItemStack item, StringBuilder textBuilder, Level level);
+    public static void addTooltip(int id, OnTooltipCallback cb)
+    {
+        addTooltip(id, cb, 0);
     }
 
-    private static final Map<Integer, List<CallbackFunction<OnTooltipCallback>>> itemOnTooltipCallbacks = new HashMap<>();
+    public static void addTooltip(int id, OnTooltipCallback cb, int priority)
+    {
+        itemOnTooltipCallbacks.putIfAbsent(id, new ArrayList<>());
+        CallbackFunction.addToList(new CallbackFunction<OnTooltipCallback>(cb, priority), itemOnTooltipCallbacks.get(id));
+    }
+
+    public static void setDynamicFoodValues(int id, FoodValuesCallback callback)
+    {
+        nativeEnableDynamicFoodValues(id);
+        foodValuesCallbacks.put(id, callback);
+    }
+
+    public static void registerReachDistanceModifierFor(int id, ReachDistanceModifier modifier)
+    {
+        reachDistanceModifiers.putIfAbsent(id, new ArrayList<>());
+        reachDistanceModifiers.get(id).add(modifier);
+    }
 
     public static String appendFormattedHovertext(long stackPtr, long levelPtr, String text)
     {
@@ -114,29 +140,6 @@ public class ItemsModule {
         }
         CallbacksModule.onItemTooltip(stack, level, textBuilder);
         return textBuilder.toString();
-    }
-
-    public static void addTooltip(int id, OnTooltipCallback cb)
-    {
-        addTooltip(id, cb, 0);
-    }
-
-    public static void addTooltip(int id, OnTooltipCallback cb, int priority)
-    {
-        itemOnTooltipCallbacks.putIfAbsent(id, new ArrayList<>());
-        CallbackFunction.addToList(new CallbackFunction<OnTooltipCallback>(cb, priority), itemOnTooltipCallbacks.get(id));
-    }
-
-    public static interface FoodValuesCallback {
-        public FoodItemComponent.Builder onEaten(ItemStack stack);
-    }
-
-    private static final Map<Integer, FoodValuesCallback> foodValuesCallbacks = new HashMap<>();
-
-    public static void setDynamicFoodValues(int id, FoodValuesCallback callback)
-    {
-        nativeEnableDynamicFoodValues(id);
-        foodValuesCallbacks.put(id, callback);
     }
 
     public static void getDynamicFoodValues(long stackPtr, long foodPtr)
@@ -158,14 +161,6 @@ public class ItemsModule {
         }
     }
 
-    private static final Map<Integer, List<ReachDistanceModifier>> reachDistanceModifiers = new HashMap<>();
-
-    public static void registerReachDistanceModifierFor(int id, ReachDistanceModifier modifier)
-    {
-        reachDistanceModifiers.putIfAbsent(id, new ArrayList<>());
-        reachDistanceModifiers.get(id).add(modifier);
-    }
-
     public static void onChangeCarriedItem(ItemStack oldStack, ItemStack newStack)
     {
         if(reachDistanceModifiers.containsKey(oldStack.id))
@@ -179,5 +174,5 @@ public class ItemsModule {
             while(iter.hasNext()) iter.next().enable();
         }
     }
-    
+
 }

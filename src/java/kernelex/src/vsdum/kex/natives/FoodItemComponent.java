@@ -24,7 +24,6 @@ public class FoodItemComponent implements INativeInterface {
     protected static native boolean nativeCanAlwaysEat(long ptr);
     protected static native int nativeGetEffectsCount(long ptr);
     protected static native int[] nativeGetRemoveEffects(long ptr);
-    @Nullable protected static native String nativeEffectGetDescriptionId(long ptr, int index);
     protected static native int nativeEffectGetId(long ptr, int index);
     protected static native int nativeEffectGetDuration(long ptr, int index);
     protected static native int nativeEffectGetAmplifier(long ptr, int index);
@@ -33,7 +32,7 @@ public class FoodItemComponent implements INativeInterface {
     protected static native void nativeSetSaturationModifier(long ptr, float satMod);
     protected static native void nativeSetCanAlwaysEat(long ptr, boolean always);
     protected static native void nativeClearEffects(long ptr);
-    protected static native void nativeAddEffect(long ptr, String descriptionId, int id, int duration, int amplifier, float chance);
+    protected static native void nativeAddEffect(long ptr, int id, int duration, int amplifier, float chance);
 
     private final long pointer;
 
@@ -157,7 +156,7 @@ public class FoodItemComponent implements INativeInterface {
         {
             this.saturationModifier = satMod;
             this.saturation = this.nutrition * this.saturationModifier;
-            this.setSaturationModifier(this.saturationModifier / 2.0f);
+            nativeSetSaturationModifier(this.pointer, this.saturationModifier / 2.0f);
         } else Logger.debug("KEX-WARNING", "The following FoodItemComponent is immutable, setSaturationModifier cannot be called!");
     }
 
@@ -184,7 +183,7 @@ public class FoodItemComponent implements INativeInterface {
         if(this.isMutable())
         {
             this.effects.add(new Effect(effect.getId(), effect.getDuration(), effect.getAmplifier(), chance));
-            nativeAddEffect(this.pointer, effect.getEffect().getDescriptionId(), effect.getId(), effect.getDuration(), effect.getAmplifier(), chance);
+            nativeAddEffect(this.pointer, effect.getId(), effect.getDuration(), effect.getAmplifier(), chance);
         } else Logger.debug("KEX-WARNING", "The following FoodItemComponent is immutable, addEffect cannot be called!");
     }
 
@@ -199,9 +198,9 @@ public class FoodItemComponent implements INativeInterface {
 
         public Effect(long ptr, int index)
         {
-            this.descriptionId = nativeEffectGetDescriptionId(ptr, index);
             this.id = nativeEffectGetId(ptr, index);
             this.effect = MobEffect.getById(id);
+            this.descriptionId = this.effect == null ? null : this.effect.getDescriptionId();
             this.duration = nativeEffectGetDuration(ptr, index);
             this.amplifier = nativeEffectGetAmplifier(ptr, index);
             this.chance = nativeEffectGetChance(ptr, index);
@@ -274,6 +273,11 @@ public class FoodItemComponent implements INativeInterface {
         {
             this._alwaysEat = true;
             return this;
+        }
+
+        public Builder effect(MobEffectInstance effect)
+        {
+            return this.effect(effect, 1.0f);
         }
 
         public Builder effect(MobEffectInstance effect, float chance)

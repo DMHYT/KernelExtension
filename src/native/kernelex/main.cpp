@@ -1,7 +1,8 @@
 #include <mod.h>
 
 #include "modules/loot.hpp"
-#include "modules/items.hpp"
+#include "modules/items/module.hpp"
+#include "modules/items/submodules/food.hpp"
 #include "modules/tools/module.hpp"
 #include "modules/tools/submodules/method_patches.hpp"
 #include "modules/tools/submodules/interactions.hpp"
@@ -32,6 +33,7 @@ extern "C" JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *) {
 	Module* main = new KernelExtensionMain();
 	Module* loot = new KEXLootModule(main);
 	Module* items = new KEXItemsModule(main);
+	Module* food = new KEXItemsFoodModule(items);
 	Module* tools = new KEXToolsModule(main);
 	Module* toolPatches = new KEXToolPatchesModule(tools);
 	Module* toolInteractions = new KEXToolInteractionsModule(tools);

@@ -748,7 +748,7 @@ declare module vsdum {
                     nutrition(nutr: number): Builder;
                     saturationMod(sat: number): Builder;
                     alwaysEat(): Builder;
-                    effect(eff: MobEffectInstance, chance: number): Builder;
+                    effect(eff: MobEffectInstance, chance?: number): Builder;
                 }
             }
         }

@@ -28,10 +28,3 @@
 
 // // @ts-ignore
 // com.zhekasmirnov.horizon.launcher.env.AssetPatch.addSingleOverride("resource_packs/vanilla/terrain-atlas/test_anim_blue.png", `${__dir__}/resources/res/terrain-atlas/test_anim_blue.png`);
-
-// ItemsModule.setDynamicFoodValues(VanillaItemID.sweet_berries, (stack) => {
-//     return new FoodItemComponent.Builder()
-//         .nutrition(Math.floor(Math.random() * 3) + 1)
-//         .saturationMod(ESaturationModifier.NORMAL)
-//         .alwaysEat();
-// });

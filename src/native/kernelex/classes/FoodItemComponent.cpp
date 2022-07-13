@@ -67,11 +67,6 @@ extern "C" {
         }
         return result;
     }
-    __EXPORT__(jstring, EffectGetDescriptionId, jint index) {
-        char* result = ((FoodItemComponentLegacy*) ptr)->effects[index].descriptionId;
-        if(result == nullptr) return NULL;
-        return env->NewStringUTF(result);
-    }
     __EXPORT__(jint, EffectGetId, jint index) {
         return ((FoodItemComponentLegacy*) ptr)->effects[index].id;
     }
@@ -96,12 +91,8 @@ extern "C" {
     __EXPORT__(void, ClearEffects) {
         ((FoodItemComponentLegacy*) ptr)->effects.clear();
     }
-    __EXPORT__(void, AddEffect, jstring descriptionId, jint id, jint duration, jint amplifier, jfloat chance) {
-        const char* cDescId = env->GetStringUTFChars(descriptionId, 0);
-        ((FoodItemComponentLegacy*) ptr)->effects.push_back(FoodItemComponentLegacy::Effect {
-            (char*) cDescId, (unsigned int) id, duration, amplifier, chance
-        });
-        env->ReleaseStringUTFChars(descriptionId, cDescId);
+    __EXPORT__(void, AddEffect, jint id, jint duration, jint amplifier, jfloat chance) {
+        ((FoodItemComponentLegacy*) ptr)->effects.emplace_back(FoodItemComponentLegacy::Effect { nullptr, (unsigned int) id, duration, amplifier, chance });
     }
 }
 
