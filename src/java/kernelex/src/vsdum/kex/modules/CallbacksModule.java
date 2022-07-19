@@ -1,10 +1,9 @@
 package vsdum.kex.modules;
 
 import com.zhekasmirnov.apparatus.adapter.innercore.game.item.ItemStack;
-import com.zhekasmirnov.innercore.api.mod.ScriptableObjectHelper;
 import com.zhekasmirnov.innercore.api.runtime.Callback;
 
-import org.mozilla.javascript.Context;
+import java.util.List;
 
 import vsdum.kex.natives.Level;
 
@@ -31,9 +30,9 @@ public class CallbacksModule {
         ItemsModule.onChangeCarriedItem(oldStack, newStack);
     }
 
-    public static void onItemTooltip(ItemStack stack, Level level, StringBuilder textBuilder)
+    public static void onItemTooltip(ItemStack stack, Level level, List<String> tooltip)
     {
-        Callback.invokeAPICallback("ItemTooltip", new Object[]{ stack, Context.javaToJS(textBuilder, ScriptableObjectHelper.getDefaultScope()), level });
+        Callback.invokeAPICallback("ItemTooltip", new Object[]{ stack, tooltip, level });
     }
 
 }
