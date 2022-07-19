@@ -116,20 +116,4 @@ void KEXCommandsModule::initialize() {
         HookManager::CALL | HookManager::LISTENER | HookManager::CONTROLLER
     );
 
-    HookManager::addCallback(
-        SYMBOL("mcpe", "_ZN4I18n3getERKNSt6__ndk112basic_stringIcNS0_11char_traitsIcEENS0_9allocatorIcEEEE"),
-        LAMBDA((stl::string* result, const stl::string& key), {
-            if(std::regex_match(key.c_str(), std::regex("^%commands.[A-z0-9_/-]{1,}.description$")) && *result == key.substr(1)) {
-                JNIEnv* env = KEXJavaUtils::attach();
-                auto commandName = std::regex_replace(std::regex_replace(key.c_str(), std::regex("%commands."), ""), std::regex(".description"), "");
-                jstring output = KEXJavaBridge::CommandsModule::translateCommandDescription(commandName.c_str());
-                const char* cOutput = env->GetStringUTFChars(output, 0);
-                *result = cOutput;
-                env->ReleaseStringUTFChars(output, cOutput);
-                env->DeleteLocalRef(output);
-            }
-        }, ),
-        HookManager::RETURN | HookManager::LISTENER
-    );
-
 }
