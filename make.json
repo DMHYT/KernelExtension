@@ -22,15 +22,10 @@
             "nativejs"
         ],
         "excludeFromRelease": [],
-        "pushTo": "storage/emulated/0/games/horizon/packs/Inner_Core_Test/modpacks/Sky_Factory/mods/KernelExtension",
+        "pushTo": "storage/emulated/0/games/horizon/packs/Inner_Core_Test/innercore/mods/KernelExtension",
         "ndkPath": null
     },
-    "resources": [
-        {
-            "path": "src/assets/res",
-            "type": "resource_directory"
-        }
-    ],
+    "resources": [],
     "sources": [
         {
             "source": "src/dev",
