@@ -26,8 +26,13 @@ public class CallbacksModule {
         if(oldStack != null && newStack != null)
         {
             Callback.invokeAPICallback("ChangeCarriedItem", new Object[]{ Long.valueOf(player), oldStack, newStack, Byte.valueOf(hand) });
+            ItemsModule.onChangeCarriedItem(oldStack, newStack);
         }
-        ItemsModule.onChangeCarriedItem(oldStack, newStack);
+    }
+
+    public static void onSneakChanged(long entity, boolean sneaking)
+    {
+        Callback.invokeAPICallback("EntitySneakChanged", new Object[]{ Long.valueOf(entity), Boolean.valueOf(sneaking) });
     }
 
     public static void onItemTooltip(ItemStack stack, Level level, List<String> tooltip)

@@ -42,4 +42,14 @@ void KEXCallbacksModule::initialize() {
         HookManager::CALL | HookManager::LISTENER
     );
 
+    HookManager::addCallback(
+        SYMBOL("mcpe", "_ZN21ActorEventCoordinator21sendActorSneakChangedER5Actorb"),
+        LAMBDA((ActorEventCoordinator* coordinator, Actor& actor, bool sneaking), {
+            if(!actor.isClientSide()) {
+                JavaCallbacks::invokeCallback(KEXJavaBridge::Cache::CallbacksModule(), "onSneakChanged", "(JZ)V", actor.getUniqueID()->id, sneaking);
+            }
+        }, ),
+        HookManager::CALL | HookManager::LISTENER
+    );
+
 }

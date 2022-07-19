@@ -1541,6 +1541,7 @@ declare namespace Callback {
     export function addCallback(name: "PlayerJump", func: (player: number) => void, priority?: number): void;
     export function addCallback(name: "GameModeChanged", func: (mode: number) => void, priority?: number): void;
     export function addCallback(name: "ChangeCarriedItem", func: (player: number, oldItem: ItemInstance, newItem: ItemInstance, hand: 0 | 1) => void, priority?: number): void;
+    export function addCallback(name: "EntitySneakChanged", func: (entity: number, sneaking: boolean) => void, priority?: number): void;
     export function addCallback(name: "ItemTooltip", func: vsdum.kex.modules.OnTooltipCallback, priority?: number): void;
     export var on: typeof addCallback;
     export var once: typeof addCallback;
