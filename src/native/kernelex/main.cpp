@@ -3,6 +3,7 @@
 #include "modules/loot.hpp"
 #include "modules/items/module.hpp"
 #include "modules/items/submodules/food.hpp"
+#include "modules/items/submodules/tooltip.hpp"
 #include "modules/tools/module.hpp"
 #include "modules/tools/submodules/method_patches.hpp"
 #include "modules/tools/submodules/interactions.hpp"
@@ -13,6 +14,7 @@
 #include "modules/misc/reachdist.hpp"
 #include "modules/misc/cameraroll.hpp"
 #include "modules/misc/smithing.hpp"
+#include "modules/misc/localization.hpp"
 
 #include "utils/java_utils.hpp"
 
@@ -34,6 +36,7 @@ extern "C" JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *) {
 	Module* loot = new KEXLootModule(main);
 	Module* items = new KEXItemsModule(main);
 	Module* food = new KEXItemsFoodModule(items);
+	Module* tooltip = new KEXItemsTooltipModule(items);
 	Module* tools = new KEXToolsModule(main);
 	Module* toolPatches = new KEXToolPatchesModule(tools);
 	Module* toolInteractions = new KEXToolInteractionsModule(tools);
@@ -44,6 +47,7 @@ extern "C" JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *) {
 	Module* reachdist = new KEXMiscReachDistModule(main);
 	Module* cameraroll = new KEXMiscCameraRollModule(main);
 	Module* smithing = new KEXMiscSmithingModule(main);
+	Module* localization = new KEXMiscLocalizationModule(main);
 }
 
 
@@ -56,4 +60,5 @@ extern "C" JNIEXPORT void JNICALL Java_vsdum_kex_KernelExtension_defineCallbackC
 	KEXJavaBridge::Cache::ItemsModule(env);
 	KEXJavaBridge::Cache::DamageModule(env);
 	KEXJavaBridge::Cache::CommandsModule(env);
+	KEXJavaBridge::Cache::I18n(env);
 }

@@ -43,10 +43,10 @@ namespace KEXJavaBridge {
         JAVA_METHOD(ItemsModule, getDynamicFoodValues, "(JJ)V")
         JAVA_CLASS(DamageModule, "vsdum/kex/modules/DamageModule")
         JAVA_METHOD(DamageModule, getDeathMessage, "(JLjava/lang/String;J)Ljava/lang/String;")
-        JAVA_METHOD(DamageModule, translateAndFormatDeathMessage, "(Ljava/lang/String;[Ljava/lang/String;)Ljava/lang/String;")
         JAVA_CLASS(CommandsModule, "vsdum/kex/modules/CommandsModule")
         JAVA_METHOD(CommandsModule, callAPICommand, "(Ljava/lang/String;JIJJ[Z)V")
-        JAVA_METHOD(CommandsModule, translateCommandDescription, "(Ljava/lang/String;)Ljava/lang/String;")
+        JAVA_CLASS(I18n, "vsdum/kex/natives/I18n")
+        JAVA_METHOD(I18n, onChooseLanguage, "(JLjava/lang/String;)V")
     }
     namespace KernelExtension {
         void setMinecraftTextboxText(const char* text) {
@@ -115,18 +115,6 @@ namespace KEXJavaBridge {
             env->DeleteLocalRef(jNickname);
             return result;
         }
-        jstring translateAndFormatDeathMessage(const char* causeName, const stl::vector<stl::string>& formatData) {
-            JNIEnv* env = KEXJavaUtils::attach();
-            jstring jCauseName = env->NewStringUTF(causeName);
-            jobjectArray arr = env->NewObjectArray(formatData.size(), env->FindClass("java/lang/String"), nullptr);
-            for(int i = 0; i < formatData.size(); i++) {
-                env->SetObjectArrayElement(arr, i, env->NewStringUTF(formatData.at(i).c_str()));
-            }
-            jstring result = (jstring) env->CallStaticObjectMethod(Cache::DamageModule(), Cache::DamageModule_translateAndFormatDeathMessage(), jCauseName, arr);
-            env->DeleteLocalRef(jCauseName);
-            env->DeleteLocalRef(arr);
-            return result;
-        }
     }
     namespace CommandsModule {
         void callAPICommand(const char* commandName, jlong commandPointer, jint overloadIndex, jlong originPtr, jlong outputPtr, int paramsCount) {
@@ -142,12 +130,13 @@ namespace KEXJavaBridge {
             env->DeleteLocalRef(jCommandName);
             env->DeleteLocalRef(paramsPresence);
         }
-        jstring translateCommandDescription(const char* commandName) {
+    }
+    namespace I18n {
+        void onChooseLanguage(jlong localizationPtr, const char* languageCode) {
             JNIEnv* env = KEXJavaUtils::attach();
-            jstring jCommandName = env->NewStringUTF(commandName);
-            jstring result = (jstring) env->CallStaticObjectMethod(Cache::CommandsModule(), Cache::CommandsModule_translateCommandDescription(), jCommandName);
-            env->DeleteLocalRef(jCommandName);
-            return result;
+            jstring jLanguageCode = env->NewStringUTF(languageCode);
+            env->CallStaticVoidMethod(Cache::I18n(), Cache::I18n_onChooseLanguage(), localizationPtr, jLanguageCode);
+            env->DeleteLocalRef(jLanguageCode);
         }
     }
 }

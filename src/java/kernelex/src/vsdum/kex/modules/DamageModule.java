@@ -1,8 +1,8 @@
 package vsdum.kex.modules;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
+import java.util.function.BiConsumer;
 
 import org.mozilla.javascript.ScriptableObject;
 
@@ -10,11 +10,11 @@ import com.zhekasmirnov.apparatus.mcpe.NativeBlockSource;
 import com.zhekasmirnov.apparatus.mod.ContentIdScope;
 import com.zhekasmirnov.apparatus.mod.ContentIdSource;
 import com.zhekasmirnov.innercore.api.mod.ScriptableObjectHelper;
-import com.zhekasmirnov.innercore.api.runtime.other.NameTranslation;
 
 import vsdum.kex.natives.Actor;
 import vsdum.kex.natives.ActorDamageSource;
 import vsdum.kex.util.CommonTypes;
+import vsdum.kex.util.LangInjector;
 
 public class DamageModule {
 
@@ -32,6 +32,7 @@ public class DamageModule {
     }
 
     private static final Map<Integer, CustomTranslationCallback> customTranslationCallbacks = new HashMap<>();
+    private static final Map<String, Map<String, String>> deathMessageTranslations = LangInjector.addSection("CUSTOM DEATH MESSAGES");
 
     public static String getDeathMessage(long sourcePtr, String nickname, long actorPtr)
     {
@@ -42,27 +43,14 @@ public class DamageModule {
         return customTranslationCallbacks.get(cause).get(source, nickname, actor);
     }
 
-    private static final Map<String, Map<String, String>> deathMessageTranslations = new HashMap<>();
-
-    private static Map<String, String> getTranslationsMapForCause(String causeName)
+    private static void putTranslation(String causeName, String translation, String language)
     {
-        deathMessageTranslations.putIfAbsent(causeName, new HashMap<>());
-        return deathMessageTranslations.get(causeName);
-    }
-
-    private static String translateDeathMessage(String causeName)
-    {
-        if(!deathMessageTranslations.containsKey(causeName)) return "death.kex." + causeName;
-        Map<String, String> translations = deathMessageTranslations.get(causeName);
-        String language = CommonTypes.getShortLanguageName(NameTranslation.getLanguage());
-        return translations.getOrDefault(language, translations.getOrDefault("en", "death.kex." + causeName));
-    }
-
-    public static String translateAndFormatDeathMessage(String causeName, String[] formatData)
-    {
-        String translated = translateDeathMessage(causeName);
-        if(translated.equals("death.kex." + causeName)) return translated;
-        return CommonTypes.formatLikeInVanilla(translated, formatData);
+        String code = LangInjector.validateLanguageCode(language);
+        if(code != null)
+        {
+            deathMessageTranslations.putIfAbsent(code, new HashMap<>());
+            deathMessageTranslations.get(code).put("death.kex." + causeName, translation);
+        }
     }
     
     public static class CustomCause {
@@ -89,21 +77,20 @@ public class DamageModule {
 
         public CustomCause setDeathMessage(String message)
         {
-            getTranslationsMapForCause(this.name).put("en", message);
+            putTranslation(this.name, message, "en_US");
             return this;
         }
 
         public CustomCause setDeathMessage(ScriptableObject translations)
         {
             Object[] keys = translations.getAllIds();
-            Map<String, String> translationsMap = getTranslationsMapForCause(this.name);
             for(int i = 0; i < keys.length; i++)
             {
                 Object obj = keys[i];
                 if(obj instanceof String)
                 {
                     String str = (String) obj;
-                    translationsMap.put(str, new StringBuilder().append("").append(translations.get(str, translations)).toString());
+                    putTranslation(this.name, new StringBuilder().append("").append(translations.get(str, translations)).toString(), str);
                 }
             }
             return this;
@@ -111,13 +98,12 @@ public class DamageModule {
 
         public CustomCause setDeathMessageMap(Map<String, String> translations)
         {
-            Iterator<Map.Entry<String, String>> iter = translations.entrySet().iterator();
-            Map<String, String> translationsMap = getTranslationsMapForCause(this.name);
-            while(iter.hasNext())
-            {
-                Map.Entry<String, String> entry = iter.next();
-                translationsMap.putIfAbsent(entry.getKey(), entry.getValue());
-            }
+            translations.forEach(new BiConsumer<String, String>() {
+                @Override public void accept(String language, String translation)
+                {
+                    putTranslation(CustomCause.this.name, translation, language);
+                }
+            });
             return this;
         }
 

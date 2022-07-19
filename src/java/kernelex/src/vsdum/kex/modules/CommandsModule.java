@@ -6,26 +6,22 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiConsumer;
 
 import org.mozilla.javascript.ScriptableObject;
 
 import com.zhekasmirnov.horizon.runtime.logger.Logger;
 import com.zhekasmirnov.innercore.api.mod.ScriptableObjectHelper;
-import com.zhekasmirnov.innercore.api.runtime.other.NameTranslation;
 
-import vsdum.kex.modules.commands.CommandContext;
-import vsdum.kex.modules.commands.CommandExecuteCallback;
-import vsdum.kex.modules.commands.CommandOverload;
-import vsdum.kex.modules.commands.CommandsNativeAPI;
-import vsdum.kex.modules.commands.CustomParserCommandExecuteCallback;
+import vsdum.kex.modules.commands.*;
 import vsdum.kex.modules.commands.arguments.*;
 import vsdum.kex.modules.commands.enums.*;
-import vsdum.kex.util.CommonTypes;
+import vsdum.kex.util.LangInjector;
 
 public class CommandsModule {
 
     private static final Map<String, List<CommandOverload>> executableData = new HashMap<>();
-    private static final Map<String, Map<String, String>> descriptionTranslations = new HashMap<>();
+    private static final Map<String, Map<String, String>> descriptionTranslations = LangInjector.addSection("CUSTOM COMMAND DESCRIPTIONS");
 
     public static void registerCommand(CommandOverloadBase base)
     {
@@ -49,7 +45,17 @@ public class CommandsModule {
             }
             Logger.debug("KEX-CommandRegistry", String.format("Overload %d for command %s built, used %d bytes out of %d possible.", new Object[]{ Integer.valueOf(i), base.commandName, Integer.valueOf(offset - 36), Integer.valueOf((2012 - overload.size()) / 4 * 4) }));
         }
-        descriptionTranslations.putIfAbsent(base.commandName, base.descriptionTranslations);
+        base.descriptionTranslations.forEach(new BiConsumer<String, String>() {
+            @Override public void accept(String language, String translation)
+            {
+                String code = LangInjector.validateLanguageCode(language);
+                if(code != null)
+                {
+                    descriptionTranslations.putIfAbsent(code, new HashMap<>());
+                    descriptionTranslations.get(code).put("commands." + base.commandName + ".description", translation);
+                }
+            }
+        });
     }
 
     public static void registerCustomParserCommand(String name, CustomParserCommandExecuteCallback callback)
@@ -256,14 +262,6 @@ public class CommandsModule {
                 lastCallbackFound.execute(new CommandContext(commandPtr, originPtr, outputPtr, overload.argumentsByName));
             } catch(Throwable ex) { ex.printStackTrace(); }
         }
-    }
-
-    public static String translateCommandDescription(String commandName)
-    {
-        if(!descriptionTranslations.containsKey(commandName)) return "commands." + commandName + ".description";
-        Map<String, String> translations = descriptionTranslations.get(commandName);
-        String language = CommonTypes.getShortLanguageName(NameTranslation.getLanguage());
-        return translations.getOrDefault(language, translations.getOrDefault("en", "commands." + commandName + ".description"));
     }
 
     private static void buildArgument(long vectorPtr, ArgumentBase arg)

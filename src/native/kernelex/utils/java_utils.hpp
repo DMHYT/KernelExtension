@@ -23,6 +23,7 @@ namespace KEXJavaBridge {
         jclass ItemsModule(JNIEnv* env);
         jclass DamageModule(JNIEnv* env);
         jclass CommandsModule(JNIEnv* env);
+        jclass I18n(JNIEnv* env);
     }
     namespace KernelExtension {
         void setMinecraftTextboxText(const char* text);
@@ -44,11 +45,12 @@ namespace KEXJavaBridge {
     }
     namespace DamageModule {
         jstring getDeathMessage(jlong sourcePtr, const char* nickname, jlong actorPtr);
-        jstring translateAndFormatDeathMessage(const char* causeName, const stl::vector<stl::string>& formatData);
     }
     namespace CommandsModule {
         void callAPICommand(const char* commandName, jlong commandPointer, jint overloadIndex, jlong originPtr, jlong outputPtr, int paramsCount);
-        jstring translateCommandDescription(const char* commandName);
+    }
+    namespace I18n {
+        void onChooseLanguage(jlong localizationPtr, const char* languageCode);
     }
 }
 
