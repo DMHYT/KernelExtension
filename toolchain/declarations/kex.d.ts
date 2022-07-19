@@ -1122,7 +1122,7 @@ declare module vsdum {
                 (stack: ItemInstance): number;
             }
             interface OnTooltipCallback {
-                (stack: ItemInstance, text: java.lang.StringBuilder, level: natives.Level): void;
+                (stack: ItemInstance, text: java.util.List<jstring>, level: natives.Level): void;
             }
             interface FoodValuesCallback {
                 (stack: ItemInstance): natives.FoodItemComponent.Builder;

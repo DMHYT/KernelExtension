@@ -1,6 +1,7 @@
 package vsdum.kex.modules;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -44,7 +45,7 @@ public class ItemsModule {
     }
 
     public static interface OnTooltipCallback {
-        public void onTooltip(ItemStack item, StringBuilder textBuilder, Level level);
+        public void onTooltip(ItemStack item, List<String> tooltip, Level level);
     }
 
     private static final Map<Integer, FoodItemComponent> food = new HashMap<>();
@@ -132,14 +133,14 @@ public class ItemsModule {
         ItemStack stack = ItemStack.fromPtr(stackPtr);
         if(stack == null) return text;
         Level level = new Level(levelPtr);
-        StringBuilder textBuilder = new StringBuilder(text);
+        List<String> tooltip = Arrays.asList(text.split("\\n"));
         if(itemOnTooltipCallbacks.containsKey(stack.id))
         {
             Iterator<CallbackFunction<OnTooltipCallback>> iter = itemOnTooltipCallbacks.get(stack.id).iterator();
-            while(iter.hasNext()) iter.next().function.onTooltip(stack, textBuilder, level);
+            while(iter.hasNext()) iter.next().function.onTooltip(stack, tooltip, level);
         }
-        CallbacksModule.onItemTooltip(stack, level, textBuilder);
-        return textBuilder.toString();
+        CallbacksModule.onItemTooltip(stack, level, tooltip);
+        return String.join("\\n", tooltip);
     }
 
     public static void getDynamicFoodValues(long stackPtr, long foodPtr)
