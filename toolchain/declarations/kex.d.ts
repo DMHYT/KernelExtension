@@ -1142,7 +1142,7 @@ declare module vsdum {
                 static newFoodSaturationModifier(name: any_string, value: number): void;
                 static saturationModifierFromString(name: any_string): number;
                 static setMaxUseDurationDynamic(id: number, callback: UseDurationCallback): void;
-                static addTooltip(id: number, callback: OnTooltipCallback, priority?: number): void;
+                static addTooltip(id: number, callback: OnTooltipCallback, priority?: number, isCallbackForced?: boolean): void;
                 static setDynamicFoodValues(id: number, callback: FoodValuesCallback): void;
                 static registerReachDistanceModifierFor(id: number, modifier: misc.ReachDistanceModifier): void;
             }

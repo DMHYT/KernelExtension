@@ -1,5 +1,6 @@
 package vsdum.kex.modules;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -9,6 +10,7 @@ import java.util.Map;
 
 import com.zhekasmirnov.apparatus.adapter.innercore.game.item.ItemStack;
 import com.zhekasmirnov.horizon.runtime.logger.Logger;
+import com.zhekasmirnov.innercore.api.runtime.Callback;
 
 import android.support.annotation.Nullable;
 import vsdum.kex.common.CallbackFunction;
@@ -24,6 +26,7 @@ public class ItemsModule {
     protected static native void nativeNewFoodSaturationModifier(String name, float value);
     protected static native void nativeEnableDynamicUseDuration(int id);
     protected static native void nativeEnableDynamicFoodValues(int id);
+    protected static native void nativeSetTooltipCallbackForced(int id);
     
     public static native void setRequiresWorldBuilder(int id, boolean requiresWorldBuilder);
     public static native void setExplodable(int id, boolean explodable);
@@ -112,8 +115,14 @@ public class ItemsModule {
 
     public static void addTooltip(int id, OnTooltipCallback cb, int priority)
     {
+        addTooltip(id, cb, priority, true);
+    }
+
+    public static void addTooltip(int id, OnTooltipCallback cb, int priority, boolean isCallbackForced)
+    {
         itemOnTooltipCallbacks.putIfAbsent(id, new ArrayList<>());
         CallbackFunction.addToList(new CallbackFunction<OnTooltipCallback>(cb, priority), itemOnTooltipCallbacks.get(id));
+        if(isCallbackForced) nativeSetTooltipCallbackForced(id);
     }
 
     public static void setDynamicFoodValues(int id, FoodValuesCallback callback)
@@ -130,17 +139,18 @@ public class ItemsModule {
 
     public static String appendFormattedHovertext(long stackPtr, long levelPtr, String text)
     {
+        if(!anyTooltipCallbacksDefined()) return text;
         ItemStack stack = ItemStack.fromPtr(stackPtr);
         if(stack == null) return text;
         Level level = new Level(levelPtr);
-        List<String> tooltip = Arrays.asList(text.split("\\n"));
+        List<String> tooltip = new ArrayList<>(Arrays.asList(text.split("\\n")));
         if(itemOnTooltipCallbacks.containsKey(stack.id))
         {
             Iterator<CallbackFunction<OnTooltipCallback>> iter = itemOnTooltipCallbacks.get(stack.id).iterator();
             while(iter.hasNext()) iter.next().function.onTooltip(stack, tooltip, level);
         }
         CallbacksModule.onItemTooltip(stack, level, tooltip);
-        return String.join("\\n", tooltip);
+        return String.join("\n", tooltip);
     }
 
     public static void getDynamicFoodValues(long stackPtr, long foodPtr)
@@ -174,6 +184,18 @@ public class ItemsModule {
             Iterator<ReachDistanceModifier> iter = reachDistanceModifiers.get(newStack.id).iterator();
             while(iter.hasNext()) iter.next().enable();
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    private static boolean anyTooltipCallbacksDefined()
+    {
+        try {
+            Field callbacksField = Callback.class.getDeclaredField("callbacks");
+            callbacksField.setAccessible(true);
+            HashMap<String, ArrayList<?>> callbacks = (HashMap<String, ArrayList<?>>) callbacksField.get(null);
+            return (callbacks.containsKey("ItemTooltip") && !callbacks.get("ItemTooltip").isEmpty())
+                && !itemOnTooltipCallbacks.isEmpty();
+        } catch(Throwable ex) { return false; }
     }
 
 }

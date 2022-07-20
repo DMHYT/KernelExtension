@@ -70,13 +70,3 @@ void KEXItemsModule::initialize() {
     );
 
 }
-
-
-// HookManager::addCallback(SYMBOL("mcpe", "_ZNK4Item24appendFormattedHovertextERK13ItemStackBaseR5LevelRNSt6__ndk112basic_stringIcNS5_11char_traitsIcEENS5_9allocatorIcEEEEb"), LAMBDA((Item* item, const ItemStackBase& stack, Level& level, stl::string& text, bool b), {
-//     JNIEnv* env = KEXJavaUtils::attach();
-//     jstring jText = KEXJavaBridge::ItemsModule::appendFormattedHovertext((jlong) &stack, (jlong) &level, text.c_str());
-//     const char* cText = env->GetStringUTFChars(jText, 0);
-//     text = cText;
-//     env->ReleaseStringUTFChars(jText, cText);
-//     env->DeleteLocalRef(jText);
-// }, ), HookManager::RETURN | HookManager::LISTENER);
