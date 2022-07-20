@@ -96,7 +96,6 @@ declare module vsdum {
                 isInSnow(): boolean;
                 canMate(mate: Actor): boolean;
                 hasTickingArea(): boolean;
-                getTickingArea(): Nullable<TickingArea>;
                 getIsOnScreen(): boolean;
                 setIsOnScreen(onScreen: boolean): void;
                 isOverScaffolding(): boolean;
@@ -701,17 +700,6 @@ declare module vsdum {
     }
 }
 declare function WRAP_JAVA(clazz: "vsdum.kex.natives.MobEffectInstance"): typeof vsdum.kex.natives.MobEffectInstance;
-
-declare module vsdum {
-    export module kex {
-        export module natives {
-            export class TickingArea extends common.INativeInterface {
-                static class: java.lang.Class<TickingArea>;
-                constructor(pointer: number);
-            }
-        }
-    }
-}
 
 declare module vsdum {
     export module kex {

@@ -61,7 +61,6 @@ public class Actor implements INativeInterface {
     protected static native boolean nativeIsInSnow(long ptr);
     protected static native boolean nativeCanMate(long ptr, long matePtr);
     protected static native boolean nativeHasTickingArea(long ptr);
-    protected static native long nativeGetTickingArea(long ptr);
     protected static native boolean nativeGetIsOnScreen(long ptr);
     protected static native void nativeSetIsOnScreen(long ptr, boolean onScreen);
     protected static native boolean nativeIsOverScaffolding(long ptr);
@@ -599,13 +598,6 @@ public class Actor implements INativeInterface {
     public boolean hasTickingArea()
     {
         return nativeHasTickingArea(this.pointer);
-    }
-
-    @Nullable public TickingArea getTickingArea()
-    {
-        long areaPtr = nativeGetTickingArea(this.pointer);
-        if(areaPtr == 0L) return null;
-        return new TickingArea(areaPtr);
     }
 
     public boolean getIsOnScreen()

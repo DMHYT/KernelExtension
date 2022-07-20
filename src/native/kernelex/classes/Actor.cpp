@@ -223,11 +223,6 @@ extern "C" {
     __EXPORT__(jboolean, HasTickingArea) {
         return ((Actor*) ptr)->hasTickingArea();
     }
-    __EXPORT__(jlong, GetTickingArea) {
-        TickingArea* area = ((Actor*) ptr)->getTickingArea();
-        if(area == nullptr) return 0;
-        return (jlong) area;
-    }
     __EXPORT__(jboolean, GetIsOnScreen) {
         return ((Actor*) ptr)->getIsOnScreen();
     }
