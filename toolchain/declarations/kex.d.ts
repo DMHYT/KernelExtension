@@ -1726,6 +1726,22 @@ declare enum ETileEntityType {
         readonly TEMPERATURE: 26,
         readonly ALL: 31
     },
+    EArgumentType: {
+        readonly INT: 0,
+        readonly FLOAT: 1,
+        readonly BOOL: 2,
+        readonly RELATIVE_FLOAT: 3,
+        readonly POSITION: 4,
+        readonly FLOAT_POSITION: 5,
+        readonly STRING: 6,
+        readonly MESSAGE: 7,
+        readonly JSON: 8,
+        readonly ENTITY: 9,
+        readonly PLAYER: 10,
+        readonly ENUM: 11,
+        readonly STRING_ENUM: 12,
+        readonly LITERAL: 13
+    },
     getKEXVersion: () => [ number, number, number ],
     getKEXVersionCode: () => number;
 }
