@@ -1584,6 +1584,8 @@ declare namespace Commands {
     }
     interface CustomCommandBuilder {
         addOverload(args: Arguments[], callback: ExecuteCallback): CustomCommandBuilder;
+        setDescription(translations: object): CustomCommandBuilder;
+        setDescription(desc: string): CustomCommandBuilder;
         register(): void;
     }
     export function newEnum(enumName: string): vsdum.kex.modules.CommandsModule.EnumBuilder;

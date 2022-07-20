@@ -11,6 +11,7 @@ class KEXCommandBuilder implements Commands.CustomCommandBuilder {
     private static readonly typeNames: Commands.Arguments["type"][] = ["int", "float", "bool", "relfloat", "pos", "floatpos", "str", "msg", "json", "entity", "player", "enum", "strenum", "literal"];
 
     private readonly overloads: CommandOverload[] = [];
+    private readonly descriptionTranslations: object = {};
 
     constructor(private readonly name: string, private readonly permissionLevel: number) {}
 
@@ -23,6 +24,17 @@ class KEXCommandBuilder implements Commands.CustomCommandBuilder {
             }
         });
         this.overloads.push({ args, callback });
+        return this;
+    }
+
+    public setDescription(translations: object): KEXCommandBuilder;
+    public setDescription(desc: string): KEXCommandBuilder;
+    public setDescription(translations: object | string): KEXCommandBuilder {
+        if(typeof translations === "object")
+            for(let languageCode in translations)
+                this.descriptionTranslations[languageCode] = translations[languageCode];
+        else if(typeof translations === "string")
+            this.descriptionTranslations["en_US"] = translations;
         return this;
     }
 
@@ -44,6 +56,7 @@ class KEXCommandBuilder implements Commands.CustomCommandBuilder {
             });
             node.executes(KEXCommandBuilder.buildExecuteCallback(overload));
         });
+        commandBase.setDescription(this.descriptionTranslations);
         CommandsModule.registerCommand(commandBase);
     }
 
