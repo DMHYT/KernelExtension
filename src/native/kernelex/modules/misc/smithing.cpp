@@ -111,17 +111,17 @@ extern "C" {
         if(additionsMap.find(additionID) == additionsMap.end()) {
             additionsMap.emplace(additionID, resultID);
         } else {
-            Logger::debug("KEX-WARNING", "Smithing table recipe with baseID=%d, additionID=%d, was already registered before, skipping...", baseID, additionID);
+            Logger::message("WARNING", "[KEX-SmithingTableRecipes] Smithing table recipe with baseID=%d, additionID=%d, was already registered before, skipping...", baseID, additionID);
         }
     }
     JNIEXPORT void JNICALL Java_vsdum_kex_modules_misc_SmithingTableRecipes_nativeRemoveRecipe
     (JNIEnv*, jclass, jint baseID, jint additionID) {
         if(KEXMiscSmithingModule::recipes.find(baseID) == KEXMiscSmithingModule::recipes.end()) {
-            Logger::debug("KEX-WARNING", "Smithing table recipe with baseID=%d is not present, nothing to remove, skipping...", baseID);
+            Logger::message("WARNING", "[KEX-SmithingTableRecipes] Smithing table recipe with baseID=%d is not present, nothing to remove, skipping...", baseID);
         }
         auto& additionsMap = KEXMiscSmithingModule::recipes.at(baseID);
         if(additionsMap.find(additionID) == additionsMap.end()) {
-            Logger::debug("KEX-WARNING", "Smithing table recipe with baseID=%d, additionID=%d, is not present, nothing to remove, skipping...", baseID, additionID);
+            Logger::message("WARNING", "[KEX-SmithingTableRecipes] Smithing table recipe with baseID=%d, additionID=%d, is not present, nothing to remove, skipping...", baseID, additionID);
         }
         additionsMap.erase(additionID);
     }

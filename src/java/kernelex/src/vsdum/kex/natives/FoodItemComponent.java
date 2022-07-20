@@ -147,7 +147,7 @@ public class FoodItemComponent implements INativeInterface {
         {
             this.nutrition = nutrition;
             nativeSetNutrition(this.pointer, nutrition);
-        } else Logger.debug("KEX-WARNING", "The following FoodItemComponent is immutable, setNutrition cannot be called!");
+        } else Logger.warning("[KEX-FoodItemComponent] The following FoodItemComponent is immutable, setNutrition cannot be called!");
     }
 
     public void setSaturationModifier(float satMod)
@@ -157,7 +157,7 @@ public class FoodItemComponent implements INativeInterface {
             this.saturationModifier = satMod;
             this.saturation = this.nutrition * this.saturationModifier;
             nativeSetSaturationModifier(this.pointer, this.saturationModifier / 2.0f);
-        } else Logger.debug("KEX-WARNING", "The following FoodItemComponent is immutable, setSaturationModifier cannot be called!");
+        } else Logger.warning("[KEX-FoodItemComponent] The following FoodItemComponent is immutable, setSaturationModifier cannot be called!");
     }
 
     public void setCanAlwaysEat(boolean can)
@@ -166,7 +166,7 @@ public class FoodItemComponent implements INativeInterface {
         {
             this._canAlwaysEat = can;
             nativeSetCanAlwaysEat(this.pointer, can);
-        } else Logger.debug("KEX-WARNING", "The following FoodItemComponent is immutable, setCanAlwaysEat cannot be called!");
+        } else Logger.warning("[KEX-FoodItemComponent] The following FoodItemComponent is immutable, setCanAlwaysEat cannot be called!");
     }
 
     public void clearEffects()
@@ -175,7 +175,7 @@ public class FoodItemComponent implements INativeInterface {
         {
             this.effects.clear();
             nativeClearEffects(this.pointer);
-        } else Logger.debug("KEX-WARNING", "The following FoodItemComponent is immutable, clearEffects cannot be called!");
+        } else Logger.warning("[KEX-FoodItemComponent] The following FoodItemComponent is immutable, clearEffects cannot be called!");
     }
 
     public void addEffect(MobEffectInstance effect, float chance)
@@ -184,7 +184,7 @@ public class FoodItemComponent implements INativeInterface {
         {
             this.effects.add(new Effect(effect.getId(), effect.getDuration(), effect.getAmplifier(), chance));
             nativeAddEffect(this.pointer, effect.getId(), effect.getDuration(), effect.getAmplifier(), chance);
-        } else Logger.debug("KEX-WARNING", "The following FoodItemComponent is immutable, addEffect cannot be called!");
+        } else Logger.warning("[KEX-FoodItemComponent] The following FoodItemComponent is immutable, addEffect cannot be called!");
     }
 
     public static final class Effect {

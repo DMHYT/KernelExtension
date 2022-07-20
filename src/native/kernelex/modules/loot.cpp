@@ -248,7 +248,7 @@ extern "C" {
                 KEXLootModule::customLootFunctions.emplace(cFunctionName);
             }
         } else {
-            Logger::debug("KEX-WARNING", "Loot function %s already exists in vanilla, cannot register custom loot function with this name, skipping...", cFunctionName);
+            Logger::message("WARNING", "[KEX-LootModule] Loot function %s already exists in vanilla, cannot register custom loot function with this name, skipping...", cFunctionName);
         }
         env->ReleaseStringUTFChars(functionName, cFunctionName);
     }

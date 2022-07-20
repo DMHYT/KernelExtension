@@ -70,7 +70,7 @@ extern "C" {
     (JNIEnv* env, jclass, jstring name, jfloat value) {
         const char* cName = env->GetStringUTFChars(name, 0);
         if(KEXItemsFoodModule::customFoodSaturationModifiers.find(cName) != KEXItemsFoodModule::customFoodSaturationModifiers.end()) {
-            Logger::debug("KEX-WARNING", "Custom food saturation modifier %s has already been registered before!", cName);
+            Logger::message("WARNING", "[KEX-ItemsModule] Custom food saturation modifier %s has already been registered before!", cName);
         } else KEXItemsFoodModule::customFoodSaturationModifiers.emplace(cName, value);
         env->ReleaseStringUTFChars(name, cName);
     }

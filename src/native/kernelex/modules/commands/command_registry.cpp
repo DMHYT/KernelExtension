@@ -29,7 +29,7 @@ std::unordered_map<std::string, stl::vector<stl::string>> KEXCommandRegistry::cu
 
 void KEXCommandRegistry::registerNativeCommandFactory(const std::string& commandName, KEXCommandRegistry::NativeCommandFactoryBase* factory) {
     if(KEXCommandRegistry::usedNamesAndAliases.find(commandName) != KEXCommandRegistry::usedNamesAndAliases.end()) {
-        Logger::debug("KEX-WARNING", "Command with name %s has already been registered by vanilla or by KEX API! Try using another name.", commandName.c_str());
+        Logger::message("WARNING", "[KEX-CommandRegistry] Command with name %s has already been registered by vanilla or by KEX API! Try using another name.", commandName.c_str());
     } else {
         KEXCommandRegistry::registeredFactories.emplace(commandName, factory);
     }
@@ -70,7 +70,7 @@ void KEXCommandRegistry::NonNativeCommandFactory::init(const std::string& comman
 
 void KEXCommandRegistry::NonNativeCommandFactory::addAlias(const std::string& alias) {
     if(usedNamesAndAliases.find(alias) != usedNamesAndAliases.end()) {
-        Logger::debug("KEX-WARNING", "Alias %s for command %s has already been registered as a command name or as an alias, by vanilla or by KEX API!", alias.c_str(), props.name.c_str());
+        Logger::message("WARNING", "[KEX-CommandRegistry] Alias %s for command %s has already been registered as a command name or as an alias, by vanilla or by KEX API!", alias.c_str(), props.name.c_str());
     } else {
         props.aliases.push_back(alias);
         usedNamesAndAliases.emplace(alias);
@@ -89,7 +89,7 @@ std::vector<KEXCommandRegistry::ArgumentTypes::Base*>* KEXCommandRegistry::NonNa
         props.overloads.push_back({});
         return &props.overloads.at(overloadIndex);
     }
-    Logger::debug("KEX-WARNING", "Overload index %d for command %s is too big, maximum index at the moment is %d. Returning dummy vector...", overloadIndex, props.name.c_str(), props.overloads.size());
+    Logger::message("WARNING", "[KEX-CommandRegistry] Overload index %d for command %s is too big, maximum index at the moment is %d. Returning dummy vector...", overloadIndex, props.name.c_str(), props.overloads.size());
     return new std::vector<KEXCommandRegistry::ArgumentTypes::Base*>();
 }
 

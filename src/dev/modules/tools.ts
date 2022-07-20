@@ -269,7 +269,7 @@ ToolAPI.addToolMaterial = (name, material) => {
             Math.floor(material.damage) || 1, 
             Math.floor(material.enchantability) || 14
         ), name);
-    } else Logger.Log(`Tool material with name \'${name}\' has already been registered before! Skipping...`, "KEX-WARNING");
+    } else Logger.Log(`[KEX-ToolAPI] Tool material with name \'${name}\' has already been registered before! Skipping...`, "WARNING");
 }
 ToolAPI.dropExpOrbs = (x, y, z, value, blockSource?: BlockSource) => (blockSource || BlockSource.getCurrentClientRegion()).spawnExpOrbs(x, y, z, value);
 ToolAPI.getBlockData = blockID => {

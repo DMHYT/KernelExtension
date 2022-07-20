@@ -44,7 +44,7 @@ extern "C" {
         const char* cName = env->GetStringUTFChars(name, 0);
         const char* cAlias = env->GetStringUTFChars(alias, 0);
         if(KEXCommandRegistry::usedNamesAndAliases.find(cAlias) != KEXCommandRegistry::usedNamesAndAliases.end()) {
-            Logger::debug("KEX-WARNING", "Alias %s for command %s has already been registered as a command name or as an alias, by vanilla or by KEX API!", cAlias, cName);
+            Logger::message("WARNING", "[KEX-CommandRegistry] Alias %s for command %s has already been registered as a command name or as an alias, by vanilla or by KEX API!", cAlias, cName);
         } else {
             KEXCommandRegistry::usedNamesAndAliases.emplace(cAlias);
             KEXCommandRegistry::staticAliases.push_back({ cName, cAlias });
@@ -71,7 +71,7 @@ extern "C" {
                 KEXCommandRegistry::customEnums.emplace(cEnumName, values);
             }
         } else {
-            Logger::debug("KEX-WARNING", "Command enum %s has already been registered by KEX API! Try using another name!", cEnumName);
+            Logger::message("WARNING", "[KEX-CommandRegistry] Command enum %s has already been registered by KEX API! Try using another name!", cEnumName);
         }
         env->ReleaseStringUTFChars(enumName, cEnumName);
     }
@@ -92,7 +92,7 @@ extern "C" {
                 KEXCommandRegistry::customStringEnums.emplace(cEnumName, values);
             }
         } else {
-            Logger::debug("KEX-WARNING", "Command enum %s has already been registered by KEX API! Try using another name!", cEnumName);
+            Logger::message("WARNING", "[KEX-CommandRegistry] Command enum %s has already been registered by KEX API! Try using another name!", cEnumName);
         }
         env->ReleaseStringUTFChars(enumName, cEnumName);
     }

@@ -18,7 +18,7 @@ public class KernelExtension {
     
     public static void boot(HashMap<?, ?> something)
     {
-        Logger.debug("KEX", "Loading java...");
+        Logger.debug("KEX-JAVA", "Booting...");
         defineCallbackClasses();
         PacketPipeline.getSingleton().initPackets();
     }
