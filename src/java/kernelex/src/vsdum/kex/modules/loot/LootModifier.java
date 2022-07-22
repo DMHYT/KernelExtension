@@ -1,8 +1,10 @@
 package vsdum.kex.modules.loot;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import com.zhekasmirnov.innercore.utils.FileTools;
 
@@ -30,8 +32,8 @@ public class LootModifier implements IJSONSerializable {
     public final List<LootPool> pools = new ArrayList<>();
     public final List<CallbackFunction<JSModifyCallback>> jsCallbacks = new ArrayList<>();
     public final List<CallbackFunction<JSONModifyCallback>> jsonCallbacks = new ArrayList<>();
-    public final List<CallbackFunction<JSModifyCallback>> jsPostCallbacks = new ArrayList<>();
-    public final List<CallbackFunction<JSONModifyCallback>> jsonPostCallbacks = new ArrayList<>();
+    public final Set<JSModifyCallback> jsPostCallbacks = new HashSet<>();
+    public final Set<JSONModifyCallback> jsonPostCallbacks = new HashSet<>();
 
     public LootModifier() {}
 
@@ -309,23 +311,13 @@ public class LootModifier implements IJSONSerializable {
 
     public LootModifier addJSPostModifyCallback(JSModifyCallback cb)
     {
-        return this.addJSPostModifyCallback(cb, 0);
-    }
-
-    public LootModifier addJSPostModifyCallback(JSModifyCallback cb, int priority)
-    {
-        CallbackFunction.addToList(new CallbackFunction<JSModifyCallback>(cb, priority), this.jsPostCallbacks);
+        this.jsPostCallbacks.add(cb);
         return this;
     }
 
     public LootModifier addJSONPostModifyCallback(JSONModifyCallback cb)
     {
-        return this.addJSONPostModifyCallback(cb, 0);
-    }
-
-    public LootModifier addJSONPostModifyCallback(JSONModifyCallback cb, int priority)
-    {
-        CallbackFunction.addToList(new CallbackFunction<JSONModifyCallback>(cb, priority), this.jsonPostCallbacks);
+        this.jsonPostCallbacks.add(cb);
         return this;
     }
 
@@ -340,18 +332,16 @@ public class LootModifier implements IJSONSerializable {
                 poolsArray.put(pool.obj);
             }
         } catch(JSONException ex) {}
-        Iterator<CallbackFunction<JSModifyCallback>> iterJS;
-        Iterator<CallbackFunction<JSONModifyCallback>> iterJSON;
         if(!this.jsonCallbacks.isEmpty())
         {
-            iterJSON = this.jsonCallbacks.iterator();
-            while(iterJSON.hasNext()) iterJSON.next().function.onModify(obj);
+            Iterator<CallbackFunction<JSONModifyCallback>> iter = this.jsonCallbacks.iterator();
+            while(iter.hasNext()) iter.next().function.onModify(obj);
         }
         if(!this.jsCallbacks.isEmpty())
         {
             ScriptableObject scr = CommonTypes.jsonToScriptable(obj);
-            iterJS = this.jsCallbacks.iterator();
-            while(iterJS.hasNext()) iterJS.next().function.onModify(scr);
+            Iterator<CallbackFunction<JSModifyCallback>> iter = this.jsCallbacks.iterator();
+            while(iter.hasNext()) iter.next().function.onModify(scr);
             JSONObject modifiedObj = CommonTypes.scriptableToJson(scr);
             try {
                 obj.remove("pools");
@@ -360,15 +350,15 @@ public class LootModifier implements IJSONSerializable {
         }
         if(!this.jsonPostCallbacks.isEmpty())
         {
-            iterJSON = this.jsonPostCallbacks.iterator();
-            while(iterJSON.hasNext()) try {
-                iterJSON.next().function.onModify(new JSONObject(obj.toString()));
+            Iterator<JSONModifyCallback> iter = this.jsonPostCallbacks.iterator();
+            while(iter.hasNext()) try {
+                iter.next().onModify(new JSONObject(obj.toString()));
             } catch(JSONException ex) {}
         }
         if(!this.jsPostCallbacks.isEmpty())
         {
-            iterJS = this.jsPostCallbacks.iterator();
-            while(iterJS.hasNext()) iterJS.next().function.onModify(CommonTypes.jsonToScriptable(obj));
+            Iterator<JSModifyCallback> iter = this.jsPostCallbacks.iterator();
+            while(iter.hasNext()) iter.next().onModify(CommonTypes.jsonToScriptable(obj));
         }
     }
 
