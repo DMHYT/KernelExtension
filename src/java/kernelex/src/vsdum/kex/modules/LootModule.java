@@ -236,7 +236,7 @@ public class LootModule {
         if(!result.startsWith("loot_tables/chests/") && !result.startsWith("loot_tables/entities/"))
             throw new IllegalArgumentException("Loot table name must be [loot_tables/](chests|entities)/{path and name}[.json]");
         if(!result.endsWith(".json")) result += ".json";
-        if(!result.matches("^loot_tables/(chests|entities)/([\\w-/]+).json$"))
+        if(!result.matches("^loot_tables/(chests|entities|equipment|gameplay)/([\\w-/]+).json$"))
             throw new IllegalArgumentException("NOT MATCHING REGEX: Loot table name must be [loot_tables/](chests|entities)/{path and name}[.json]");
         return result;
     }
