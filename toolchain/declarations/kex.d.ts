@@ -1049,7 +1049,7 @@ declare module vsdum {
                 addRandomChanceCondition(chance: number, maxChance?: number): LootConditions;
                 addRandomChanceWithLootingCondition(chance: number, lootingMultiplier: number): LootConditions;
                 addRandomDifficultyChanceCondition(defaultChance: number, easy?: number, normal?: number, hard?: number, peaceful?: number): LootConditions;
-                addRandomRegionalDifficultyChanceCondition(defaultChance: number, easy?: number, normal?: number, hard?: number, peaceful?: number): LootConditions;
+                addRandomRegionalDifficultyChanceCondition(maxChance: number): LootConditions;
                 endConditions(): LootPool;
             }
             export interface LootTiers {

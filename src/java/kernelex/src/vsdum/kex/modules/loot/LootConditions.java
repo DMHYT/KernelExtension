@@ -163,37 +163,13 @@ public class LootConditions implements IJSONSerializable {
         } catch(JSONException ex) {}
         return this;
     }
-
-    public LootConditions addRandomRegionalDifficultyChanceCondition(float defaultChance)
-    {
-        return addRandomRegionalDifficultyChanceCondition(defaultChance, defaultChance);
-    }
-
-    public LootConditions addRandomRegionalDifficultyChanceCondition(float defaultChance, float easy)
-    {
-        return addRandomRegionalDifficultyChanceCondition(defaultChance, easy, defaultChance);
-    }
-
-    public LootConditions addRandomRegionalDifficultyChanceCondition(float defaultChance, float easy, float normal)
-    {
-        return addRandomRegionalDifficultyChanceCondition(defaultChance, easy, normal, defaultChance);
-    }
-
-    public LootConditions addRandomRegionalDifficultyChanceCondition(float defaultChance, float easy, float normal, float hard)
-    {
-        return addRandomRegionalDifficultyChanceCondition(defaultChance, easy, normal, hard, defaultChance);
-    }
-
-    public LootConditions addRandomRegionalDifficultyChanceCondition(float defaultChance, float easy, float normal, float hard, float peaceful)
+    
+    public LootConditions addRandomRegionalDifficultyChanceCondition(float maxChance)
     {
         try {
             this.arr.put(new JSONObject()
                 .put("condition", "random_regional_difficulty_chance")
-                .put("default_chance", defaultChance)
-                .put("easy", easy)
-                .put("normal", normal)
-                .put("hard", hard)
-                .put("peaceful", peaceful));
+                .put("max_chance", maxChance));
         } catch(JSONException ex) {}
         return this;
     }
