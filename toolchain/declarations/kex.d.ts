@@ -1091,7 +1091,7 @@ declare module vsdum {
                 addBookContentsFunction(author: any_string, title: any_string, pages: any_string[]): LootEntryFunctions;
                 addDataFromColorIndexFunction(): LootEntryFunctions;
                 addLoreFunction(lore: any_string[]): LootEntryFunctions;
-                addSpecificEnchantsFunction(enchants: java.util.Map<jstring, number>): LootEntryFunctions;
+                addSpecificEnchantsFunction(enchants: java.util.Map<jstring, number> | { [key in EnchantTypes]: number }): LootEntryFunctions;
                 addTraderMaterialTypeFunction(): LootEntryFunctions;
                 addCustomFunction(functionName: any_string, json: org.json.JSONObject): LootEntryFunctions;
                 addCustomFunction(functionName: any_string, json: object): LootEntryFunctions;

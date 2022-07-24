@@ -1,6 +1,7 @@
 package vsdum.kex.modules.loot;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -8,6 +9,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mozilla.javascript.ScriptableObject;
+
+import com.zhekasmirnov.innercore.api.mod.ScriptableObjectHelper;
 
 import vsdum.kex.util.CommonTypes;
 import vsdum.kex.util.JsonUtils;
@@ -255,6 +258,23 @@ public class LootPoolEntryFunctions {
                     .put("lore", new JSONArray(Arrays.asList(lore))));
         } catch(JSONException ex) {}
         return this;
+    }
+
+    public LootPoolEntryFunctions addSpecificEnchantsFunction(ScriptableObject enchants)
+    {
+        Map<String, Integer> map = new HashMap<>();
+        Object[] keys = enchants.getAllIds();
+        for(int i = 0; i < keys.length; i++)
+        {
+            Object key = keys[i];
+            if(key instanceof String)
+            {
+                String name = (String) key;
+                int level = ScriptableObjectHelper.getIntProperty(enchants, name, -1);
+                if(level != -1) map.put(name, level);
+            }
+        }
+        return this.addSpecificEnchantsFunction(map);
     }
 
     public LootPoolEntryFunctions addSpecificEnchantsFunction(Map<String, Integer> enchants)
