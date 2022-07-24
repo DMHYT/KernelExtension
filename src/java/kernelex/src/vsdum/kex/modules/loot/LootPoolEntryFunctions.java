@@ -200,7 +200,7 @@ public class LootPoolEntryFunctions {
         return this;
     }
 
-    // TODO manage with random_block_state
+    // TODO manage with random_block_state and banner details
 
     public LootPoolEntryFunctions addRandomDyeFunction()
     {
@@ -219,17 +219,6 @@ public class LootPoolEntryFunctions {
                 .put(new JSONObject()
                     .put("function", "set_actor_id")
                     .put("id", actorId));
-        } catch(JSONException ex) {}
-        return this;
-    }
-
-    public LootPoolEntryFunctions addBannerDetailsFunction(int type)
-    {
-        try {
-            this.entry.obj.getJSONArray("functions")
-                .put(new JSONObject()
-                    .put("function", "set_banner_details")
-                    .put("type", type));
         } catch(JSONException ex) {}
         return this;
     }

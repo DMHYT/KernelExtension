@@ -1088,7 +1088,6 @@ declare module vsdum {
                 addRandomAuxValueFunction(minValue: number, maxValue: number): LootEntryFunctions;
                 addRandomDyeFunction(): LootEntryFunctions;
                 addActorIdFunction(actorId: any_string): LootEntryFunctions;
-                addBannerDetailsFunction(type: number): LootEntryFunctions;
                 addBookContentsFunction(author: any_string, title: any_string, pages: any_string[]): LootEntryFunctions;
                 addDataFromColorIndexFunction(): LootEntryFunctions;
                 addLoreFunction(lore: any_string[]): LootEntryFunctions;
