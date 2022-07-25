@@ -56,7 +56,7 @@ public class Actor implements INativeInterface {
     protected static native void nativeRemoveEffect(long ptr, int id);
     protected static native boolean nativeHasAnyEffects(long ptr);
     protected static native void nativeRemoveAllEffects(long ptr);
-    protected static native void nativeAddEffect(long ptr, long instancePtr);
+    protected static native void nativeAddEffect(long ptr, int id, int durationPeaceful, int durationEasy, int durationNormal, int durationHard, int amplifier, boolean isAmbient, boolean isVisible, boolean displaysOnScreenTextureAnimation);
     protected static native void nativeRemoveEffects(long ptr, boolean harmful, boolean harmless);
     protected static native boolean nativeIsInSnow(long ptr);
     protected static native boolean nativeCanMate(long ptr, long matePtr);
@@ -272,8 +272,8 @@ public class Actor implements INativeInterface {
     protected static native void nativeHeal(long ptr, int amount);
     protected static native boolean nativeIsInvertedHealAndHarm(long ptr);
     protected static native boolean nativeCanBeAffected(long ptr, int effectId);
-    protected static native boolean nativeCanBeAffected(long ptr, long mobEffectInstance);
-    protected static native boolean nativeCanBeAffectedByArrow(long ptr, long mei);
+    protected static native boolean nativeCanBeAffected(long ptr, int id, int durationPeaceful, int durationEasy, int durationNormal, int durationHard, int amplifier, boolean isAmbient, boolean isVisible, boolean displaysOnScreenTextureAnimation);
+    protected static native boolean nativeCanBeAffectedByArrow(long ptr, int id, int durationPeaceful, int durationEasy, int durationNormal, int durationHard, int amplifier, boolean isAmbient, boolean isVisible, boolean displaysOnScreenTextureAnimation);
     protected static native void nativeSwing(long ptr);
     protected static native boolean nativeHasOutputSignal(long ptr, short signal);
     protected static native short nativeGetOutputSignal(long ptr);
@@ -577,7 +577,7 @@ public class Actor implements INativeInterface {
 
     public void addEffect(MobEffectInstance effectInstance)
     {
-        nativeAddEffect(this.pointer, effectInstance.getPointer());
+        nativeAddEffect(this.pointer, effectInstance.getId(), effectInstance.getDuration(), effectInstance.getDifficultyDuration(1), effectInstance.getDifficultyDuration(2), effectInstance.getDifficultyDuration(3), effectInstance.getAmplifier(), effectInstance.isAmbient(), effectInstance.isEffectVisible(), effectInstance.displaysOnScreenTextureAnimation());
     }
 
     public void removeEffects(boolean harmful, boolean harmless)
@@ -1687,14 +1687,14 @@ public class Actor implements INativeInterface {
         return nativeCanBeAffected(this.pointer, effectId);
     }
 
-    public boolean canBeAffected(MobEffectInstance effect)
+    public boolean canBeAffected(MobEffectInstance effectInstance)
     {
-        return nativeCanBeAffected(this.pointer, effect.getPointer());
+        return nativeCanBeAffected(this.pointer, effectInstance.getId(), effectInstance.getDuration(), effectInstance.getDifficultyDuration(1), effectInstance.getDifficultyDuration(2), effectInstance.getDifficultyDuration(3), effectInstance.getAmplifier(), effectInstance.isAmbient(), effectInstance.isEffectVisible(), effectInstance.displaysOnScreenTextureAnimation());
     }
 
-    public boolean canBeAffectedByArrow(MobEffectInstance effect)
+    public boolean canBeAffectedByArrow(MobEffectInstance effectInstance)
     {
-        return nativeCanBeAffectedByArrow(this.pointer, effect.getPointer());
+        return nativeCanBeAffectedByArrow(this.pointer, effectInstance.getId(), effectInstance.getDuration(), effectInstance.getDifficultyDuration(1), effectInstance.getDifficultyDuration(2), effectInstance.getDifficultyDuration(3), effectInstance.getAmplifier(), effectInstance.isAmbient(), effectInstance.isEffectVisible(), effectInstance.displaysOnScreenTextureAnimation());
     }
 
     public void swing()

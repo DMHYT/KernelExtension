@@ -195,8 +195,8 @@ extern "C" {
     __EXPORT__(void, RemoveAllEffects) {
         ((Actor*) ptr)->removeAllEffects();
     }
-    __EXPORT__(void, AddEffect, jlong instancePtr) {
-        ((Actor*) ptr)->addEffect(*(MobEffectInstance*) instancePtr);
+    __EXPORT__(void, AddEffect, jint id, jint durationPeaceful, jint durationEasy, jint durationNormal, jint durationHard, jint amplifier, jboolean isAmbient, jboolean isVisible, jboolean displaysOnScreenTextureAnimation) {
+        ((Actor*) ptr)->addEffect(MobEffectInstance(id, durationPeaceful, durationEasy, durationNormal, durationHard, amplifier, isAmbient, isVisible, displaysOnScreenTextureAnimation));
     }
     __EXPORT__(void, RemoveEffects, jboolean harmful, jboolean harmless) {
         Actor* actor = (Actor*) ptr;
@@ -1001,13 +1001,15 @@ extern "C" {
         VTABLE_FIND_OFFSET(Actor_canBeAffectedI, _ZTV5Actor, _ZNK5Actor13canBeAffectedEi);
         return VTABLE_CALL<bool>(Actor_canBeAffectedI, (Actor*) ptr, effectId);
     }
-    __EXPORT__(jboolean, CanBeAffected__JJ, jlong mei) {
+    __EXPORT__(jboolean, CanBeAffected__JIIIIIIZZZ, jint id, jint durationPeaceful, jint durationEasy, jint durationNormal, jint durationHard, jint amplifier, jboolean isAmbient, jboolean isVisible, jboolean displaysOnScreenTextureAnimation) {
         VTABLE_FIND_OFFSET(Actor_canBeAffectedMEI, _ZTV5Actor, _ZNK5Actor13canBeAffectedERK17MobEffectInstance);
-        return VTABLE_CALL<bool>(Actor_canBeAffectedMEI, (Actor*) ptr, (MobEffectInstance*) mei);
+        MobEffectInstance mei(id, durationPeaceful, durationEasy, durationNormal, durationHard, amplifier, isAmbient, isVisible, displaysOnScreenTextureAnimation);
+        return VTABLE_CALL<bool>(Actor_canBeAffectedMEI, (Actor*) ptr, &mei);
     }
-    __EXPORT__(jboolean, CanBeAffectedByArrow, jlong mei) {
+    __EXPORT__(jboolean, CanBeAffectedByArrow, jint id, jint durationPeaceful, jint durationEasy, jint durationNormal, jint durationHard, jint amplifier, jboolean isAmbient, jboolean isVisible, jboolean displaysOnScreenTextureAnimation) {
         VTABLE_FIND_OFFSET(Actor_canBeAffectedByArrow, _ZTV5Actor, _ZNK5Actor20canBeAffectedByArrowERK17MobEffectInstance);
-        return VTABLE_CALL<bool>(Actor_canBeAffectedByArrow, (Actor*) ptr, (MobEffectInstance*) mei);
+        MobEffectInstance mei(id, durationPeaceful, durationEasy, durationNormal, durationHard, amplifier, isAmbient, isVisible, displaysOnScreenTextureAnimation);
+        return VTABLE_CALL<bool>(Actor_canBeAffectedByArrow, (Actor*) ptr, &mei);
     }
     __EXPORT__(void, Swing) {
         VTABLE_FIND_OFFSET(Actor_swing, _ZTV5Actor, _ZN5Actor5swingEv);
