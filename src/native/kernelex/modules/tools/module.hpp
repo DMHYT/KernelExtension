@@ -22,6 +22,8 @@ class KEXToolsModule : public Module {
     public:
     class SimpleTests {
         public:
+        static std::unordered_set<int> allVanillaTools;
+        static std::unordered_map<std::string, std::unordered_set<int>> vanillaToolsMap;
         static bool isTool(int id);
         static bool isTool(LegacyItemRegistry::LegacyItemFactoryBase* factory);
         static bool isSword(int id);
