@@ -78,6 +78,7 @@ class KEXToolsModule : public Module {
         static void setBlockDestroyLevel(int id, int destroyLevel);
         static void setBlockIsNative(int id, bool isNative);
         static Item::Tier* getItemTier(DiggerItem*);
+        static bool itemHasMaterial(int id, const std::string& materialName);
     };
     class CustomToolPatches {
         public:

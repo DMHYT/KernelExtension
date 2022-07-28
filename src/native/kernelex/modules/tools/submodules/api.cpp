@@ -1,5 +1,7 @@
+#include <innercore/block_registry.h>
 #include <innercore/id_conversion_map.h>
 
+#include "../submodules/method_patches.hpp"
 #include "../tooltypes/base.hpp"
 #include "../module.hpp"
 
@@ -85,4 +87,15 @@ Item::Tier* KEXToolsModule::ToolAPI::getItemTier(DiggerItem* item) {
         }
         return nullptr;
     }
+}
+
+
+bool KEXToolsModule::ToolAPI::itemHasMaterial(int itemID, const std::string& materialName) {
+    static HashedString diggerTag("minecraft:digger");
+    static HashedString weaponTag("minecraft:weapon");
+    auto item = ItemRegistry::getItemById(IdConversion::staticToDynamic(itemID, IdConversion::ITEM));
+    if(item == nullptr) return false;
+    if(item->hasTag(weaponTag)) return materialName == "plant" || materialName == "fibre";
+    if(item->hasTag(diggerTag)) return KEXToolPatchesModule::hasBlockMaterial((DiggerItem*) item, materialName);
+    return false;
 }

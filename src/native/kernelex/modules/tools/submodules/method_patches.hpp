@@ -16,6 +16,7 @@ class KEXToolPatchesModule : public Module {
     static HashedString* isPickaxeTag;
     static HashedString* isShovelTag;
     static bool canDestroySpecial(DiggerItem*, const Block&);
+    static bool hasBlockMaterial(DiggerItem*, const std::string&);
     static bool hasBlock(DiggerItem*, const Block&);
     static unsigned char hurtAndBreak(ItemStackBase*, int);
     KEXToolPatchesModule(Module* parent): Module(parent, "kex.tools.patches") {};

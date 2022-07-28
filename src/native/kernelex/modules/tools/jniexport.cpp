@@ -137,16 +137,16 @@ extern "C" {
     }
     JNIEXPORT jint JNICALL Java_vsdum_kex_modules_ToolsModule_getToolLevelViaBlock
     (JNIEnv*, jclass, jint itemID, jint blockID) {
-        auto find = KEXToolsModule::Data::blockData.find(blockID);
-        if(find == KEXToolsModule::Data::blockData.end()) return 0;
-        auto iface = find->second;
-        int dynamicId = IdConversion::staticToDynamic(itemID, IdConversion::ITEM);
-        Item* item = ItemRegistry::getItemById(dynamicId);
+        auto blockMaterial = KEXToolsModule::ToolAPI::getBlockMaterialName(blockID);
+        if(blockMaterial.empty()) return 0;
+        auto item = ItemRegistry::getItemById(IdConversion::staticToDynamic(itemID, IdConversion::ITEM));
         if(item == nullptr) return 0;
-        auto tier = KEXToolsModule::ToolAPI::getItemTier((DiggerItem*) item);
-        if(tier == nullptr) return 0;
-        int toolLevel = tier->getLevel() + 1;
-        return toolLevel >= iface->destroyLevel ? toolLevel : 0;
+        if(KEXToolsModule::ToolAPI::itemHasMaterial(itemID, blockMaterial)) {
+            auto tier = KEXToolsModule::ToolAPI::getItemTier((DiggerItem*) item);
+            if(tier == nullptr) return 0;
+            return tier->getLevel() + 1;
+        }
+        return 0;
     }
     JNIEXPORT void JNICALL Java_vsdum_kex_modules_ToolsModule_enableDynamicDamageFor
     (JNIEnv*, jclass, jint id) {

@@ -28,10 +28,7 @@ bool KEXToolPatchesModule::canDestroySpecial(DiggerItem* _this, const Block& blo
 }
 
 
-bool KEXToolPatchesModule::hasBlock(DiggerItem* _this, const Block& block) {
-    int staticId = IdConversion::dynamicToStatic(block.legacy->id, IdConversion::BLOCK);
-    std::string materialName = KEXToolsModule::ToolAPI::getBlockMaterialName(staticId);
-    if(materialName.empty()) return false;
+bool KEXToolPatchesModule::hasBlockMaterial(DiggerItem* _this, const std::string& materialName) {
     if(_this->hasTag(*isAxeTag)) {
         return materialName == "wood";
     } else if(_this->hasTag(*isPickaxeTag)) {
@@ -39,7 +36,7 @@ bool KEXToolPatchesModule::hasBlock(DiggerItem* _this, const Block& block) {
     } else if(_this->hasTag(*isShovelTag)) {
         return materialName == "dirt";
     } else {
-        staticId = IdConversion::dynamicToStatic(_this->id, IdConversion::ITEM);
+        int staticId = IdConversion::dynamicToStatic(_this->id, IdConversion::ITEM);
         auto factory = LegacyItemRegistry::findFactoryById(staticId);
         if(factory == nullptr) return false;
         if(factory->getType() == ToolFactory::_factoryTypeId) {
@@ -51,6 +48,14 @@ bool KEXToolPatchesModule::hasBlock(DiggerItem* _this, const Block& block) {
         }
         return false;
     }
+}
+
+
+bool KEXToolPatchesModule::hasBlock(DiggerItem* _this, const Block& block) {
+    int staticId = IdConversion::dynamicToStatic(block.legacy->id, IdConversion::BLOCK);
+    std::string materialName = KEXToolsModule::ToolAPI::getBlockMaterialName(staticId);
+    if(materialName.empty()) return false;
+    return hasBlockMaterial(_this, materialName);
 }
 
 
