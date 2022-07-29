@@ -73,17 +73,17 @@ public class ChunksModule {
         return new LoadedCircle(dimension);
     }
 
-    public static LoadedRectangle addLoadedChunk(int dimension, String name, int x, int z)
+    public static LoadedRectangle addLoadedChunk(int dimension, int x, int z, String name)
     {
-        return addLoadedChunk(ExtendedBlockSource.getDefaultForDimension(dimension).getDimensionObject(), name, x, z);
+        return addLoadedChunk(ExtendedBlockSource.getDefaultForDimension(dimension).getDimensionObject(), x, z, name);
     }
 
-    public static LoadedRectangle addLoadedChunk(NativeBlockSource world, String name, int x, int z)
+    public static LoadedRectangle addLoadedChunk(NativeBlockSource world, int x, int z, String name)
     {
-        return addLoadedChunk(ExtendedBlockSource.toKEXBlockSource(world).getDimensionObject(), name, x, z);
+        return addLoadedChunk(ExtendedBlockSource.toKEXBlockSource(world).getDimensionObject(), x, z, name);
     }
 
-    public static LoadedRectangle addLoadedChunk(Dimension dimension, String name, int x, int z)
+    public static LoadedRectangle addLoadedChunk(Dimension dimension, int x, int z, String name)
     {
         return addLoadedRectangle(dimension, name)
             .start(x, z).end(x, z);

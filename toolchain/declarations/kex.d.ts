@@ -1346,8 +1346,7 @@ declare module vsdum {
                 }
                 export function addLoadedRectangle(worldOrDimension: natives.WorldOrDimension, name?: any_string): LoadedRectangle;
                 export function addLoadedCircle(worldOrDimension: natives.WorldOrDimension, name?: any_string): LoadedCircle;
-                export function addLoadedChunk(worldOrDimension: natives.WorldOrDimension, name: any_string, x: number, z: number): LoadedRectangle;
-                export function addLoadedChunk(worldOrDimension: natives.WorldOrDimension, x: number, z: number): LoadedRectangle;
+                export function addLoadedChunk(worldOrDimension: natives.WorldOrDimension, x: number, z: number, name?: any_string): LoadedRectangle;
                 export function areaExists(name: any_string, worldOrDimension: natives.WorldOrDimension): boolean;
             }
         }
