@@ -1387,9 +1387,9 @@ declare module vsdum {
                 interface OverlaidTextureBuilder {
                     bitmap(width: number, height: number, config?: android.graphics.Bitmap.Config): OverlaidTextureBuilder;
                     overlay(path: any_string, name: any_string): OverlaidTextureBuilder;
-                    overlay(path: any_string, name: any_string, colorR: number, colorG: number, colorB: number): OverlaidTextureBuilder;
+                    overlay(path: any_string, name: any_string, colorR: number, colorG: number, colorB: number, colorA?: number): OverlaidTextureBuilder;
                     overlay(bitmap: android.graphics.Bitmap): OverlaidTextureBuilder;
-                    overlay(bitmap: android.graphics.Bitmap, colorR: number, colorG: number, colorB: number): OverlaidTextureBuilder;
+                    overlay(bitmap: android.graphics.Bitmap, colorR: number, colorG: number, colorB: number, colorA?: number): OverlaidTextureBuilder;
                     result(path: any_string, name: any_string): OverlaidTextureBuilder;
                     create(): Nullable<android.graphics.Bitmap>;
                 }
@@ -1397,7 +1397,7 @@ declare module vsdum {
                     bitmap(width: number, height: number, config?: android.graphics.Bitmap.Config): PaintedTextureBuilder;
                     source(path: any_string, name: any_string): PaintedTextureBuilder;
                     source(bitmap: android.graphics.Bitmap): PaintedTextureBuilder;
-                    color(r: number, g: number, b: number): PaintedTextureBuilder;
+                    color(r: number, g: number, b: number, a?: number): PaintedTextureBuilder;
                     result(path: any_string, name: any_string): PaintedTextureBuilder;
                     create(): Nullable<android.graphics.Bitmap>;
                 }
@@ -1407,7 +1407,8 @@ declare module vsdum {
                     result(path: any_string, name: any_string): GrayscaledTextureBuilder;
                     create(): Nullable<android.graphics.Bitmap>;
                 }
-                export function changeBitmapColor(source: android.graphics.Bitmap, colorR: number, colorG: number, colorB: number): android.graphics.Bitmap;
+                export function changeBitmapColor(source: android.graphics.Bitmap, colorR: number, colorG: number, colorB: number, colorA?: number): android.graphics.Bitmap;
+                export function changeBitmapColor(source: android.graphics.Bitmap, color: number): android.graphics.Bitmap;
                 export function createTextureWithOverlays(): OverlaidTextureBuilder;
                 export function createPaintedTexture(): PaintedTextureBuilder;
                 export function createGrayscaledTexture(): GrayscaledTextureBuilder;

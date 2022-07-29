@@ -42,6 +42,14 @@ public class OverlaidTextureBuilder {
         return this;
     }
 
+    public OverlaidTextureBuilder overlay(String path, String name, int r, int g, int b, int a)
+    {
+        Bitmap tex = FileTools.readFileAsBitmap(path + name + ".png");
+        if(r >= 0 && g >= 0 && b >= 0 && a >= 0) tex = TextureWorker.changeBitmapColor(tex, r, g, b, a);
+        this.overlays.add(tex);
+        return this;
+    }
+
     public OverlaidTextureBuilder overlay(Bitmap bitmap)
     {
         this.overlays.add(bitmap);
@@ -51,6 +59,12 @@ public class OverlaidTextureBuilder {
     public OverlaidTextureBuilder overlay(Bitmap bitmap, int r, int g, int b)
     {
         if(r >= 0 && g >= 0 && b >= 0) this.overlays.add(TextureWorker.changeBitmapColor(bitmap, r, g, b));
+        return this;
+    }
+
+    public OverlaidTextureBuilder overlay(Bitmap bitmap, int r, int g, int b, int a)
+    {
+        if(r >= 0 && g >= 0 && b >= 0 && a >= 0) this.overlays.add(TextureWorker.changeBitmapColor(bitmap, r, g, b, a));
         return this;
     }
 

@@ -1,10 +1,13 @@
 package vsdum.kex.util.textureworker;
 
+import java.util.Optional;
+
 import com.zhekasmirnov.horizon.runtime.logger.Logger;
 import com.zhekasmirnov.innercore.utils.FileTools;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.support.annotation.Nullable;
 import vsdum.kex.util.TextureWorker;
 
@@ -13,9 +16,7 @@ public class PaintedTextureBuilder {
     @Nullable private Bitmap _bitmap = null;
     @Nullable private Bitmap _source = null;
     @Nullable private String _result = null;
-    private int r = -1;
-    private int g = -1;
-    private int b = -1;
+    private Optional<Integer> _color = Optional.empty();
 
     public PaintedTextureBuilder bitmap(int width, int height)
     {
@@ -42,9 +43,13 @@ public class PaintedTextureBuilder {
 
     public PaintedTextureBuilder color(int r, int g, int b)
     {
-        this.r = r;
-        this.g = g;
-        this.b = b;
+        this._color = Optional.of(Color.rgb(r, g, b));
+        return this;
+    }
+
+    public PaintedTextureBuilder color(int r, int g, int b, int a)
+    {
+        this._color = Optional.of(Color.argb(a, r, g, b));
         return this;
     }
 
@@ -64,7 +69,7 @@ public class PaintedTextureBuilder {
         if(this._source == null) return null;
         if(this._bitmap == null) this._bitmap = Bitmap.createBitmap(this._source.getWidth(), this._source.getHeight(), this._source.getConfig());
         Canvas canvas = new Canvas(this._bitmap);
-        canvas.drawBitmap(TextureWorker.changeBitmapColor(this._source, this.r, this.g, this.b), 0, 0, null);
+        canvas.drawBitmap(this._color.isPresent() ? TextureWorker.changeBitmapColor(this._source, this._color.get().intValue()) : this._source, 0, 0, null);
         if(this._result != null) FileTools.writeBitmap(this._result, this._bitmap);
         return this._bitmap;
     }

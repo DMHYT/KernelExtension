@@ -12,10 +12,20 @@ public class TextureWorker {
     
     public static Bitmap changeBitmapColor(Bitmap source, int r, int g, int b)
     {
+        return changeBitmapColor(source, Color.rgb(r, g, b));
+    }
+
+    public static Bitmap changeBitmapColor(Bitmap source, int r, int g, int b, int a)
+    {
+        return changeBitmapColor(source, Color.argb(a, r, g, b));
+    }
+
+    public static Bitmap changeBitmapColor(Bitmap source, int color)
+    {
         Bitmap result = Bitmap.createBitmap(source.getWidth(), source.getHeight(), source.getConfig());
         Canvas canvas = new Canvas(result);
         Paint paint = new Paint();
-        paint.setColorFilter(new PorterDuffColorFilter(Color.rgb(r, g, b), PorterDuff.Mode.MULTIPLY));
+        paint.setColorFilter(new PorterDuffColorFilter(color, PorterDuff.Mode.MULTIPLY));
         canvas.drawBitmap(source, 0, 0, paint);
         return result;
     }
