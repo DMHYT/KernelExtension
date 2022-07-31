@@ -50,6 +50,7 @@ class KEXCommandBuilder implements Commands.CustomCommandBuilder {
                 } else if(optionalFound) {
                     throw new java.lang.IllegalArgumentException(`Detected mandatory argument ${arg.label} after optional argument ${overload.args[index - 1].label}`);
                 }
+                if(typeof arg.type === "string") arg.type = arg.type.toLowerCase() as typeof arg.type;
                 const next = KEXCommandBuilder.buildArgument(arg);
                 node.then(next);
                 node = next;
@@ -128,11 +129,13 @@ class KEXCommandBuilder implements Commands.CustomCommandBuilder {
                     case "floatpos": case "floatposition":
                         obj[arg.label] = ctx.getFloatPosition(arg.label); break;
                     case "str": case "string": case "strenum": case "stringenum":
-                        obj[arg.label] = ctx.getString(arg.label); break;
+                        obj[arg.label] = String(ctx.getString(arg.label)); break;
                     case "msg": case "message":
-                        obj[arg.label] = ctx.getMessage(arg.label); break;
+                        obj[arg.label] = String(ctx.getMessage(arg.label)); break;
                     case "json":
-                        obj[arg.label] = ctx.getJson(arg.label); break;
+                        const json = ctx.getJson(arg.label);
+                        obj[arg.label] = json == null ? null : JSON.parse(String(json.toString()));
+                        break;
                     case "entity":
                         const entitiesArr = [];
                         const entitiesIter = ctx.getEntities(arg.label).iterator();
