@@ -15,6 +15,7 @@
 #include "modules/misc/cameraroll.hpp"
 #include "modules/misc/smithing.hpp"
 #include "modules/misc/localization.hpp"
+#include "modules/fixes.hpp"
 
 #include "utils/java_utils.hpp"
 
@@ -48,6 +49,7 @@ extern "C" JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *) {
 	Module* cameraroll = new KEXMiscCameraRollModule(main);
 	Module* smithing = new KEXMiscSmithingModule(main);
 	Module* localization = new KEXMiscLocalizationModule(main);
+	Module* fixes = new KEXFixesModule(main);
 }
 
 
