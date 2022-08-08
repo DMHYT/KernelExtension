@@ -14,7 +14,7 @@ public class TestTileEntity extends BlockActor {
 
     @Override public void tick()
     {
-        if(Math.random() <= .1) NativeAPI.clientMessage("TICK");
+        if(Math.random() <= .01) NativeAPI.clientMessage("TICK");
     }
 
     @Override public void onChanged()
@@ -40,12 +40,6 @@ public class TestTileEntity extends BlockActor {
     @Override public void onNeighborChanged(BlockPos changed)
     {
         NativeAPI.clientMessage("NEIGHBOR CHANGED ON " + changed.toString());
-    }
-
-    @Override public float getShadowRadius()
-    {
-        NativeAPI.clientMessage("CALLED GETSHADOWRADIUS");
-        return 0.0f;
     }
 
     @Override public void onChunkLoaded()

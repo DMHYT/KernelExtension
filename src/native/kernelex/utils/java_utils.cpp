@@ -60,7 +60,6 @@ namespace KEXJavaBridge {
         JAVA_METHOD(TileEntityModule, onRemoved, "(JJ)V")
         JAVA_METHOD(TileEntityModule, triggerEvent, "(JII)V")
         JAVA_METHOD(TileEntityModule, onNeighborChanged, "(JJIII)V")
-        JAVA_METHOD(TileEntityModule, getShadowRadius, "(JJ)F")
         JAVA_METHOD(TileEntityModule, getCustomName, "(J)Ljava/lang/String;")
         JAVA_METHOD(TileEntityModule, getName, "(J)Ljava/lang/String;")
         JAVA_METHOD(TileEntityModule, setCustomName, "(JLjava/lang/String;)V")
@@ -194,9 +193,6 @@ namespace KEXJavaBridge {
         }
         void onNeighborChanged(jlong tilePtr, jlong blockSourcePtr, int changedX, int changedY, int changedZ) {
             KEXJavaUtils::attach()->CallStaticVoidMethod(Cache::TileEntityModule(), Cache::TileEntityModule_onNeighborChanged(), tilePtr, blockSourcePtr, changedX, changedY, changedZ);
-        }
-        float getShadowRadius(jlong tilePtr, jlong blockSourcePtr) {
-            return KEXJavaUtils::attach()->CallStaticFloatMethod(Cache::TileEntityModule(), Cache::TileEntityModule_getShadowRadius(), tilePtr, blockSourcePtr);
         }
         jstring getCustomName(jlong tilePtr) {
             return (jstring) KEXJavaUtils::attach()->CallStaticObjectMethod(Cache::TileEntityModule(), Cache::TileEntityModule_getCustomName(), tilePtr);

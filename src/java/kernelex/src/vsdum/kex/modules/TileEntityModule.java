@@ -97,12 +97,14 @@ public class TileEntityModule {
 
     private static void onMove(long tilePtr)
     {
-        getOrCreate(tilePtr).onMove();
+        getOrCreate(tilePtr).updateBlockPos().onMove();
     }
 
     private static void onRemoved(long tilePtr, long blockSourcePtr)
     {
-        getOrCreate(tilePtr, blockSourcePtr).onRemoved();
+        BlockActor tile = getOrCreate(tilePtr, blockSourcePtr);
+        customTileEntityMap.remove(tile.getPointer());
+        tile.onRemoved();
     }
 
     private static void triggerEvent(long tilePtr, int id, int type)
@@ -114,16 +116,6 @@ public class TileEntityModule {
     {
         getOrCreate(tilePtr, blockSourcePtr).onNeighborChanged(new BlockPos(changedX, changedY, changedZ));
     }
-
-    private static float getShadowRadius(long tilePtr, long blockSourcePtr)
-    {
-        return getOrCreate(tilePtr, blockSourcePtr).getShadowRadius();
-    }
-
-    // private static void getDebugText(long tilePtr, String[] text, long textVectorPtr, int x, int y, int z)
-    // {
-    //     getOrCreate(tilePtr).getDebugText(Arrays.asList(text), new BlockPos(x, y, z));
-    // }
 
     @Nullable private static String getCustomName(long tilePtr)
     {

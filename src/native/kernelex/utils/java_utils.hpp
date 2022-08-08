@@ -66,7 +66,6 @@ namespace KEXJavaBridge {
         void onRemoved(jlong tilePtr, jlong blockSourcePtr);
         void triggerEvent(jlong tilePtr, int id, int type);
         void onNeighborChanged(jlong tilePtr, jlong blockSourcePtr, int changedX, int changedY, int changedZ);
-        float getShadowRadius(jlong tilePtr, jlong blockSourcePtr);
         jstring getCustomName(jlong tilePtr);
         jstring getName(jlong tilePtr);
         void setCustomName(jlong tilePtr, const char* customName);

@@ -56,15 +56,6 @@ void KEXTileEntityModule::TileEntity::onNeighborChanged(BlockSource& world, cons
     KEXJavaBridge::TileEntityModule::onNeighborChanged((jlong) this, (jlong) &world, changed.x, changed.y, changed.z);
 }
 
-float KEXTileEntityModule::TileEntity::getShadowRadius(BlockSource& world) const {
-    return KEXJavaBridge::TileEntityModule::getShadowRadius((jlong) this, (jlong) &world);
-}
-
-void KEXTileEntityModule::TileEntity::getDebugText(stl::vector<stl::string>& debugText, const BlockPos& pos) {
-    BlockActor::getDebugText(debugText, pos);
-    // TODO
-}
-
 const stl::string& KEXTileEntityModule::TileEntity::getCustomName() const {
     JNIEnv* env = KEXJavaUtils::attach();
     jstring jResult = KEXJavaBridge::TileEntityModule::getCustomName((jlong) this);

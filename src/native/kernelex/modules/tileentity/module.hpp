@@ -23,8 +23,6 @@ class KEXTileEntityModule : public Module {
         virtual void onRemoved(BlockSource&);
         virtual void triggerEvent(int, int);
         virtual void onNeighborChanged(BlockSource&, const BlockPos&);
-        virtual float getShadowRadius(BlockSource&) const;
-        virtual void getDebugText(stl::vector<stl::string>&, const BlockPos&);
         virtual const stl::string& getCustomName() const;
         virtual stl::string getName() const;
         virtual void setCustomName(const stl::string&);

@@ -1,6 +1,5 @@
 package vsdum.kex.modules.tileentity;
 
-import java.util.List;
 import java.util.Objects;
 
 import com.zhekasmirnov.apparatus.adapter.innercore.game.block.BlockState;
@@ -33,6 +32,13 @@ public abstract class BlockActor implements INativeInterface {
     public BlockPos getBlockPos()
     {
         return this.blockPos;
+    }
+
+    public BlockActor updateBlockPos()
+    {
+        int[] pos = TileEntityNativeAPI.getPosition(this.pointer);
+        this.blockPos = new BlockPos(pos[0], pos[1], pos[2]);
+        return this;
     }
 
     public BlockState getBlockState()
@@ -90,13 +96,6 @@ public abstract class BlockActor implements INativeInterface {
     public void triggerEvent(int id, int type) {}
 
     public void onNeighborChanged(BlockPos changed) {}
-
-    public float getShadowRadius()
-    {
-        return 0.0f;
-    }
-
-    public void getDebugText(List<String> text, BlockPos pos) {}
 
     @Nullable public String getCustomName()
     {

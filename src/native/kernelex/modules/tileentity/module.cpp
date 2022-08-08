@@ -4,6 +4,7 @@
 
 #include <innercore/block_registry.h>
 #include <innercore/id_conversion_map.h>
+#include <innercore/vtable.h>
 
 #include <BlockLegacy.hpp>
 
@@ -22,7 +23,7 @@ void KEXTileEntityModule::initialize() {
         LAMBDA((HookManager::CallbackController* controller, stl::shared_ptr<BlockActor>* result, int type, const BlockPos& pos), {
             if(type >= 1024) {
                 controller->prevent();
-                *result = stl::shared_ptr<TileEntity>(new TileEntity(type, pos));
+                new (result) stl::shared_ptr<TileEntity>(new TileEntity(type, pos));
             }
         }, ),
         HookManager::CALL | HookManager::LISTENER | HookManager::CONTROLLER
@@ -34,6 +35,11 @@ void KEXTileEntityModule::initialize() {
                 auto block = BlockRegistry::getBlockById(IdConversion::staticToDynamic(iter->first, IdConversion::BLOCK));
                 if(block != nullptr) {
                     block->tileEntityType = iter->second;
+                    void** vtable = *(void***) block;
+                    VTABLE_FIND_OFFSET(neighborChanged, _ZTV11BlockLegacy, _ZNK11BlockLegacy15neighborChangedER11BlockSourceRK8BlockPosS4_);
+                    VTABLE_FIND_OFFSET(triggerEvent, _ZTV11BlockLegacy, _ZNK11BlockLegacy12triggerEventER11BlockSourceRK8BlockPosii);
+                    vtable[neighborChanged] = SYMBOL("mcpe", "_ZNK10ActorBlock15neighborChangedER11BlockSourceRK8BlockPosS4_");
+                    vtable[triggerEvent] = SYMBOL("mcpe", "_ZNK10ActorBlock12triggerEventER11BlockSourceRK8BlockPosii");
                 }
             }
         })

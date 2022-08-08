@@ -22,7 +22,11 @@ public class KernelExtension {
         Logger.debug("KEX-JAVA", "Booting...");
         defineCallbackClasses();
         PacketPipeline.getSingleton().initPackets();
-        TileEntityModule.registerForBlock(57, TileEntityModule.registerTileEntityType("TestTile", TestTileEntity.class));
+    }
+
+    public static void registerCustomTile(int blockID)
+    {
+        TileEntityModule.registerForBlock(blockID, TileEntityModule.registerTileEntityType("TestTile", TestTileEntity.class));
     }
 
     public static final byte[] getVersion()
