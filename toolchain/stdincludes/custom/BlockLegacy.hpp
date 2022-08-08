@@ -4,11 +4,9 @@
 
 class BlockLegacy {
     public:
-    // char filler1[184]; // 184
-    // float destroyTime; // 188
-    // char filler2[24]; // 212
-    // short id; // 214
-    char filler[212]; // 212
+    char filler1[104]; // 104
+    int tileEntityType; // 108
+    char filler2[104]; // 212
     short id; // 214
     float getDestroySpeed() const;
 };

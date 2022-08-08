@@ -23,20 +23,15 @@ class ActorDamageSource;
 #ifndef KEX_BLOCKPOS_HPP
     class BlockPos;
 #endif
-class BlockActor {
-    public:
-    char filler1[72]; // 72
-    BlockActorType type; // 76
-};
+#ifndef KEX_BLOCKACTOR_HPP
+    class BlockActor;
+#endif
 class SignBlockActor {
     public:
     stl::string& getMessage();
 };
 #ifndef KEX_BLOCKSOURCE_HPP
-    class BlockSource {
-        public:
-        BlockActor* getBlockEntity(const BlockPos&);
-    };
+    class BlockSource;
 #endif
 #ifndef KEX_DIMENSION_HPP
     class Dimension;

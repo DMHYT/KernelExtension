@@ -7,6 +7,7 @@
 
 #include <commontypes.hpp>
 
+#include <BlockActor.hpp>
 #include <LocalPlayer.hpp>
 
 #include "../utils/java_utils.hpp"

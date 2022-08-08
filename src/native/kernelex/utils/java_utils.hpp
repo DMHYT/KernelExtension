@@ -24,6 +24,7 @@ namespace KEXJavaBridge {
         jclass DamageModule(JNIEnv* env);
         jclass CommandsModule(JNIEnv* env);
         jclass I18n(JNIEnv* env);
+        jclass TileEntityModule(JNIEnv* env);
     }
     namespace KernelExtension {
         void setMinecraftTextboxText(const char* text);
@@ -51,6 +52,26 @@ namespace KEXJavaBridge {
     }
     namespace I18n {
         void onChooseLanguage(jlong localizationPtr, const char* languageCode);
+    }
+    namespace TileEntityModule {
+        void construct(jlong tilePtr);
+        void load(jlong tilePtr, jlong tagPtr);
+        bool save(jlong tilePtr, jlong tagPtr);
+        void tick(jlong tilePtr, jlong blockSourcePtr);
+        bool isFinished(jlong tilePtr);
+        void onChanged(jlong tilePtr, jlong blockSourcePtr);
+        bool isMovable(jlong tilePtr, jlong blockSourcePtr);
+        void onPlace(jlong tilePtr, jlong blockSourcePtr);
+        void onMove(jlong tilePtr);
+        void onRemoved(jlong tilePtr, jlong blockSourcePtr);
+        void triggerEvent(jlong tilePtr, int id, int type);
+        void onNeighborChanged(jlong tilePtr, jlong blockSourcePtr, int changedX, int changedY, int changedZ);
+        float getShadowRadius(jlong tilePtr, jlong blockSourcePtr);
+        jstring getCustomName(jlong tilePtr);
+        jstring getName(jlong tilePtr);
+        void setCustomName(jlong tilePtr, const char* customName);
+        void onChunkLoaded(jlong tilePtr);
+        void onChunkUnloaded(jlong tilePtr);
     }
 }
 

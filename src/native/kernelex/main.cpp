@@ -11,6 +11,7 @@
 #include "modules/callbacks.hpp"
 #include "modules/damage.hpp"
 #include "modules/chunks.hpp"
+#include "modules/tileentity/module.hpp"
 #include "modules/misc/reachdist.hpp"
 #include "modules/misc/cameraroll.hpp"
 #include "modules/misc/smithing.hpp"
@@ -45,6 +46,7 @@ extern "C" JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *) {
 	Module* callbacks = new KEXCallbacksModule(main);
 	Module* damage = new KEXDamageModule(main);
 	Module* chunks = new KEXChunksModule(main);
+	Module* tileentity = new KEXTileEntityModule(main);
 	Module* reachdist = new KEXMiscReachDistModule(main);
 	Module* cameraroll = new KEXMiscCameraRollModule(main);
 	Module* smithing = new KEXMiscSmithingModule(main);
@@ -63,4 +65,5 @@ extern "C" JNIEXPORT void JNICALL Java_vsdum_kex_KernelExtension_defineCallbackC
 	KEXJavaBridge::Cache::DamageModule(env);
 	KEXJavaBridge::Cache::CommandsModule(env);
 	KEXJavaBridge::Cache::I18n(env);
+	KEXJavaBridge::Cache::TileEntityModule(env);
 }

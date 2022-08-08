@@ -156,3 +156,17 @@ class Bounds {
 
 
 #endif //KEX_BOUNDS_HPP
+
+
+#ifndef KEX_CHUNKPOS_HPP
+#define KEX_CHUNKPOS_HPP
+
+
+class ChunkPos {
+    public:
+    int x, z;
+    ChunkPos(int xIn, int zIn): x(xIn), z(zIn) {}
+};
+
+
+#endif //KEX_CHUNKPOS_HPP

@@ -10,7 +10,7 @@ enum ActorType: int {};
 enum AttributeBuffType: int {};
 enum ArmorSlot: int {};
 enum ArmorTextureType: int {};
-enum BlockActorType {
+enum BlockActorType: int {
     SIGN = 4
 };
 enum EquipmentSlot: int {};
