@@ -28,6 +28,8 @@ class KEXTileEntityModule : public Module {
         virtual void setCustomName(const stl::string&);
         virtual void onChunkLoaded(LevelChunk&);
         virtual void onChunkUnloaded(LevelChunk&);
+        virtual stl::unique_ptr<BlockActorDataPacket> _getUpdatePacket(BlockSource&);
+        virtual void _onUpdatePacket(const CompoundTag&, BlockSource&);
         TileEntity(int type, const BlockPos& pos);
         bool onUse(Player&, unsigned char, const Vec3&) const;
     };

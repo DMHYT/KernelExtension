@@ -68,12 +68,20 @@ public abstract class BlockActor implements INativeInterface {
         return this.type;
     }
 
-    public void load(NativeCompoundTag data) {}
-
-    public boolean save(NativeCompoundTag data)
+    public void load(NativeCompoundTag data, boolean fromNative)
     {
-        return true;
+        if(fromNative) load(data);
+        else TileEntityNativeAPI.load(this.pointer, data.pointer);
     }
+
+    protected abstract void load(NativeCompoundTag data);
+
+    public boolean save(NativeCompoundTag data, boolean fromNative)
+    {
+        return fromNative ? save(data) : TileEntityNativeAPI.save(this.pointer, data.pointer);
+    }
+
+    protected abstract boolean save(NativeCompoundTag data);
 
     public void tick() {}
 
@@ -119,5 +127,9 @@ public abstract class BlockActor implements INativeInterface {
     {
         return false;
     }
+
+    public void getUpdatePacket(NativeCompoundTag packetTag) {}
+
+    public void onUpdatePacket(NativeCompoundTag packetTag) {}
 
 }

@@ -1,6 +1,7 @@
 package vsdum.kex;
 
 import com.zhekasmirnov.innercore.api.NativeAPI;
+import com.zhekasmirnov.innercore.api.nbt.NativeCompoundTag;
 
 import vsdum.kex.modules.tileentity.BlockActor;
 import vsdum.kex.natives.Player;
@@ -8,6 +9,8 @@ import vsdum.kex.util.mcmath.BlockPos;
 import vsdum.kex.util.mcmath.Vec3d;
 
 public class TestTileEntity extends BlockActor {
+
+    private int testValue = 0;
     
     public TestTileEntity(long ptr, int type, BlockPos pos)
     {
@@ -58,6 +61,28 @@ public class TestTileEntity extends BlockActor {
     {
         NativeAPI.clientMessage(String.format("Clicked on side %d with exact coords %s", new Object[]{ Byte.valueOf(side), vec.toString() }));
         return true;
+    }
+
+    @Override protected void load(NativeCompoundTag tag)
+    {
+        this.testValue = tag.contains("testValue") ? tag.getInt("testValue") : 0;
+    }
+
+    @Override protected boolean save(NativeCompoundTag tag)
+    {
+        tag.putInt("testValue", this.testValue);
+        return true;
+    }
+
+    @Override public void getUpdatePacket(NativeCompoundTag tag)
+    {
+        this.save(tag, false);
+    }
+
+    @Override public void onUpdatePacket(NativeCompoundTag tag)
+    {
+        NativeAPI.clientMessage("RECEIVED UPDATE PACKET");
+        this.load(tag, false);
     }
 
 }

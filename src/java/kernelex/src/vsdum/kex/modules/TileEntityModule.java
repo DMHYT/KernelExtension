@@ -64,12 +64,12 @@ public class TileEntityModule {
 
     private static void load(long tilePtr, long tagPtr)
     {
-        getOrCreate(tilePtr).load(new NativeCompoundTag(tagPtr).setFinalizable(false));
+        getOrCreate(tilePtr).load(new NativeCompoundTag(tagPtr).setFinalizable(false), true);
     }
 
     private static boolean save(long tilePtr, long tagPtr)
     {
-        return getOrCreate(tilePtr).save(new NativeCompoundTag(tagPtr).setFinalizable(false));
+        return getOrCreate(tilePtr).save(new NativeCompoundTag(tagPtr).setFinalizable(false), true);
     }
 
     private static void tick(long tilePtr, long blockSourcePtr)
@@ -147,6 +147,16 @@ public class TileEntityModule {
     private static boolean onUse(long tilePtr, long playerUid, byte side, float vecX, float vecY, float vecZ)
     {
         return getOrCreate(tilePtr).onUse(new Player(playerUid), side, new Vec3d(vecX, vecY, vecZ));
+    }
+
+    private static void getUpdatePacket(long tilePtr, long blockSourcePtr, long tagPtr)
+    {
+        getOrCreate(tilePtr, blockSourcePtr).getUpdatePacket(new NativeCompoundTag(tagPtr).setFinalizable(false));
+    }
+
+    private static void onUpdatePacket(long tilePtr, long blockSourcePtr, long tagPtr)
+    {
+        getOrCreate(tilePtr, blockSourcePtr).onUpdatePacket(new NativeCompoundTag(tagPtr).setFinalizable(false));
     }
 
     public static int registerTileEntityType(String typeName, Class<? extends BlockActor> typeClass)
