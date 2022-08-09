@@ -6,6 +6,7 @@ import vsdum.kex.common.INativeInterface;
 public class Level implements INativeInterface {
     
     protected static native long nativeGetTickingAreasManager(long ptr);
+    protected static native boolean nativeIsClientSide(long ptr);
 
     protected final long pointer;
 
@@ -23,6 +24,11 @@ public class Level implements INativeInterface {
     {
         long ptr = nativeGetTickingAreasManager(this.pointer);
         return ptr == 0L ? null : new TickingAreasManager(ptr);
+    }
+
+    public boolean isClientSide()
+    {
+        return nativeIsClientSide(this.pointer);
     }
 
 }

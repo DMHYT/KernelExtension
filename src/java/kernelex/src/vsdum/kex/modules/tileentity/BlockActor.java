@@ -68,6 +68,16 @@ public abstract class BlockActor implements INativeInterface {
         return this.type;
     }
 
+    public boolean isClient()
+    {
+        return this.hasWorld() ? this.getWorld().getLevel().isClientSide() : true;
+    }
+
+    public boolean isServer()
+    {
+        return !this.isClient();
+    }
+
     public void load(NativeCompoundTag data, boolean fromNative)
     {
         if(fromNative) load(data);

@@ -12,6 +12,9 @@ extern "C" {
         if(result == nullptr) return 0;
         return (jlong) result;
     }
+    __EXPORT__(jboolean, IsClientSide) {
+        return ((Level*) ptr)->isClientSide();
+    }
 }
 
 
