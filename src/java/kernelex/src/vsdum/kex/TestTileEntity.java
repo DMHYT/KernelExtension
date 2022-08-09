@@ -3,7 +3,9 @@ package vsdum.kex;
 import com.zhekasmirnov.innercore.api.NativeAPI;
 
 import vsdum.kex.modules.tileentity.BlockActor;
+import vsdum.kex.natives.Player;
 import vsdum.kex.util.mcmath.BlockPos;
+import vsdum.kex.util.mcmath.Vec3d;
 
 public class TestTileEntity extends BlockActor {
     
@@ -50,6 +52,12 @@ public class TestTileEntity extends BlockActor {
     @Override public void onChunkUnloaded()
     {
         NativeAPI.clientMessage("CHUNK UNLOADED");
+    }
+
+    @Override public boolean onUse(Player player, byte side, Vec3d vec)
+    {
+        NativeAPI.clientMessage(String.format("Clicked on side %d with exact coords %s", new Object[]{ Byte.valueOf(side), vec.toString() }));
+        return true;
     }
 
 }

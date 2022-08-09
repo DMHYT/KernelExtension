@@ -1,6 +1,7 @@
+#include <ActorUniqueID.hpp>
+
 #include "../../utils/java_utils.hpp"
 #include "module.hpp"
-#include <innercore/global_context.h>
 
 
 KEXTileEntityModule::TileEntity::TileEntity(int type, const BlockPos& pos)
@@ -91,4 +92,8 @@ void KEXTileEntityModule::TileEntity::onChunkLoaded(LevelChunk& levelChunk) {
 
 void KEXTileEntityModule::TileEntity::onChunkUnloaded(LevelChunk& levelChunk) {
     KEXJavaBridge::TileEntityModule::onChunkUnloaded((jlong) this);
+}
+
+bool KEXTileEntityModule::TileEntity::onUse(Player& player, unsigned char side, const Vec3& vec) const {
+    return KEXJavaBridge::TileEntityModule::onUse((jlong) this, player.getUniqueID()->id, (char) side, vec.x, vec.y, vec.z);
 }

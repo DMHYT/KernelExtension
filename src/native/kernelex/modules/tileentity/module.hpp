@@ -29,6 +29,7 @@ class KEXTileEntityModule : public Module {
         virtual void onChunkLoaded(LevelChunk&);
         virtual void onChunkUnloaded(LevelChunk&);
         TileEntity(int type, const BlockPos& pos);
+        bool onUse(Player&, unsigned char, const Vec3&) const;
     };
     static std::unordered_map<int, int> customTileEntityBlocks;
     KEXTileEntityModule(Module* parent): Module(parent, "kex.tileentity") {}

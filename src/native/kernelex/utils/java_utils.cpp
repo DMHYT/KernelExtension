@@ -65,6 +65,7 @@ namespace KEXJavaBridge {
         JAVA_METHOD(TileEntityModule, setCustomName, "(JLjava/lang/String;)V")
         JAVA_METHOD(TileEntityModule, onChunkLoaded, "(J)V")
         JAVA_METHOD(TileEntityModule, onChunkUnloaded, "(J)V")
+        JAVA_METHOD(TileEntityModule, onUse, "(JJBFFF)Z")
     }
     namespace KernelExtension {
         void setMinecraftTextboxText(const char* text) {
@@ -211,6 +212,9 @@ namespace KEXJavaBridge {
         }
         void onChunkUnloaded(jlong tilePtr) {
             KEXJavaUtils::attach()->CallStaticVoidMethod(Cache::TileEntityModule(), Cache::TileEntityModule_onChunkUnloaded(), tilePtr);
+        }
+        bool onUse(jlong tilePtr, jlong playerUid, char side, float vecX, float vecY, float vecZ) {
+            return KEXJavaUtils::attach()->CallStaticBooleanMethod(Cache::TileEntityModule(), Cache::TileEntityModule_onUse(), tilePtr, playerUid, side, vecX, vecY, vecZ);
         }
     }
 }

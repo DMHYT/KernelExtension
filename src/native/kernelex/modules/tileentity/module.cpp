@@ -7,6 +7,7 @@
 #include <innercore/vtable.h>
 
 #include <BlockLegacy.hpp>
+#include <GameMode.hpp>
 
 #include "module.hpp"
 
@@ -27,6 +28,22 @@ void KEXTileEntityModule::initialize() {
             }
         }, ),
         HookManager::CALL | HookManager::LISTENER | HookManager::CONTROLLER
+    );
+
+    HookManager::addCallback(
+        SYMBOL("mcpe", "_ZN8GameMode9useItemOnER9ItemStackRK8BlockPoshRK4Vec3PK5Block"),
+        LAMBDA((HookManager::CallbackController* controller, GameMode* gm, ItemStack& item, const BlockPos& pos, unsigned char side, const Vec3& vec, const Block& state), {
+            auto blockEntity = gm->player->getRegion()->getBlockEntity(pos);
+            if(
+                blockEntity != nullptr &&
+                (int) blockEntity->type >= 1024 &&
+                ((KEXTileEntityModule::TileEntity*) blockEntity)->onUse(*(gm->player), side, vec)
+            ) {
+                controller->replace();
+                return true;
+            }
+        }, ),
+        HookManager::CALL | HookManager::LISTENER | HookManager::CONTROLLER | HookManager::RESULT
     );
 
     Callbacks::addCallback("postModItemsInit", 

@@ -71,6 +71,7 @@ namespace KEXJavaBridge {
         void setCustomName(jlong tilePtr, const char* customName);
         void onChunkLoaded(jlong tilePtr);
         void onChunkUnloaded(jlong tilePtr);
+        bool onUse(jlong tilePtr, jlong playerUid, char side, float vecX, float vecY, float vecZ);
     }
 }
 

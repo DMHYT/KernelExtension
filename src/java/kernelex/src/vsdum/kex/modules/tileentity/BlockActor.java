@@ -8,7 +8,9 @@ import com.zhekasmirnov.innercore.api.nbt.NativeCompoundTag;
 import android.support.annotation.Nullable;
 import vsdum.kex.common.INativeInterface;
 import vsdum.kex.natives.ExtendedBlockSource;
+import vsdum.kex.natives.Player;
 import vsdum.kex.util.mcmath.BlockPos;
+import vsdum.kex.util.mcmath.Vec3d;
 
 public abstract class BlockActor implements INativeInterface {
     
@@ -112,5 +114,10 @@ public abstract class BlockActor implements INativeInterface {
     public void onChunkLoaded() {}
 
     public void onChunkUnloaded() {}
+
+    public boolean onUse(Player player, byte side, Vec3d vec)
+    {
+        return false;
+    }
 
 }

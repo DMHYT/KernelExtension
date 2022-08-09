@@ -13,8 +13,10 @@ import com.zhekasmirnov.innercore.api.nbt.NativeCompoundTag;
 import android.support.annotation.Nullable;
 import vsdum.kex.modules.tileentity.*;
 import vsdum.kex.natives.ExtendedBlockSource;
+import vsdum.kex.natives.Player;
 import vsdum.kex.util.SetBuilder;
 import vsdum.kex.util.mcmath.BlockPos;
+import vsdum.kex.util.mcmath.Vec3d;
 
 public class TileEntityModule {
     
@@ -140,6 +142,11 @@ public class TileEntityModule {
     private static void onChunkUnloaded(long tilePtr)
     {
         getOrCreate(tilePtr).onChunkUnloaded();
+    }
+
+    private static boolean onUse(long tilePtr, long playerUid, byte side, float vecX, float vecY, float vecZ)
+    {
+        return getOrCreate(tilePtr).onUse(new Player(playerUid), side, new Vec3d(vecX, vecY, vecZ));
     }
 
     public static int registerTileEntityType(String typeName, Class<? extends BlockActor> typeClass)
