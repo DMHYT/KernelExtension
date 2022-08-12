@@ -54,18 +54,18 @@ namespace KEXJavaBridge {
         void onChooseLanguage(jlong localizationPtr, const char* languageCode);
     }
     namespace TileEntityModule {
-        void construct(jlong tilePtr);
+        void construct(jlong tilePtr, int dimension);
         void load(jlong tilePtr, jlong tagPtr);
         bool save(jlong tilePtr, jlong tagPtr);
-        void tick(jlong tilePtr, jlong blockSourcePtr);
+        void tick(jlong tilePtr);
         bool isFinished(jlong tilePtr);
-        void onChanged(jlong tilePtr, jlong blockSourcePtr);
-        bool isMovable(jlong tilePtr, jlong blockSourcePtr);
-        void onPlace(jlong tilePtr, jlong blockSourcePtr);
+        void onChanged(jlong tilePtr);
+        bool isMovable(jlong tilePtr);
+        void onPlace(jlong tilePtr);
         void onMove(jlong tilePtr);
-        void onRemoved(jlong tilePtr, jlong blockSourcePtr);
+        void onRemoved(jlong tilePtr);
         void triggerEvent(jlong tilePtr, int id, int type);
-        void onNeighborChanged(jlong tilePtr, jlong blockSourcePtr, int changedX, int changedY, int changedZ);
+        void onNeighborChanged(jlong tilePtr, int changedX, int changedY, int changedZ);
         jstring getCustomName(jlong tilePtr);
         jstring getName(jlong tilePtr);
         void setCustomName(jlong tilePtr, const char* customName);

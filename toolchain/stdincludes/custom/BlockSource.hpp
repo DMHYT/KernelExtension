@@ -24,6 +24,7 @@ class BlockSource {
     BlockActor* getBlockEntity(const BlockPos&);
     Level* getLevel() const;
     Dimension* getDimension() const;
+    void fireBlockEntityChanged(BlockActor&);
 };
 
 

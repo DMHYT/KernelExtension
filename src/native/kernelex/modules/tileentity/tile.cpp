@@ -4,9 +4,9 @@
 #include "module.hpp"
 
 
-KEXTileEntityModule::TileEntity::TileEntity(int type, const BlockPos& pos)
+KEXTileEntityModule::TileEntity::TileEntity(int type, const BlockPos& pos, int dimension)
 : BlockActor((BlockActorType) type, pos, "") {
-    KEXJavaBridge::TileEntityModule::construct((jlong) this);
+    KEXJavaBridge::TileEntityModule::construct((jlong) this, dimension);
 }
 
 void KEXTileEntityModule::TileEntity::load(Level& level, const CompoundTag& tag, DataLoadHelper& helper) {
@@ -21,7 +21,7 @@ bool KEXTileEntityModule::TileEntity::save(CompoundTag& tag) const {
 
 void KEXTileEntityModule::TileEntity::tick(BlockSource& world) {
     BlockActor::tick(world);
-    KEXJavaBridge::TileEntityModule::tick((jlong) this, (jlong) &world);
+    KEXJavaBridge::TileEntityModule::tick((jlong) this);
 }
 
 bool KEXTileEntityModule::TileEntity::isFinished() {
@@ -29,15 +29,15 @@ bool KEXTileEntityModule::TileEntity::isFinished() {
 }
 
 void KEXTileEntityModule::TileEntity::onChanged(BlockSource& world) {
-    KEXJavaBridge::TileEntityModule::onChanged((jlong) this, (jlong) &world);
+    KEXJavaBridge::TileEntityModule::onChanged((jlong) this);
 }
 
 bool KEXTileEntityModule::TileEntity::isMovable(BlockSource& world) {
-    return KEXJavaBridge::TileEntityModule::isMovable((jlong) this, (jlong) &world);
+    return KEXJavaBridge::TileEntityModule::isMovable((jlong) this);
 }
 
 void KEXTileEntityModule::TileEntity::onPlace(BlockSource& world) {
-    KEXJavaBridge::TileEntityModule::onPlace((jlong) this, (jlong) &world);
+    KEXJavaBridge::TileEntityModule::onPlace((jlong) this);
 }
 
 void KEXTileEntityModule::TileEntity::onMove() {
@@ -45,7 +45,7 @@ void KEXTileEntityModule::TileEntity::onMove() {
 }
 
 void KEXTileEntityModule::TileEntity::onRemoved(BlockSource& world) {
-    KEXJavaBridge::TileEntityModule::onRemoved((jlong) this, (jlong) &world);
+    KEXJavaBridge::TileEntityModule::onRemoved((jlong) this);
 }
 
 void KEXTileEntityModule::TileEntity::triggerEvent(int id, int type) {
@@ -54,7 +54,7 @@ void KEXTileEntityModule::TileEntity::triggerEvent(int id, int type) {
 }
 
 void KEXTileEntityModule::TileEntity::onNeighborChanged(BlockSource& world, const BlockPos& changed) {
-    KEXJavaBridge::TileEntityModule::onNeighborChanged((jlong) this, (jlong) &world, changed.x, changed.y, changed.z);
+    KEXJavaBridge::TileEntityModule::onNeighborChanged((jlong) this, changed.x, changed.y, changed.z);
 }
 
 const stl::string& KEXTileEntityModule::TileEntity::getCustomName() const {

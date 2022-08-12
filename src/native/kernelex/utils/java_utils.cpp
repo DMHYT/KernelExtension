@@ -48,18 +48,18 @@ namespace KEXJavaBridge {
         JAVA_CLASS(I18n, "vsdum/kex/natives/I18n")
         JAVA_METHOD(I18n, onChooseLanguage, "(JLjava/lang/String;)V")
         JAVA_CLASS(TileEntityModule, "vsdum/kex/modules/TileEntityModule")
-        JAVA_METHOD(TileEntityModule, getOrCreate, "(J)Lvsdum/kex/modules/tileentity/BlockActor;")
+        JAVA_METHOD(TileEntityModule, getOrCreate, "(JI)Lvsdum/kex/modules/tileentity/BlockActor;")
         JAVA_METHOD(TileEntityModule, load, "(JJ)V")
         JAVA_METHOD(TileEntityModule, save, "(JJ)Z")
-        JAVA_METHOD(TileEntityModule, tick, "(JJ)V")
+        JAVA_METHOD(TileEntityModule, tick, "(J)V")
         JAVA_METHOD(TileEntityModule, isFinished, "(J)Z")
-        JAVA_METHOD(TileEntityModule, onChanged, "(JJ)V")
-        JAVA_METHOD(TileEntityModule, isMovable, "(JJ)Z")
-        JAVA_METHOD(TileEntityModule, onPlace, "(JJ)V")
+        JAVA_METHOD(TileEntityModule, onChanged, "(J)V")
+        JAVA_METHOD(TileEntityModule, isMovable, "(J)Z")
+        JAVA_METHOD(TileEntityModule, onPlace, "(J)V")
         JAVA_METHOD(TileEntityModule, onMove, "(J)V")
-        JAVA_METHOD(TileEntityModule, onRemoved, "(JJ)V")
+        JAVA_METHOD(TileEntityModule, onRemoved, "(J)V")
         JAVA_METHOD(TileEntityModule, triggerEvent, "(JII)V")
-        JAVA_METHOD(TileEntityModule, onNeighborChanged, "(JJIII)V")
+        JAVA_METHOD(TileEntityModule, onNeighborChanged, "(JIII)V")
         JAVA_METHOD(TileEntityModule, getCustomName, "(J)Ljava/lang/String;")
         JAVA_METHOD(TileEntityModule, getName, "(J)Ljava/lang/String;")
         JAVA_METHOD(TileEntityModule, setCustomName, "(JLjava/lang/String;)V")
@@ -159,8 +159,8 @@ namespace KEXJavaBridge {
         }
     }
     namespace TileEntityModule {
-        void construct(jlong tilePtr) {
-            KEXJavaUtils::attach()->CallStaticObjectMethod(Cache::TileEntityModule(), Cache::TileEntityModule_getOrCreate(), tilePtr);
+        void construct(jlong tilePtr, int dimension) {
+            KEXJavaUtils::attach()->CallStaticObjectMethod(Cache::TileEntityModule(), Cache::TileEntityModule_getOrCreate(), tilePtr, dimension);
         }
         void load(jlong tilePtr, jlong tagPtr) {
             KEXJavaUtils::attach()->CallStaticVoidMethod(Cache::TileEntityModule(), Cache::TileEntityModule_load(), tilePtr, tagPtr);
@@ -168,32 +168,32 @@ namespace KEXJavaBridge {
         bool save(jlong tilePtr, jlong tagPtr) {
             return KEXJavaUtils::attach()->CallStaticBooleanMethod(Cache::TileEntityModule(), Cache::TileEntityModule_save(), tilePtr, tagPtr);
         }
-        void tick(jlong tilePtr, jlong blockSourcePtr) {
-            KEXJavaUtils::attach()->CallStaticVoidMethod(Cache::TileEntityModule(), Cache::TileEntityModule_tick(), tilePtr, blockSourcePtr);
+        void tick(jlong tilePtr) {
+            KEXJavaUtils::attach()->CallStaticVoidMethod(Cache::TileEntityModule(), Cache::TileEntityModule_tick(), tilePtr);
         }
         bool isFinished(jlong tilePtr) {
             return KEXJavaUtils::attach()->CallStaticBooleanMethod(Cache::TileEntityModule(), Cache::TileEntityModule_isFinished(), tilePtr);
         }
-        void onChanged(jlong tilePtr, jlong blockSourcePtr) {
-            KEXJavaUtils::attach()->CallStaticVoidMethod(Cache::TileEntityModule(), Cache::TileEntityModule_onChanged(), tilePtr, blockSourcePtr);
+        void onChanged(jlong tilePtr) {
+            KEXJavaUtils::attach()->CallStaticVoidMethod(Cache::TileEntityModule(), Cache::TileEntityModule_onChanged(), tilePtr);
         }
-        bool isMovable(jlong tilePtr, jlong blockSourcePtr) {
-            return KEXJavaUtils::attach()->CallStaticBooleanMethod(Cache::TileEntityModule(), Cache::TileEntityModule_isMovable(), tilePtr, blockSourcePtr);
+        bool isMovable(jlong tilePtr) {
+            return KEXJavaUtils::attach()->CallStaticBooleanMethod(Cache::TileEntityModule(), Cache::TileEntityModule_isMovable(), tilePtr);
         }
-        void onPlace(jlong tilePtr, jlong blockSourcePtr) {
-            KEXJavaUtils::attach()->CallStaticVoidMethod(Cache::TileEntityModule(), Cache::TileEntityModule_onPlace(), tilePtr, blockSourcePtr);
+        void onPlace(jlong tilePtr) {
+            KEXJavaUtils::attach()->CallStaticVoidMethod(Cache::TileEntityModule(), Cache::TileEntityModule_onPlace(), tilePtr);
         }
         void onMove(jlong tilePtr) {
             KEXJavaUtils::attach()->CallStaticVoidMethod(Cache::TileEntityModule(), Cache::TileEntityModule_onMove(), tilePtr);
         }
-        void onRemoved(jlong tilePtr, jlong blockSourcePtr) {
-            KEXJavaUtils::attach()->CallStaticVoidMethod(Cache::TileEntityModule(), Cache::TileEntityModule_onRemoved(), tilePtr, blockSourcePtr);
+        void onRemoved(jlong tilePtr) {
+            KEXJavaUtils::attach()->CallStaticVoidMethod(Cache::TileEntityModule(), Cache::TileEntityModule_onRemoved(), tilePtr);
         }
         void triggerEvent(jlong tilePtr, int id, int type) {
             return KEXJavaUtils::attach()->CallStaticVoidMethod(Cache::TileEntityModule(), Cache::TileEntityModule_triggerEvent(), tilePtr, id, type);
         }
-        void onNeighborChanged(jlong tilePtr, jlong blockSourcePtr, int changedX, int changedY, int changedZ) {
-            KEXJavaUtils::attach()->CallStaticVoidMethod(Cache::TileEntityModule(), Cache::TileEntityModule_onNeighborChanged(), tilePtr, blockSourcePtr, changedX, changedY, changedZ);
+        void onNeighborChanged(jlong tilePtr, int changedX, int changedY, int changedZ) {
+            KEXJavaUtils::attach()->CallStaticVoidMethod(Cache::TileEntityModule(), Cache::TileEntityModule_onNeighborChanged(), tilePtr, changedX, changedY, changedZ);
         }
         jstring getCustomName(jlong tilePtr) {
             return (jstring) KEXJavaUtils::attach()->CallStaticObjectMethod(Cache::TileEntityModule(), Cache::TileEntityModule_getCustomName(), tilePtr);

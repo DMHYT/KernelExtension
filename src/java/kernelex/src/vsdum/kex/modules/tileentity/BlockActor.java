@@ -1,7 +1,5 @@
 package vsdum.kex.modules.tileentity;
 
-import java.util.Objects;
-
 import com.zhekasmirnov.apparatus.adapter.innercore.game.block.BlockState;
 import com.zhekasmirnov.innercore.api.nbt.NativeCompoundTag;
 
@@ -17,18 +15,19 @@ public abstract class BlockActor implements INativeInterface {
     protected final long pointer;
     private final int type;
     private BlockPos blockPos;
-    @Nullable private ExtendedBlockSource world = null;
+    private int dimension = -1;
 
     public final long getPointer()
     {
         return this.pointer;
     }
 
-    public BlockActor(long ptr, int type, BlockPos blockPos)
+    public BlockActor(long ptr, int type, BlockPos blockPos, int dimension)
     {
         this.pointer = ptr;
         this.type = type;
         this.blockPos = blockPos;
+        this.dimension = dimension;
     }
 
     public BlockPos getBlockPos()
@@ -45,22 +44,17 @@ public abstract class BlockActor implements INativeInterface {
 
     public BlockState getBlockState()
     {
-        return this.world.getBlock(this.blockPos.x, this.blockPos.y, this.blockPos.z);
-    }
-
-    public boolean hasWorld()
-    {
-        return this.world != null;
+        return this.hasWorld() ? this.getWorld().getBlock(this.blockPos.x, this.blockPos.y, this.blockPos.z) : null;
     }
 
     @Nullable public ExtendedBlockSource getWorld()
     {
-        return this.world;
+        return this.hasWorld() ? ExtendedBlockSource.getDefaultForDimension(this.dimension) : null;
     }
-
-    public void setWorld(ExtendedBlockSource world)
+    
+    public boolean hasWorld()
     {
-        this.world = Objects.requireNonNull(world);
+        return this.dimension != -1;
     }
 
     public int getType()
@@ -76,6 +70,16 @@ public abstract class BlockActor implements INativeInterface {
     public boolean isServer()
     {
         return !this.isClient();
+    }
+
+    public void loadDimension(NativeCompoundTag data)
+    {
+        this.dimension = data.contains("Dimension") ? data.getInt("Dimension") : -1;
+    }
+    
+    public void saveDimension(NativeCompoundTag data)
+    {
+        data.putInt("Dimension", this.dimension);
     }
 
     public void load(NativeCompoundTag data, boolean fromNative)

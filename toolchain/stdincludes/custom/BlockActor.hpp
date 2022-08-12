@@ -101,5 +101,7 @@ class BlockActor {
     static stl::map<stl::string, int> mIdClassMap;
 };
 
+bool _needsToCreateBlockEntity(const Block*, const Block*);
+
 
 #endif //KEX_BLOCKACTOR_HPP

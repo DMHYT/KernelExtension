@@ -12,9 +12,9 @@ public class TestTileEntity extends BlockActor {
 
     private int testValue = 0;
     
-    public TestTileEntity(long ptr, int type, BlockPos pos)
+    public TestTileEntity(long ptr, int type, BlockPos pos, int dimension)
     {
-        super(ptr, type, pos);
+        super(ptr, type, pos, dimension);
     }
 
     @Override public void tick()

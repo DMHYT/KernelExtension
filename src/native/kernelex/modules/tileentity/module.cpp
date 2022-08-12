@@ -7,7 +7,9 @@
 #include <innercore/vtable.h>
 
 #include <BlockLegacy.hpp>
+#include <Block.hpp>
 #include <GameMode.hpp>
+#include <Dimension.hpp>
 
 #include "module.hpp"
 
@@ -20,11 +22,29 @@ void KEXTileEntityModule::initialize() {
     DLHandleManager::initializeHandle("libminecraftpe.so", "mcpe");
 
     HookManager::addCallback(
+        SYMBOL("mcpe", "_ZN10LevelChunk18_createBlockEntityERK8BlockPosP11BlockSourceRK5BlockS7_"),
+        LAMBDA((HookManager::CallbackController* controller, stl::shared_ptr<BlockActor>* result, LevelChunk* chunk, const BlockPos& pos, BlockSource* world, const Block& b1, const Block& b2), {
+            if(
+                world != nullptr &&
+                _needsToCreateBlockEntity(&b1, &b2) &&
+                b1.legacy != nullptr &&
+                b1.legacy->tileEntityType >= 1024
+            ) {
+                controller->prevent();
+                new (result) stl::shared_ptr<TileEntity>(new TileEntity(b1.legacy->tileEntityType, pos, world->getDimension()->getDimensionId().id));
+                chunk->_placeBlockEntity(*result);
+                world->fireBlockEntityChanged(*(result->get()));
+            }
+        }, ),
+        HookManager::CALL | HookManager::LISTENER | HookManager::CONTROLLER
+    );
+
+    HookManager::addCallback(
         SYMBOL("mcpe", "_ZN17BlockActorFactory17createBlockEntityE14BlockActorTypeRK8BlockPosRK11BlockLegacy"),
-        LAMBDA((HookManager::CallbackController* controller, stl::shared_ptr<BlockActor>* result, int type, const BlockPos& pos), {
+        LAMBDA((HookManager::CallbackController* controller, stl::shared_ptr<BlockActor>* result, int type, const BlockPos& pos, const BlockLegacy& blockLegacy), {
             if(type >= 1024) {
                 controller->prevent();
-                new (result) stl::shared_ptr<TileEntity>(new TileEntity(type, pos));
+                new (result) stl::shared_ptr<TileEntity>(new TileEntity(type, pos, -1));
             }
         }, ),
         HookManager::CALL | HookManager::LISTENER | HookManager::CONTROLLER

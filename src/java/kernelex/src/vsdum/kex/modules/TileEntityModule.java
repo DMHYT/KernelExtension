@@ -12,7 +12,6 @@ import com.zhekasmirnov.innercore.api.nbt.NativeCompoundTag;
 
 import android.support.annotation.Nullable;
 import vsdum.kex.modules.tileentity.*;
-import vsdum.kex.natives.ExtendedBlockSource;
 import vsdum.kex.natives.Player;
 import vsdum.kex.util.SetBuilder;
 import vsdum.kex.util.mcmath.BlockPos;
@@ -29,32 +28,23 @@ public class TileEntityModule {
 
     @Nullable private static BlockActor getOrCreate(long tilePtr)
     {
-        return getOrCreate(tilePtr, 0L);
+        return getOrCreate(tilePtr, -1);
     }
 
-    @Nullable private static BlockActor getOrCreate(long tilePtr, long blockSourcePtr)
+    @Nullable private static BlockActor getOrCreate(long tilePtr, int dimension)
     {
         if(customTileEntityMap.containsKey(tilePtr))
         {
-            BlockActor result = customTileEntityMap.get(tilePtr);
-            if(blockSourcePtr != 0L && !result.hasWorld())
-            {
-                result.setWorld(new ExtendedBlockSource(blockSourcePtr));
-            }
-            return result;
+            return customTileEntityMap.get(tilePtr);
         }
         int type = TileEntityNativeAPI.getType(tilePtr);
         if(customTileEntityTypes.containsKey(type))
         {
             Class<? extends BlockActor> tileClass = customTileEntityTypes.get(type);
             try {
-                Constructor<? extends BlockActor> tileConstructor = tileClass.getConstructor(long.class, int.class, BlockPos.class);
+                Constructor<? extends BlockActor> tileConstructor = tileClass.getConstructor(long.class, int.class, BlockPos.class, int.class);
                 int[] pos = TileEntityNativeAPI.getPosition(tilePtr);
-                BlockActor result = tileConstructor.newInstance(tilePtr, type, new BlockPos(pos[0], pos[1], pos[2]));
-                if(blockSourcePtr != 0L)
-                {
-                    result.setWorld(new ExtendedBlockSource(blockSourcePtr));
-                }
+                BlockActor result = tileConstructor.newInstance(tilePtr, type, new BlockPos(pos[0], pos[1], pos[2]), dimension);
                 customTileEntityMap.put(tilePtr, result);
                 return result;
             } catch(Throwable ex) { ex.printStackTrace(); }
@@ -64,17 +54,23 @@ public class TileEntityModule {
 
     private static void load(long tilePtr, long tagPtr)
     {
-        getOrCreate(tilePtr).load(new NativeCompoundTag(tagPtr).setFinalizable(false), true);
+        BlockActor tile = getOrCreate(tilePtr);
+        NativeCompoundTag tag = new NativeCompoundTag(tagPtr).setFinalizable(false);
+        tile.loadDimension(tag);
+        tile.load(tag, true);
     }
 
     private static boolean save(long tilePtr, long tagPtr)
     {
-        return getOrCreate(tilePtr).save(new NativeCompoundTag(tagPtr).setFinalizable(false), true);
+        BlockActor tile = getOrCreate(tilePtr);
+        NativeCompoundTag tag = new NativeCompoundTag(tagPtr).setFinalizable(false);
+        tile.saveDimension(tag);
+        return tile.save(tag, true);
     }
 
-    private static void tick(long tilePtr, long blockSourcePtr)
+    private static void tick(long tilePtr)
     {
-        getOrCreate(tilePtr, blockSourcePtr).tick();
+        getOrCreate(tilePtr).tick();
     }
 
     private static boolean isFinished(long tilePtr)
@@ -82,19 +78,19 @@ public class TileEntityModule {
         return getOrCreate(tilePtr).isFinished();
     }
 
-    private static void onChanged(long tilePtr, long blockSourcePtr)
+    private static void onChanged(long tilePtr)
     {
-        getOrCreate(tilePtr, blockSourcePtr).onChanged();
+        getOrCreate(tilePtr).onChanged();
     }
 
-    private static boolean isMovable(long tilePtr, long blockSourcePtr)
+    private static boolean isMovable(long tilePtr)
     {
-        return getOrCreate(tilePtr, blockSourcePtr).isMovable();
+        return getOrCreate(tilePtr).isMovable();
     }
 
-    private static void onPlace(long tilePtr, long blockSourcePtr)
+    private static void onPlace(long tilePtr)
     {
-        getOrCreate(tilePtr, blockSourcePtr).onPlace();
+        getOrCreate(tilePtr).onPlace();
     }
 
     private static void onMove(long tilePtr)
@@ -102,9 +98,9 @@ public class TileEntityModule {
         getOrCreate(tilePtr).updateBlockPos().onMove();
     }
 
-    private static void onRemoved(long tilePtr, long blockSourcePtr)
+    private static void onRemoved(long tilePtr)
     {
-        BlockActor tile = getOrCreate(tilePtr, blockSourcePtr);
+        BlockActor tile = getOrCreate(tilePtr);
         customTileEntityMap.remove(tile.getPointer());
         tile.onRemoved();
     }
@@ -114,9 +110,9 @@ public class TileEntityModule {
         getOrCreate(tilePtr).triggerEvent(id, type);
     }
 
-    private static void onNeighborChanged(long tilePtr, long blockSourcePtr, int changedX, int changedY, int changedZ)
+    private static void onNeighborChanged(long tilePtr, int changedX, int changedY, int changedZ)
     {
-        getOrCreate(tilePtr, blockSourcePtr).onNeighborChanged(new BlockPos(changedX, changedY, changedZ));
+        getOrCreate(tilePtr).onNeighborChanged(new BlockPos(changedX, changedY, changedZ));
     }
 
     @Nullable private static String getCustomName(long tilePtr)
