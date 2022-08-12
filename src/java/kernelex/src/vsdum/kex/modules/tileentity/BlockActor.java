@@ -138,8 +138,4 @@ public abstract class BlockActor implements INativeInterface {
         return false;
     }
 
-    public void getUpdatePacket(NativeCompoundTag packetTag) {}
-
-    public void onUpdatePacket(NativeCompoundTag packetTag) {}
-
 }

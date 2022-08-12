@@ -72,8 +72,6 @@ namespace KEXJavaBridge {
         void onChunkLoaded(jlong tilePtr);
         void onChunkUnloaded(jlong tilePtr);
         bool onUse(jlong tilePtr, jlong playerUid, char side, float vecX, float vecY, float vecZ);
-        void getUpdatePacket(jlong tilePtr, jlong blockSourcePtr, jlong tagPtr);
-        void onUpdatePacket(jlong tilePtr, jlong blockSourcePtr, jlong tagPtr);
     }
 }
 

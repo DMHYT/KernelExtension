@@ -149,16 +149,6 @@ public class TileEntityModule {
         return getOrCreate(tilePtr).onUse(new Player(playerUid), side, new Vec3d(vecX, vecY, vecZ));
     }
 
-    private static void getUpdatePacket(long tilePtr, long blockSourcePtr, long tagPtr)
-    {
-        getOrCreate(tilePtr, blockSourcePtr).getUpdatePacket(new NativeCompoundTag(tagPtr).setFinalizable(false));
-    }
-
-    private static void onUpdatePacket(long tilePtr, long blockSourcePtr, long tagPtr)
-    {
-        getOrCreate(tilePtr, blockSourcePtr).onUpdatePacket(new NativeCompoundTag(tagPtr).setFinalizable(false));
-    }
-
     public static int registerTileEntityType(String typeName, Class<? extends BlockActor> typeClass)
     {
         if(vanillaTileEntityTypeNames.contains(typeName))

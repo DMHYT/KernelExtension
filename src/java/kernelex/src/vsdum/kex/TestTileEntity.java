@@ -74,15 +74,4 @@ public class TestTileEntity extends BlockActor {
         return true;
     }
 
-    @Override public void getUpdatePacket(NativeCompoundTag tag)
-    {
-        this.save(tag, false);
-    }
-
-    @Override public void onUpdatePacket(NativeCompoundTag tag)
-    {
-        NativeAPI.clientMessage("RECEIVED UPDATE PACKET");
-        this.load(tag, false);
-    }
-
 }

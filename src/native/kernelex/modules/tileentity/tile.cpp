@@ -97,13 +97,3 @@ void KEXTileEntityModule::TileEntity::onChunkUnloaded(LevelChunk& levelChunk) {
 bool KEXTileEntityModule::TileEntity::onUse(Player& player, unsigned char side, const Vec3& vec) const {
     return KEXJavaBridge::TileEntityModule::onUse((jlong) this, player.getUniqueID()->id, (char) side, vec.x, vec.y, vec.z);
 }
-
-stl::unique_ptr<BlockActorDataPacket> KEXTileEntityModule::TileEntity::_getUpdatePacket(BlockSource& world) {
-    CompoundTag tag;
-    KEXJavaBridge::TileEntityModule::getUpdatePacket((jlong) this, (jlong) &world, (jlong) &tag);
-    return stl::unique_ptr<BlockActorDataPacket>(new BlockActorDataPacket(this->getPosition(), tag));
-}
-
-void KEXTileEntityModule::TileEntity::_onUpdatePacket(const CompoundTag& tag, BlockSource& world) {
-    KEXJavaBridge::TileEntityModule::onUpdatePacket((jlong) this, (jlong) &world, (jlong) &tag);
-}
