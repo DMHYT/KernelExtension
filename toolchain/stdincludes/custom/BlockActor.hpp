@@ -29,7 +29,8 @@ class UIProfanityContext;
 
 class BlockActor {
     public:
-    char filler1[68]; // 72
+    int life; // 8
+    char filler1[64]; // 72
     BlockActorType type; // 76
     char filler2[4]; // 80
     stl::string customName; // 92
@@ -100,8 +101,6 @@ class BlockActor {
     static stl::map<int, stl::string> mClassIdMap;
     static stl::map<stl::string, int> mIdClassMap;
 };
-
-bool _needsToCreateBlockEntity(const Block*, const Block*);
 
 
 #endif //KEX_BLOCKACTOR_HPP

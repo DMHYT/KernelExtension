@@ -1356,6 +1356,21 @@ declare function WRAP_JAVA(clazz: "vsdum.kex.modules.ChunksModule"): typeof vsdu
 
 declare module vsdum {
     export module kex {
+        export module modules {
+            export module TileEntityModule {
+                export interface TileEntityCreationCallback {
+                    (pointer: number, type: number, pos: Vector): any;
+                }
+                export function registerTileEntityType(typeName: any_string, callback: TileEntityCreationCallback): number;
+                export function registerForBlock(blockID: number, type: number): void;
+            }
+        }
+    }
+}
+declare function WRAP_JAVA(clazz: "vsdum.kex.modules.TileEntityModule"): typeof vsdum.kex.modules.TileEntityModule;
+
+declare module vsdum {
+    export module kex {
         export class KernelExtension extends java.lang.Object {
             static class: java.lang.Class<KernelExtension>;
             static getVersion(): [number, number, number];

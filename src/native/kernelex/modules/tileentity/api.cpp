@@ -8,13 +8,19 @@
 #include "module.hpp"
 
 
+#define __EXPORT__(RET, NAME, ...) JNIEXPORT RET JNICALL Java_vsdum_kex_modules_tileentity_TileEntityNativeAPI_##NAME (JNIEnv* env, jclass clazz, jlong ptr, ##__VA_ARGS__)
+
+
 extern "C" {
-    JNIEXPORT jint JNICALL Java_vsdum_kex_modules_tileentity_TileEntityNativeAPI_getType
-    (JNIEnv*, jclass, jlong ptr) {
+    __EXPORT__(jlong, get, jint x, jint y, jint z) {
+        auto tile = ((BlockSource*) ptr)->getBlockEntity(BlockPos(x, y, z));
+        if(tile == nullptr) return 0;
+        return (jlong) tile;
+    }
+    __EXPORT__(jint, getType) {
         return (int) ((BlockActor*) ptr)->type;
     }
-    JNIEXPORT jintArray JNICALL Java_vsdum_kex_modules_tileentity_TileEntityNativeAPI_getPosition
-    (JNIEnv* env, jclass, jlong ptr) {
+    __EXPORT__(jintArray, getPosition) {
         const auto& pos = ((BlockActor*) ptr)->getPosition();
         jintArray result = env->NewIntArray(3);
         jint fill[3];
@@ -35,16 +41,20 @@ extern "C" {
     (JNIEnv* env, jclass, jint blockID, jint type) {
         KEXTileEntityModule::customTileEntityBlocks.emplace(blockID, type);
     }
-    JNIEXPORT void JNICALL Java_vsdum_kex_modules_tileentity_TileEntityNativeAPI_load
-    (JNIEnv* env, jclass, jlong ptr, jlong tagPtr) {
+    __EXPORT__(void, load, jlong tagPtr) {
         BlockActor* tile = (BlockActor*) ptr;
         VTABLE_FIND_OFFSET(BlockActor_load, _ZTV10BlockActor, _ZN10BlockActor4loadER5LevelRK11CompoundTagR14DataLoadHelper);
         VTABLE_CALL<void>(BlockActor_load, tile, GlobalContext::getLevel(), (CompoundTag*) tagPtr, nullptr);
     }
-    JNIEXPORT jboolean JNICALL Java_vsdum_kex_modules_tileentity_TileEntityNativeAPI_save
-    (JNIEnv* env, jclass, jlong ptr, jlong tagPtr) {
+    __EXPORT__(jboolean, save, jlong tagPtr) {
         BlockActor* tile = (BlockActor*) ptr;
         VTABLE_FIND_OFFSET(BlockActor_save, _ZTV10BlockActor, _ZNK10BlockActor4saveER11CompoundTag);
         return VTABLE_CALL<bool>(BlockActor_save, tile, (CompoundTag*) tagPtr);
     }
+    __EXPORT__(jint, getLife) {
+        return ((BlockActor*) ptr)->life;
+    }
 }
+
+
+#undef __EXPORT__

@@ -24,7 +24,7 @@ namespace KEXJavaBridge {
         jclass DamageModule(JNIEnv* env);
         jclass CommandsModule(JNIEnv* env);
         jclass I18n(JNIEnv* env);
-        jclass TileEntityModule(JNIEnv* env);
+        jclass TileEntityEvents(JNIEnv* env);
     }
     namespace KernelExtension {
         void setMinecraftTextboxText(const char* text);
@@ -53,8 +53,8 @@ namespace KEXJavaBridge {
     namespace I18n {
         void onChooseLanguage(jlong localizationPtr, const char* languageCode);
     }
-    namespace TileEntityModule {
-        void construct(jlong tilePtr, int dimension);
+    namespace TileEntityEvents {
+        void construct(jlong tilePtr);
         void load(jlong tilePtr, jlong tagPtr);
         bool save(jlong tilePtr, jlong tagPtr);
         void tick(jlong tilePtr);
@@ -72,6 +72,7 @@ namespace KEXJavaBridge {
         void onChunkLoaded(jlong tilePtr);
         void onChunkUnloaded(jlong tilePtr);
         bool onUse(jlong tilePtr, jlong playerUid, char side, float vecX, float vecY, float vecZ);
+        void reportTileSideAndDimension(jlong tilePtr, bool client, int dimension);
     }
 }
 
