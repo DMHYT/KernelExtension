@@ -28,9 +28,3 @@
 
 // // @ts-ignore
 // com.zhekasmirnov.horizon.launcher.env.AssetPatch.addSingleOverride("resource_packs/vanilla/terrain-atlas/test_anim_blue.png", `${__dir__}/resources/res/terrain-atlas/test_anim_blue.png`);
-
-
-IDRegistry.genBlockID("testNativeTileBlock");
-Block.createBlock("testNativeTileBlock", [ { name: "Test Native Tile Block", texture: [[ "aaa", 0 ]], inCreative: true } ]);
-// @ts-ignore
-MAIN.registerCustomTile(BlockID.testNativeTileBlock);

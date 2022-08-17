@@ -10,7 +10,6 @@ import com.zhekasmirnov.horizon.runtime.logger.Logger;
 import com.zhekasmirnov.innercore.utils.UIUtils;
 
 import android.support.annotation.Nullable;
-import vsdum.kex.modules.TileEntityModule;
 import vsdum.kex.network.PacketPipeline;
 
 public class KernelExtension {
@@ -22,11 +21,6 @@ public class KernelExtension {
         Logger.debug("KEX-JAVA", "Booting...");
         defineCallbackClasses();
         PacketPipeline.getSingleton().initPackets();
-    }
-
-    public static void registerCustomTile(int blockID)
-    {
-        TileEntityModule.registerForBlock(blockID, TileEntityModule.registerTileEntityType("TestTile", TestTileEntity.class));
     }
 
     public static final byte[] getVersion()
