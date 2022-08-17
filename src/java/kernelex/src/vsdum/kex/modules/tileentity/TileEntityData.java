@@ -38,8 +38,7 @@ public class TileEntityData {
     private static final Map<String, Pair<String, NetworkEntity>> awaitingClientNetworkData = new HashMap<>();
     private static final Map<Integer, NetworkEntityType> networkEntityTypes = new HashMap<>();
 
-    static final Map<Long, BlockActor> customTileEntityMap = new HashMap<>();
-
+    public static final Map<Long, BlockActor> customTileEntityMap = new HashMap<>();
     public static final Map<Integer, TileEntityCreationCallback> customTileEntityCreationCallbacks = new HashMap<>();
 
     public static final Set<String> vanillaTileEntityTypes = new SetBuilder<String>()

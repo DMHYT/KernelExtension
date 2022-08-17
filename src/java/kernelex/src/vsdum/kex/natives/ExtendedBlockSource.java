@@ -4,6 +4,10 @@ import com.zhekasmirnov.apparatus.mcpe.NativeBlockSource;
 
 import android.support.annotation.Nullable;
 import vsdum.kex.common.INativeInterface;
+import vsdum.kex.modules.tileentity.BlockActor;
+import vsdum.kex.modules.tileentity.TileEntityData;
+import vsdum.kex.modules.tileentity.TileEntityNativeAPI;
+import vsdum.kex.util.mcmath.BlockPos;
 
 public class ExtendedBlockSource extends NativeBlockSource implements INativeInterface {
 
@@ -73,6 +77,13 @@ public class ExtendedBlockSource extends NativeBlockSource implements INativeInt
     {
         long ptr = nativeGetDimension(this.pointer);
         return ptr == 0L ? null : new Dimension(ptr);
+    }
+
+    @Nullable public BlockActor getCustomBlockEntity(BlockPos pos)
+    {
+        long ptr = TileEntityNativeAPI.get(this.pointer, pos.x, pos.y, pos.z);
+        if(ptr == 0L || !TileEntityData.customTileEntityMap.containsKey(ptr)) return null;
+        return TileEntityData.customTileEntityMap.get(ptr);
     }
 
 }
