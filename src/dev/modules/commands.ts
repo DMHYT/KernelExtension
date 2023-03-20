@@ -65,30 +65,37 @@ class KEXCommandBuilder implements Commands.CustomCommandBuilder {
         switch(arg.type) {
             case "int": case "integer":
                 return typeof arg.default !== "number" ?
+                    // @ts-ignore
                     CommandsModule.intArg(arg.label) :
                     CommandsModule.intArg(arg.label, Math.floor(arg.default));
             case "float":
                 return typeof arg.default !== "number" ?
+                    // @ts-ignore
                     CommandsModule.floatArg(arg.label) :
                     CommandsModule.floatArg(arg.label, arg.default);
             case "bool": case "boolean":
                 return typeof arg.default !== "boolean" ?
+                    // @ts-ignore
                     CommandsModule.boolArg(arg.label) :
                     CommandsModule.boolArg(arg.label, arg.default);
             case "relfloat": case "relativefloat":
                 return typeof arg.default !== "number" ?
+                    // @ts-ignore
                     CommandsModule.relativeFloatArg(arg.label) :
                     CommandsModule.relativeFloatArg(arg.label, arg.default);
             case "pos": case "position":
                 return typeof arg.default !== "object" ?
+                    // @ts-ignore
                     CommandsModule.positionArg(arg.label) :
                     CommandsModule.positionArg(arg.label, arg.default.x ?? 0, arg.default.y ?? 0, arg.default.z ?? 0);
             case "floatpos": case "floatposition":
                 return typeof arg.default !== "object" ?
+                    // @ts-ignore
                     CommandsModule.floatPositionArg(arg.label) :
                     CommandsModule.floatPositionArg(arg.label, arg.default.x ?? 0.0, arg.default.y ?? 0.0, arg.default.z ?? 0.0);
             case "str": case "string":
                 return typeof arg.default !== "string" ?
+                    // @ts-ignore
                     CommandsModule.stringArg(arg.label) :
                     CommandsModule.stringArg(arg.label, arg.default);
             case "msg": case "message":
@@ -101,6 +108,7 @@ class KEXCommandBuilder implements Commands.CustomCommandBuilder {
                 return CommandsModule.playerArg(arg.label);
             case "enum":
                 return typeof arg.default !== "number" ?
+                    // @ts-ignore
                     CommandsModule.enumArg(arg.label, arg.name) :
                     CommandsModule.enumArg(arg.label, arg.name, Math.floor(arg.default));
             case "strenum": case "stringenum":
