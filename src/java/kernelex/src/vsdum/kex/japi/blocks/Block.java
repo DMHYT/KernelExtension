@@ -7,9 +7,10 @@ import com.zhekasmirnov.innercore.api.unlimited.IDRegistry;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import vsdum.kex.common.IdentifierHolder;
 import vsdum.kex.japi.registry.*;
 
-public class Block implements IRegistrable<Block> {
+public class Block implements IRegistrable<Block>, IdentifierHolder {
 
     public final String nameID;
     public final int id;
@@ -25,22 +26,22 @@ public class Block implements IRegistrable<Block> {
     {
         this.nameID = nameID;
         this.id = IDRegistry.genBlockID(nameID);
-        this.properties = properties;
+        this.properties = new BlockProperties(properties);
     }
 
-    public Block setDefineData(JSONArray defineData)
+    public final Block setDefineData(JSONArray defineData)
     {
         this.defineData = defineData;
         return this;
     }
 
-    public Block setDefineData(JSONObject variation)
+    public final Block setDefineData(JSONObject variation)
     {
         this.defineData = new JSONArray().put(variation);
         return this;
     }
 
-    public Block addVariation(JSONObject variation)
+    public final Block addVariation(JSONObject variation)
     {
         this.defineData.put(variation);
         return this;
@@ -49,6 +50,11 @@ public class Block implements IRegistrable<Block> {
     @Override @NonNull public RegistryObject<Block> getRegistryObject()
     {
         return new BlockRegistryObject<>(this);
+    }
+    
+    @Override public final int getId()
+    {
+        return this.id;
     }
 
 }
