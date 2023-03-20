@@ -14,17 +14,8 @@ import com.zhekasmirnov.innercore.api.mod.util.ScriptableFunctionImpl;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import vsdum.kex.japi.blocks.components.IAnimateTickListener;
-import vsdum.kex.japi.blocks.components.ICustomPlaceBehavior;
-import vsdum.kex.japi.blocks.components.IEntityInsideListener;
-import vsdum.kex.japi.blocks.components.IExplosionListener;
-import vsdum.kex.japi.blocks.components.IHasBlockActor;
-import vsdum.kex.japi.blocks.components.IHasDrops;
-import vsdum.kex.japi.blocks.components.INeighborChangeListener;
-import vsdum.kex.japi.blocks.components.IRandomTickListener;
-import vsdum.kex.japi.blocks.components.IStepOnListener;
-import vsdum.kex.japi.blocks.components.IUsable;
-import vsdum.kex.japi.component.ComponentFactory;
+import vsdum.kex.japi.blocks.components.*;
+import vsdum.kex.japi.component.IdentifiedComponentFactory;
 import vsdum.kex.modules.TileEntityModule;
 import vsdum.kex.natives.ExtendedBlockSource;
 import vsdum.kex.util.mcmath.BlockPos;
@@ -33,42 +24,41 @@ public class BlockRegistry {
 
     private static final Map<Integer, Block> customBlocks = new HashMap<>();
 
-    public static final ComponentFactory<Block> componentFactory = new ComponentFactory<Block>()
-        .registerComponent(IAnimateTickListener.class, block -> {
-            NativeBlock.setAnimateTickCallback(block.id, new ScriptableFunctionImpl() {
+    public static final IdentifiedComponentFactory<Block> componentFactory = new IdentifiedComponentFactory<Block>()
+        .registerIdentifiedComponent(IAnimateTickListener.class, (id, component) -> {
+            NativeBlock.setAnimateTickCallback(id, new ScriptableFunctionImpl() {
                 @Override public Object call(Context cx, Scriptable scope, Scriptable thisObj, Object[] args)
                 {
-                    ((IAnimateTickListener) block).animateTick(new BlockState((int) args[3], (int) args[4]), new BlockPos((int) args[0], (int) args[1], (int) args[2]));
+                    component.animateTick(new BlockState((int) args[3], (int) args[4]), new BlockPos((int) args[0], (int) args[1], (int) args[2]));
                     return null;
                 }
             });
         })
-        .registerComponent(ICustomPlaceBehavior.class, block -> BlockEvents.onPlaceEvents.put(block.id, (ICustomPlaceBehavior) block))
-        .registerComponent(IEntityInsideListener.class, block -> {
-            NativeBlock.setReceivingEntityInsideEvent(block.id, true);
-            BlockEvents.entityInsideEvents.put(block.id, (IEntityInsideListener) block);
+        .registerIdentifiedComponent(ICustomPlaceBehavior.class, BlockEvents.onPlaceEvents::put)
+        .registerIdentifiedComponent(IEntityInsideListener.class, (id, component) -> {
+            NativeBlock.setReceivingEntityInsideEvent(id, true);
+            BlockEvents.entityInsideEvents.put(id, component);
         })
-        .registerComponent(IExplosionListener.class, block -> BlockEvents.popResourcesEvents.put(block.id, (IExplosionListener) block))
-        .registerComponent(IHasBlockActor.class, block -> TileEntityModule.registerForBlock(block.id, ((IHasBlockActor) block).getTileEntityType()))
-        .registerComponent(IHasDrops.class, block -> BlockEvents.getDropsEvents.put(block.id, (IHasDrops) block))
-        .registerComponent(INeighborChangeListener.class, block -> {
-            NativeBlock.setReceivingNeighbourChangeEvent(block.id, true);
-            BlockEvents.neighborChangedEvents.put(block.id, (INeighborChangeListener) block);
+        .registerIdentifiedComponent(IExplosionListener.class, BlockEvents.popResourcesEvents::put)
+        .registerIdentifiedComponent(IHasBlockActor.class, (id, component) -> TileEntityModule.registerForBlock(id, component.getTileEntityType()))
+        .registerIdentifiedComponent(INeighborChangeListener.class, (id, component) -> {
+            NativeBlock.setReceivingNeighbourChangeEvent(id, true);
+            BlockEvents.neighborChangedEvents.put(id, component);
         })
-        .registerComponent(IRandomTickListener.class, block -> {
-            NativeBlock.setRandomTickCallback(block.id, new ScriptableFunctionImpl() {
+        .registerIdentifiedComponent(IRandomTickListener.class, (id, component) -> {
+            NativeBlock.setRandomTickCallback(id, new ScriptableFunctionImpl() {
                 @Override public Object call(Context cx, Scriptable scope, Scriptable thisObj, Object[] args)
                 {
-                    ((IRandomTickListener) block).randomTick(new BlockState((int) args[3], (int) args[4]), new BlockPos((int) args[0], (int) args[1], (int) args[2]), ExtendedBlockSource.toKEXBlockSource((NativeBlockSource) args[5]));
+                    component.randomTick(new BlockState((int) args[3], (int) args[4]), new BlockPos((int) args[0], (int) args[1], (int) args[2]), ExtendedBlockSource.toKEXBlockSource((NativeBlockSource) args[5]));
                     return null;
                 }
             });
         })
-        .registerComponent(IStepOnListener.class, block -> {
-            NativeBlock.setReceivingEntityStepOnEvent(block.id, true);
-            BlockEvents.stepOnEvents.put(block.id, (IStepOnListener) block);
+        .registerIdentifiedComponent(IStepOnListener.class, (id, component) -> {
+            NativeBlock.setReceivingEntityStepOnEvent(id, true);
+            BlockEvents.stepOnEvents.put(id, component);
         })
-        .registerComponent(IUsable.class, block -> BlockEvents.onUseEvents.put(block.id, (IUsable) block));
+        .registerIdentifiedComponent(IUsable.class, BlockEvents.onUseEvents::put);
 
     @NonNull public static <T extends Block> T register(@NonNull T block)
     {
