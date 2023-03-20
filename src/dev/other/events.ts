@@ -9,11 +9,6 @@ Callback.addCallback("ItemIconOverride", item => ModCallbacks.onIconOverride(ite
 Callback.addCallback("ModsLoaded", () => ModCallbacks.onModsLoaded());
 
 const BlockEvents = WRAP_JAVA("vsdum.kex.japi.blocks.BlockEvents");
-Callback.addCallback("ItemUse", (coords, item, block, ie, player) => {
-    if(!Game.isActionPrevented()) {
-        BlockEvents.onUse(block.id, block.data, Entity.getDimension(player), coords.x, coords.y, coords.z, player, coords.side, coords.vec.x, coords.vec.y, coords.vec.z);
-    }
-});
 (() => {
     const temp = Block.getBlockDropViaItem;
     Block.getBlockDropViaItem = (block, item, coords, region) => {
@@ -43,3 +38,18 @@ Callback.addCallback("BlockEventNeighbourChange", (coords, block, changedCoords,
     }
 })();
 Callback.addCallback("PopBlockResources", (coords, block, r, i, region) => BlockEvents.popResources(coords.x, coords.y, coords.z, region.getDimension(), block.id, block.data));
+
+const ItemEvents = WRAP_JAVA("vsdum.kex.japi.items.ItemEvents");
+Callback.addCallback("ItemDispensed", (coords, item, region, slot) => ItemEvents.onDispense(coords.x, coords.y, coords.z, coords.side, coords.vec.x, coords.vec.y, coords.vec.z, item.id, item.count, item.data, item.extra ?? null, region.getDimension(), slot));
+Callback.addCallback("ItemUsingReleased", (item, ticks, player) => ItemEvents.onReleaseUsing(item.id, item.count, item.data, item.extra ?? null, ticks, player));
+Callback.addCallback("ItemIconOverride", (item, isModUI) => ItemEvents.getIcon(item.id, item.count, item.data, item.extra ?? null, isModUI));
+Callback.addCallback("ItemUsingComplete", (item, player) => ItemEvents.onCompleteUsing(item.id, item.count, item.data, item.extra ?? null, player));
+Callback.addCallback("ItemUseNoTarget", (item, player) => ItemEvents.onUseNoTarget(item.id, item.count, item.data, item.extra ?? null, player));
+Callback.addCallback("ProjectileHit", (projectile, item, target) => ItemEvents.onProjectileHit(projectile, item.id, item.count, item.data, item.extra ?? null, target.x, target.y, target.z, target.entity, target.coords?.x ?? 0, target.coords?.y ?? 0, target.coords?.z ?? 0, target.coords?.side ?? 0));
+
+Callback.addCallback("ItemUse", (coords, item, block, ie, player) => {
+    if(!Game.isActionPrevented()) {
+        BlockEvents.onUse(block.id, block.data, Entity.getDimension(player), coords.x, coords.y, coords.z, player, coords.side, coords.vec.x, coords.vec.y, coords.vec.z);
+        ItemEvents.onUse(coords.x, coords.y, coords.z, coords.side, coords.vec.x, coords.vec.y, coords.vec.z, item.id, item.count, item.data, item.extra ?? null, block.id, block.data, player);
+    }
+});
