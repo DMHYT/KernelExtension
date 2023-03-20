@@ -2,34 +2,16 @@ package vsdum.kex.japi.blocks;
 
 import vsdum.kex.japi.registry.RegistryObject;
 
-import java.lang.reflect.Field;
-import java.util.HashMap;
-
 import org.mozilla.javascript.ScriptableObject;
 
 import com.zhekasmirnov.innercore.api.runtime.saver.serializer.ScriptableSerializer;
 import com.zhekasmirnov.innercore.api.unlimited.BlockRegistry;
-import com.zhekasmirnov.innercore.api.unlimited.BlockVariant;
-import com.zhekasmirnov.innercore.api.unlimited.IDDataPair;
 
 import android.support.annotation.NonNull;
 
 import static vsdum.kex.japi.blocks.BlockRegistry.componentFactory;
 
 public class BlockRegistryObject<T extends Block> extends RegistryObject<T> {
-
-    @SuppressWarnings("unchecked")
-    private static final HashMap<IDDataPair, BlockVariant> getBlockVariantMap()
-    {
-        try {
-            Field field = BlockRegistry.class.getDeclaredField("blockVariantMap");
-            field.setAccessible(false);
-            return (HashMap<IDDataPair, BlockVariant>) field.get(null);
-        } catch(Throwable ex) { ex.printStackTrace(); }
-        return null;
-    }
-
-    protected static final HashMap<IDDataPair, BlockVariant> blockVariantMap = getBlockVariantMap();
 
     public BlockRegistryObject(@NonNull T block)
     {
