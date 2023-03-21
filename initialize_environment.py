@@ -8,12 +8,14 @@ RUN `Initialize Environment` TASK,
 FOR ALL OTHER NEEDED FILES TO DOWNLOAD
 '''
 
+
 from urllib.request import urlretrieve
 from zipfile import ZipFile
 from os import remove, getcwd, listdir, mkdir
 from os.path import join, exists, isfile, isdir
 from shutil import copy2, rmtree
-from subprocess import call
+from time import time
+
 
 def copytree(src, dst, symlinks=False, ignore=None):
     if not exists(src) or isfile(src):
@@ -28,15 +30,34 @@ def copytree(src, dst, symlinks=False, ignore=None):
         else:
             copy2(s, d)
 
+
 print("Initializing development environment...")
+start = time()
+
+
 url = "https://codeload.github.com/DMHYT/innercore-mod-toolchain/zip/gitignored-toolchain"
-archive_path = join(getcwd(), "toolchain", "archive.zip")
+cwd = getcwd()
+toolchain_path = join(cwd, "toolchain")
+archive_path = join(toolchain_path, "archive.zip")
+
+
 urlretrieve(url=url, filename=archive_path)
 with ZipFile(archive_path, 'r') as archive:
-    archive.extractall(join(getcwd(), "toolchain"))
+    archive.extractall(toolchain_path)
 remove(archive_path)
-toolchain_path = join(getcwd(), "toolchain")
+
+
 shit = join(toolchain_path, "innercore-mod-toolchain-gitignored-toolchain")
 copytree(shit, toolchain_path)
 rmtree(shit)
-print("complete!")
+
+
+root_zip = join(toolchain_path, "root.zip")
+if exists(root_zip):
+    with ZipFile(root_zip, 'r') as root:
+        root.extractall(cwd)
+    remove(root_zip)
+
+
+end = time()
+print("done in " + str(round((end - start) * 1000)) + " ms")
