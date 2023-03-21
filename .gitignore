@@ -1,4 +1,6 @@
-.vscode/.ropeproject
+.vscode
+.settings
+
 toolchain/build
 toolchain/temp
 toolchain/ndk
@@ -15,20 +17,14 @@ android.d.ts
 android-declarations.d.ts
 preloader.d.ts
 
-android-support-multidex.jar
-android-support-v4.jar
-android-support-v7-recyclerview.jar
 android.jar
-classes-dex2jar.jar
-classes2-dex2jar.jar
-horizon-classes.jar
-rhino-1.7.7.jar
+horizon.jar
+innercore.jar
 
 toolchain/adb
 toolchain/bin
 
 toolchain/stdincludes/horizon
-toolchain/stdincludes/innercore
 toolchain/stdincludes/gnustl/**
 !toolchain/stdincludes/gnustl/.placeholder
 
