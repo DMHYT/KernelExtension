@@ -14,13 +14,10 @@ public abstract class ClientPacket extends AbstractPacket {
 
     protected static OnPacketReceivedListener makeListener(ClientHandler handler)
     {
-        return new OnPacketReceivedListener() {
-            @Override public void onPacketReceived(Object packetObj, String str, Class<?> clazz)
+        return (packetObj, str, clazz) -> {
+            if(packetObj instanceof JSONObject)
             {
-                if(packetObj instanceof JSONObject)
-                {
-                    handler.onMessage((JSONObject) packetObj);
-                }
+                handler.onMessage((JSONObject) packetObj);
             }
         };
     }

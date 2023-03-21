@@ -2,7 +2,6 @@ package vsdum.kex.modules;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.BiConsumer;
 
 import org.mozilla.javascript.ScriptableObject;
 
@@ -98,12 +97,7 @@ public class DamageModule {
 
         public CustomCause setDeathMessageMap(Map<String, String> translations)
         {
-            translations.forEach(new BiConsumer<String, String>() {
-                @Override public void accept(String language, String translation)
-                {
-                    putTranslation(CustomCause.this.name, translation, language);
-                }
-            });
+            translations.forEach((language, translation) -> putTranslation(this.name, translation, language));
             return this;
         }
 

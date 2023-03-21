@@ -87,15 +87,12 @@ public class PacketSound extends ClientPacket {
 
     public static void register()
     {
-        init(IDENTIFIER, makeListener(new ClientHandler() {
-            @Override public void onMessage(JSONObject message)
-            {
-                PacketSound packet = new PacketSound();
-                packet.deserialize(message);
-                if(packet.volume == -1.0f) packet.volume = 0.5f;
-                if(packet.pitch == -1.0f) packet.pitch = 0.4f / ((float) KernelExtension.rand.nextDouble() * 0.4f + 0.8f);
-                Level.playSound(packet.x, packet.y, packet.z, packet.sound, packet.volume, packet.pitch);
-            }
+        init(IDENTIFIER, makeListener(message -> {
+            PacketSound packet = new PacketSound();
+            packet.deserialize(message);
+            if(packet.volume == -1.0f) packet.volume = 0.5f;
+            if(packet.pitch == -1.0f) packet.pitch = 0.4f / ((float) KernelExtension.rand.nextDouble() * 0.4f + 0.8f);
+            Level.playSound(packet.x, packet.y, packet.z, packet.sound, packet.volume, packet.pitch);
         }));
     }
 

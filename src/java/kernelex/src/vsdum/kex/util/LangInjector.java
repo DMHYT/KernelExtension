@@ -2,8 +2,6 @@ package vsdum.kex.util;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 import com.zhekasmirnov.innercore.utils.FileTools;
 
@@ -54,45 +52,26 @@ public class LangInjector {
     {
         FileTools.mkdirs(dir);
         Map<String, StringBuilder> builders = new HashMap<>();
-        fullLanguageNames.values().forEach(new Consumer<String>() {
-            @Override public void accept(String languageName)
-            {
-                builders.put(languageName, new StringBuilder());
-            }
+        fullLanguageNames.values().forEach(languageName -> builders.put(languageName, new StringBuilder()));
+        injectionData.forEach((sectionName, languages) -> {
+            languages.forEach((languageName, translations) -> {
+                if(builders.containsKey(languageName))
+                {
+                    writeSection(builders.get(languageName), sectionName, translations);
+                }
+            });
         });
-        injectionData.forEach(new BiConsumer<String, Map<String, Map<String, String>>>() {
-            @Override public void accept(String sectionName, Map<String, Map<String, String>> languages)
-            {
-                languages.forEach(new BiConsumer<String, Map<String, String>>() {
-                    @Override public void accept(String languageName, Map<String, String> translations)
-                    {
-                        if(builders.containsKey(languageName))
-                        {
-                            writeSection(builders.get(languageName), sectionName, translations);
-                        }
-                    }
-                });
-            }
-        });
-        builders.forEach(new BiConsumer<String, StringBuilder>() {
-            @Override public void accept(String languageName, StringBuilder builder)
-            {
-                if(builder.length() > 0) try {
-                    FileTools.writeFileText(dir + languageName + ".lang", builder.toString());
-                } catch(Throwable ex) { ex.printStackTrace(); }
-            }
+        builders.forEach((languageName, builder) -> {
+            if(builder.length() > 0) try {
+                FileTools.writeFileText(dir + languageName + ".lang", builder.toString());
+            } catch(Throwable ex) { ex.printStackTrace(); }
         });
     }
 
     private static void writeSection(StringBuilder content, String sectionName, Map<String, String> translations)
     {
         content.append("## ").append(sectionName).append("\n");
-        translations.forEach(new BiConsumer<String, String>() {
-            @Override public void accept(String key, String translated)
-            {
-                content.append(key).append("=").append(translated).append("\n");
-            }
-        });
+        translations.forEach((key, translated) -> content.append(key).append("=").append(translated).append("\n"));
         content.append("\n");
     }
     

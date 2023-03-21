@@ -6,7 +6,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.BiConsumer;
 
 import org.mozilla.javascript.ScriptableObject;
 
@@ -45,15 +44,12 @@ public class CommandsModule {
             }
             Logger.debug("KEX-CommandRegistry", String.format("Overload %d for command %s built, used %d bytes out of %d possible.", new Object[]{ Integer.valueOf(i), base.commandName, Integer.valueOf(offset - 36), Integer.valueOf((2012 - overload.size()) / 4 * 4) }));
         }
-        base.descriptionTranslations.forEach(new BiConsumer<String, String>() {
-            @Override public void accept(String language, String translation)
+        base.descriptionTranslations.forEach((language, translation) -> {
+            String code = LangInjector.validateLanguageCode(language);
+            if(code != null)
             {
-                String code = LangInjector.validateLanguageCode(language);
-                if(code != null)
-                {
-                    descriptionTranslations.putIfAbsent(code, new HashMap<>());
-                    descriptionTranslations.get(code).put("commands." + base.commandName + ".description", translation);
-                }
+                descriptionTranslations.putIfAbsent(code, new HashMap<>());
+                descriptionTranslations.get(code).put("commands." + base.commandName + ".description", translation);
             }
         });
     }
@@ -67,12 +63,7 @@ public class CommandsModule {
     {
         registerCommand(newCommand(name, permissionLevel)
             .then(messageArg("{...}")
-                .executes(new CommandExecuteCallback() {
-                    public void execute(CommandContext ctx)
-                    {
-                        callback.execute(ctx.getMessage("{...}"), ctx);
-                    }
-                })
+                .executes(ctx -> callback.execute(ctx.getMessage("{...}"), ctx))
             )
         );
     }

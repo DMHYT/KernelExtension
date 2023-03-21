@@ -58,17 +58,14 @@ public class ItemAnimHelper {
             AnimationContainer container = new AnimationContainer();
             container.textureName = textureName;
             animationTickingData.put(id, container);
-            animationTickers.add(new Runnable() {
-                @Override public void run()
+            animationTickers.add(() -> {
+                if(container.timer + 1 == ticks)
                 {
-                    if(container.timer + 1 == ticks)
-                    {
-                        if(container.meta < frames - 1) ++container.meta;
-                        else container.meta = 0;
-                    }
-                    if(container.timer < ticks) ++container.timer;
-                    else container.timer = 0;
+                    if(container.meta < frames - 1) ++container.meta;
+                    else container.meta = 0;
                 }
+                if(container.timer < ticks) ++container.timer;
+                else container.timer = 0;
             });
         } else {
             Logger.debug("KEX-ItemAnimHelper", String.format("An error occured calling 'ItemAnimHelper.makeCommonAnim' method. Another animation is already bound to item '%s'", new Object[]{ NativeItem.getNameForId(id, 0) }));
@@ -82,18 +79,15 @@ public class ItemAnimHelper {
             AnimationContainer container = new AnimationContainer();
             container.textureName = textureName;
             animationTickingData.put(id, container);
-            animationTickers.add(new Runnable() {
-                @Override public void run()
+            animationTickers.add(() -> {
+                if(container.timer + 1 == interval)
                 {
-                    if(container.timer + 1 == interval)
-                    {
-                        if(container.frameIndex < frames.length) ++container.frameIndex;
-                        else container.frameIndex = 0;
-                        container.meta = frames[container.frameIndex];
-                    }
-                    if(container.timer < interval) container.timer++;
-                    else container.timer = 0;
+                    if(container.frameIndex < frames.length) ++container.frameIndex;
+                    else container.frameIndex = 0;
+                    container.meta = frames[container.frameIndex];
                 }
+                if(container.timer < interval) container.timer++;
+                else container.timer = 0;
             });
         } else {
             Logger.debug("KEX-ItemAnimHelper", String.format("An error occured calling 'ItemAnimHelper.makeAdvancedAnim' method. Another animation is already bound to item '%s'", new Object[]{ NativeItem.getNameForId(id, 0) }));

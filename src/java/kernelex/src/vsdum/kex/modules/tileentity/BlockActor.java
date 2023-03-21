@@ -1,7 +1,6 @@
 package vsdum.kex.modules.tileentity;
 
 import java.util.Optional;
-import java.util.function.BiConsumer;
 
 import org.json.JSONObject;
 
@@ -215,15 +214,11 @@ public abstract class BlockActor implements INativeInterface {
     {
         if(this.networkInitialized && this.isServer())
         {
-            MainThreadQueue.serverThread.enqueue(new Runnable() {
-                @Override public void run()
+            MainThreadQueue.serverThread.enqueue(() -> {
+                NativeCompoundTag packetTag = this.getUpdatePacket();
+                if(packetTag != null)
                 {
-                    BlockActor that = BlockActor.this;
-                    NativeCompoundTag packetTag = that.getUpdatePacket();
-                    if(packetTag != null)
-                    {
-                        that.networkEntity.send("kex.tile.server.update.nbt", NBTJSON.NBT2JSON(packetTag));
-                    }
+                    this.networkEntity.send("kex.tile.server.update.nbt", NBTJSON.NBT2JSON(packetTag));
                 }
             });
         }
@@ -233,15 +228,11 @@ public abstract class BlockActor implements INativeInterface {
     {
         if(this.networkInitialized && this.isServer())
         {
-            MainThreadQueue.serverThread.enqueue(new Runnable() {
-                @Override public void run()
+            MainThreadQueue.serverThread.enqueue(() -> {
+                JSONObject packetJSON = this.getUpdatePacketJSON();
+                if(packetJSON != null)
                 {
-                    BlockActor that = BlockActor.this;
-                    JSONObject packetJSON = that.getUpdatePacketJSON();
-                    if(packetJSON != null)
-                    {
-                        that.networkEntity.send("kex.tile.server.update.json", packetJSON);
-                    }
+                    this.networkEntity.send("kex.tile.server.update.json", packetJSON);
                 }
             });
         }
@@ -254,23 +245,16 @@ public abstract class BlockActor implements INativeInterface {
         this.networkEntityType = TileEntityData.getNetworkEntityTypeFor(this);
         if(this.isServer())
         {
-            MainThreadQueue.serverThread.enqueue(new Runnable() {
-                @Override public void run()
-                {
-                    BlockActor that = BlockActor.this;
-                    that.container = new ItemContainer();
-                    that.container.setParent(that);
-                    that.container.setClientContainerTypeName(that.networkEntityType.getTypeName());
-                    that.getContainerServerEvents().build().forEach(new BiConsumer<String, ServerEventListener>() {
-                        @Override public void accept(String eventName, ServerEventListener eventHandler)
-                        {
-                            that.container.addServerEventListener(eventName, eventHandler);
-                        }
-                    });
-                    that.networkData = new SyncedNetworkData();
-                    that.networkEntity = new NetworkEntity(that.networkEntityType, that);
-                    that.networkData.setClients(that.networkEntity.getClients());
-                }
+            MainThreadQueue.serverThread.enqueue(() -> {
+                this.container = new ItemContainer();
+                this.container.setParent(this);
+                this.container.setClientContainerTypeName(this.networkEntityType.getTypeName());
+                this.getContainerServerEvents()
+                    .build()
+                    .forEach((eventName, eventHandler) -> this.container.addServerEventListener(eventName, eventHandler));
+                this.networkData = new SyncedNetworkData();
+                this.networkEntity = new NetworkEntity(this.networkEntityType, this);
+                this.networkData.setClients(this.networkEntity.getClients());
             });
         } else {
             Pair<String, NetworkEntity> awaitingData = TileEntityData.getAwaitingData(this.blockPos.x, this.blockPos.y, this.blockPos.z, this.dimension.isPresent() ? this.dimension.get() : -1);
@@ -288,17 +272,13 @@ public abstract class BlockActor implements INativeInterface {
     {
         if(this.networkInitialized && this.isServer())
         {
-            MainThreadQueue.serverThread.enqueue(new Runnable() {
-                @Override public void run()
-                {
-                    BlockActor that = BlockActor.this;
-                    that.networkEntity.remove();
-                    that.networkEntity = null;
-                    that.container.close();
-                    that.container.dropAt(that.getWorld(), that.blockPos.x + .5f, that.blockPos.y + .5f, that.blockPos.z + .5f);
-                    that.container.removeEntity();
-                    that.networkInitialized = false;
-                }
+            MainThreadQueue.serverThread.enqueue(() -> {
+                this.networkEntity.remove();
+                this.networkEntity = null;
+                this.container.close();
+                this.container.dropAt(this.getWorld(), this.blockPos.x + .5f, this.blockPos.y + .5f, this.blockPos.z + .5f);
+                this.container.removeEntity();
+                this.networkInitialized = false;
             });
         }
     }

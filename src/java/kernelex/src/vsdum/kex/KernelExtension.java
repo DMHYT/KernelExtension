@@ -49,18 +49,15 @@ public class KernelExtension {
     public static void setMinecraftTextboxText(String text)
     {
         MainActivity minecraft = (MainActivity) UIUtils.getContext();
-        onSignOpenFunc = new Runnable() {
-            public void run()
-            {
-                try {
-                    Field textEditField = MainActivity.class.getDeclaredField("textInputWidget");
-                    textEditField.setAccessible(true);
-                    TextInputProxyEditTextbox textbox = (TextInputProxyEditTextbox) textEditField.get(minecraft);
-                    textbox.setText(text);
-                    textbox.setSelection(textbox.length());
-                } catch(Throwable ex) {
-                    ex.printStackTrace();
-                }
+        onSignOpenFunc = () -> {
+            try {
+                Field textEditField = MainActivity.class.getDeclaredField("textInputWidget");
+                textEditField.setAccessible(true);
+                TextInputProxyEditTextbox textbox = (TextInputProxyEditTextbox) textEditField.get(minecraft);
+                textbox.setText(text);
+                textbox.setSelection(textbox.length());
+            } catch(Throwable ex) {
+                ex.printStackTrace();
             }
         };
     }

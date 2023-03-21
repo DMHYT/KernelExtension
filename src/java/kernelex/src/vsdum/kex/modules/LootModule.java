@@ -136,25 +136,22 @@ public class LootModule {
 
     static {
         createLootTableModifier("entities/piglin_barter")
-            .addJSONModifyCallback(new LootModifier.JSONModifyCallback() {
-                public void onModify(JSONObject obj)
+            .addJSONModifyCallback(obj -> {
+                if(!piglinBarteringItems.isEmpty())
                 {
-                    if(!piglinBarteringItems.isEmpty())
-                    {
-                        try {
-                            JSONArray entriesArray = obj.getJSONArray("pools")
-                                .getJSONObject(0)
-                                .getJSONArray("entries");
-                            for(int i = 0; i < piglinBarteringItems.size(); ++i)
+                    try {
+                        JSONArray entriesArray = obj.getJSONArray("pools")
+                            .getJSONObject(0)
+                            .getJSONArray("entries");
+                        for(int i = 0; i < piglinBarteringItems.size(); ++i)
+                        {
+                            LootPoolEntry entry = piglinBarteringItems.get(i);
+                            if(validatePiglinBarteringEntry(entry))
                             {
-                                LootPoolEntry entry = piglinBarteringItems.get(i);
-                                if(validatePiglinBarteringEntry(entry))
-                                {
-                                    entriesArray.put(entry.obj);
-                                }
+                                entriesArray.put(entry.obj);
                             }
-                        } catch(JSONException ex) {}
-                    }
+                        }
+                    } catch(JSONException ex) {}
                 }
             });
         forceLoad("entities/piglin_barter");
