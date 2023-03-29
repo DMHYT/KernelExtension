@@ -1,7 +1,6 @@
 package vsdum.kex.modules.commands;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -17,12 +16,7 @@ public class CommandOverload {
     {
         this.arguments = args;
         this.index = index;
-        Iterator<ArgumentBase> iter = this.arguments.iterator();
-        while(iter.hasNext())
-        {
-            ArgumentBase arg = iter.next();
-            this.argumentsByName.put(arg.name, arg);
-        }
+        this.arguments.forEach(arg -> this.argumentsByName.put(arg.name, arg));
     }
 
 }

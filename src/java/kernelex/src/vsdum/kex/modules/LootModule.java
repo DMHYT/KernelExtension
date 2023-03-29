@@ -3,7 +3,6 @@ package vsdum.kex.modules;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -179,8 +178,7 @@ public class LootModule {
         {
             RandomItemsList drops = new RandomItemsList(vectorPtr, vectorSize);
             LootTableContext context = new LootTableContext(contextPtr);
-            Iterator<CallbackFunction<OnDropCallback>> iter = onDropCallbacks.get(tableDir).iterator();
-            while(iter.hasNext()) iter.next().function.onDrop(drops, context);
+            onDropCallbacks.get(tableDir).forEach(cb -> cb.function.onDrop(drops, context));
             drops.modifyNative();
         }
     }
@@ -191,8 +189,7 @@ public class LootModule {
         {
             long start = System.currentTimeMillis();
             Logger.debug("KEX-LootModule", String.format("The level has been displayed, force loading %d loot tables...", new Object[]{ Integer.valueOf(forceLoaded.size()) }));
-            Iterator<String> iter = forceLoaded.iterator();
-            while(iter.hasNext()) nativeForceLoad(iter.next());
+            forceLoaded.forEach(LootModule::nativeForceLoad);
             Logger.debug("KEX-LootModule", String.format("Finished in %d ms!", new Object[]{ Long.valueOf(System.currentTimeMillis() - start) }));
         } else Logger.debug("KEX-LootModule", "The level has been displayed, no loot tables to force load.");
     }

@@ -2,7 +2,6 @@ package vsdum.kex.util;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -96,8 +95,7 @@ public class ItemAnimHelper {
 
     public static void onLocalTick()
     {
-        Iterator<Runnable> iter = animationTickers.iterator();
-        while(iter.hasNext()) iter.next().run();
+        animationTickers.forEach(Runnable::run);
     }
 
     public static void onIconOverride(int id)

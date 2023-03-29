@@ -1,7 +1,6 @@
 package vsdum.kex.util.textureworker;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import com.zhekasmirnov.horizon.runtime.logger.Logger;
@@ -83,8 +82,7 @@ public class OverlaidTextureBuilder {
         }
         if(this._bitmap == null) return null;
         Canvas canvas = new Canvas(this._bitmap);
-        Iterator<Bitmap> iter = this.overlays.iterator();
-        while(iter.hasNext()) canvas.drawBitmap(iter.next(), 0, 0, null);
+        this.overlays.forEach(overlay -> canvas.drawBitmap(overlay, 0, 0, null));
         if(this._result != null) FileTools.writeBitmap(this._result, this._bitmap);
         return this._bitmap;
     }

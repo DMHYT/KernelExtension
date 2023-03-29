@@ -2,7 +2,6 @@ package vsdum.kex.modules;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -33,10 +32,8 @@ public class CommandsModule {
             executableData.putIfAbsent(base.commandName, new ArrayList<>());
             executableData.get(base.commandName).add(new CommandOverload(overload, i));
             long overloadPointer = CommandsNativeAPI.nativeAddOverload(factoryPointer, i);
-            Iterator<ArgumentBase> iter = overload.iterator();
-            while(iter.hasNext())
+            for(ArgumentBase arg : overload)
             {
-                ArgumentBase arg = iter.next();
                 arg.mandatory = arg.parent.getCallback() == null;
                 arg.fieldOffset = offset;
                 buildArgument(overloadPointer, arg);

@@ -355,23 +355,16 @@ public class LootModifier implements IJSONSerializable {
     {
         try {
             JSONArray poolsArray = JsonUtils.getOrCreateArray(obj, "pools");
-            Iterator<LootPool> iter = this.pools.iterator();
-            while(iter.hasNext())
-            {
-                LootPool pool = iter.next();
-                poolsArray.put(pool.obj);
-            }
+            this.pools.forEach(pool -> poolsArray.put(pool.obj));
         } catch(JSONException ex) {}
         if(!this.jsonCallbacks.isEmpty())
         {
-            Iterator<CallbackFunction<JSONModifyCallback>> iter = this.jsonCallbacks.iterator();
-            while(iter.hasNext()) iter.next().function.onModify(obj);
+            this.jsonCallbacks.forEach(cb -> cb.function.onModify(obj));
         }
         if(!this.jsCallbacks.isEmpty())
         {
             ScriptableObject scr = CommonTypes.jsonToScriptable(obj);
-            Iterator<CallbackFunction<JSModifyCallback>> iter = this.jsCallbacks.iterator();
-            while(iter.hasNext()) iter.next().function.onModify(scr);
+            this.jsCallbacks.forEach(cb -> cb.function.onModify(scr));
             JSONObject modifiedObj = CommonTypes.scriptableToJson(scr);
             try {
                 obj.remove("pools");
@@ -380,15 +373,15 @@ public class LootModifier implements IJSONSerializable {
         }
         if(!this.jsonPostCallbacks.isEmpty())
         {
-            Iterator<JSONModifyCallback> iter = this.jsonPostCallbacks.iterator();
-            while(iter.hasNext()) try {
-                iter.next().onModify(new JSONObject(obj.toString()));
-            } catch(JSONException ex) {}
+            this.jsonPostCallbacks.forEach(cb -> {
+                try {
+                    cb.onModify(new JSONObject(obj.toString()));
+                } catch(JSONException ex) { ex.printStackTrace(); }
+            });
         }
         if(!this.jsPostCallbacks.isEmpty())
         {
-            Iterator<JSModifyCallback> iter = this.jsPostCallbacks.iterator();
-            while(iter.hasNext()) iter.next().onModify(CommonTypes.jsonToScriptable(obj));
+            this.jsPostCallbacks.forEach(cb -> cb.onModify(CommonTypes.jsonToScriptable(obj)));
         }
     }
 

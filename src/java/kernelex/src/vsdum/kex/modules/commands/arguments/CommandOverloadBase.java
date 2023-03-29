@@ -2,7 +2,6 @@ package vsdum.kex.modules.commands.arguments;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -79,12 +78,7 @@ public class CommandOverloadBase implements ICommandNode {
 
     public CommandOverloadBase setDescriptionMap(Map<String, String> translations)
     {
-        Iterator<Map.Entry<String, String>> iter = translations.entrySet().iterator();
-        while(iter.hasNext())
-        {
-            Map.Entry<String, String> entry = iter.next();
-            this.descriptionTranslations.putIfAbsent(entry.getKey(), entry.getValue());
-        }
+        translations.entrySet().forEach(entry -> this.descriptionTranslations.putIfAbsent(entry.getKey(), entry.getValue()));
         return this;
     }
 

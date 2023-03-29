@@ -2,7 +2,6 @@ package vsdum.kex.modules.loot;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.json.JSONArray;
@@ -281,10 +280,8 @@ public class LootPoolEntryFunctions {
     {
         try {
             JSONArray enchantsArray = new JSONArray();
-            Iterator<String> iter = enchants.keySet().iterator();
-            while(iter.hasNext())
+            for(String id : enchants.keySet())
             {
-                String id = iter.next();
                 enchantsArray.put(new JSONObject()
                     .put("id", id)
                     .put("level", enchants.get(id).intValue()));

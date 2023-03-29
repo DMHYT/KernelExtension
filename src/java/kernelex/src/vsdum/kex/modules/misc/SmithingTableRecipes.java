@@ -2,7 +2,6 @@ package vsdum.kex.modules.misc;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -59,10 +58,8 @@ public class SmithingTableRecipes {
     {
         if(recipesByBase.containsKey(baseID))
         {
-            Iterator<SmithingTableRecipe> iter = recipesByBase.get(baseID).iterator();
-            while(iter.hasNext())
+            for(SmithingTableRecipe recipe : recipesByBase.get(baseID))
             {
-                SmithingTableRecipe recipe = iter.next();
                 if(recipe.additionID == additionID)
                 {
                     allRecipes.remove(recipe);

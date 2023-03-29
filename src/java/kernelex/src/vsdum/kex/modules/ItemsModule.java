@@ -4,7 +4,6 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -17,7 +16,6 @@ import vsdum.kex.common.CallbackFunction;
 import vsdum.kex.modules.misc.ReachDistanceModifier;
 import vsdum.kex.natives.FoodItemComponent;
 import vsdum.kex.natives.Level;
-import vsdum.kex.natives.MobEffectInstance;
 import vsdum.kex.util.MapBuilder;
 
 public class ItemsModule {
@@ -146,8 +144,7 @@ public class ItemsModule {
         List<String> tooltip = new ArrayList<>(Arrays.asList(text.split("\\n")));
         if(itemOnTooltipCallbacks.containsKey(stack.id))
         {
-            Iterator<CallbackFunction<OnTooltipCallback>> iter = itemOnTooltipCallbacks.get(stack.id).iterator();
-            while(iter.hasNext()) iter.next().function.onTooltip(stack, tooltip, level);
+            itemOnTooltipCallbacks.get(stack.id).forEach(cb -> cb.function.onTooltip(stack, tooltip, level));
         }
         CallbacksModule.onItemTooltip(stack, level, tooltip);
         return String.join("\n", tooltip);
@@ -164,25 +161,18 @@ public class ItemsModule {
         food.setSaturationModifier(foodBuilder.getSaturationMod());
         food.setCanAlwaysEat(foodBuilder.getAlwaysEat());
         food.clearEffects();
-        Iterator<Map.Entry<MobEffectInstance, Float>> iter = foodBuilder.getEffects().entrySet().iterator();
-        while(iter.hasNext())
-        {
-            Map.Entry<MobEffectInstance, Float> entry = iter.next();
-            food.addEffect(entry.getKey(), entry.getValue());
-        }
+        foodBuilder.getEffects().entrySet().forEach(entry -> food.addEffect(entry.getKey(), entry.getValue()));
     }
 
     public static void onChangeCarriedItem(ItemStack oldStack, ItemStack newStack)
     {
         if(reachDistanceModifiers.containsKey(oldStack.id))
         {
-            Iterator<ReachDistanceModifier> iter = reachDistanceModifiers.get(oldStack.id).iterator();
-            while(iter.hasNext()) iter.next().disable();
+            reachDistanceModifiers.get(oldStack.id).forEach(ReachDistanceModifier::disable);
         }
         if(reachDistanceModifiers.containsKey(newStack.id))
         {
-            Iterator<ReachDistanceModifier> iter = reachDistanceModifiers.get(newStack.id).iterator();
-            while(iter.hasNext()) iter.next().enable();
+            reachDistanceModifiers.get(newStack.id).forEach(ReachDistanceModifier::enable);
         }
     }
 
