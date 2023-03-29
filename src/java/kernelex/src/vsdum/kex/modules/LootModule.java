@@ -155,7 +155,7 @@ public class LootModule {
                         }
                     } catch(JSONException ex) {}
                 }
-            });
+            }).lock();
         forceLoad("entities/piglin_barter");
     }
 
