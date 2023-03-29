@@ -51,6 +51,7 @@ std::unordered_set<std::string> KEXLootModule::vanillaLootFunctions {
 std::unordered_set<std::string> KEXLootModule::customLootFunctions;
 
 
+// Deprecated since 3.1
 std::string KEXLootModule::getLootTableName(LootTable* table) {
     auto tableDir = table->getDir();
     auto tableName = std::regex_replace(tableDir.c_str(), std::regex("loot_tables/"), "");
@@ -66,7 +67,7 @@ void KEXLootModule::initialize() {
     HookManager::addCallback(
         SYMBOL("mcpe", "_ZN9LootTable11deserializeEN4Json5ValueE"),
         LAMBDA((HookManager::CallbackController* controller, LootTable* table, Json::Value* json), {
-            auto tableName = getLootTableName(table);
+            std::string tableName = table->getDir().c_str();
             auto search = cachedModifiedTables.find(tableName);
             if(search != cachedModifiedTables.end()) {
                 Json::Value newJson(0);
@@ -96,7 +97,7 @@ void KEXLootModule::initialize() {
     HookManager::addCallback(
         SYMBOL("mcpe", "_ZNK9LootTable14getRandomItemsER6RandomR16LootTableContext"),
         LAMBDA((stl::vector<ItemStack>* items, LootTable* table, Random& rnd, LootTableContext& ctx), {
-            auto tableName = getLootTableName(table);
+            std::string tableName = table->getDir().c_str();
             if(KEXLootModule::tablesWithDropCallbacks.find(tableName) != KEXLootModule::tablesWithDropCallbacks.end()) {
                 KEXJavaBridge::LootModule::onDrop(tableName.c_str(), (jlong) items, items->size(), (jlong) &ctx);
             }

@@ -63,8 +63,9 @@ public class LootModule {
 
     public static final LootModifier createLootTableModifier(String tableName)
     {
-        modifiers.putIfAbsent(tableName, new LootModifier());
-        return modifiers.get(tableName);
+        String tableDir = validateTableName(tableName);
+        modifiers.putIfAbsent(tableDir, new LootModifier());
+        return modifiers.get(tableDir);
     }
 
     public static final LootConditions createConditionsList()
@@ -79,9 +80,10 @@ public class LootModule {
 
     public static void addOnDropCallbackFor(String tableName, OnDropCallback cb, int priority)
     {
-        enableOnDropCallbackFor(tableName);
-        onDropCallbacks.putIfAbsent(tableName, new ArrayList<>());
-        CallbackFunction.addToList(new CallbackFunction<OnDropCallback>(cb, priority), onDropCallbacks.get(tableName));
+        String tableDir = validateTableName(tableName);
+        enableOnDropCallbackFor(tableDir);
+        onDropCallbacks.putIfAbsent(tableDir, new ArrayList<>());
+        CallbackFunction.addToList(new CallbackFunction<OnDropCallback>(cb, priority), onDropCallbacks.get(tableDir));
     }
 
     public static void fillContainer(NativeBlockSource region, int x, int y, int z, String tableName, @Nullable Actor actor)
@@ -157,27 +159,27 @@ public class LootModule {
         forceLoad("entities/piglin_barter");
     }
 
-    @Nullable public static String modify(String tableName, String json)
+    @Nullable public static String modify(String tableDir, String json)
     {
-        if(!modifiers.containsKey(tableName))
+        if(!modifiers.containsKey(tableDir))
         {
             return null;
         } else try {
             JSONObject obj = new JSONObject(json);
-            modifiers.get(tableName).serialize(obj);
+            modifiers.get(tableDir).serialize(obj);
             return obj.toString();
         } catch(JSONException ex) {
             return null;
         }
     }
 
-    public static void onDrop(String tableName, long vectorPtr, int vectorSize, long contextPtr)
+    public static void onDrop(String tableDir, long vectorPtr, int vectorSize, long contextPtr)
     {
-        if(onDropCallbacks.containsKey(tableName))
+        if(onDropCallbacks.containsKey(tableDir))
         {
             RandomItemsList drops = new RandomItemsList(vectorPtr, vectorSize);
             LootTableContext context = new LootTableContext(contextPtr);
-            Iterator<CallbackFunction<OnDropCallback>> iter = onDropCallbacks.get(tableName).iterator();
+            Iterator<CallbackFunction<OnDropCallback>> iter = onDropCallbacks.get(tableDir).iterator();
             while(iter.hasNext()) iter.next().function.onDrop(drops, context);
             drops.modifyNative();
         }
@@ -230,11 +232,9 @@ public class LootModule {
     {
         String result = tableName;
         if(!result.startsWith("loot_tables/")) result = "loot_tables/" + result;
-        if(!result.startsWith("loot_tables/chests/") && !result.startsWith("loot_tables/entities/"))
-            throw new IllegalArgumentException("Loot table name must be [loot_tables/](chests|entities)/{path and name}[.json]");
-        if(!result.endsWith(".json")) result += ".json";
-        if(!result.matches("^loot_tables/(chests|entities|equipment|gameplay)/([\\w-/]+).json$"))
-            throw new IllegalArgumentException("NOT MATCHING REGEX: Loot table name must be [loot_tables/](chests|entities)/{path and name}[.json]");
+        if(!result.endsWith(".json")) result = result + ".json";
+        if(!result.matches("^loot_tables/[\\w_-]+/[\\w/_-]+.json$"))
+            throw new IllegalArgumentException("Invalid loot table dir: " + tableName);
         return result;
     }
 
