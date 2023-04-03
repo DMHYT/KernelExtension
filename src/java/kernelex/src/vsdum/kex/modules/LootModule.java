@@ -144,9 +144,8 @@ public class LootModule {
                         JSONArray entriesArray = obj.getJSONArray("pools")
                             .getJSONObject(0)
                             .getJSONArray("entries");
-                        for(int i = 0; i < piglinBarteringItems.size(); ++i)
+                        for(LootPoolEntry entry : piglinBarteringItems)
                         {
-                            LootPoolEntry entry = piglinBarteringItems.get(i);
                             if(validatePiglinBarteringEntry(entry))
                             {
                                 entriesArray.put(entry.obj);

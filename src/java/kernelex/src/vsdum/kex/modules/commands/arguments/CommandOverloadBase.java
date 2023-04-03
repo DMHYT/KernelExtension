@@ -84,9 +84,8 @@ public class CommandOverloadBase implements ICommandNode {
 
     private static void listLeaves(List<ArgumentBase> result, List<ArgumentBase> children)
     {
-        for(int i = 0; i < children.size(); i++)
+        for(ArgumentBase node : children)
         {
-            ArgumentBase node = (ArgumentBase) children.get(i);
             if(node.children.isEmpty()) result.add(node);
             else listLeaves(result, node.children);
         }
@@ -116,13 +115,13 @@ public class CommandOverloadBase implements ICommandNode {
         }
         List<ArgumentBase> leaves = new ArrayList<>();
         listLeaves(leaves, this.children);
-        for(int i = 0; i < leaves.size(); i++)
+        for(ArgumentBase arg : leaves)
         {
-            List<ArgumentBase> path = leafToRoot(leaves.get(i));
+            List<ArgumentBase> path = leafToRoot(arg);
             List<ArgumentBase> overload = new ArrayList<>();
-            for(int j = path.size() - 1; j >= 0; j--)
+            for(int i = path.size() - 1; i >= 0; i--)
             {
-                overload.add(path.get(j));
+                overload.add(path.get(i));
             }
             result.add(overload);
         }
