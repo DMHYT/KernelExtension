@@ -2,7 +2,7 @@
     "global": {
         "info": {
             "name": "Kernel Extension",
-            "author": "dsdekhm",
+            "author": "visualstudiodan",
             "version": "3.0",
             "description": "A library mod that adds small, but useful features, not exported by InnerCore itself.",
             "clientside": false,
