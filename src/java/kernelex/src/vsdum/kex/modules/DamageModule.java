@@ -168,7 +168,7 @@ public class DamageModule {
                     }
                 } else throw new IllegalArgumentException("world|region field in DamageModule.damageEntity params object is not an instance of BlockSource!");
                 
-            } else throw new IllegalArgumentException(String.format("DamageModule.damageEntity does not take source type %s, possible sources are: actor|entity, blocksource|world, block!", new Object[]{ source }));
+            } else throw new IllegalArgumentException(String.format("DamageModule.damageEntity does not take source type %s, possible sources are: actor|entity, blocksource|world, block!", source));
         } else nativeDamageEntityCommon(entity, damage, cause, b1, b2);
     }
 

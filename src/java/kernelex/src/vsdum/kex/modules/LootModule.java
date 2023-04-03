@@ -92,7 +92,7 @@ public class LootModule {
         {
             String tableDir = validateTableName(tableName);
             nativeFillContainer(region.getPointer(), x, y, z, tableDir, actor != null ? actor.getPointer() : 0L);
-        } else throw new IllegalStateException(String.format("Cannot fill container on %d %d %d, because the tile entity %s!", new Object[]{ Integer.valueOf(x), Integer.valueOf(y), Integer.valueOf(z), tile == null ? "is null" : "is not of supported type" }));
+        } else throw new IllegalStateException(String.format("Cannot fill container on %d %d %d, because the tile entity %s!", x, y, z, tile == null ? "is null" : "is not of supported type"));
     }
 
     public static List<ItemStack> getRandomItems(String tableName, LootTableContext context)
@@ -187,9 +187,9 @@ public class LootModule {
         if(!forceLoaded.isEmpty())
         {
             long start = System.currentTimeMillis();
-            Logger.debug("KEX-LootModule", String.format("The level has been displayed, force loading %d loot tables...", new Object[]{ Integer.valueOf(forceLoaded.size()) }));
+            Logger.debug("KEX-LootModule", String.format("The level has been displayed, force loading %d loot tables...", forceLoaded.size()));
             forceLoaded.forEach(LootModule::nativeForceLoad);
-            Logger.debug("KEX-LootModule", String.format("Finished in %d ms!", new Object[]{ Long.valueOf(System.currentTimeMillis() - start) }));
+            Logger.debug("KEX-LootModule", String.format("Finished in %d ms!", System.currentTimeMillis() - start));
         } else Logger.debug("KEX-LootModule", "The level has been displayed, no loot tables to force load.");
     }
 
@@ -218,7 +218,7 @@ public class LootModule {
         }
         if(!entry.obj.has("weight"))
         {
-            Logger.warning(String.format("[KEX-LootModule] The piglin bartering entry with name ID \"%s\" has no weight specified. This entry is being skipped! (TIP: The item weight is the value that is used in weighted random logics when the item from piglin bartering process is being chosen. The larger this value, the greater the chance for this item to be dropped. In vanilla piglin bartering items list, weight values vary from 1 (netherite hoe) to 40 (gravel, leather, nether brick etc.). The item weight can be specified using entry.setWeight method)", new Object[]{ entry.obj.optString("name") }));
+            Logger.warning(String.format("[KEX-LootModule] The piglin bartering entry with name ID \"%s\" has no weight specified. This entry is being skipped! (TIP: The item weight is the value that is used in weighted random logics when the item from piglin bartering process is being chosen. The larger this value, the greater the chance for this item to be dropped. In vanilla piglin bartering items list, weight values vary from 1 (netherite hoe) to 40 (gravel, leather, nether brick etc.). The item weight can be specified using entry.setWeight method)", entry.obj.optString("name")));
             return false;
         }
         return true;

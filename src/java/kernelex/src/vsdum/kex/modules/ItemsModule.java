@@ -78,7 +78,7 @@ public class ItemsModule {
     {
         if(foodSaturationModifiers.containsKey(name))
         {
-            Logger.warning(String.format("[KEX-ItemsModule] Food saturation modifier %s has already been registered before!", new Object[]{ name }));
+            Logger.warning(String.format("[KEX-ItemsModule] Food saturation modifier %s has already been registered before!", name));
         } else {
             nativeNewFoodSaturationModifier(name, value / 2.0f);
             foodSaturationModifiers.put(name, value);
@@ -88,7 +88,7 @@ public class ItemsModule {
     public static float saturationModifierFromString(String name)
     {
         if(foodSaturationModifiers.containsKey(name)) return foodSaturationModifiers.get(name);
-        Logger.warning(String.format("[KEX-ItemsModule] Food saturation modifier %s does not exist, returning default value 1.2 (as for normal modifier)", new Object[]{ name }));
+        Logger.warning(String.format("[KEX-ItemsModule] Food saturation modifier %s does not exist, returning default value 1.2 (as for normal modifier)", name));
         return 1.2f;
     }
 

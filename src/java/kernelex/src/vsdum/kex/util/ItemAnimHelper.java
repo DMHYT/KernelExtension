@@ -40,13 +40,13 @@ public class ItemAnimHelper {
                             frame.setPixel(x, y, anim.getPixel(x, y + anim.getWidth() * i));
                         }
                     }
-                    FileTools.writeBitmap(String.format("%s_%d.png", new Object[]{ resultPath, Integer.valueOf(i) }), frame);
+                    FileTools.writeBitmap(String.format("%s_%d.png", resultPath, i), frame);
                 }
             } else {
-                Logger.debug("KEX-ItemAnimHelper", String.format("Invalid 'tall' texture on path %s. Texture's height must be a multiple of texture's width", new Object[]{ sourcePath + ".png" }));
+                Logger.debug("KEX-ItemAnimHelper", String.format("Invalid 'tall' texture on path %s. Texture's height must be a multiple of texture's width", sourcePath + ".png"));
             }
         } else {
-            Logger.debug("KEX-ItemAnimHelper", String.format("Texture frame on path %s already exists, texture generation process cancelled!", new Object[]{ resultPath }));
+            Logger.debug("KEX-ItemAnimHelper", String.format("Texture frame on path %s already exists, texture generation process cancelled!", resultPath));
         }
     }
 
@@ -67,7 +67,7 @@ public class ItemAnimHelper {
                 else container.timer = 0;
             });
         } else {
-            Logger.debug("KEX-ItemAnimHelper", String.format("An error occured calling 'ItemAnimHelper.makeCommonAnim' method. Another animation is already bound to item '%s'", new Object[]{ NativeItem.getNameForId(id, 0) }));
+            Logger.debug("KEX-ItemAnimHelper", String.format("An error occured calling 'ItemAnimHelper.makeCommonAnim' method. Another animation is already bound to item '%s'", NativeItem.getNameForId(id, 0)));
         }
     }
 
@@ -89,7 +89,7 @@ public class ItemAnimHelper {
                 else container.timer = 0;
             });
         } else {
-            Logger.debug("KEX-ItemAnimHelper", String.format("An error occured calling 'ItemAnimHelper.makeAdvancedAnim' method. Another animation is already bound to item '%s'", new Object[]{ NativeItem.getNameForId(id, 0) }));
+            Logger.debug("KEX-ItemAnimHelper", String.format("An error occured calling 'ItemAnimHelper.makeAdvancedAnim' method. Another animation is already bound to item '%s'", NativeItem.getNameForId(id, 0)));
         }
     }
 

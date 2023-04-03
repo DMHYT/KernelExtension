@@ -24,7 +24,7 @@ public class CommandsModule {
     public static void registerCommand(CommandOverloadBase base)
     {
         long factoryPointer = CommandsNativeAPI.nativeNewCommand(base.commandName, base.permissionLevel, base.aliases.toArray());
-        if(factoryPointer == 0L) throw new IllegalArgumentException(String.format("Command with name %s already exists!", new Object[]{ base.commandName }));
+        if(factoryPointer == 0L) throw new IllegalArgumentException(String.format("Command with name %s already exists!", base.commandName));
         List<List<ArgumentBase>> overloads = base.listOverloads();
         for(int i = 0; i < overloads.size(); i++) {
             int offset = 36;
@@ -39,7 +39,7 @@ public class CommandsModule {
                 buildArgument(overloadPointer, arg);
                 offset += arg.type.sizeof;
             }
-            Logger.debug("KEX-CommandRegistry", String.format("Overload %d for command %s built, used %d bytes out of %d possible.", new Object[]{ Integer.valueOf(i), base.commandName, Integer.valueOf(offset - 36), Integer.valueOf((2012 - overload.size()) / 4 * 4) }));
+            Logger.debug("KEX-CommandRegistry", String.format("Overload %d for command %s built, used %d bytes out of %d possible.", i, base.commandName, offset - 36, (2012 - overload.size()) / 4 * 4));
         }
         base.descriptionTranslations.forEach((language, translation) -> {
             String code = LangInjector.validateLanguageCode(language);
@@ -268,7 +268,7 @@ public class CommandsModule {
             case 10: CommandsNativeAPI.nativeBuildPlayerArgument(vectorPtr, arg.name, arg.mandatory, arg.fieldOffset); break;
             case 11: CommandsNativeAPI.nativeBuildEnumArgument(vectorPtr, arg.name, arg.mandatory, arg.fieldOffset, arg.type.enumName, arg.type.enumName.startsWith("KEXLITERAL-") ? 0 : ((IntArgument) arg).defaultValue); break;
             case 12: CommandsNativeAPI.nativeBuildStringEnumArgument(vectorPtr, arg.name, arg.mandatory, arg.fieldOffset, arg.type.enumName, ((StringArgument) arg).defaultValue); break;
-            default: throw new IllegalArgumentException(String.format("Invalid command argument type %d", new Object[]{ Integer.valueOf(arg.type.type) }));
+            default: throw new IllegalArgumentException(String.format("Invalid command argument type %d", arg.type.type));
         }
     }
     

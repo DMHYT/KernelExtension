@@ -165,7 +165,7 @@ public class TileEntityData {
 
     public static void onLevelLeft()
     {
-        Logger.debug("KEX-TileEntityData", String.format("Player leaving level, clearing %d custom tile entity interfaces and %d awaiting client network data objects", new Object[]{ Integer.valueOf(customTileEntityMap.size()), Integer.valueOf(awaitingClientNetworkData.size()) }));
+        Logger.debug("KEX-TileEntityData", String.format("Player leaving level, clearing %d custom tile entity interfaces and %d awaiting client network data objects", customTileEntityMap.size(), awaitingClientNetworkData.size()));
         customTileEntityMap.clear();
         awaitingClientNetworkData.clear();
     }

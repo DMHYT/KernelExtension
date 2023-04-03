@@ -23,7 +23,7 @@ public class LoadedRectangle {
         this.name = this.dimension.getLevel()
             .getTickingAreasManager()
             .findUsableDefaultName(dimension);
-        Logger.debug("KEX-ChunksModule", String.format("Loaded rectangle name was not specified, thus it was set to %s", new Object[]{ this.name }));
+        Logger.debug("KEX-ChunksModule", String.format("Loaded rectangle name was not specified, thus it was set to %s", this.name));
     }
 
     public LoadedRectangle(Dimension dimension, String name)
@@ -54,7 +54,7 @@ public class LoadedRectangle {
         if(!this.loaded)
         {
             if(mgr.hasArea(this.name, this.dimension))
-                throw new IllegalArgumentException(String.format("Ticking area with name %s already exists in dimension %d. You should use ChunksModule.areaExists in order not to get exceptions thrown.", new Object[]{ this.name, Integer.valueOf(this.dimension.getDimensionId()) }));
+                throw new IllegalArgumentException(String.format("Ticking area with name %s already exists in dimension %d. You should use ChunksModule.areaExists in order not to get exceptions thrown.", this.name, this.dimension.getDimensionId()));
             mgr.addRectangleArea(this.dimension, this.name, this.x1.get().intValue(), this.z1.get().intValue(), this.x2.get().intValue(), this.z2.get().intValue());
             this.loaded = true;
         }

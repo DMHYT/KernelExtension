@@ -54,7 +54,7 @@ public class CommandContext {
     {
         if(!argsByName.containsKey(name))
         {
-            throw new IllegalArgumentException(String.format("Argument %s does not exist in this command overload, possible arguments are %s", new Object[]{ name, Arrays.toString(this.argsByName.keySet().toArray()) }));
+            throw new IllegalArgumentException(String.format("Argument %s does not exist in this command overload, possible arguments are %s", name, Arrays.toString(this.argsByName.keySet().toArray())));
         }
     }
 
@@ -62,7 +62,7 @@ public class CommandContext {
     {
         if(arg.type.type != type.type)
         {
-            throw new IllegalArgumentException(String.format("Argument %s is not of type %s", new Object[]{ arg.name, type.typeName }));
+            throw new IllegalArgumentException(String.format("Argument %s is not of type %s", arg.name, type.typeName));
         }
     }
 
@@ -72,7 +72,7 @@ public class CommandContext {
         ArgumentBase arg = argsByName.get(name);
         if(arg.type.type != 0 && arg.type.type != 11)
         {
-            throw new IllegalArgumentException(String.format("Argument %s is not of type %s", new Object[]{ arg.name, "Integer" }));
+            throw new IllegalArgumentException(String.format("Argument %s is not of type Integer", arg.name));
         }
         return CommandsNativeAPI.nativeGetInt(this.commandPtr, arg.fieldOffset);
     }
@@ -123,7 +123,7 @@ public class CommandContext {
         ArgumentBase arg = argsByName.get(name);
         if(arg.type.type != 6 && arg.type.type != 12)
         {
-            throw new IllegalArgumentException(String.format("Argument %s is not of type %s", new Object[]{ arg.name, "String" }));
+            throw new IllegalArgumentException(String.format("Argument %s is not of type String", arg.name));
         }
         return CommandsNativeAPI.nativeGetString(this.commandPtr, arg.fieldOffset);
     }

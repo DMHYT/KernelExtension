@@ -195,7 +195,7 @@ public final class CommonTypes {
     {
         for(int i = 0; i < formatData.length; ++i)
         {
-            str = str.replace(String.format("%%%d$s", new Object[]{ Integer.valueOf(i + 1) }), formatData[i]);
+            str = str.replace(String.format("%%%d$s", i + 1), formatData[i]);
         }
         return str;
     }

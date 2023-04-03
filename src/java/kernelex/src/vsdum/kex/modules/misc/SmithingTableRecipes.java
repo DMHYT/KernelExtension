@@ -89,7 +89,7 @@ public class SmithingTableRecipes {
 
     public static void printRecipesCount()
     {
-        Logger.debug("KEX-SmithingTableRecipes", String.format("Registered in total %d smithing table recipes.", new Object[]{ Integer.valueOf(allRecipes.size()) }));
+        Logger.debug("KEX-SmithingTableRecipes", String.format("Registered in total %d smithing table recipes.", allRecipes.size()));
     }
 
 }

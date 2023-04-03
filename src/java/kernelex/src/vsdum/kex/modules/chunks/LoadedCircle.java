@@ -22,7 +22,7 @@ public class LoadedCircle {
         this.name = this.dimension.getLevel()
             .getTickingAreasManager()
             .findUsableDefaultName(dimension);
-        Logger.debug("KEX-ChunksModule", String.format("Loaded circle name was not specified, thus it was set to %s", new Object[]{ this.name }));
+        Logger.debug("KEX-ChunksModule", String.format("Loaded circle name was not specified, thus it was set to %s", this.name));
     }
 
     public LoadedCircle(Dimension dimension, String name)
@@ -53,7 +53,7 @@ public class LoadedCircle {
         if(!this.loaded)
         {
             if(mgr.hasArea(this.name, this.dimension))
-                throw new IllegalArgumentException(String.format("Ticking area with name %s already exists in dimension %d. You should use ChunksModule.areaExists in order not to get exceptions thrown.", new Object[]{ this.name, Integer.valueOf(this.dimension.getDimensionId()) }));
+                throw new IllegalArgumentException(String.format("Ticking area with name %s already exists in dimension %d. You should use ChunksModule.areaExists in order not to get exceptions thrown.", this.name, this.dimension.getDimensionId()));
             mgr.addCircleArea(this.dimension, this.name, this.x.get().intValue(), this.z.get().intValue(), this._radius);
             this.loaded = true;
         }

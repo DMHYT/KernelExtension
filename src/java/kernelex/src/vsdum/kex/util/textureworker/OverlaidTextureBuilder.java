@@ -77,7 +77,7 @@ public class OverlaidTextureBuilder {
     {
         if(FileTools.exists(this._result))
         {
-            Logger.debug("KEX-TextureWorker", String.format("File on path %s already exists, texture generation process cancelled", new Object[]{ this._result }));
+            Logger.debug("KEX-TextureWorker", String.format("File on path %s already exists, texture generation process cancelled", this._result));
             return null;
         }
         if(this._bitmap == null) return null;
