@@ -154,8 +154,10 @@ public class CommandContext {
         ArgumentBase arg = argsByName.get(name);
         checkArgumentType(arg, CommandArgumentType.ENTITY);
         List<Actor> result = new ArrayList<>();
-        long[] ids = CommandsNativeAPI.nativeGetEntities(this.commandPtr, arg.fieldOffset, this.originPtr);
-        for(int i = 0; i < ids.length; i++) result.add(new Actor(ids[i]));
+        for(long id : CommandsNativeAPI.nativeGetEntities(this.commandPtr, arg.fieldOffset, this.originPtr))
+        {
+            result.add(new Actor(id));
+        }
         return result;
     }
 
@@ -165,8 +167,10 @@ public class CommandContext {
         ArgumentBase arg = argsByName.get(name);
         checkArgumentType(arg, CommandArgumentType.PLAYER);
         List<Player> result = new ArrayList<>();
-        long[] ids = CommandsNativeAPI.nativeGetPlayers(this.commandPtr, arg.fieldOffset, this.originPtr);
-        for(int i = 0; i < ids.length; i++) result.add(new Player(ids[i]));
+        for(long id : CommandsNativeAPI.nativeGetPlayers(this.commandPtr, arg.fieldOffset, this.originPtr))
+        {
+            result.add(new Player(id));
+        }
         return result;
     }
 

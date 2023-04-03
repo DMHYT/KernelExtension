@@ -77,8 +77,7 @@ public class FoodItemComponent implements INativeInterface {
         this.cooldownTime = nativeGetCooldownTime(ptr);
         this._canAlwaysEat = nativeCanAlwaysEat(ptr);
         for(int i = 0; i < nativeGetEffectsCount(ptr); ++i) this.effects.add(new Effect(ptr, i));
-        int[] reff = nativeGetRemoveEffects(ptr);
-        for(int i = 0; i < reff.length; ++i) this.removeEffects.add(reff[i]);
+        for(int removeEffectId : nativeGetRemoveEffects(ptr)) this.removeEffects.add(removeEffectId);
     }
 
     public final int getItem()

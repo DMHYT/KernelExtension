@@ -51,7 +51,7 @@ public class CommandOverloadBase implements ICommandNode {
 
     public CommandOverloadBase addAliases(String[] aliasesArr)
     {
-        for(int i = 0; i < aliasesArr.length; ++i) this.aliases.add(aliasesArr[i]);
+        for(String alias : aliasesArr) this.aliases.add(alias);
         return this;
     }
 
@@ -63,10 +63,8 @@ public class CommandOverloadBase implements ICommandNode {
 
     public CommandOverloadBase setDescription(ScriptableObject translations)
     {
-        Object[] keys = translations.getAllIds();
-        for(int i = 0; i < keys.length; i++)
+        for(Object obj : translations.getAllIds())
         {
-            Object obj = keys[i];
             if(obj instanceof String)
             {
                 String str = (String) obj;

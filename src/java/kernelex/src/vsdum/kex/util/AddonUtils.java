@@ -44,10 +44,8 @@ public final class AddonUtils {
 
     static {
         parseVanillaIdsFrom("numeric_ids.json");
-        String[] files = FileTools.listDirectory(FileTools.DIR_PACK + "/assets/innercore/id/");
-        for(int i = 0; i < files.length; ++i)
+        for(String filePath : FileTools.listDirectory(FileTools.DIR_PACK + "/assets/innercore/id/"))
         {
-            String filePath = files[i];
             if(filePath.matches("^numeric_ids_override_[0-9]{1,}.json$"))
             {
                 parseVanillaIdsFrom(filePath);

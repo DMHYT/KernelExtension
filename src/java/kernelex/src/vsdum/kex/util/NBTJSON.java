@@ -18,11 +18,9 @@ public class NBTJSON {
         JSONObject result = new JSONObject();
         JSONObject values = new JSONObject();
         JSONObject valueTypes = new JSONObject();
-        String[] keys = tag.getAllKeys();
         try {
-            for(int i = 0; i < keys.length; i++)
+            for(String key : tag.getAllKeys())
             {
-                String key = keys[i];
                 int type = tag.getValueType(key);
                 valueTypes.put(key, type);
                 switch(type)

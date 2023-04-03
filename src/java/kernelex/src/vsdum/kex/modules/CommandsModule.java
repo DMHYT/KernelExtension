@@ -88,9 +88,8 @@ public class CommandsModule {
     public static void addEnum(String name, ScriptableObject values)
     {
         Map<String, Integer> map = new HashMap<>();
-        Object[] keys = values.getAllIds();
-        for(int i = 0; i < keys.length; i++) {
-            Object o = keys[i];
+        for(Object o : values.getAllIds())
+        {
             if(o instanceof String)
             {
                 String key = (String) o;

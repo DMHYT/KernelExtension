@@ -262,10 +262,8 @@ public class LootPoolEntryFunctions {
     public LootPoolEntryFunctions addSpecificEnchantsFunction(ScriptableObject enchants)
     {
         Map<String, Integer> map = new HashMap<>();
-        Object[] keys = enchants.getAllIds();
-        for(int i = 0; i < keys.length; i++)
+        for(Object key : enchants.getAllIds())
         {
-            Object key = keys[i];
             if(key instanceof String)
             {
                 String name = (String) key;
