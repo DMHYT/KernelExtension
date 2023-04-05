@@ -997,8 +997,16 @@ declare module vsdum {
                 static fillContainer(region: BlockSource, x: number, y: number, z: number, tableName: any_string, actor: Nullable<natives.Actor>): void;
                 static getRandomItems(tableName: any_string, context: natives.LootTableContext): java.util.List<ItemInstance>;
                 static forceLoad(tableName: any_string): void;
+                static registerCustomLootCondition(conditionName: any_string, callback: CustomLootConditionCallback): void;
+                static registerCustomLootConditionJS(conditionName: any_string, callback: CustomLootConditionCallbackJS): void;
                 static registerCustomLootFunction(functionName: any_string, callback: CustomLootFunctionCallback): void;
                 static registerCustomLootFunctionJS(functionName: any_string, callback: CustomLootFunctionCallbackJS): void;
+            }
+            export interface CustomLootConditionCallback {
+                (json: org.json.JSONObject, context: natives.LootTableContext): boolean;
+            }
+            export interface CustomLootConditionCallbackJS {
+                (json: object, context: natives.LootTableContext): boolean;
             }
             export interface CustomLootFunctionCallback {
                 (json: org.json.JSONObject, stack: ItemInstance, context: natives.LootTableContext): void;
@@ -1015,6 +1023,8 @@ declare module vsdum {
                 addItem(id: number, count: number, data: number, extra?: Nullable<ItemExtraData>): void;
             }
             export interface LootModifier {
+                lock(): LootModifier;
+                isLocked(): boolean;
                 createNewPool(): LootPool;
                 createNewPool(rolls: number): LootPool;
                 createNewPool(minRolls: number, maxRolls: number): LootPool;
@@ -1050,6 +1060,8 @@ declare module vsdum {
                 addRandomChanceWithLootingCondition(chance: number, lootingMultiplier: number): LootConditions;
                 addRandomDifficultyChanceCondition(defaultChance: number, easy?: number, normal?: number, hard?: number, peaceful?: number): LootConditions;
                 addRandomRegionalDifficultyChanceCondition(maxChance: number): LootConditions;
+                addCustomCondition(conditionName: any_string, json: org.json.JSONObject): LootConditions;
+                addCustomCondition(conditionName: any_string, json: object): LootConditions;
                 endConditions(): LootPool;
             }
             export interface LootTiers {
