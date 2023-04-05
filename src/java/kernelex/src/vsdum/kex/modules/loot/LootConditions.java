@@ -3,9 +3,11 @@ package vsdum.kex.modules.loot;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.mozilla.javascript.ScriptableObject;
 
 import android.support.annotation.Nullable;
 import vsdum.kex.common.IJSONSerializable;
+import vsdum.kex.util.CommonTypes;
 import vsdum.kex.util.JsonUtils;
 
 public class LootConditions implements IJSONSerializable {
@@ -172,6 +174,20 @@ public class LootConditions implements IJSONSerializable {
                 .put("max_chance", maxChance));
         } catch(JSONException ex) {}
         return this;
+    }
+
+    public LootConditions addCustomCondition(String conditionName, JSONObject json)
+    {
+        try {
+            if(json.optString("condition") != conditionName) json.put("condition", conditionName);
+            this.arr.put(json);
+        } catch(JSONException ex) {}
+        return this;
+    }
+
+    public LootConditions addCustomCondition(String conditionName, ScriptableObject json)
+    {
+        return this.addCustomCondition(conditionName, CommonTypes.scriptableToJson(json));
     }
 
     public LootPool endConditions()

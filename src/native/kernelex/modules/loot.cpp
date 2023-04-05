@@ -26,6 +26,10 @@
 #include "loot.hpp"
 
 
+bool KEXLootModule::CustomLootCondition::applies(Random&, LootTableContext& ctx) {
+    return KEXJavaBridge::LootModule::customLootConditionApplies(conditionName.c_str(), json.toStyledString().c_str(), (jlong) &ctx);
+}
+
 void KEXLootModule::CustomLootFunction::apply(ItemStack& stack, Random&, LootTableContext& ctx) {
     KEXJavaBridge::LootModule::applyCustomLootFunction(functionName.c_str(), json.toStyledString().c_str(), (jlong) &stack, (jlong) &ctx);
 }
@@ -40,6 +44,12 @@ void KEXLootModule::CustomLootFunction::apply(ItemInstance& instance, Random&, L
 Json::Reader* KEXLootModule::jsonReader = new Json::Reader();
 std::unordered_map<std::string, std::string> KEXLootModule::cachedModifiedTables;
 std::unordered_set<std::string> KEXLootModule::tablesWithDropCallbacks;
+std::unordered_set<std::string> KEXLootModule::vanillaLootConditions {
+    "killed_by_player", "killed_by_player_or_pets", "killed_by_entity",
+    "random_chance", "random_difficulty_chance", "random_chance_with_looting",
+    "random_regional_difficulty_chance", "has_mark_variant"
+};
+std::unordered_set<std::string> KEXLootModule::customLootConditions;
 std::unordered_set<std::string> KEXLootModule::vanillaLootFunctions {
     "set_count", "set_data", "set_damage", "looting_enchant",
     "enchant_with_levels", "enchant_book_for_trading", "enchant_randomly",
@@ -103,6 +113,18 @@ void KEXLootModule::initialize() {
             }
         }, ),
         HookManager::RETURN | HookManager::LISTENER
+    );
+
+    HookManager::addCallback(
+        SYMBOL("mcpe", "_ZN17LootItemCondition11deserializeEN4Json5ValueE"),
+        LAMBDA((HookManager::CallbackController* controller, LootItemCondition** result, Json::Value* json), {
+            const char* conditionName = json->operator[]("condition").asCString();
+            if(KEXLootModule::customLootConditions.find(conditionName) != KEXLootModule::customLootConditions.end()) {
+                controller->prevent();
+                *result = new KEXLootModule::CustomLootCondition(conditionName, Json::Value(*json));
+            }
+        }, ),
+        HookManager::CALL | HookManager::LISTENER | HookManager::CONTROLLER | HookManager::RESULT
     );
 
     HookManager::addCallback(
@@ -240,6 +262,18 @@ extern "C" {
                 env->ReleaseStringUTFChars(tableName, cTableName);
             }
         }
+    }
+    JNIEXPORT void JNICALL Java_vsdum_kex_modules_LootModule_nativeNewCustomLootCondition
+    (JNIEnv* env, jclass, jstring conditionName) {
+        const char* cConditionName = env->GetStringUTFChars(conditionName, 0);
+        if(KEXLootModule::vanillaLootConditions.find(cConditionName) == KEXLootModule::vanillaLootConditions.end()) {
+            if(KEXLootModule::customLootConditions.find(cConditionName) == KEXLootModule::customLootConditions.end()) {
+                KEXLootModule::customLootConditions.emplace(cConditionName);
+            }
+        } else {
+            Logger::message("WARNING", "[KEX-LootModule] Loot condition %s already exists in vanilla, cannot register custom loot condition with this name, skipping...", cConditionName);
+        }
+        env->ReleaseStringUTFChars(conditionName, cConditionName);
     }
     JNIEXPORT void JNICALL Java_vsdum_kex_modules_LootModule_nativeNewCustomLootFunction
     (JNIEnv* env, jclass, jstring functionName) {

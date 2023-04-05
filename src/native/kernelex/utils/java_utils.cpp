@@ -35,6 +35,7 @@ namespace KEXJavaBridge {
         JAVA_CLASS(LootModule, "vsdum/kex/modules/LootModule")
         JAVA_METHOD(LootModule, modify, "(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;")
         JAVA_METHOD(LootModule, onDrop, "(Ljava/lang/String;JIJ)V")
+        JAVA_METHOD(LootModule, customLootConditionApplies, "(Ljava/lang/String;Ljava/lang/String;J)Z")
         JAVA_METHOD(LootModule, applyCustomLootFunction, "(Ljava/lang/String;Ljava/lang/String;JJ)V")
         JAVA_CLASS(CallbacksModule, "vsdum/kex/modules/CallbacksModule")
         JAVA_CLASS(ItemsModule, "vsdum/kex/modules/ItemsModule")
@@ -102,6 +103,15 @@ namespace KEXJavaBridge {
             jstring jTableName = env->NewStringUTF(tableName);
             env->CallStaticVoidMethod(Cache::LootModule(), Cache::LootModule_onDrop(), jTableName, vectorPtr, vectorSize, contextPtr);
             env->DeleteLocalRef(jTableName);
+        }
+        bool customLootConditionApplies(const char* conditionName, const char* jsonString, jlong contextPtr) {
+            JNIEnv* env = KEXJavaUtils::attach();
+            jstring jConditionName = env->NewStringUTF(conditionName);
+            jstring jJsonString = env->NewStringUTF(jsonString);
+            bool result = env->CallStaticBooleanMethod(Cache::LootModule(), Cache::LootModule_customLootConditionApplies(), jConditionName, jJsonString, contextPtr);
+            env->DeleteLocalRef(jConditionName);
+            env->DeleteLocalRef(jJsonString);
+            return result;
         }
         void applyCustomLootFunction(const char* functionName, const char* jsonString, jlong stackPtr, jlong contextPtr) {
             JNIEnv* env = KEXJavaUtils::attach();

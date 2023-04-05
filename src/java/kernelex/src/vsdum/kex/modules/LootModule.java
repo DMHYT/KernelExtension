@@ -37,11 +37,20 @@ public class LootModule {
     protected static native int nativeGetVectorSize(long vectorPtr);
     protected static native void nativeDeleteVector(long vectorPtr);
     protected static native void nativeForceLoad(String tableName);
+    protected static native void nativeNewCustomLootCondition(String conditionName);
     protected static native void nativeNewCustomLootFunction(String functionName);
     protected static native void nativeModifyStack(long stackPointer, int id, int count, int data, long extra);
 
     public static interface OnDropCallback {
         public void onDrop(RandomItemsList drops, LootTableContext context);
+    }
+
+    public static interface CustomLootConditionCallback {
+        public boolean applies(JSONObject json, LootTableContext context);
+    }
+
+    public static interface CustomLootConditionCallbackJS {
+        public boolean applies(ScriptableObject json, LootTableContext context);
     }
 
     public static interface CustomLootFunctionCallback {
@@ -57,6 +66,8 @@ public class LootModule {
     private static final Map<String, List<CallbackFunction<OnDropCallback>>> onDropCallbacks = new HashMap<>();
     private static final Set<Integer> supportedFillingContainers = new SetBuilder<Integer>().add(0).add(2).add(13).add(14).add(42).build();
     private static final Set<String> forceLoaded = new HashSet<>();
+    private static final Map<String, CustomLootConditionCallback> customLootConditions = new HashMap<>();
+    private static final Map<String, CustomLootConditionCallbackJS> customLootConditionsJS = new HashMap<>();
     private static final Map<String, CustomLootFunctionCallback> customLootFunctions = new HashMap<>();
     private static final Map<String, CustomLootFunctionCallbackJS> customLootFunctionsJS = new HashMap<>();
 
@@ -121,6 +132,18 @@ public class LootModule {
         String tableDir = validateTableName(tableName);
         if(NativeCallback.isLevelDisplayed()) nativeForceLoad(tableDir);
         forceLoaded.add(tableDir);
+    }
+
+    public static void registerCustomLootCondition(String conditionName, CustomLootConditionCallback callback)
+    {
+        customLootConditions.put(conditionName, callback);
+        nativeNewCustomLootCondition(conditionName);
+    }
+
+    public static void registerCustomLootConditionJS(String conditionName, CustomLootConditionCallbackJS callback)
+    {
+        customLootConditionsJS.put(conditionName, callback);
+        nativeNewCustomLootCondition(conditionName);
     }
 
     public static void registerCustomLootFunction(String functionName, CustomLootFunctionCallback callback)
@@ -191,6 +214,20 @@ public class LootModule {
             forceLoaded.forEach(LootModule::nativeForceLoad);
             Logger.debug("KEX-LootModule", String.format("Finished in %d ms!", System.currentTimeMillis() - start));
         } else Logger.debug("KEX-LootModule", "The level has been displayed, no loot tables to force load.");
+    }
+
+    public static boolean customLootConditionApplies(String conditionName, String jsonString, long contextPointer)
+    {
+        LootTableContext context = new LootTableContext(contextPointer);
+        try {
+            if(customLootConditions.containsKey(conditionName))
+            {
+                return customLootConditions.get(conditionName).applies(new JSONObject(jsonString), context);
+            } else if(customLootConditionsJS.containsKey(conditionName)) {
+                return customLootConditionsJS.get(conditionName).applies(CommonTypes.jsonToScriptable(new JSONObject(jsonString)), context);
+            }
+        } catch(JSONException ex) { ex.printStackTrace(); }
+        return false;
     }
 
     public static void applyCustomLootFunction(String functionName, String jsonString, long stackPointer, long contextPointer)

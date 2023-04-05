@@ -11,7 +11,9 @@
 #define KEX_LOOTITEMFUNCTION_HPP
 
 
-class LootItemCondition {public:};
+#ifndef KEX_LOOTITEMCONDITION_HPP
+    class LootItemCondition {public:};
+#endif
 class Random;
 class Trade;
 
