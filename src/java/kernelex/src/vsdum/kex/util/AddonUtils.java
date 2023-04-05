@@ -111,8 +111,9 @@ public final class AddonUtils {
 
     public static int getNumericIdFromIdentifier(String identifier)
     {
-        if(vanillaIdShortcut.containsKey(identifier)) return vanillaIdShortcut.get(identifier);
-        if(innercoreIdentifierToNumeric.containsKey(identifier)) return innercoreIdentifierToNumeric.get(identifier);
+        String identifierWithoutNamespace = identifier.startsWith("minecraft:") ? identifier.substring(10) : identifier;
+        if(vanillaIdShortcut.containsKey(identifierWithoutNamespace)) return vanillaIdShortcut.get(identifierWithoutNamespace);
+        if(innercoreIdentifierToNumeric.containsKey(identifierWithoutNamespace)) return innercoreIdentifierToNumeric.get(identifierWithoutNamespace);
         return -1;
     }
 
