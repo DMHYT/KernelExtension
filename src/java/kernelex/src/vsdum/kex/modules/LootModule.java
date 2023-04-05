@@ -40,6 +40,7 @@ public class LootModule {
     protected static native void nativeNewCustomLootCondition(String conditionName);
     protected static native void nativeNewCustomLootFunction(String functionName);
     protected static native void nativeModifyStack(long stackPointer, int id, int count, int data, long extra);
+    protected static native boolean nativeRunLootCondition(String jsonString, long contextPtr);
 
     public static interface OnDropCallback {
         public void onDrop(RandomItemsList drops, LootTableContext context);
@@ -178,6 +179,58 @@ public class LootModule {
                 }
             }).lock();
         forceLoad("entities/piglin_barter");
+    }
+
+    public static boolean runLootCondition(JSONObject json, LootTableContext context)
+    {
+        return nativeRunLootCondition(json.toString(), context.getPointer());
+    }
+
+    public static boolean runLootCondition(ScriptableObject json, LootTableContext context)
+    {
+        return runLootCondition(CommonTypes.scriptableToJson(json), context);
+    }
+
+    static {
+        registerCustomLootCondition("and", (json, context) -> {
+            if(!json.has("clauses")) return true;
+            JSONArray clauses = json.optJSONArray("clauses");
+            if(clauses == null) return false;
+            boolean result = true;
+            for(int i = 0; i < clauses.length(); i++)
+            {
+                JSONObject conditionJSON = clauses.optJSONObject(i);
+                if(conditionJSON != null)
+                {
+                    result = runLootCondition(conditionJSON, context);
+                } else result = false;
+                if(!result) break;
+            }
+            return result;
+        });
+        registerCustomLootCondition("or", (json, context) -> {
+            if(!json.has("clauses")) return true;
+            JSONArray clauses = json.optJSONArray("clauses");
+            if(clauses == null) return false;
+            if(clauses.length() == 0) return true;
+            boolean result = false;
+            for(int i = 0; i < clauses.length(); i++)
+            {
+                JSONObject conditionJSON = clauses.optJSONObject(i);
+                if(conditionJSON != null)
+                {
+                    result = runLootCondition(conditionJSON, context);
+                }
+                if(result) break;
+            }
+            return result;
+        });
+        registerCustomLootCondition("not", (json, context) -> {
+            if(!json.has("clause")) return false;
+            JSONObject clause = json.optJSONObject("clause");
+            if(clause == null) return false;
+            return !runLootCondition(clause, context);
+        });
     }
 
     @Nullable public static String modify(String tableDir, String json)

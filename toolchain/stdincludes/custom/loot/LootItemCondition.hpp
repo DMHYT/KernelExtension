@@ -1,3 +1,8 @@
+#include <stl/memory>
+#include <stl.h>
+
+#include "json/value.h"
+
 #include "LootTableContext.hpp"
 
 #ifndef KEX_LOOTITEMCONDITION_HPP
@@ -12,6 +17,7 @@ class LootItemCondition {
     // _ZTV17LootItemCondition does not exist for some reason...
     // /*0*/ virtual ~LootItemCondition();
     // /*1*/ virtual bool applies(Random&, LootTableContext&) = 0;
+    static stl::unique_ptr<LootItemCondition> deserialize(Json::Value);
 };
 
 

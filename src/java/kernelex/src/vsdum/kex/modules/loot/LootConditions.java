@@ -190,6 +190,42 @@ public class LootConditions implements IJSONSerializable {
         return this.addCustomCondition(conditionName, CommonTypes.scriptableToJson(json));
     }
 
+    public LootConditions addANDCondition(LootConditions clauses)
+    {
+        try {
+            this.arr.put(new JSONObject()
+                .put("condition", "and")
+                .put("clauses", clauses.arr));
+        } catch(JSONException ex) {}
+        return this;
+    }
+
+    public LootConditions addORCondition(LootConditions clauses)
+    {
+        try {
+            this.arr.put(new JSONObject()
+                .put("condition", "or")
+                .put("clauses", clauses.arr));
+        } catch(JSONException ex) {}
+        return this;
+    }
+
+    public LootConditions addNOTCondition(LootConditions clause)
+    {
+        if(clause.arr.length() == 0) return this;
+        try {
+            JSONObject clauseJSON = clause.arr.length() == 1 ?
+                clause.arr.getJSONObject(0) :
+                new JSONObject()
+                    .put("condition", "and")
+                    .put("clauses", clause.arr);
+            this.arr.put(new JSONObject()
+                .put("condition", "not")
+                .put("clause", clauseJSON));
+        } catch(JSONException ex) {}
+        return this;
+    }
+
     public LootPool endConditions()
     {
         if(this.pool == null)

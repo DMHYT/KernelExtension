@@ -298,4 +298,23 @@ extern "C" {
             }
         }
     }
+    JNIEXPORT jboolean JNICALL Java_vsdum_kex_modules_LootModule_nativeRunLootCondition
+    (JNIEnv* env, jclass, jstring jsonString, jlong contextPtr) {
+        const char* cJsonString = env->GetStringUTFChars(jsonString, 0);
+        Json::Value json(0);
+        KEXLootModule::jsonReader->parse(cJsonString, json, true);
+        auto compiledCondition = LootItemCondition::deserialize(json);
+        bool result = false;
+        if(compiledCondition) {
+            auto customCondition = (KEXLootModule::CustomLootCondition*) compiledCondition.get();
+            Random* random = GlobalContext::getLevel()->getRandom();
+            auto ctx = (LootTableContext*) contextPtr;
+            result = customCondition->applies(*random, *ctx);
+        } else {
+            Logger::message("WARNING", "[KEX-LootModule] Failed to deserialize loot condition JSON object in LootModule.runLootCondition. Printing the JSON string...");
+            Logger::debug("KEX-LootModule", "%s", cJsonString);
+        }
+        env->ReleaseStringUTFChars(jsonString, cJsonString);
+        return result;
+    }
 }

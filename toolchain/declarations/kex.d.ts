@@ -969,6 +969,12 @@ declare namespace LootTableTypes {
         normal?: number,
         hard?: number,
         peaceful?: number;
+    } | {
+        condition: "and" | "or",
+        clauses: LootCondition[];
+    } | {
+        condition: "not",
+        clause: LootCondition;
     }
     export interface LootTiers {
         bonus_chance?: number,
@@ -1001,18 +1007,20 @@ declare module vsdum {
                 static registerCustomLootConditionJS(conditionName: any_string, callback: CustomLootConditionCallbackJS): void;
                 static registerCustomLootFunction(functionName: any_string, callback: CustomLootFunctionCallback): void;
                 static registerCustomLootFunctionJS(functionName: any_string, callback: CustomLootFunctionCallbackJS): void;
+                static runLootCondition(json: org.json.JSONObject, context: natives.LootTableContext): boolean;
+                static runLootCondition(json: {[key: string]: any}, context: natives.LootTableContext): boolean;
             }
             export interface CustomLootConditionCallback {
                 (json: org.json.JSONObject, context: natives.LootTableContext): boolean;
             }
             export interface CustomLootConditionCallbackJS {
-                (json: object, context: natives.LootTableContext): boolean;
+                (json: {[key: string]: any}, context: natives.LootTableContext): boolean;
             }
             export interface CustomLootFunctionCallback {
                 (json: org.json.JSONObject, stack: ItemInstance, context: natives.LootTableContext): void;
             }
             export interface CustomLootFunctionCallbackJS {
-                (json: object, stack: ItemInstance, context: natives.LootTableContext): void;
+                (json: {[key: string]: any}, stack: ItemInstance, context: natives.LootTableContext): void;
             }
             export interface OnDropCallback {
                 (drops: RandomItemsList, context: natives.LootTableContext): void;
@@ -1062,6 +1070,9 @@ declare module vsdum {
                 addRandomRegionalDifficultyChanceCondition(maxChance: number): LootConditions;
                 addCustomCondition(conditionName: any_string, json: org.json.JSONObject): LootConditions;
                 addCustomCondition(conditionName: any_string, json: object): LootConditions;
+                addANDCondition(clauses: LootConditions): LootConditions;
+                addORCondition(clauses: LootConditions): LootConditions;
+                addNOTCondition(clause: LootConditions): LootConditions;
                 endConditions(): LootPool;
             }
             export interface LootTiers {
