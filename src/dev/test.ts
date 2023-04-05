@@ -28,20 +28,3 @@
 
 // // @ts-ignore
 // com.zhekasmirnov.horizon.launcher.env.AssetPatch.addSingleOverride("resource_packs/vanilla/terrain-atlas/test_anim_blue.png", `${__dir__}/resources/res/terrain-atlas/test_anim_blue.png`);
-
-// LootModule.registerCustomLootConditionJS("attacker_holding_item", (json: any, context) => {
-//     return typeof json.item === "string" &&
-//         context.getKillerPlayer() !== null &&
-//         context.getKillerPlayer().getCarriedItem().id == AddonUtils.getNumericIdFromIdentifier(json.item);
-// });
-
-// LootModule.createLootTableModifier("entities/pig")
-//     .createNewPool()
-//         .addEntry()
-//             .describeItem("minecraft", "diamond")
-//             .setCount(1, 5)
-//         .endEntry()
-//         .beginConditions()
-//             .addCustomCondition("attacker_holding_item", { item: "minecraft:diamond_sword" })
-//         .endConditions()
-//     .endPool();
