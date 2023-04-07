@@ -10,9 +10,11 @@ Callback.addCallback("ModsLoaded", () => ModCallbacks.onModsLoaded());
 
 const BlockEvents = WRAP_JAVA("vsdum.kex.japi.blocks.BlockEvents");
 (() => {
-    const temp = Block.getBlockDropViaItem;
+    // @ts-ignore
+    Block.__getBlockDropViaItem = Block.getBlockDropViaItem;
     Block.getBlockDropViaItem = (block, item, coords, region) => {
-        const result = temp(block, item, coords, region) ?? [];
+        // @ts-ignore
+        const result = Block.__getBlockDropViaItem(block, item, coords, region) ?? [];
         const iter = BlockEvents.getDrops(block.id, block.data, region.getDimension(), item.id, item.count, item.data, item.extra ?? null, coords.x, coords.y, coords.z)
             .iterator();
         while(iter.hasNext()) {
@@ -26,11 +28,13 @@ Callback.addCallback("BlockEventEntityInside", (coords, block, entity) => BlockE
 Callback.addCallback("BlockEventEntityStepOn", (coords, block, entity) => BlockEvents.stepOn(Entity.getDimension(entity), coords.x, coords.y, coords.z, block.id, block.data, entity));
 Callback.addCallback("BlockEventNeighbourChange", (coords, block, changedCoords, region) => BlockEvents.neighborChanged(block.id, block.data, region.getDimension(), coords.x, coords.y, coords.z, changedCoords.x, changedCoords.y, changedCoords.z));
 (() => {
-    const temp = Block.getPlaceFunc;
+    // @ts-ignore
+    Block.__getPlaceFunc = Block.getPlaceFunc;
     Block.getPlaceFunc = blockID => {
         return (coords, item, block, player, region) => {
             BlockEvents.onPlace(coords.x, coords.y, coords.z, item.id, item.count, item.data, item.extra ?? null, block.id, block.data, player, region.getDimension(), blockID);
-            const func = temp(blockID);
+            // @ts-ignore
+            const func = Block.__getPlaceFunc(blockID);
             if(typeof func !== "undefined") {
                 return func(coords, item, block, player, region);
             }
