@@ -7,7 +7,7 @@
 #include <innercore/block_registry.h>
 #include <innercore/vtable.h>
 
-#include "blocks.hpp"
+#include "module.hpp"
 
 
 std::unordered_map<int, KEXBlocksModule::BlockParamsModifier*> KEXBlocksModule::modifiers;

@@ -7,7 +7,7 @@
 #include "modules/tools/module.hpp"
 #include "modules/tools/submodules/method_patches.hpp"
 #include "modules/tools/submodules/interactions.hpp"
-#include "modules/blocks.hpp"
+#include "modules/blocks/module.hpp"
 #include "modules/commands/module.hpp"
 #include "modules/callbacks.hpp"
 #include "modules/damage.hpp"

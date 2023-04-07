@@ -10,10 +10,10 @@
 #include <BlockLegacy.hpp>
 #include <BlockSource.hpp>
 
-#include "../utils/java_utils.hpp"
+#include "../../utils/java_utils.hpp"
 
-#ifndef KEX_MODULES_BLOCKS_HPP
-#define KEX_MODULES_BLOCKS_HPP
+#ifndef KEX_MODULES_BLOCKS_MODULE_HPP
+#define KEX_MODULES_BLOCKS_MODULE_HPP
 
 
 class KEXBlocksModule : public Module {
