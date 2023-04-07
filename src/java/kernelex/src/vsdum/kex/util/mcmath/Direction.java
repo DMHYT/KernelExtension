@@ -253,7 +253,7 @@ public enum Direction {
 
         public boolean isHorizontal()
         {
-            return this.plane == Plane.VERTICAL;
+            return this.plane == Plane.HORIZONTAL;
         }
 
         @Override public String toString()
