@@ -42,6 +42,8 @@ namespace KEXJavaBridge {
         JAVA_METHOD(ItemsModule, getUseDurationDynamic, "(J)I")
         JAVA_METHOD(ItemsModule, appendFormattedHovertext, "(JJLjava/lang/String;)Ljava/lang/String;")
         JAVA_METHOD(ItemsModule, getDynamicFoodValues, "(JJ)V")
+        JAVA_CLASS(BlocksModule, "vsdum/kex/modules/BlocksModule")
+        JAVA_METHOD(BlocksModule, getComparatorSignal, "(JJIIII)I")
         JAVA_CLASS(DamageModule, "vsdum/kex/modules/DamageModule")
         JAVA_METHOD(DamageModule, getDeathMessage, "(JLjava/lang/String;J)Ljava/lang/String;")
         JAVA_CLASS(CommandsModule, "vsdum/kex/modules/CommandsModule")
@@ -135,6 +137,11 @@ namespace KEXJavaBridge {
         }
         void getDynamicFoodValues(jlong stackPtr, jlong foodPtr) {
             KEXJavaUtils::attach()->CallStaticVoidMethod(Cache::ItemsModule(), Cache::ItemsModule_getDynamicFoodValues(), stackPtr, foodPtr);
+        }
+    }
+    namespace BlocksModule {
+        int getComparatorSignal(jlong blockLong, jlong blockSourcePtr, jint x, jint y, jint z, jint side) {
+            return KEXJavaUtils::attach()->CallStaticIntMethod(Cache::BlocksModule(), Cache::BlocksModule_getComparatorSignal(), blockLong, blockSourcePtr, x, y, z, side);
         }
     }
     namespace DamageModule {

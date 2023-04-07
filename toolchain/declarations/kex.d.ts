@@ -1230,6 +1230,23 @@ declare function WRAP_JAVA(clazz: "vsdum.kex.modules.ToolsModule"): typeof vsdum
 declare module vsdum {
     export module kex {
         export module modules {
+            export class BlocksModule extends java.lang.Object {
+                static class: java.lang.Class<BlocksModule>;
+                static registerComparatorSignalCallbackJS(id: number, callback: BlocksModule.ComparatorSignalCallbackJS): void;
+            }
+            export module BlocksModule {
+                export interface ComparatorSignalCallbackJS {
+                    (block: BlockState, world: natives.ExtendedBlockSource, coords: Callback.ItemUseCoordinates): number;
+                }
+            }
+        }
+    }
+}
+declare function WRAP_JAVA(clazz: "vsdum.kex.modules.BlocksModule"): typeof vsdum.kex.modules.BlocksModule;
+
+declare module vsdum {
+    export module kex {
+        export module modules {
             export module DamageModule {
                 export type DamageDealingParams = {} | {
                     source: "actor" | "entity" | "blocksource" | "world" | "block",
@@ -1641,6 +1658,13 @@ declare namespace Recipes {
 }
 
 
+declare namespace Block {
+    type ComparatorSignalFunction = vsdum.kex.modules.BlocksModule.ComparatorSignalCallbackJS;
+    export function registerComparatorSignalFunctionForID(id: number, func: ComparatorSignalFunction): void;
+    export function registerComparatorSignalFunction(id: string | number, func: ComparatorSignalFunction): void;
+}
+
+
 declare enum EItemAnimation {
     NONE = 0,
     EAT = 1,
@@ -1708,6 +1732,7 @@ declare enum ETileEntityType {
     ToolsModule: typeof vsdum.kex.modules.ToolsModule,
     DamageModule: typeof vsdum.kex.modules.DamageModule,
     CommandsModule: typeof vsdum.kex.modules.CommandsModule,
+    BlocksModule: typeof vsdum.kex.modules.BlocksModule,
     LootTableContext: typeof vsdum.kex.natives.LootTableContext,
     MobEffect: typeof vsdum.kex.natives.MobEffect,
     MobEffectInstance: typeof vsdum.kex.natives.MobEffectInstance,

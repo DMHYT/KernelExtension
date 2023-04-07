@@ -21,6 +21,7 @@ namespace KEXJavaBridge {
         jclass CallbacksModule(JNIEnv* env);
         jclass CallbacksModule();
         jclass ItemsModule(JNIEnv* env);
+        jclass BlocksModule(JNIEnv* env);
         jclass DamageModule(JNIEnv* env);
         jclass CommandsModule(JNIEnv* env);
         jclass I18n(JNIEnv* env);
@@ -44,6 +45,9 @@ namespace KEXJavaBridge {
         int getUseDurationDynamic(jlong stackPtr);
         jstring appendFormattedHovertext(jlong stackPtr, jlong levelPtr, const char* text);
         void getDynamicFoodValues(jlong stackPtr, jlong foodPtr);
+    }
+    namespace BlocksModule {
+        int getComparatorSignal(jlong blockLong, jlong blockSourcePtr, jint x, jint y, jint z, jint side);
     }
     namespace DamageModule {
         jstring getDeathMessage(jlong sourcePtr, const char* nickname, jlong actorPtr);

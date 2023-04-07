@@ -7,6 +7,7 @@
 #include "modules/tools/module.hpp"
 #include "modules/tools/submodules/method_patches.hpp"
 #include "modules/tools/submodules/interactions.hpp"
+#include "modules/blocks.hpp"
 #include "modules/commands/module.hpp"
 #include "modules/callbacks.hpp"
 #include "modules/damage.hpp"
@@ -42,6 +43,7 @@ extern "C" JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *) {
 	Module* tools = new KEXToolsModule(main);
 	Module* toolPatches = new KEXToolPatchesModule(tools);
 	Module* toolInteractions = new KEXToolInteractionsModule(tools);
+	Module* blocks = new KEXBlocksModule(main);
 	Module* commands = new KEXCommandsModule(main);
 	Module* callbacks = new KEXCallbacksModule(main);
 	Module* damage = new KEXDamageModule(main);
@@ -62,6 +64,7 @@ extern "C" JNIEXPORT void JNICALL Java_vsdum_kex_KernelExtension_defineCallbackC
 	KEXJavaBridge::Cache::LootModule(env);
 	KEXJavaBridge::Cache::CallbacksModule(env);
 	KEXJavaBridge::Cache::ItemsModule(env);
+	KEXJavaBridge::Cache::BlocksModule(env);
 	KEXJavaBridge::Cache::DamageModule(env);
 	KEXJavaBridge::Cache::CommandsModule(env);
 	KEXJavaBridge::Cache::I18n(env);
