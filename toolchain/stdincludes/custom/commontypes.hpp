@@ -170,3 +170,6 @@ class ChunkPos {
 
 
 #endif //KEX_CHUNKPOS_HPP
+
+
+long long getTimeMilliseconds();

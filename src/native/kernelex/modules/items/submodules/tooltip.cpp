@@ -4,6 +4,8 @@
 
 #include <innercore/id_conversion_map.h>
 
+#include <commontypes.hpp>
+
 #include "../../../utils/java_utils.hpp"
 #include "tooltip.hpp"
 

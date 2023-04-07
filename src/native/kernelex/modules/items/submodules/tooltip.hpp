@@ -13,8 +13,6 @@
 #define KEX_MODULES_ITEMS_SUBMODULES_TOOLTIP_HPP
 
 
-long long getTimeMilliseconds();
-
 class KEXItemsTooltipModule : public Module {
     public:
     static std::unordered_map<int, std::string> tooltipCache;
