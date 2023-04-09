@@ -31,13 +31,12 @@ Callback.addCallback("BlockEventNeighbourChange", (coords, block, changedCoords,
     // @ts-ignore
     Block.__getPlaceFunc = Block.getPlaceFunc;
     Block.getPlaceFunc = blockID => {
-        return (coords, item, block, player, region) => {
+        // @ts-ignore
+        const func = Block.__getPlaceFunc(blockID);
+        return typeof func === "undefined" ? func :
+        (coords, item, block, player, region) => {
             BlockEvents.onPlace(coords.x, coords.y, coords.z, item.id, item.count, item.data, item.extra ?? null, block.id, block.data, player, region.getDimension(), blockID);
-            // @ts-ignore
-            const func = Block.__getPlaceFunc(blockID);
-            if(typeof func !== "undefined") {
-                return func(coords, item, block, player, region);
-            }
+            return func(coords, item, block, player, region);
         }
     }
 })();
