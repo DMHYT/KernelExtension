@@ -16,6 +16,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import vsdum.kex.japi.blocks.components.*;
 import vsdum.kex.japi.component.IdentifiedComponentFactory;
+import vsdum.kex.modules.BlocksModule;
 import vsdum.kex.modules.TileEntityModule;
 import vsdum.kex.natives.ExtendedBlockSource;
 import vsdum.kex.util.mcmath.BlockPos;
@@ -58,7 +59,8 @@ public class BlockRegistry {
             NativeBlock.setReceivingEntityStepOnEvent(id, true);
             BlockEvents.stepOnEvents.put(id, component);
         })
-        .registerIdentifiedComponent(IUsable.class, BlockEvents.onUseEvents::put);
+        .registerIdentifiedComponent(IUsable.class, BlockEvents.onUseEvents::put)
+        .registerIdentifiedComponent(BlocksModule.ComparatorSignalCallback.class, BlocksModule::registerComparatorSignalCallback);
 
     @NonNull public static <T extends Block> T register(@NonNull T block)
     {
