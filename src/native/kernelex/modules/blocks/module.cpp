@@ -1,8 +1,6 @@
 #include <jni.h>
 
-#include <hook.h>
 #include <innercore_callbacks.h>
-#include <symbol.h>
 
 #include <innercore/block_registry.h>
 #include <innercore/vtable.h>
@@ -18,10 +16,14 @@ void KEXBlocksModule::BlockParamsModifier::applyTo(int id) {
     if(block == nullptr) return;
     void** vtable = *(void***) block;
     if(emitsComparatorSignal) {
-        VTABLE_FIND_OFFSET(BlockLegacy_hasComparatorSignal, _ZTV11BlockLegacy, _ZNK11BlockLegacy19hasComparatorSignalEv)
+        VTABLE_FIND_OFFSET(BlockLegacy_hasComparatorSignal, _ZTV11BlockLegacy, _ZNK11BlockLegacy19hasComparatorSignalEv);
         vtable[BlockLegacy_hasComparatorSignal] = ADDRESS(_enableComparatorSignal);
         VTABLE_FIND_OFFSET(BlockLegacy_getComparatorSignal, _ZTV11BlockLegacy, _ZNK11BlockLegacy19getComparatorSignalER11BlockSourceRK8BlockPosRK5Blockh);
         vtable[BlockLegacy_getComparatorSignal] = ADDRESS(_getComparatorSignalPatch);
+    }
+    if(dynamicLightEmission) {
+        VTABLE_FIND_OFFSET(BlockLegacy_getLightEmission, _ZTV11BlockLegacy, _ZNK11BlockLegacy16getLightEmissionERK5Block);
+        vtable[BlockLegacy_getLightEmission] = ADDRESS(_getLightEmissionPatch);
     }
 }
 
@@ -48,6 +50,16 @@ extern "C" {
 
     __EXPORT__(void, nativeEnableComparatorSignalCallback) {
         MOD->emitsComparatorSignal = true;
+    }
+    __EXPORT__(void, nativeEnableDynamicLightEmission) {
+        MOD->dynamicLightEmission = true;
+        KEXBlocksModule::LightEmission::lightData.emplace(id, 0ll);
+    }
+    __EXPORT__(void, nativeSetLightEmission, jint data, jbyte lightLevel) {
+        KEXBlocksModule::LightEmission::set(id, data, (unsigned char) lightLevel);
+    }
+    __EXPORT__(jbyte, nativeGetLightEmission, jint data) {
+        return (jbyte) KEXBlocksModule::LightEmission::get(id, data);
     }
 
     #undef MOD

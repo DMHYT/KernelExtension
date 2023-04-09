@@ -18,6 +18,12 @@
 
 class KEXBlocksModule : public Module {
     public:
+    class LightEmission {
+        public:
+        static std::unordered_map<int, unsigned long long> lightData;
+        static unsigned char get(int id, int data);
+        static void set(int id, int data, unsigned char lightLevel);
+    };
     class BlockParamsModifier {
         public:
         bool dynamicLightEmission = false;
@@ -41,6 +47,9 @@ class KEXBlocksModule : public Module {
     static inline bool hasModifier(int id) {
         return modifiers.find(id) != modifiers.end();
     }
+    static inline unsigned long long packBlockLong(int id, int data, int runtimeId) {
+        return ((((unsigned long long) id << 16) | (unsigned long long) data) | ((unsigned long long) runtimeId << 32));
+    }
     static inline bool _enableComparatorSignal(BlockLegacy* block) {
         return true;
     }
@@ -48,9 +57,12 @@ class KEXBlocksModule : public Module {
         int id = IdConversion::dynamicToStatic(block->id, IdConversion::BLOCK);
         int data = state.getVariant();
         int runtimeId = (int) state.getRuntimeId();
-        jlong blockLong = (jlong) ((((unsigned long long) id << 16) | (unsigned long long) data) | ((unsigned long long) runtimeId << 32));
+        jlong blockLong = (jlong) packBlockLong(id, data, runtimeId);
         int result = KEXJavaBridge::BlocksModule::getComparatorSignal(blockLong, (jlong) &region, pos.x, pos.y, pos.z, side);
         return result < 0 ? 0 : result > 15 ? 15 : result;
+    }
+    static inline unsigned char* _getLightEmissionPatch(unsigned char* resultRVO, BlockLegacy*, const Block& state) {
+        *resultRVO = (unsigned char) LightEmission::get(IdConversion::dynamicToStatic(state.legacy->id, IdConversion::BLOCK), state.getVariant());
     }
     KEXBlocksModule(Module* parent): Module(parent, "kex.blocks") {}
     virtual void initialize();
