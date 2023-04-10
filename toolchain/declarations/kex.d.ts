@@ -1232,7 +1232,7 @@ declare module vsdum {
         export module modules {
             export class BlocksModule extends java.lang.Object {
                 static class: java.lang.Class<BlocksModule>;
-                static registerComparatorSignalCallbackJS(id: number, callback: BlocksModule.ComparatorSignalCallbackJS): void;
+                static registerComparatorSignalCallbackJS(id: number, callback: BlocksModule.ComparatorSignalCallbackJS, isCallbackForced?: boolean): void;
                 static setLightEmission(id: number, data: number, lightLevel: number): void;
                 static getLightEmission(id: number, data: number): number;
             }
@@ -1662,8 +1662,8 @@ declare namespace Recipes {
 
 declare namespace Block {
     type ComparatorSignalFunction = vsdum.kex.modules.BlocksModule.ComparatorSignalCallbackJS;
-    export function registerComparatorSignalFunctionForID(id: number, func: ComparatorSignalFunction): void;
-    export function registerComparatorSignalFunction(id: string | number, func: ComparatorSignalFunction): void;
+    export function registerComparatorSignalFunctionForID(id: number, func: ComparatorSignalFunction, isCallbackForced?: boolean): void;
+    export function registerComparatorSignalFunction(id: string | number, func: ComparatorSignalFunction, isCallbackForced?: boolean): void;
     export function getLightLevel(id: number, data?: number): number;
     export function setLightLevel(id: number, lightLevel: number): void;
     export function setLightLevel(id: number, data: number, lightLevel: number): void;

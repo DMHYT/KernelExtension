@@ -17,13 +17,13 @@ void KEXBlocksModule::BlockParamsModifier::applyTo(int id) {
     void** vtable = *(void***) block;
     if(emitsComparatorSignal) {
         VTABLE_FIND_OFFSET(BlockLegacy_hasComparatorSignal, _ZTV11BlockLegacy, _ZNK11BlockLegacy19hasComparatorSignalEv);
-        vtable[BlockLegacy_hasComparatorSignal] = ADDRESS(_enableComparatorSignal);
+        vtable[BlockLegacy_hasComparatorSignal] = ADDRESS(ComparatorSignal::_enableComparatorSignal);
         VTABLE_FIND_OFFSET(BlockLegacy_getComparatorSignal, _ZTV11BlockLegacy, _ZNK11BlockLegacy19getComparatorSignalER11BlockSourceRK8BlockPosRK5Blockh);
-        vtable[BlockLegacy_getComparatorSignal] = ADDRESS(_getComparatorSignalPatch);
+        vtable[BlockLegacy_getComparatorSignal] = ADDRESS(ComparatorSignal::get);
     }
     if(dynamicLightEmission) {
         VTABLE_FIND_OFFSET(BlockLegacy_getLightEmission, _ZTV11BlockLegacy, _ZNK11BlockLegacy16getLightEmissionERK5Block);
-        vtable[BlockLegacy_getLightEmission] = ADDRESS(_getLightEmissionPatch);
+        vtable[BlockLegacy_getLightEmission] = ADDRESS(LightEmission::_getLightEmissionPatch);
     }
 }
 
@@ -48,8 +48,9 @@ extern "C" {
 
     #define MOD KEXBlocksModule::getOrCreateModifier(id)
 
-    __EXPORT__(void, nativeEnableComparatorSignalCallback) {
+    __EXPORT__(void, nativeEnableComparatorSignalCallback, jboolean isCallbackForced) {
         MOD->emitsComparatorSignal = true;
+        if(isCallbackForced) KEXBlocksModule::ComparatorSignal::forced.emplace(id);
     }
     __EXPORT__(void, nativeEnableDynamicLightEmission) {
         MOD->dynamicLightEmission = true;

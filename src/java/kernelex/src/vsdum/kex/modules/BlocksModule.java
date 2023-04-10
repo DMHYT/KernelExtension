@@ -15,7 +15,7 @@ import vsdum.kex.util.mcmath.Direction;
 
 public class BlocksModule {
 
-    protected static native void nativeEnableComparatorSignalCallback(int id);
+    protected static native void nativeEnableComparatorSignalCallback(int id, boolean isCallbackForced);
     protected static native void nativeEnableDynamicLightEmission(int id);
     protected static native void nativeSetLightEmission(int id, int data, byte lightLevel);
     protected static native byte nativeGetLightEmission(int id, int data);
@@ -33,13 +33,23 @@ public class BlocksModule {
 
     public static void registerComparatorSignalCallback(int id, ComparatorSignalCallback callback)
     {
-        nativeEnableComparatorSignalCallback(id);
+        registerComparatorSignalCallback(id, callback, false);
+    }
+
+    public static void registerComparatorSignalCallback(int id, ComparatorSignalCallback callback, boolean isCallbackForced)
+    {
+        nativeEnableComparatorSignalCallback(id, isCallbackForced);
         comparatorSignalCallbacks.put(id, callback);
     }
 
     public static void registerComparatorSignalCallbackJS(int id, ComparatorSignalCallbackJS callback)
     {
-        registerComparatorSignalCallback(id, (block, world, pos, side) -> callback.getComparatorSignal(block, world, new Coords(pos.x, pos.y, pos.z, side.getIndex())));
+        registerComparatorSignalCallbackJS(id, callback, false);
+    }
+
+    public static void registerComparatorSignalCallbackJS(int id, ComparatorSignalCallbackJS callback, boolean isCallbackForced)
+    {
+        registerComparatorSignalCallback(id, (block, world, pos, side) -> callback.getComparatorSignal(block, world, new Coords(pos.x, pos.y, pos.z, side.getIndex())), isCallbackForced);
     }
 
     public static void setLightEmission(int id, int data, byte lightLevel)
