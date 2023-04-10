@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import com.zhekasmirnov.innercore.api.NativeItem;
+
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import vsdum.kex.japi.component.IdentifiedComponentFactory;
@@ -24,9 +26,12 @@ public class ItemRegistry {
                 ItemsModule.setDynamicFoodValues(item.id, ((IDynamicFood) item)::getFoodValues);
             }
         })
-        .registerIdentifiedComponent(IHasDynamicIcon.class, ItemEvents.getIconEvents::put)
-        .registerIdentifiedComponent(IHasDynamicUseDuration.class, (id, component) -> ItemsModule.setMaxUseDurationDynamic(id, component::getUseDuration))
-        .registerIdentifiedComponent(IHasTooltip.class, (id, component) -> ItemsModule.addTooltip(id, component::addInformation))
+        .registerIdentifiedComponent(IHasDynamicIcon.class, (id, component) -> {
+            NativeItem.setItemRequiresIconOverride(id, true);
+            ItemEvents.getIconEvents.put(id, component);
+        })
+        .registerIdentifiedComponent(ItemsModule.UseDurationCallback.class, ItemsModule::setMaxUseDurationDynamic)
+        .registerIdentifiedComponent(IHasTooltip.class, (id, component) -> ItemsModule.addTooltip(id, component, 0, component.isTooltipCallbackForced()))
         .registerIdentifiedComponent(IHasUseResult.class, ItemEvents.onCompleteUsingEvents::put)
         .registerIdentifiedComponent(INoTargetUsable.class, ItemEvents.onUseNoTargetEvents::put)
         .registerIdentifiedComponent(IThrowable.class, ItemEvents.onProjectileHitEvents::put)

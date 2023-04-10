@@ -60,7 +60,7 @@ public class BlockRegistry {
             BlockEvents.stepOnEvents.put(id, component);
         })
         .registerIdentifiedComponent(IUsable.class, BlockEvents.onUseEvents::put)
-        .registerIdentifiedComponent(BlocksModule.ComparatorSignalCallback.class, BlocksModule::registerComparatorSignalCallback);
+        .registerIdentifiedComponent(IComparatorSignalEmitter.class, (id, component) -> BlocksModule.registerComparatorSignalCallback(id, component, component.isComparatorCallbackForced()));
 
     @NonNull public static <T extends Block> T register(@NonNull T block)
     {
