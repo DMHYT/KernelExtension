@@ -1,6 +1,9 @@
 package vsdum.kex.common;
 
 import vsdum.kex.KernelExtension;
+import vsdum.kex.japi.blocks.BlockRegistry;
+import vsdum.kex.japi.internal.ResourceManager;
+import vsdum.kex.japi.internal.block.model.BlockModelManager;
 import vsdum.kex.modules.LootModule;
 import vsdum.kex.modules.misc.SmithingTableRecipes;
 import vsdum.kex.modules.tileentity.TileEntityData;
@@ -21,7 +24,7 @@ public class ModCallbacks {
     
     public static void onLevelDisplayed()
     {
-        AddonUtils.onLevelDisplayed();
+        BlockModelManager.onLevelDisplayed();
         LootModule.onLevelDisplayed();
         SmithingTableRecipes.printRecipesCount();
     }
@@ -51,7 +54,10 @@ public class ModCallbacks {
 
     public static void onModsLoaded()
     {
+        AddonUtils.onModsLoaded();
         LangInjector.run(modDir + "data/lang/");
+        ResourceManager.onModsLoaded();
+        BlockRegistry.onModsLoaded();
         I18n.onModsLoaded();
     }
 
