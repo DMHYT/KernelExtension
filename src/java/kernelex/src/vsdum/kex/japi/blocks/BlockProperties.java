@@ -1,5 +1,10 @@
 package vsdum.kex.japi.blocks;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.zhekasmirnov.apparatus.minecraft.enums.GameEnums;
 import com.zhekasmirnov.innercore.api.NativeBlock;
 
@@ -29,6 +34,7 @@ public class BlockProperties {
     private String sound = "";
     private int terrainMaterial = 3;
     private float translucency = 1.0f;
+    private Map<Integer, List<Float>> shapes = new HashMap<>();
 
     public BlockProperties() {}
 
@@ -72,7 +78,7 @@ public class BlockProperties {
         NativeBlock.setLightLevel(block.id, this.lightLevel);
         NativeBlock.setLightOpacity(block.id, this.lightOpacity);
         NativeBlock.setMapColor(block.id, this.mapColor);
-        ToolsModule.setBlockMaterialName(block.id, this.material);
+        if(this.material != null) ToolsModule.setBlockMaterialName(block.id, this.material);
         NativeBlock.setMaterialBase(block.id, this.materialBase);
         NativeBlock.setRenderAllFaces(block.id, this.renderAllFaces);
         NativeBlock.setRenderLayer(block.id, this.renderLayer);
@@ -81,6 +87,14 @@ public class BlockProperties {
         NativeBlock.setSoundType(block.id, this.sound);
         NativeBlock.setMaterial(block.id, this.terrainMaterial);
         NativeBlock.setTranslucency(block.id, this.translucency);
+        for(int variant = 0; variant < block.defineData.length(); variant++)
+        {
+            if(shapes.containsKey(variant))
+            {
+                List<Float> shape = shapes.get(variant);
+                NativeBlock.setShape(block.id, variant, shape.get(0), shape.get(1), shape.get(2), shape.get(3), shape.get(4), shape.get(5));
+            }
+        }
     }
 
     public BlockProperties setCanBeExtraBlock(boolean can)
@@ -194,6 +208,16 @@ public class BlockProperties {
     public BlockProperties setTranslucency(float translucency)
     {
         this.translucency = translucency;
+        return this;
+    }
+
+    public BlockProperties setShape(int data, float startX, float startY, float startZ, float endX, float endY, float endZ)
+    {
+        if(data < 0)
+            for(int i = 0; i < 16; i++)
+                setShape(i, startX, startY, startZ, endX, endY, endZ);
+        else if(data < 16)
+            this.shapes.put(data, Arrays.asList(startX, startY, startZ, endX, endY, endZ));
         return this;
     }
 

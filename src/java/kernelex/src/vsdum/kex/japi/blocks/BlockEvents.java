@@ -12,13 +12,7 @@ import com.zhekasmirnov.innercore.api.NativeItemInstanceExtra;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import vsdum.kex.japi.blocks.components.ICustomPlaceBehavior;
-import vsdum.kex.japi.blocks.components.IEntityInsideListener;
-import vsdum.kex.japi.blocks.components.IExplosionListener;
-import vsdum.kex.japi.blocks.components.IHasDrops;
-import vsdum.kex.japi.blocks.components.INeighborChangeListener;
-import vsdum.kex.japi.blocks.components.IStepOnListener;
-import vsdum.kex.japi.blocks.components.IUsable;
+import vsdum.kex.japi.blocks.components.*;
 import vsdum.kex.natives.Actor;
 import vsdum.kex.natives.ExtendedBlockSource;
 import vsdum.kex.natives.Player;

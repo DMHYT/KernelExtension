@@ -40,12 +40,12 @@ public class DirectionalBlock extends Block implements ICustomPlaceBehavior, IHa
         while(yaw < 0) yaw += 4;
         while(yaw > 3) yaw -= 4;
         int meta = new int[]{ 2, 0, 3, 1 }[yaw];
-        world.setBlock(pos.x, pos.y, pos.z, this.id, meta);
+        world.setBlock(pos.x, pos.y, pos.z, this.id, item.data / 4 * 4 + meta);
     }
 
     @Override @NonNull public List<ItemStack> getDrops(BlockState state, BlockPos pos, ExtendedBlockSource world, ItemStack item)
     {
-        return Arrays.asList(new ItemStack(state.id, 1, state.data));
+        return Arrays.asList(new ItemStack(state.id, 1, state.data / 4 * 4));
     }
 
 }

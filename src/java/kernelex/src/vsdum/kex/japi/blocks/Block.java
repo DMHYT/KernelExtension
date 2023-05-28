@@ -43,6 +43,7 @@ public class Block implements IRegistrable<Block>, IdentifierHolder {
 
     public final Block addVariation(JSONObject variation)
     {
+        if(this.defineData == null) this.defineData = new JSONArray();
         this.defineData.put(variation);
         return this;
     }
