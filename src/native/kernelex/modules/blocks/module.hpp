@@ -3,6 +3,7 @@
 
 #include <mod.h>
 
+#include <innercore/ic_render.h>
 #include <innercore/id_conversion_map.h>
 
 #include <commontypes.hpp>
@@ -19,6 +20,18 @@
 
 class KEXBlocksModule : public Module {
     public:
+    class RenderConditions {
+        public:
+        class WeightedRandomCondition : public ICRenderCondition {
+            public:
+            virtual bool apply(BlockSource*, const Block&, const BlockPos&);
+            int minValue = 0;
+            int maxValue = 0;
+            int weightSum = 0;
+            WeightedRandomCondition(int min, int max, int sum)
+                : minValue(min), maxValue(max), weightSum(sum) {}
+        };
+    };
     class ComparatorSignal {
         public:
         static std::unordered_set<int> forced;
