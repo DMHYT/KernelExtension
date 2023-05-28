@@ -360,6 +360,7 @@ declare module vsdum {
                 constructor(entity: number);
                 constructor(actor: Actor);
                 setSleeping(sleeping: boolean): void;
+                isSprinting(): boolean;
                 setSprinting(sprinting: boolean): void;
                 getSpeed(): number;
                 setSpeed(speed: number): void;

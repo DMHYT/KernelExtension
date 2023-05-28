@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 public class Mob extends Actor {
 
     protected static native void nativeSetSleeping(long ptr, boolean sleeping);
+    protected static native boolean nativeIsSprinting(long ptr);
     protected static native void nativeSetSprinting(long ptr, boolean sprinting);
     protected static native float nativeGetSpeed(long ptr);
     protected static native void nativeSetSpeed(long ptr, float speed);
@@ -128,6 +129,11 @@ public class Mob extends Actor {
     public void setSleeping(boolean sleeping)
     {
         nativeSetSleeping(this.pointer, sleeping);
+    }
+
+    public boolean isSprinting()
+    {
+        return nativeIsSprinting(this.pointer);
     }
     
     public void setSprinting(boolean sprinting)
