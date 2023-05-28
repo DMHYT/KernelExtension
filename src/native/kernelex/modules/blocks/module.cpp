@@ -25,6 +25,10 @@ void KEXBlocksModule::BlockParamsModifier::applyTo(int id) {
         VTABLE_FIND_OFFSET(BlockLegacy_getLightEmission, _ZTV11BlockLegacy, _ZNK11BlockLegacy16getLightEmissionERK5Block);
         vtable[BlockLegacy_getLightEmission] = ADDRESS(LightEmission::_getLightEmissionPatch);
     }
+    if(onStepOffCallbackEnabled) {
+        VTABLE_FIND_OFFSET(BlockLegacy_onStepOff, _ZTV11BlockLegacy, _ZNK11BlockLegacy9onStepOffER5ActorRK8BlockPos);
+        vtable[BlockLegacy_onStepOff] = ADDRESS(_patchedOnStepOff);
+    }
 }
 
 
@@ -55,6 +59,9 @@ extern "C" {
     __EXPORT__(void, nativeEnableDynamicLightEmission) {
         MOD->dynamicLightEmission = true;
         KEXBlocksModule::LightEmission::lightData.emplace(id, 0ll);
+    }
+    __EXPORT__(void, nativeEnableOnStepOffCallback) {
+        MOD->onStepOffCallbackEnabled = true;
     }
     __EXPORT__(void, nativeSetLightEmission, jint data, jbyte lightLevel) {
         KEXBlocksModule::LightEmission::set(id, data, (unsigned char) lightLevel);

@@ -1234,12 +1234,16 @@ declare module vsdum {
             export class BlocksModule extends java.lang.Object {
                 static class: java.lang.Class<BlocksModule>;
                 static registerComparatorSignalCallbackJS(id: number, callback: BlocksModule.ComparatorSignalCallbackJS, isCallbackForced?: boolean): void;
+                static registerOnStepOffCallback(id: number, callback: BlocksModule.OnStepOffCallback): void;
                 static setLightEmission(id: number, data: number, lightLevel: number): void;
                 static getLightEmission(id: number, data: number): number;
             }
             export module BlocksModule {
                 export interface ComparatorSignalCallbackJS {
                     (block: BlockState, world: natives.ExtendedBlockSource, coords: Callback.ItemUseCoordinates): number;
+                }
+                export interface OnStepOffCallback {
+                    (world: natives.ExtendedBlockSource, pos: Vector, state: BlockState, entity: natives.Actor): void;
                 }
             }
         }
@@ -1588,6 +1592,7 @@ declare namespace Callback {
     export function addCallback(name: "ChangeCarriedItem", func: (player: number, oldItem: ItemInstance, newItem: ItemInstance, hand: 0 | 1) => void, priority?: number): void;
     export function addCallback(name: "EntitySneakChanged", func: (entity: number, sneaking: boolean) => void, priority?: number): void;
     export function addCallback(name: "ItemTooltip", func: vsdum.kex.modules.OnTooltipCallback, priority?: number): void;
+    export function addCallback(name: "BlockEventEntityStepOff", func: Block.EntityStepOffFunction, priority?: number): void;
     export var on: typeof addCallback;
     export var once: typeof addCallback;
     export var off: typeof addCallback;
@@ -1663,8 +1668,11 @@ declare namespace Recipes {
 
 declare namespace Block {
     type ComparatorSignalFunction = vsdum.kex.modules.BlocksModule.ComparatorSignalCallbackJS;
+    type EntityStepOffFunction = EntityStepOnFunction;
     export function registerComparatorSignalFunctionForID(id: number, func: ComparatorSignalFunction, isCallbackForced?: boolean): void;
     export function registerComparatorSignalFunction(id: string | number, func: ComparatorSignalFunction, isCallbackForced?: boolean): void;
+    export function registerEntityStepOffFunctionForID(id: number, func: EntityStepOffFunction): void;
+    export function registerEntityStepOffFunction(id: string | number, func: EntityStepOffFunction): void;
     export function getLightLevel(id: number, data?: number): number;
     export function setLightLevel(id: number, lightLevel: number): void;
     export function setLightLevel(id: number, data: number, lightLevel: number): void;

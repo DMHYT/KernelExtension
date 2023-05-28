@@ -251,7 +251,7 @@ public abstract class BlockActor implements INativeInterface {
                 this.container.setClientContainerTypeName(this.networkEntityType.getTypeName());
                 this.getContainerServerEvents()
                     .build()
-                    .forEach((eventName, eventHandler) -> this.container.addServerEventListener(eventName, eventHandler));
+                    .forEach(this.container::addServerEventListener);
                 this.networkData = new SyncedNetworkData();
                 this.networkEntity = new NetworkEntity(this.networkEntityType, this);
                 this.networkData.setClients(this.networkEntity.getClients());

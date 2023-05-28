@@ -78,6 +78,7 @@ public class BlockRegistry {
             NativeBlock.setReceivingEntityStepOnEvent(id, true);
             BlockEvents.stepOnEvents.put(id, component);
         })
+        .registerIdentifiedComponent(IStepOffListener.class, BlocksModule::registerOnStepOffCallback)
         .registerIdentifiedComponent(IUsable.class, BlockEvents.onUseEvents::put)
         .registerIdentifiedComponent(IComparatorSignalEmitter.class, (id, component) -> BlocksModule.registerComparatorSignalCallback(id, component, component.isComparatorCallbackForced()))
         .registerComponent(ICustomCollisionShape.class, block -> {

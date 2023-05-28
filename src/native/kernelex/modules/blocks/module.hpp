@@ -8,6 +8,8 @@
 
 #include <commontypes.hpp>
 
+#include <Actor.hpp>
+#include <ActorUniqueID.hpp>
 #include <Block.hpp>
 #include <BlockLegacy.hpp>
 #include <BlockSource.hpp>
@@ -59,6 +61,7 @@ class KEXBlocksModule : public Module {
         public:
         bool dynamicLightEmission = false;
         bool emitsComparatorSignal = false;
+        bool onStepOffCallbackEnabled = false;
         BlockParamsModifier() {}
         void applyTo(int id);
     };
@@ -80,6 +83,9 @@ class KEXBlocksModule : public Module {
     }
     static inline unsigned long long packBlockLong(int id, int data, int runtimeId) {
         return ((((unsigned long long) id << 16) | (unsigned long long) data) | ((unsigned long long) runtimeId << 32));
+    }
+    static inline void _patchedOnStepOff(BlockLegacy* block, Actor& actor, const BlockPos& pos) {
+        KEXJavaBridge::BlocksModule::onStepOff(IdConversion::dynamicToStatic(block->id, IdConversion::BLOCK), pos.x, pos.y, pos.z, (jlong) actor.getUniqueID()->id);
     }
     KEXBlocksModule(Module* parent): Module(parent, "kex.blocks") {}
     virtual void initialize();

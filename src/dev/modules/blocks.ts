@@ -8,5 +8,12 @@ Block.registerComparatorSignalFunction = (id, func, isCallbackForced?) => {
     Block.registerComparatorSignalFunctionForID(numericID, func, isCallbackForced);
 }
 
+Block.registerEntityStepOffFunctionForID = (id, func) => BlocksModule.registerOnStepOffCallback(id, (world, pos, state, entity) => func(pos, state, entity.getUniqueID()));
+Block.registerEntityStepOffFunction = (id, func) => {
+    const numericID = Block.getNumericId(id);
+    if(numericID == -1) return;
+    Block.registerEntityStepOffFunctionForID(numericID, func);
+}
+
 Block.getLightLevel = (id: number, data?: number) => BlocksModule.getLightEmission(id, data ?? 0);
 Block.setLightLevel = (id: number, data: number, lightLevel?: number) => typeof lightLevel === "number" ? BlocksModule.setLightEmission(id, data, lightLevel) : BlocksModule.setLightEmission(id, 0, data);
