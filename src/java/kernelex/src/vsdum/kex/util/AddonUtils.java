@@ -72,49 +72,30 @@ public final class AddonUtils {
         } else return NativeAPI.convertNameId(IDRegistry.getNameByID(id));
     }
 
-    private static final HashMap<String, Integer> vanillaIdShortcut = getVanillaIdShortcut();
+    private static final Map<String, Integer> identifierToNumeric = new HashMap<>();
 
-    @SuppressWarnings("unchecked")
-    private static final HashMap<String, Integer> getVanillaIdShortcut()
+    @SuppressWarnings("unchecked") public static void onModsLoaded()
     {
-        try {
-            Field field = com.zhekasmirnov.innercore.api.unlimited.IDRegistry.class.getDeclaredField("vanillaIdShortcut");
-            field.setAccessible(true);
-            return (HashMap<String, Integer>) field.get(null);
-        } catch(Throwable ex) {}
-        return null;
-    }
-
-    private static final Map<String, Integer> innercoreIdentifierToNumeric = new HashMap<>();
-
-    public static void onLevelDisplayed()
-    {
-        try {
-            JSONObject json = FileTools.readJSON(FileTools.DIR_PACK + "/innercore/mods/.staticids").getJSONObject("id");
-            JSONObject blocks = json.getJSONObject("blocks");
-            JSONObject items = json.getJSONObject("items");
-            Iterator<String> blocksIter = blocks.keys();
-            Iterator<String> itemsIter = items.keys();
-            while(blocksIter.hasNext())
-            {
-                String k = blocksIter.next();
-                innercoreIdentifierToNumeric.put("block_" + NativeAPI.convertNameId(k), blocks.getInt(k));
-            }
-            while(itemsIter.hasNext())
-            {
-                String k = itemsIter.next();
-                innercoreIdentifierToNumeric.put("item_" + NativeAPI.convertNameId(k), items.getInt(k));
-            }
-            Callback.invokeAPICallback("KEX-InnerCoreIdsCached", new Object[]{});
-        } catch(Throwable ex) {}
+        new MapBuilder<String, String>()
+            .add("vanillaIdShortcut", "")
+            .add("blockIdShortcut", "block_")
+            .add("itemIdShortcut", "block_")
+            .build()
+            .forEach((fieldName, prefix) -> {
+                try {
+                    Field field = com.zhekasmirnov.innercore.api.unlimited.IDRegistry.class.getDeclaredField(fieldName);
+                    field.setAccessible(true);
+                    ((HashMap<String, Integer>) field.get(null))
+                        .forEach((stringID, numericID) -> identifierToNumeric.put(prefix + NativeAPI.convertNameId(stringID), numericID));
+                } catch(Throwable ex) {}
+            });
+        Callback.invokeAPICallback("KEX-InnerCoreIdsCached", new Object[]{});
     }
 
     public static int getNumericIdFromIdentifier(String identifier)
     {
         String identifierWithoutNamespace = identifier.startsWith("minecraft:") ? identifier.substring(10) : identifier;
-        if(vanillaIdShortcut.containsKey(identifierWithoutNamespace)) return vanillaIdShortcut.get(identifierWithoutNamespace);
-        if(innercoreIdentifierToNumeric.containsKey(identifierWithoutNamespace)) return innercoreIdentifierToNumeric.get(identifierWithoutNamespace);
-        return -1;
+        return identifierToNumeric.getOrDefault(identifierWithoutNamespace, -1);
     }
 
 }
