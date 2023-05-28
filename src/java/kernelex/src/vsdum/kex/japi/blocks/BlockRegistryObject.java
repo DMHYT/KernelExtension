@@ -9,6 +9,7 @@ import com.zhekasmirnov.innercore.api.unlimited.BlockRegistry;
 
 import android.support.annotation.NonNull;
 
+import static vsdum.kex.japi.blocks.BlockRegistry.preComponentFactory;
 import static vsdum.kex.japi.blocks.BlockRegistry.componentFactory;
 
 public class BlockRegistryObject<T extends Block> extends RegistryObject<T> {
@@ -25,13 +26,13 @@ public class BlockRegistryObject<T extends Block> extends RegistryObject<T> {
     
     @Override @NonNull public final T register()
     {
-        if(this.object.defineData == null)
+        if(this.object.defineData != null)
         {
-            throw new IllegalStateException("Cannot create block " + this.object.nameID + " because its define data was not specified");
+            preComponentFactory.apply(this.object);
+            this.createBlock();
+            this.object.properties.apply(this.object);
+            componentFactory.apply(this.object);
         }
-        this.createBlock();
-        this.object.properties.apply(this.object);
-        componentFactory.apply(this.object);
         return this.object;
     }
 
