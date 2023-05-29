@@ -81,7 +81,12 @@ public class ExtendedBlockSource extends NativeBlockSource implements INativeInt
 
     @Nullable public BlockActor getCustomBlockEntity(BlockPos pos)
     {
-        long ptr = TileEntityNativeAPI.get(this.pointer, pos.x, pos.y, pos.z);
+        return this.getCustomBlockEntity(pos.x, pos.y, pos.z);
+    }
+
+    @Nullable public BlockActor getCustomBlockEntity(int x, int y, int z)
+    {
+        long ptr = TileEntityNativeAPI.get(this.pointer, x, y, z);
         if(ptr == 0L || !TileEntityData.customTileEntityMap.containsKey(ptr)) return null;
         return TileEntityData.customTileEntityMap.get(ptr);
     }
