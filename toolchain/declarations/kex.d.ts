@@ -1234,6 +1234,7 @@ declare module vsdum {
             export class BlocksModule extends java.lang.Object {
                 static class: java.lang.Class<BlocksModule>;
                 static registerComparatorSignalCallbackJS(id: number, callback: BlocksModule.ComparatorSignalCallbackJS, isCallbackForced?: boolean): void;
+                static registerOnStepOnCallback(id: number, callback: BlocksModule.OnStepOnCallback): void;
                 static registerOnStepOffCallback(id: number, callback: BlocksModule.OnStepOffCallback): void;
                 static setLightEmission(id: number, data: number, lightLevel: number): void;
                 static getLightEmission(id: number, data: number): number;
@@ -1242,9 +1243,10 @@ declare module vsdum {
                 export interface ComparatorSignalCallbackJS {
                     (block: BlockState, world: natives.ExtendedBlockSource, coords: Callback.ItemUseCoordinates): number;
                 }
-                export interface OnStepOffCallback {
+                export interface OnStepOnCallback {
                     (world: natives.ExtendedBlockSource, pos: Vector, state: BlockState, entity: natives.Actor): void;
                 }
+                export type OnStepOffCallback = OnStepOnCallback;
             }
         }
     }

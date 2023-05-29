@@ -25,7 +25,6 @@ const BlockEvents = WRAP_JAVA("vsdum.kex.japi.blocks.BlockEvents");
     }
 })();
 Callback.addCallback("BlockEventEntityInside", (coords, block, entity) => BlockEvents.entityInside(block.id, block.data, Entity.getDimension(entity), coords.x, coords.y, coords.z, entity));
-Callback.addCallback("BlockEventEntityStepOn", (coords, block, entity) => BlockEvents.stepOn(Entity.getDimension(entity), coords.x, coords.y, coords.z, block.id, block.data, entity));
 Callback.addCallback("BlockEventNeighbourChange", (coords, block, changedCoords, region) => BlockEvents.neighborChanged(block.id, block.data, region.getDimension(), coords.x, coords.y, coords.z, changedCoords.x, changedCoords.y, changedCoords.z));
 (() => {
     // @ts-ignore

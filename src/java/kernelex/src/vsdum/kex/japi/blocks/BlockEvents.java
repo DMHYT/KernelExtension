@@ -25,7 +25,6 @@ public class BlockEvents {
     static final Map<Integer, IUsable> onUseEvents = new HashMap<>();
     static final Map<Integer, IHasDrops> getDropsEvents = new HashMap<>();
     static final Map<Integer, IEntityInsideListener> entityInsideEvents = new HashMap<>();
-    static final Map<Integer, IStepOnListener> stepOnEvents = new HashMap<>();
     static final Map<Integer, INeighborChangeListener> neighborChangedEvents = new HashMap<>();
     static final Map<Integer, ICustomPlaceBehavior> onPlaceEvents = new HashMap<>();
     static final Map<Integer, IExplosionListener> popResourcesEvents = new HashMap<>();
@@ -50,14 +49,6 @@ public class BlockEvents {
         if(entityInsideEvents.containsKey(id))
         {
             entityInsideEvents.get(id).entityInside(new BlockState(id, data), ExtendedBlockSource.getDefaultForDimension(dimension), new BlockPos(x, y, z), new Actor(entity));
-        }
-    }
-
-    public static void stepOn(int dimension, int x, int y, int z, int id, int data, long entity)
-    {
-        if(stepOnEvents.containsKey(id))
-        {
-            stepOnEvents.get(id).stepOn(ExtendedBlockSource.getDefaultForDimension(dimension), new BlockPos(x, y, z), new BlockState(id, data), new Actor(entity));
         }
     }
 

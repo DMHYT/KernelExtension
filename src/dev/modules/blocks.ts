@@ -8,6 +8,16 @@ Block.registerComparatorSignalFunction = (id, func, isCallbackForced?) => {
     Block.registerComparatorSignalFunctionForID(numericID, func, isCallbackForced);
 }
 
+Block.registerEntityStepOnFunctionForID = (id, func) => {
+    BlocksModule.registerOnStepOnCallback(id, (world, pos, state, entity) => func(pos, state, entity.getUniqueID()));
+    return true;
+}
+Block.registerEntityStepOnFunction = (id, func) => {
+    const numericID = Block.getNumericId(id);
+    if(numericID == -1) return;
+    return Block.registerEntityStepOnFunctionForID(numericID, func);
+}
+
 Block.registerEntityStepOffFunctionForID = (id, func) => BlocksModule.registerOnStepOffCallback(id, (world, pos, state, entity) => func(pos, state, entity.getUniqueID()));
 Block.registerEntityStepOffFunction = (id, func) => {
     const numericID = Block.getNumericId(id);

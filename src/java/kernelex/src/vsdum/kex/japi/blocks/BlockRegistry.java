@@ -74,10 +74,7 @@ public class BlockRegistry {
                 }
             });
         })
-        .registerIdentifiedComponent(IStepOnListener.class, (id, component) -> {
-            NativeBlock.setReceivingEntityStepOnEvent(id, true);
-            BlockEvents.stepOnEvents.put(id, component);
-        })
+        .registerIdentifiedComponent(IStepOnListener.class, BlocksModule::registerOnStepOnCallback)
         .registerIdentifiedComponent(IStepOffListener.class, BlocksModule::registerOnStepOffCallback)
         .registerIdentifiedComponent(IUsable.class, BlockEvents.onUseEvents::put)
         .registerIdentifiedComponent(IComparatorSignalEmitter.class, (id, component) -> BlocksModule.registerComparatorSignalCallback(id, component, component.isComparatorCallbackForced()))

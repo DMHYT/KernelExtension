@@ -48,6 +48,7 @@ namespace KEXJavaBridge {
     }
     namespace BlocksModule {
         int getComparatorSignal(jlong blockLong, jlong blockSourcePtr, jint x, jint y, jint z, jint side);
+        void onStepOn(jint, jint x, jint y, jint z, jlong entity);
         void onStepOff(jint id, jint x, jint y, jint z, jlong entity);
     }
     namespace DamageModule {
