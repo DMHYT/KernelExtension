@@ -41,6 +41,7 @@ class ItemStackBase {
     ItemStackBase(const Item&, int);
     short getMaxDamage() const;
     bool isBlock() const;
+    Block* getBlock() const;
     Item* getItem() const;
     bool isNull() const;
     int getId() const;

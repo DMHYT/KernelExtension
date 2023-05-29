@@ -6,32 +6,35 @@
 
 #include <commontypes.hpp>
 
+#include <Block.hpp>
+
 #include "../../../utils/java_utils.hpp"
 #include "tooltip.hpp"
 
 
-std::unordered_map<int, std::string> KEXItemsTooltipModule::tooltipCache;
+std::unordered_map<long long, std::string> KEXItemsTooltipModule::tooltipCache;
 std::unordered_map<int, bool> KEXItemsTooltipModule::isCallbackForced;
 unsigned short KEXItemsTooltipModule::currentCalls = 0;
 long long KEXItemsTooltipModule::lastTimestamp = 0ll;
 
 
-void KEXItemsTooltipModule::append(int id, const ItemStackBase* stack, Level* level, stl::string& textRef) {
+void KEXItemsTooltipModule::append(int id, int damageValue, const ItemStackBase* stack, Level* level, stl::string& textRef) {
     if(lastTimestamp == 0ll) lastTimestamp = getTimeMilliseconds();
     long long current = getTimeMilliseconds();
+    long long idDataLong = ((unsigned long long) id << 32) | (unsigned long long) damageValue;
     if(current < lastTimestamp + 1000ll) {
         lastTimestamp = current;
         currentCalls = 0;
     }
-    if(!isCachePresent(id)) {
+    if(!isCachePresent(idDataLong)) {
         JNIEnv* env = KEXJavaUtils::attach();
         jstring output = KEXJavaBridge::ItemsModule::appendFormattedHovertext((jlong) stack, (jlong) level, textRef.c_str());
         const char* cOutput = env->GetStringUTFChars(output, 0);
-        tooltipCache.emplace(id, cOutput);
+        tooltipCache.emplace(idDataLong, cOutput);
         env->ReleaseStringUTFChars(output, cOutput);
         env->DeleteLocalRef(output);
     } else {
-        auto& cache = tooltipCache.at(id);
+        auto& cache = tooltipCache.at(idDataLong);
         unsigned short limit = isTooltipCallbackForced(id) ? 20 : 5;
         if(currentCalls < limit) {
             JNIEnv* env = KEXJavaUtils::attach();
@@ -43,7 +46,7 @@ void KEXItemsTooltipModule::append(int id, const ItemStackBase* stack, Level* le
             currentCalls++;
         }
     }
-    textRef = tooltipCache.at(id).c_str();
+    textRef = tooltipCache.at(idDataLong).c_str();
 }
 
 
@@ -55,7 +58,8 @@ void KEXItemsTooltipModule::initialize() {
         SYMBOL("mcpe", "_ZNK4Item24appendFormattedHovertextERK13ItemStackBaseR5LevelRNSt6__ndk112basic_stringIcNS5_11char_traitsIcEENS5_9allocatorIcEEEEb"),
         LAMBDA((Item* item, const ItemStackBase& stack, Level& level, stl::string& text, bool b), {
             int id = IdConversion::dynamicToStatic(stack.getId(), IdConversion::ITEM);
-            append(id, &stack, &level, text);
+            int damageValue = stack.isBlock() ? stack.getBlock()->getVariant() : stack.getDamageValue();
+            append(id, damageValue, &stack, &level, text);
         }, ),
         HookManager::RETURN | HookManager::LISTENER
     );
