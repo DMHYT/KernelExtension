@@ -25,12 +25,12 @@ public class KernelExtension {
 
     public static final byte[] getVersion()
     {
-        return new byte[]{ 3, 0, 0 };
+        return new byte[]{ 4, 0, 0 };
     }
 
     public static final short getVersionCode()
     {
-        return 300;
+        return 400;
     }
 
     public static final Random rand = new Random();
