@@ -835,6 +835,7 @@ declare module vsdum {
                 static getDefaultForDimension(dimensionId: number): Nullable<ExtendedBlockSource>;
                 getLevel(): Nullable<Level>;
                 getDimensionObject(): Nullable<Dimension>;
+                getCustomBlockEntity(x: number, y: number, z: number): Nullable<modules.TileEntityModule.BlockActor>;
             }
         }
     }
@@ -1408,10 +1409,47 @@ declare module vsdum {
         export module modules {
             export module TileEntityModule {
                 export interface TileEntityCreationCallback {
-                    (pointer: number, type: number, pos: Vector): any;
+                    (pointer: number, type: number, pos: Vector): BlockActor;
                 }
                 export function registerTileEntityType(typeName: any_string, callback: TileEntityCreationCallback): number;
                 export function registerForBlock(blockID: number, type: number): void;
+                export interface BlockActor extends common.INativeInterface {
+                    networkEntityType: Nullable<NetworkEntityType>;
+                    networkEntity: Nullable<NetworkEntity>;
+                    networkData: Nullable<SyncedNetworkData>;
+                    container: Nullable<ItemContainer>;
+                    getBlockPos(): Vector;
+                    getDimension(): number;
+                    updateBlockPos(): BlockActor;
+                    getBlockState(): Nullable<BlockState>;
+                    getWorld(): Nullable<natives.ExtendedBlockSource>;
+                    hasWorld(): boolean;
+                    getType(): number;
+                    getLife(): number;
+                    isClient(): boolean;
+                    isServer(): boolean;
+                    load(data: NBT.CompoundTag): void;
+                    save(data: NBT.CompoundTag): boolean;
+                    getUpdatePacket(): Nullable<NBT.CompoundTag>;
+                    onUpdatePacket(packet: NBT.CompoundTag): void;
+                    getUpdatePacketJSON(): Nullable<org.json.JSONObject>;
+                    onUpdatePacketJSON(packet: org.json.JSONObject): void;
+                    tick(): void;
+                    isFinished(): boolean;
+                    onChanged(): void;
+                    isMovable(): boolean;
+                    onPlace(): void;
+                    onMove(): void;
+                    onRemoved(): void;
+                    triggerEvent(id: number, type: number): void;
+                    getCustomName(): Nullable<jstring>;
+                    setCustomName(customName: any_string): void;
+                    getName(): Nullable<jstring>;
+                    onChunkLoaded(): void;
+                    onChunkUnloaded(): void;
+                    onUse(player: natives.Player, side: number, vec: Vector): boolean;
+                    getScreenByName(container: ItemContainer, screenName: any_string): Nullable<UI.IWindow>;
+                }
             }
         }
     }
@@ -1748,6 +1786,7 @@ declare enum ETileEntityType {
     ToolsModule: typeof vsdum.kex.modules.ToolsModule,
     DamageModule: typeof vsdum.kex.modules.DamageModule,
     CommandsModule: typeof vsdum.kex.modules.CommandsModule,
+    TileEntityModule: typeof vsdum.kex.modules.TileEntityModule,
     BlocksModule: typeof vsdum.kex.modules.BlocksModule,
     LootTableContext: typeof vsdum.kex.natives.LootTableContext,
     MobEffect: typeof vsdum.kex.natives.MobEffect,
