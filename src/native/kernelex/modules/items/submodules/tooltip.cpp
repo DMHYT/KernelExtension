@@ -6,8 +6,6 @@
 
 #include <commontypes.hpp>
 
-#include <Block.hpp>
-
 #include "../../../utils/java_utils.hpp"
 #include "tooltip.hpp"
 
@@ -57,9 +55,7 @@ void KEXItemsTooltipModule::initialize() {
     HookManager::addCallback(
         SYMBOL("mcpe", "_ZNK4Item24appendFormattedHovertextERK13ItemStackBaseR5LevelRNSt6__ndk112basic_stringIcNS5_11char_traitsIcEENS5_9allocatorIcEEEEb"),
         LAMBDA((Item* item, const ItemStackBase& stack, Level& level, stl::string& text, bool b), {
-            int id = IdConversion::dynamicToStatic(stack.getId(), IdConversion::ITEM);
-            int damageValue = stack.isBlock() ? stack.getBlock()->getVariant() : stack.getDamageValue();
-            append(id, damageValue, &stack, &level, text);
+            append(IdConversion::dynamicToStatic(stack.getId(), IdConversion::ITEM), stack.getAuxValue(), &stack, &level, text);
         }, ),
         HookManager::RETURN | HookManager::LISTENER
     );

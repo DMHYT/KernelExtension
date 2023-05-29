@@ -58,6 +58,7 @@ class ItemStackBase {
     ItemEnchants constructItemEnchantsFromUserData() const;
     // Added by InnerCore
     unsigned short getCount() const;
+    int getAuxValue() const;
 };
 
 
