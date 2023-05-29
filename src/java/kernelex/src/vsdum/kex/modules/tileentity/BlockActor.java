@@ -73,7 +73,7 @@ public abstract class BlockActor implements INativeInterface {
         return this;
     }
 
-    public BlockState getBlockState()
+    @Nullable public BlockState getBlockState()
     {
         return this.hasWorld() ? this.getWorld().getBlock(this.blockPos.x, this.blockPos.y, this.blockPos.z) : null;
     }
