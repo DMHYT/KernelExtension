@@ -5,6 +5,7 @@
 const LootModule = WRAP_JAVA("vsdum.kex.modules.LootModule");
 const DamageModule = WRAP_JAVA("vsdum.kex.modules.DamageModule");
 const ChunksModule = WRAP_JAVA("vsdum.kex.modules.ChunksModule");
+const TileEntityModule = WRAP_JAVA("vsdum.kex.modules.TileEntityModule");
 
 const LootTableContext = WRAP_JAVA("vsdum.kex.natives.LootTableContext");
 const MobEffect = WRAP_JAVA("vsdum.kex.natives.MobEffect");
@@ -32,6 +33,7 @@ ModAPI.registerAPI("KernelExtension", {
     DamageModule,
     CommandsModule,
     ChunksModule,
+    TileEntityModule,
     BlocksModule,
 
     LootTableContext,
