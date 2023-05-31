@@ -28,25 +28,3 @@
 
 // // @ts-ignore
 // com.zhekasmirnov.horizon.launcher.env.AssetPatch.addSingleOverride("resource_packs/vanilla/terrain-atlas/test_anim_blue.png", `${__dir__}/resources/res/terrain-atlas/test_anim_blue.png`);
-
-
-// var __SIGNAL_STRENGTH__: number = 0;
-
-// IDRegistry.genBlockID("testBlock");
-// Block.createBlock("testBlock", [{name: "Test Block", texture: [["yyyy", 0]], inCreative: true}]);
-// Block.registerClickFunction(BlockID.testBlock, (coords, item, block, player) => {
-//     if(Entity.getSneaking(player)) __SIGNAL_STRENGTH__--;
-//     else __SIGNAL_STRENGTH__++;
-//     __SIGNAL_STRENGTH__ = __SIGNAL_STRENGTH__ < 0 ? 0 : __SIGNAL_STRENGTH__ > 15 ? 15 : __SIGNAL_STRENGTH__;
-// });
-// Block.registerComparatorSignalFunctionForID(BlockID.testBlock, () => __SIGNAL_STRENGTH__);
-
-
-// IDRegistry.genBlockID("testLightBlock");
-// Block.createBlock("testLightBlock", (() => {
-//     const variations: Block.BlockVariation[] = [];
-//     for(let i = 0; i < 16; i++)
-//         variations.push({ name: `Test Light Block ${i}`, texture: [["yyyy", 0]], inCreative: true });
-//     return variations;
-// })());
-// for(let i = 0; i < 16; i++) Block.setLightLevel(BlockID.testLightBlock, i, i);
