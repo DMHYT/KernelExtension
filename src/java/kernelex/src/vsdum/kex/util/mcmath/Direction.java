@@ -5,11 +5,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
-import java.util.function.Predicate;
 
 import android.support.annotation.Nullable;
+import vsdum.kex.common.IStringSerializable;
 
-public enum Direction {
+public enum Direction implements IStringSerializable {
     
     DOWN(0, 1, -1, "down", AxisDirection.NEGATIVE, Axis.Y, new Vec3i(0, -1, 0)),
     UP(1, 0, -1, "up", AxisDirection.POSITIVE, Axis.Y, new Vec3i(0, 1, 0)),
@@ -215,6 +215,92 @@ public enum Direction {
         return this.directionVec;
     }
 
+    public Direction getClockWise(Direction.Axis axis)
+    {
+        switch(axis) {
+            case X: return this != WEST && this != EAST ? this.getClockWiseX() : this;
+            case Z: return this != NORTH && this != SOUTH ? this.getClockWiseZ() : this;
+            case Y: return this != UP && this != DOWN ? this.getClockWise() : this;
+            default: throw new IncompatibleClassChangeError();
+        }
+    }
+
+    public Direction getCounterClockWise(Direction.Axis axis)
+    {
+        switch(axis) {
+            case X: return this != WEST && this != EAST ? this.getCounterClockWiseX() : this;
+            case Z: return this != NORTH && this != SOUTH ? this.getCounterClockWiseZ() : this;
+            case Y: return this != UP && this != DOWN ? this.getCounterClockWise() : this;
+            default: throw new IncompatibleClassChangeError();
+        }
+    }
+
+    public Direction getClockWise()
+    {
+        switch(this) {
+            case NORTH: return EAST;
+            case SOUTH: return WEST;
+            case WEST: return NORTH;
+            case EAST: return SOUTH;
+            default: throw new IllegalStateException("Unable to get Y-rotated facing of " + this);
+        }
+    }
+
+    public Direction getCounterClockWise()
+    {
+        switch(this) {
+            case NORTH: return WEST;
+            case SOUTH: return EAST;
+            case WEST: return SOUTH;
+            case EAST: return NORTH;
+            default: throw new IllegalStateException("Unable to get CCW facing of " + this);
+        }
+    }
+
+    private Direction getClockWiseX()
+    {
+        switch(this) {
+            case DOWN: return SOUTH;
+            case UP: return NORTH;
+            case NORTH: return DOWN;
+            case SOUTH: return UP;
+            default: throw new IllegalStateException("Unable to get X-rotated facing of " + this);
+        }
+    }
+
+    private Direction getCounterClockWiseX()
+    {
+        switch(this) {
+            case DOWN: return NORTH;
+            case UP: return SOUTH;
+            case NORTH: return UP;
+            case SOUTH: return DOWN;
+            default: throw new IllegalStateException("Unable to get X-rotated facing of " + this);
+        }
+    }
+
+    private Direction getClockWiseZ()
+    {
+        switch(this) {
+            case DOWN: return WEST;
+            case UP: return EAST;
+            case WEST: return UP;
+            case EAST: return DOWN;
+            default: throw new IllegalStateException("Unable to get Z-rotated facing of " + this);
+        }
+    }
+
+    private Direction getCounterClockWiseZ()
+    {
+        switch(this) {
+            case DOWN: return EAST;
+            case UP: return WEST;
+            case WEST: return DOWN;
+            case EAST: return UP;
+            default: throw new IllegalStateException("Unable to get Z-rotated facing of " + this);
+        }
+    }
+
     static {
         for(Direction dir : values())
         {
@@ -225,7 +311,7 @@ public enum Direction {
         }
     }
 
-    public static enum Axis implements Predicate<Direction> {
+    public static enum Axis implements IStringSerializable {
 
         X("x", Plane.HORIZONTAL),
         Y("y", Plane.VERTICAL),
@@ -266,7 +352,7 @@ public enum Direction {
             return to != null && to.getAxis() == this;
         }
 
-        @Override public boolean test(Direction dir)
+        public boolean test(Direction dir)
         {
             return true;
         }
@@ -311,7 +397,7 @@ public enum Direction {
 
     }
 
-    public static enum Plane implements Predicate<Direction>, Iterable<Direction> {
+    public static enum Plane {
 
         HORIZONTAL, VERTICAL;
 
@@ -339,12 +425,12 @@ public enum Direction {
             return dir != null && dir.getAxis().getPlane() == this;
         }
 
-        @Override public boolean test(Direction dir)
+        public boolean test(Direction dir)
         {
             return true;
         }
 
-        @Override public Iterator<Direction> iterator()
+        public Iterator<Direction> iterator()
         {
             return Arrays.asList(this.facings()).iterator();
         }

@@ -4,6 +4,7 @@ import com.zhekasmirnov.apparatus.mcpe.NativeBlockSource;
 
 import android.support.annotation.Nullable;
 import vsdum.kex.common.INativeInterface;
+import vsdum.kex.modules.states.BlockState;
 import vsdum.kex.modules.tileentity.BlockActor;
 import vsdum.kex.modules.tileentity.TileEntityData;
 import vsdum.kex.modules.tileentity.TileEntityNativeAPI;
@@ -13,6 +14,9 @@ public class ExtendedBlockSource extends NativeBlockSource implements INativeInt
 
     protected static native long nativeGetLevel(long ptr);
     protected static native long nativeGetDimension(long ptr);
+    protected static native long nativeGetBlockState(long ptr, int x, int y, int z);
+    protected static native boolean nativeSetBlockState(long ptr, int x, int y, int z, int runtimeID, int flags);
+    protected static native boolean nativeSetBlockStateNoUpdate(long ptr, int x, int y, int z, int runtimeID);
     
     protected final long pointer;
 
@@ -89,6 +93,27 @@ public class ExtendedBlockSource extends NativeBlockSource implements INativeInt
         long ptr = TileEntityNativeAPI.get(this.pointer, x, y, z);
         if(ptr == 0L || !TileEntityData.customTileEntityMap.containsKey(ptr)) return null;
         return TileEntityData.customTileEntityMap.get(ptr);
+    }
+
+    @Nullable public BlockState getBlockState(BlockPos pos)
+    {
+        return this.getBlockState(pos.x, pos.y, pos.z);
+    }
+
+    @Nullable public BlockState getBlockState(int x, int y, int z)
+    {
+        long blockLong = nativeGetBlockState(this.pointer, x, y, z);
+        return blockLong == 0L ? null : new BlockState(blockLong);
+    }
+
+    public boolean setBlockState(int x, int y, int z, BlockState state, int flags)
+    {
+        return nativeSetBlockState(this.pointer, x, y, z, state.getRuntimeID(), flags);
+    }
+
+    public boolean setBlockStateNoUpdate(int x, int y, int z, BlockState state)
+    {
+        return nativeSetBlockStateNoUpdate(this.pointer, x, y, z, state.getRuntimeID());
     }
 
 }

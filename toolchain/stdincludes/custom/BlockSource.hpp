@@ -21,6 +21,8 @@
 class BlockSource {
     public:
     Block* getBlock(const BlockPos&) const;
+    bool setBlock(int, int, int, const Block&, int);
+    bool setBlockNoUpdate(int, int, int, const Block&);
     BlockActor* getBlockEntity(const BlockPos&);
     Level* getLevel() const;
     Dimension* getDimension() const;

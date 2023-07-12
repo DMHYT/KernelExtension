@@ -8,6 +8,7 @@
 #include "modules/tools/submodules/method_patches.hpp"
 #include "modules/tools/submodules/interactions.hpp"
 #include "modules/blocks/module.hpp"
+#include "modules/blocks/submodules/states.hpp"
 #include "modules/commands/module.hpp"
 #include "modules/callbacks.hpp"
 #include "modules/damage.hpp"
@@ -44,6 +45,7 @@ extern "C" JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *) {
 	Module* toolPatches = new KEXToolPatchesModule(tools);
 	Module* toolInteractions = new KEXToolInteractionsModule(tools);
 	Module* blocks = new KEXBlocksModule(main);
+	Module* states = new KEXBlockStatesModule(blocks);
 	Module* commands = new KEXCommandsModule(main);
 	Module* callbacks = new KEXCallbacksModule(main);
 	Module* damage = new KEXDamageModule(main);
