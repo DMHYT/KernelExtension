@@ -8,7 +8,6 @@ import org.json.JSONObject;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
 
-import com.zhekasmirnov.apparatus.adapter.innercore.game.block.BlockState;
 import com.zhekasmirnov.apparatus.mcpe.NativeBlockSource;
 import com.zhekasmirnov.horizon.runtime.logger.Logger;
 import com.zhekasmirnov.innercore.api.NativeBlock;
@@ -22,6 +21,7 @@ import vsdum.kex.japi.blocks.components.*;
 import vsdum.kex.japi.component.IdentifiedComponentFactory;
 import vsdum.kex.modules.BlocksModule;
 import vsdum.kex.modules.TileEntityModule;
+import vsdum.kex.modules.states.BlockState;
 import vsdum.kex.natives.ExtendedBlockSource;
 import vsdum.kex.util.mcmath.BlockPos;
 

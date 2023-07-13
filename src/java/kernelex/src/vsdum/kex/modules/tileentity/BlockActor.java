@@ -4,7 +4,6 @@ import java.util.Optional;
 
 import org.json.JSONObject;
 
-import com.zhekasmirnov.apparatus.adapter.innercore.game.block.BlockState;
 import com.zhekasmirnov.apparatus.api.container.ItemContainer;
 import com.zhekasmirnov.apparatus.api.container.ItemContainer.ClientEventListener;
 import com.zhekasmirnov.apparatus.api.container.ItemContainer.ServerEventListener;
@@ -21,6 +20,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Pair;
 import vsdum.kex.common.INativeInterface;
+import vsdum.kex.modules.states.BlockState;
 import vsdum.kex.natives.ExtendedBlockSource;
 import vsdum.kex.natives.Player;
 import vsdum.kex.util.MapBuilder;
@@ -75,7 +75,7 @@ public abstract class BlockActor implements INativeInterface {
 
     @Nullable public BlockState getBlockState()
     {
-        return this.hasWorld() ? this.getWorld().getBlock(this.blockPos.x, this.blockPos.y, this.blockPos.z) : null;
+        return this.hasWorld() ? this.getWorld().getBlockState(this.blockPos.x, this.blockPos.y, this.blockPos.z) : null;
     }
 
     @Nullable public ExtendedBlockSource getWorld()

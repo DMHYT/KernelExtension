@@ -166,6 +166,12 @@ extern "C" {
         return block == nullptr ? 0 : KEXBlocksModule::packBlockLong(IdConversion::dynamicToStatic(block->legacy->id, IdConversion::BLOCK), block->getVariant(), block->getRuntimeId());
     }
 
+    JNIEXPORT jint JNICALL Java_vsdum_kex_modules_states_BlockState_runtimeIDFromIDData
+    (JNIEnv*, jclass, jint id, jint data) {
+        Block* block = BlockRegistry::getBlockStateForIdData(IdConversion::staticToDynamic(id, IdConversion::BLOCK), data);
+        return block == nullptr ? 0 : block->getRuntimeId();
+    }
+
     JNIEXPORT jboolean JNICALL Java_vsdum_kex_modules_states_BlockState_nativeHasState
     (JNIEnv*, jclass, jint id, jlong statePtr) {
         BlockLegacy* block = BlockRegistry::getBlockById(IdConversion::staticToDynamic(id, IdConversion::BLOCK));

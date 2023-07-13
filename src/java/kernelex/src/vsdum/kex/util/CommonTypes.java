@@ -1,6 +1,5 @@
 package vsdum.kex.util;
 
-import com.zhekasmirnov.apparatus.adapter.innercore.game.block.BlockState;
 import com.zhekasmirnov.apparatus.adapter.innercore.game.item.ItemStack;
 import com.zhekasmirnov.innercore.api.commontypes.FullBlock;
 import com.zhekasmirnov.innercore.api.constants.Enchantment;
@@ -15,6 +14,7 @@ import org.mozilla.javascript.ScriptableObject;
 
 import android.support.annotation.Nullable;
 import android.util.Pair;
+import vsdum.kex.modules.states.BlockState;
 
 public final class CommonTypes {
     
@@ -165,6 +165,11 @@ public final class CommonTypes {
         {
             FullBlock full = (FullBlock) block;
             return new Pair<>(full.id, full.data);
+        }
+        if(block instanceof com.zhekasmirnov.apparatus.adapter.innercore.game.block.BlockState)
+        {
+            com.zhekasmirnov.apparatus.adapter.innercore.game.block.BlockState state = (com.zhekasmirnov.apparatus.adapter.innercore.game.block.BlockState) block;
+            return new Pair<>(state.id, state.data);
         }
         if(block instanceof BlockState)
         {

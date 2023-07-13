@@ -1,9 +1,8 @@
 package vsdum.kex.natives;
 
-import com.zhekasmirnov.apparatus.adapter.innercore.game.block.BlockState;
-
 import android.support.annotation.Nullable;
 import vsdum.kex.common.INativeInterface;
+import vsdum.kex.modules.states.BlockState;
 
 public class ActorDamageSource implements INativeInterface {
 

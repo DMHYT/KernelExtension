@@ -6,13 +6,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import com.zhekasmirnov.apparatus.adapter.innercore.game.block.BlockState;
 import com.zhekasmirnov.apparatus.adapter.innercore.game.item.ItemStack;
 import com.zhekasmirnov.innercore.api.NativeItemInstanceExtra;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import vsdum.kex.japi.blocks.components.*;
+import vsdum.kex.modules.states.BlockState;
 import vsdum.kex.natives.Actor;
 import vsdum.kex.natives.ExtendedBlockSource;
 import vsdum.kex.natives.Player;

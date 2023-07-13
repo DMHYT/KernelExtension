@@ -22,6 +22,7 @@ import vsdum.kex.util.mcmath.Rotation;
 public class BlockState {
 
     protected static native long blockLongFromRuntimeID(int runtimeID);
+    protected static native int runtimeIDFromIDData(int id, int data);
     protected static native boolean nativeHasState(int id, long statePtr);
     protected static native int nativeGet(int runtimeID, long statePtr);
     protected static native int nativeSet(int runtimeID, long statePtr, int value);
@@ -32,11 +33,20 @@ public class BlockState {
     public final int id;
     public final int data;
 
-    public BlockState(long idDataAndState) {
+    public BlockState(long idDataAndState)
+    {
         long idData = idDataAndState & 0xFFFFFFFFL;
         this.id = (int) (idData >> 16L) & 0xFFFF;
         this.data = (int) (idData & 0xFFFFL);
         this.runtimeID = (int) (idDataAndState >> 32L);
+    }
+
+    public BlockState(int id, int data)
+    {
+        this.id = id;
+        this.data = data;
+        this.runtimeID = runtimeIDFromIDData(this.id, this.data);
+        if(this.runtimeID == 0) throw new IllegalArgumentException();
     }
 
     public final int getRuntimeID()

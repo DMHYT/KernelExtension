@@ -3,7 +3,6 @@ package vsdum.kex.japi.items;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.zhekasmirnov.apparatus.adapter.innercore.game.block.BlockState;
 import com.zhekasmirnov.apparatus.adapter.innercore.game.item.ItemStack;
 import com.zhekasmirnov.innercore.api.NativeItem;
 import com.zhekasmirnov.innercore.api.NativeItemInstanceExtra;
@@ -11,6 +10,7 @@ import com.zhekasmirnov.innercore.api.NativeItemInstanceExtra;
 import android.support.annotation.Nullable;
 import android.util.Pair;
 import vsdum.kex.japi.items.components.IUsable;
+import vsdum.kex.modules.states.BlockState;
 import vsdum.kex.natives.Actor;
 import vsdum.kex.natives.ExtendedBlockSource;
 import vsdum.kex.natives.Player;

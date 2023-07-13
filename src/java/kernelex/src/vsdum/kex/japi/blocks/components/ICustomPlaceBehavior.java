@@ -1,8 +1,8 @@
 package vsdum.kex.japi.blocks.components;
 
-import com.zhekasmirnov.apparatus.adapter.innercore.game.block.BlockState;
 import com.zhekasmirnov.apparatus.adapter.innercore.game.item.ItemStack;
 
+import vsdum.kex.modules.states.BlockState;
 import vsdum.kex.natives.ExtendedBlockSource;
 import vsdum.kex.natives.Player;
 import vsdum.kex.util.mcmath.BlockPos;

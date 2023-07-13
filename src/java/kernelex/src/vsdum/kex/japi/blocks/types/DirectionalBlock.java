@@ -3,7 +3,6 @@ package vsdum.kex.japi.blocks.types;
 import java.util.Arrays;
 import java.util.List;
 
-import com.zhekasmirnov.apparatus.adapter.innercore.game.block.BlockState;
 import com.zhekasmirnov.apparatus.adapter.innercore.game.item.ItemStack;
 import com.zhekasmirnov.innercore.api.mod.adaptedscript.AdaptedScriptAPI.Entity;
 
@@ -13,6 +12,7 @@ import vsdum.kex.japi.blocks.BlockProperties;
 import vsdum.kex.japi.blocks.components.ICustomPlaceBehavior;
 import vsdum.kex.japi.blocks.components.IHasDrops;
 import vsdum.kex.japi.registry.RegistryObject;
+import vsdum.kex.modules.states.BlockState;
 import vsdum.kex.natives.ExtendedBlockSource;
 import vsdum.kex.natives.Player;
 import vsdum.kex.util.mcmath.BlockPos;

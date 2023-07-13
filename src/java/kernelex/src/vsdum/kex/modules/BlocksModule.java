@@ -5,13 +5,13 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.zhekasmirnov.apparatus.adapter.innercore.game.block.BlockState;
 import com.zhekasmirnov.innercore.api.NativeBlock;
 import com.zhekasmirnov.innercore.api.commontypes.Coords;
 import com.zhekasmirnov.innercore.api.runtime.Callback;
 
 import vsdum.kex.japi.blocks.components.IStepOffListener;
 import vsdum.kex.japi.blocks.components.IStepOnListener;
+import vsdum.kex.modules.states.BlockState;
 import vsdum.kex.natives.Actor;
 import vsdum.kex.natives.ExtendedBlockSource;
 import vsdum.kex.util.mcmath.BlockPos;
@@ -101,7 +101,7 @@ public class BlocksModule {
         {
             BlockPos pos = new BlockPos(x, y, z);
             ExtendedBlockSource world = ExtendedBlockSource.getDefaultForActor(entity);
-            BlockState state = world.getBlock(x, y, z);
+            BlockState state = world.getBlockState(x, y, z);
             onStepOnCallbacks.get(id).stepOn(world, pos, state, new Actor(entity));
             Callback.invokeAPICallback("BlockEventEntityStepOn", new Object[]{ pos, state, Long.valueOf(entity) });
         }
@@ -113,7 +113,7 @@ public class BlocksModule {
         {
             BlockPos pos = new BlockPos(x, y, z);
             ExtendedBlockSource world = ExtendedBlockSource.getDefaultForActor(entity);
-            BlockState state = world.getBlock(x, y, z);
+            BlockState state = world.getBlockState(x, y, z);
             onStepOffCallbacks.get(id).stepOff(world, pos, state, new Actor(entity));
             Callback.invokeAPICallback("BlockEventEntityStepOff", new Object[]{ pos, state, Long.valueOf(entity) });
         }
