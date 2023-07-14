@@ -133,6 +133,10 @@ std::vector<ItemState*> KEXBlockStatesModule::vanillaStates {
 };
 
 
+#define __EXPORT__(RET, NAME, ...) JNIEXPORT RET JNICALL Java_vsdum_kex_modules_states_BlockState_##NAME (JNIEnv* env, jclass clazz, jlong ptr, ##__VA_ARGS__)
+#define __BLOCK__ Block* block = BlockStatesRegistry::getBlockByRuntimeId(runtimeID);
+
+
 extern "C" {
     
     JNIEXPORT jlong JNICALL Java_vsdum_kex_modules_states_properties_Property_getVanillaPointer
@@ -160,43 +164,53 @@ extern "C" {
         return (jlong) state;
     }
 
-    JNIEXPORT jlong JNICALL Java_vsdum_kex_modules_states_BlockState_blockLongFromRuntimeID
-    (JNIEnv*, jclass, jint runtimeID) {
-        Block* block = BlockStatesRegistry::getBlockByRuntimeId(runtimeID);
-        return block == nullptr ? 0 : KEXBlocksModule::packBlockLong(IdConversion::dynamicToStatic(block->legacy->id, IdConversion::BLOCK), block->getVariant(), block->getRuntimeId());
+    __EXPORT__(jlong, blockLongFromRuntimeID, jint runtimeID) {
+        __BLOCK__ return block == nullptr ? 0 : KEXBlocksModule::packBlockLong(IdConversion::dynamicToStatic(block->legacy->id, IdConversion::BLOCK), block->getVariant(), block->getRuntimeId());
     }
 
-    JNIEXPORT jint JNICALL Java_vsdum_kex_modules_states_BlockState_runtimeIDFromIDData
-    (JNIEnv*, jclass, jint id, jint data) {
+    __EXPORT__(jint, runtimeIDFromIDData, jint id, jint data) {
         Block* block = BlockRegistry::getBlockStateForIdData(IdConversion::staticToDynamic(id, IdConversion::BLOCK), data);
         return block == nullptr ? 0 : block->getRuntimeId();
     }
 
-    JNIEXPORT jboolean JNICALL Java_vsdum_kex_modules_states_BlockState_nativeHasState
-    (JNIEnv*, jclass, jint id, jlong statePtr) {
+    __EXPORT__(jboolean, nativeHasState, jint id, jlong statePtr) {
         BlockLegacy* block = BlockRegistry::getBlockById(IdConversion::staticToDynamic(id, IdConversion::BLOCK));
         if(block == nullptr) return false;
         ItemState* state = (ItemState*) statePtr;
         return block->hasState(*state);
     }
 
-    JNIEXPORT jint JNICALL Java_vsdum_kex_modules_states_BlockState_nativeGet
-    (JNIEnv*, jclass, jint runtimeID, jlong statePtr) {
-        STATIC_SYMBOL(getState, "_ZNK5Block8getStateIiEET_RK9ItemState", (Block*, const ItemState&), int)
-        Block* block = BlockStatesRegistry::getBlockByRuntimeId(runtimeID);
-        if(block == nullptr) return 0;
+    __EXPORT__(jint, nativeGetState, jint runtimeID, jlong statePtr) {
+        __BLOCK__ if(block == nullptr) return 0;
         ItemState* state = (ItemState*) statePtr;
         return block->getState<int>(*state);
     }
 
-    JNIEXPORT jint JNICALL Java_vsdum_kex_modules_states_BlockState_nativeSet
-    (JNIEnv*, jclass, jint runtimeID, jlong statePtr, jint value) {
-        STATIC_SYMBOL(setState, "_ZNK5Block8setStateIiEEN3gsl8not_nullIPKS_EERK9ItemStateT_", (Block*, const ItemState&, int), Block*)
-        Block* block = BlockStatesRegistry::getBlockByRuntimeId(runtimeID);
-        if(block == nullptr) return runtimeID;
+    __EXPORT__(jint, nativeSetState, jint runtimeID, jlong statePtr, jint value) {
+        __BLOCK__ if(block == nullptr) return runtimeID;
         ItemState* state = (ItemState*) statePtr;
         Block* newBlock = block->setState<int>(*state, value);
         return newBlock == nullptr ? runtimeID : newBlock->getRuntimeId();
     }
 
+    __EXPORT__(jfloat, nativeGetFriction, jint runtimeID) {
+        __BLOCK__ return block == nullptr ? .6f : block->getFriction();
+    }
+
+    __EXPORT__(jfloat, nativeGetDestroySpeed, jint runtimeID) {
+        __BLOCK__ return block == nullptr ? 1.0f : block->getDestroySpeed();
+    }
+
+    __EXPORT__(jbyte, nativeGetLightBlock, jint runtimeID) {
+        __BLOCK__ return block == nullptr ? 0 : (jbyte) block->getLight();
+    }
+
+    __EXPORT__(jbyte, nativeGetLightEmission, jint runtimeID) {
+        __BLOCK__ return block == nullptr ? 0 : (jbyte) block->getLightEmission();
+    }
+
 }
+
+
+#undef __EXPORT__
+#undef __BLOCK__

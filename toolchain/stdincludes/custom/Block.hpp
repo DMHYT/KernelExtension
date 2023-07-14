@@ -17,6 +17,10 @@ class Block {
     BlockLegacy* legacy; // 12
     unsigned int getRuntimeId() const;
     int getVariant() const;
+    float getDestroySpeed() const;
+    float getFriction() const;
+    unsigned char getLight() const;
+    unsigned char getLightEmission() const;
     template<typename T> T getState(const ItemState&) const;
     template<typename T> Block* setState(const ItemState&, T) const;
 };

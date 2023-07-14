@@ -23,13 +23,19 @@ public class BlockState {
 
     protected static native long blockLongFromRuntimeID(int runtimeID);
     protected static native int runtimeIDFromIDData(int id, int data);
+
     protected static native boolean nativeHasState(int id, long statePtr);
-    protected static native int nativeGet(int runtimeID, long statePtr);
-    protected static native int nativeSet(int runtimeID, long statePtr, int value);
+    protected static native int nativeGetState(int runtimeID, long statePtr);
+    protected static native int nativeSetState(int runtimeID, long statePtr, int value);
+
+    protected static native float nativeGetFriction(int runtimeID);
+    protected static native float nativeGetDestroySpeed(int runtimeID);
+    protected static native byte nativeGetLightBlock(int runtimeID);
+    protected static native byte nativeGetLightEmission(int runtimeID);
 
     private static final Map<Integer, Set<Property<?>>> propertiesById = new HashMap<>();
 
-    private final int runtimeID;
+    protected final int runtimeID;
     public final int id;
     public final int data;
 
@@ -81,7 +87,7 @@ public class BlockState {
 
     public <T extends Comparable<T>> T getValue(Property<T> property)
     {
-        return property.getValue(nativeGet(this.runtimeID, property.getPointer())).get();
+        return property.getValue(nativeGetState(this.runtimeID, property.getPointer())).get();
     }
 
     public <T extends Comparable<T>> Optional<T> getOptionalValue(Property<T> property)
@@ -91,7 +97,7 @@ public class BlockState {
 
     public <T extends Comparable<T>, V extends T> BlockState setValue(Property<T> property, V value)
     {
-        int newRuntimeID = nativeSet(this.runtimeID, property.getPointer(), property.getIndex(value));
+        int newRuntimeID = nativeSetState(this.runtimeID, property.getPointer(), property.getIndex(value));
         return newRuntimeID == this.runtimeID ? this : new BlockState(blockLongFromRuntimeID(newRuntimeID));
     }
 
@@ -112,6 +118,26 @@ public class BlockState {
         Block block = this.getBlock();
         if(block == null || !(block instanceof IMirrorable)) return this;
         return ((IMirrorable) block).mirror(this, m);
+    }
+
+    public float getFriction()
+    {
+        return nativeGetFriction(this.runtimeID);
+    }
+
+    public float getDestroySpeed()
+    {
+        return nativeGetDestroySpeed(this.runtimeID);
+    }
+
+    public byte getLightBlock()
+    {
+        return nativeGetLightBlock(this.runtimeID);
+    }
+
+    public byte getLightEmission()
+    {
+        return nativeGetLightEmission(this.runtimeID);
     }
 
     protected static <T> T findNextInCollection(Collection<T> possibleValues, T currentValue)
