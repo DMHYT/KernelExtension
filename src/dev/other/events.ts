@@ -2,6 +2,7 @@ const ModCallbacks = WRAP_JAVA("vsdum.kex.common.ModCallbacks");
 
 ModCallbacks.specifyModDir(`${__dir__}/`);
 Callback.addCallback("LevelDisplayed", () => ModCallbacks.onLevelDisplayed());
+Callback.addCallback("LevelSelected", () => ModCallbacks.onLevelSelected());
 Callback.addCallback("LevelLeft", () => ModCallbacks.onLevelLeft());
 Callback.addCallback("NativeGuiChanged", screenName => ModCallbacks.onNativeGuiChanged(screenName));
 Callback.addCallback("LocalTick", () => ModCallbacks.onLocalTick());
