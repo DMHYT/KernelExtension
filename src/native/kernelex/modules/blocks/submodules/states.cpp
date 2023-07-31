@@ -120,7 +120,7 @@ std::vector<ItemState*> KEXBlockStatesModule::vanillaStates {
     &VanillaStates::LeverDirection,
     &VanillaStates::PillarAxis,
     &VanillaStates::BlockLightLevel,
-    &VanillaStates::HoneyLevel,
+    &VanillaStates::BeehiveHoneyLevel,
     &VanillaStates::WeepingVinesAge,
     &VanillaStates::WallPostBit,
     &VanillaStates::WallConnectionTypeNorth,
@@ -187,9 +187,10 @@ extern "C" {
     }
 
     __EXPORT__(jint, nativeSetState, jint runtimeID, jlong statePtr, jint value) {
+        STATIC_SYMBOL(Block_setState, "_ZNK5Block8setStateIiEEN3gsl8not_nullIPKS_EERK9ItemStateT_", (Block*, const ItemState&, int), Block*)
         __BLOCK__ if(block == nullptr) return runtimeID;
         ItemState* state = (ItemState*) statePtr;
-        Block* newBlock = block->setState<int>(*state, value);
+        Block* newBlock = Block_setState(block, *state, value);
         return newBlock == nullptr ? runtimeID : newBlock->getRuntimeId();
     }
 

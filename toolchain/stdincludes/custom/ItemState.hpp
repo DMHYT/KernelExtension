@@ -113,7 +113,7 @@ class VanillaStates {
     static ItemState LeverDirection;
     static ItemState PillarAxis;
     static ItemState BlockLightLevel;
-    static ItemState HoneyLevel;
+    static ItemState BeehiveHoneyLevel; // "honey_level"
     static ItemState WeepingVinesAge;
     static ItemState WallPostBit;
     static ItemState WallConnectionTypeNorth;

@@ -22,7 +22,6 @@ class Block {
     unsigned char getLight() const;
     unsigned char getLightEmission() const;
     template<typename T> T getState(const ItemState&) const;
-    template<typename T> Block* setState(const ItemState&, T) const;
 };
 
 namespace BlockStatesRegistry {
