@@ -33,6 +33,9 @@ void KEXBlocksModule::BlockParamsModifier::applyTo(int id) {
         VTABLE_FIND_OFFSET(BlockLegacy_onStepOff, _ZTV11BlockLegacy, _ZNK11BlockLegacy9onStepOffER5ActorRK8BlockPos);
         vtable[BlockLegacy_onStepOff] = ADDRESS(_patchedOnStepOff);
     }
+    for(const ItemState* state : states) {
+        block->addState(*state);
+    }
 }
 
 
@@ -75,6 +78,9 @@ extern "C" {
     }
     __EXPORT__(jbyte, nativeGetLightEmission, jint data) {
         return (jbyte) KEXBlocksModule::LightEmission::get(id, data);
+    }
+    __EXPORT__(void, nativeAddState, jlong statePtr) {
+        MOD->states.emplace((ItemState*) statePtr);
     }
 
     #undef MOD

@@ -2,14 +2,19 @@ package vsdum.kex.japi.blocks;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.zhekasmirnov.apparatus.minecraft.enums.GameEnums;
 import com.zhekasmirnov.innercore.api.NativeBlock;
 
+import android.support.annotation.NonNull;
 import vsdum.kex.japi.blocks.enums.BlockColorSource;
+import vsdum.kex.modules.BlocksModule;
 import vsdum.kex.modules.ToolsModule;
+import vsdum.kex.modules.states.properties.Property;
 
 public class BlockProperties {
 
@@ -35,6 +40,7 @@ public class BlockProperties {
     private int terrainMaterial = 3;
     private float translucency = 1.0f;
     private Map<Integer, List<Float>> shapes = new HashMap<>();
+    private Set<Property<?>> states = new HashSet<>();
 
     public BlockProperties() {}
 
@@ -95,6 +101,7 @@ public class BlockProperties {
                 NativeBlock.setShape(block.id, variant, shape.get(0), shape.get(1), shape.get(2), shape.get(3), shape.get(4), shape.get(5));
             }
         }
+        this.states.forEach(state -> BlocksModule.registerStateForBlock(block.id, state));
     }
 
     public BlockProperties setCanBeExtraBlock(boolean can)
@@ -218,6 +225,12 @@ public class BlockProperties {
                 setShape(i, startX, startY, startZ, endX, endY, endZ);
         else if(data < 16)
             this.shapes.put(data, Arrays.asList(startX, startY, startZ, endX, endY, endZ));
+        return this;
+    }
+
+    public BlockProperties addState(@NonNull Property<?> state)
+    {
+        if(state != null && this.states.contains(state)) this.states.add(state);
         return this;
     }
 

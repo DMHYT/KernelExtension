@@ -63,6 +63,7 @@ class KEXBlocksModule : public Module {
         bool emitsComparatorSignal = false;
         bool onStepOnCallbackEnabled = false;
         bool onStepOffCallbackEnabled = false;
+        std::unordered_set<ItemState*> states;
         BlockParamsModifier() {}
         void applyTo(int id);
     };

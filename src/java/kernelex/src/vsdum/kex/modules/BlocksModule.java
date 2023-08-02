@@ -9,9 +9,11 @@ import com.zhekasmirnov.innercore.api.NativeBlock;
 import com.zhekasmirnov.innercore.api.commontypes.Coords;
 import com.zhekasmirnov.innercore.api.runtime.Callback;
 
+import android.support.annotation.NonNull;
 import vsdum.kex.japi.blocks.components.IStepOffListener;
 import vsdum.kex.japi.blocks.components.IStepOnListener;
 import vsdum.kex.modules.states.BlockState;
+import vsdum.kex.modules.states.properties.Property;
 import vsdum.kex.natives.Actor;
 import vsdum.kex.natives.ExtendedBlockSource;
 import vsdum.kex.util.mcmath.BlockPos;
@@ -25,6 +27,7 @@ public class BlocksModule {
     protected static native void nativeEnableOnStepOffCallback(int id);
     protected static native void nativeSetLightEmission(int id, int data, byte lightLevel);
     protected static native byte nativeGetLightEmission(int id, int data);
+    protected static native void nativeAddState(int id, long statePtr);
 
     public static interface ComparatorSignalCallback {
         public int getComparatorSignal(BlockState block, ExtendedBlockSource world, BlockPos pos, Direction side);
@@ -83,6 +86,11 @@ public class BlocksModule {
     {
         if(dynamicLightBlocks.contains(id)) return nativeGetLightEmission(id, data);
         return (byte) NativeBlock.getLightLevel(id);
+    }
+
+    public static void registerStateForBlock(int id, @NonNull Property<?> state)
+    {
+        if(state != null) nativeAddState(id, state.getPointer());
     }
 
     public static int getComparatorSignal(long blockLong, long blockSourcePtr, int x, int y, int z, int side)
