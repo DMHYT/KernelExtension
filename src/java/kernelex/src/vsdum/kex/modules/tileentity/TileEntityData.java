@@ -7,15 +7,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.zhekasmirnov.apparatus.api.container.ItemContainer;
-import com.zhekasmirnov.apparatus.mod.ContentIdScope;
-import com.zhekasmirnov.apparatus.mod.ContentIdSource;
 import com.zhekasmirnov.apparatus.multiplayer.util.entity.NetworkEntity;
 import com.zhekasmirnov.apparatus.multiplayer.util.entity.NetworkEntityType;
 import com.zhekasmirnov.apparatus.multiplayer.util.entity.SyncedNetworkData;
 import com.zhekasmirnov.horizon.runtime.logger.Logger;
 import android.support.annotation.Nullable;
 import android.util.Pair;
+import vsdum.kex.modules.TileEntityModule;
 import vsdum.kex.natives.ExtendedBlockSource;
+import vsdum.kex.util.AlphabeticIDSource;
 import vsdum.kex.util.NBTJSON;
 import vsdum.kex.util.SetBuilder;
 import vsdum.kex.util.mcmath.BlockPos;
@@ -26,6 +26,8 @@ public class TileEntityData {
     private static final Map<Integer, NetworkEntityType> networkEntityTypes = new HashMap<>();
 
     public static final Map<Long, BlockActor> customTileEntityMap = new HashMap<>();
+    public static final Map<String, TileEntityCreationCallback> creationCallbacksByNameID = new HashMap<>();
+    public static final Map<Integer, String> blockToTileNameID = new HashMap<>();
     public static final Map<Integer, TileEntityCreationCallback> customTileEntityCreationCallbacks = new HashMap<>();
 
     public static final Set<String> vanillaTileEntityTypes = new SetBuilder<String>()
@@ -70,7 +72,17 @@ public class TileEntityData {
         .add("Lodestone")
         .build();
 
-    public static final ContentIdScope idSource = ContentIdSource.getGlobal().getOrCreateScope("kex-nativetetypes");
+    @SuppressWarnings("deprecation")
+    public static final AlphabeticIDSource.Scope idScope = AlphabeticIDSource.instance()
+        .createScope("nativetetypes", 256, scopeData -> {
+            creationCallbacksByNameID.keySet().forEach(nameID -> {
+                int numericID = scopeData.getNumericID(nameID);
+                TileEntityNativeAPI.newType(nameID, numericID);
+                customTileEntityCreationCallbacks.put(numericID, creationCallbacksByNameID.get(nameID));
+                Logger.debug("KEX-TileEntityModule", String.format("Successfully assigned numeric ID %d to custom tile entity type name %s", numericID, nameID));
+            });
+            blockToTileNameID.forEach((blockID, typeNameID) -> TileEntityModule.registerForBlock(blockID, scopeData.getNumericID(typeNameID)));
+        });
 
     @Nullable static BlockActor getOrCreate(long tilePtr)
     {

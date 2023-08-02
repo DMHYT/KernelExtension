@@ -1,17 +1,18 @@
 package vsdum.kex.modules;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.mozilla.javascript.ScriptableObject;
 
 import com.zhekasmirnov.apparatus.mcpe.NativeBlockSource;
-import com.zhekasmirnov.apparatus.mod.ContentIdScope;
-import com.zhekasmirnov.apparatus.mod.ContentIdSource;
 import com.zhekasmirnov.innercore.api.mod.ScriptableObjectHelper;
 
 import vsdum.kex.natives.Actor;
 import vsdum.kex.natives.ActorDamageSource;
+import vsdum.kex.util.AlphabeticIDSource;
 import vsdum.kex.util.CommonTypes;
 import vsdum.kex.util.LangInjector;
 
@@ -54,18 +55,36 @@ public class DamageModule {
     
     public static class CustomCause {
 
-        private static final ContentIdScope idSource = ContentIdSource.getGlobal().getOrCreateScope("kex-damagecauses");
+        private static final Set<CustomCause> registered = new HashSet<>();
+        private static final AlphabeticIDSource.Scope idScope = AlphabeticIDSource.instance()
+            .createScope("damagecauses", 128, scopeData -> registered.forEach(cause -> {
+                cause.id = scopeData.getNumericID(cause.name);
+                nativeNewCause(cause.name, cause.id);
+            }));
 
         public final String name;
-        public final int id;
+        /**
+         * Since 4.1+ don't ever use declarations like this:
+         * <pre>
+         * int MY_CAUSE_ID = new CustomCause("my_cause").id;
+         * </pre>
+         * Instead:
+         * <pre>
+         * CustomCause MY_CAUSE = new CustomCause("my_cause");
+         * // when needed
+         * MY_CAUSE.id
+         * </pre>
+         */
+        public int id;
 
         public CustomCause(String name)
         {
-            if(idSource.isNameIdUsed(name))
+            if(idScope.has(name))
                 throw new IllegalArgumentException("Custom damage cause \"" + name + "\" has already been registered before! Try using another name!");
             this.name = name;
-            this.id = idSource.getOrGenerateId(this.name, 100, Integer.MAX_VALUE, true);
-            nativeNewCause(this.name, this.id);
+            this.id = 127;
+            idScope.add(this.name);
+            registered.add(this);
         }
 
         public CustomCause setFire()
