@@ -50,9 +50,9 @@ public class BooleanProperty extends Property<Boolean> {
     public static BooleanProperty create(String name)
     {
         if(statesByName.containsKey(name)) throw new IllegalArgumentException(String.format("Block state with name %s has already been registered by vanilla or by KEX API! Try using another name.", name));
-        int id = idSource.getOrGenerateId(name, 1024, Integer.MAX_VALUE, true);
-        long ptr = nativeCreateBooleanProperty(name, id);
-        return new BooleanProperty(ptr, name, id);
+        idScope.add(name);
+        long ptr = nativeCreateBooleanProperty(name, 255);
+        return new BooleanProperty(ptr, name, 255);
     }
 
 }

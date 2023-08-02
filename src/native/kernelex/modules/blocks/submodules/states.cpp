@@ -164,6 +164,11 @@ extern "C" {
         return (jlong) state;
     }
 
+    JNIEXPORT void JNICALL Java_vsdum_kex_modules_states_properties_Property_nativeSetNumericID
+    (JNIEnv* env, jclass, jlong ptr, jint id) {
+        ((ItemState*) ptr)->id = (unsigned int) id;
+    }
+
     __EXPORT__(jlong, blockLongFromRuntimeID, jint runtimeID) {
         __BLOCK__ return block == nullptr ? 0 : KEXBlocksModule::packBlockLong(IdConversion::dynamicToStatic(block->legacy->id, IdConversion::BLOCK), block->getVariant(), block->getRuntimeId());
     }

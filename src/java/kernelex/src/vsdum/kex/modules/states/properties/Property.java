@@ -5,25 +5,31 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import com.zhekasmirnov.apparatus.mod.ContentIdScope;
-import com.zhekasmirnov.apparatus.mod.ContentIdSource;
-
 import vsdum.kex.common.INativeInterface;
+import vsdum.kex.util.AlphabeticIDSource;
 
 public abstract class Property<T extends Comparable<T>> implements INativeInterface {
 
     protected static native long getVanillaPointer(int id);
     protected static native long nativeCreateIntegerProperty(String name, int id, int possibleValuesCount);
     protected static native long nativeCreateBooleanProperty(String name, int id);
-
-    protected static final ContentIdScope idSource = ContentIdSource.getGlobal().getOrCreateScope("kex-blockstates");
+    private static native void nativeSetNumericID(long ptr, int id);
 
     public static final Map<Integer, Property<?>> statesById = new HashMap<>();
     public static final Map<String, Property<?>> statesByName = new HashMap<>();
+
+    protected static final AlphabeticIDSource.Scope idScope = AlphabeticIDSource.instance()
+        .createScope("blockstates", 256, scopeData -> {
+            statesByName.values().forEach(property -> {
+                int numericID = scopeData.getNumericID(property.name);
+                property.setNumericID(numericID);
+                statesById.put(numericID, property);
+            });
+        });
     
     private final long pointer;
     private final String name;
-    private final int id;
+    private int id;
     private final Class<T> valueClass;
     private Integer hash = null;
 
@@ -35,9 +41,14 @@ public abstract class Property<T extends Comparable<T>> implements INativeInterf
         this.valueClass = valueClass;
         if(!statesByName.containsKey(name))
         {
-            statesById.put(this.id, this);
             statesByName.put(this.name, this);
         }
+    }
+
+    private final void setNumericID(int id)
+    {
+        this.id = id;
+        nativeSetNumericID(this.pointer, this.id);
     }
 
     @Override public final long getPointer()

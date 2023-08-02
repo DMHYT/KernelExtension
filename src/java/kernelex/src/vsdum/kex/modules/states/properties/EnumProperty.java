@@ -118,9 +118,9 @@ public class EnumProperty<T extends Enum<T> & IStringSerializable> extends Prope
     public static <T extends Enum<T> & IStringSerializable> EnumProperty<T> create(String name, Class<T> enumClass, Collection<T> possibleValues)
     {
         if(statesByName.containsKey(name)) throw new IllegalArgumentException(String.format("Block state with name %s has already been registered by vanilla or by KEX API! Try using another name.", name));
-        int id = idSource.getOrGenerateId(name, 1024, Integer.MAX_VALUE, true);
-        long ptr = nativeCreateIntegerProperty(name, id, possibleValues.size());
-        return new EnumProperty<>(ptr, name, id, enumClass, possibleValues);
+        idScope.add(name);
+        long ptr = nativeCreateIntegerProperty(name, 255, possibleValues.size());
+        return new EnumProperty<>(ptr, name, 255, enumClass, possibleValues);
     }
 
 }

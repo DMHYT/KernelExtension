@@ -56,9 +56,9 @@ public class IntegerProperty extends Property<Integer> {
         if(statesByName.containsKey(name)) throw new IllegalArgumentException(String.format("Block state with name %s has already been registered by vanilla or by KEX API! Try using another name.", name));
         if(min < 0) throw new IllegalArgumentException(String.format("Minimum value of IntegerProperty %s must be 0 or greater!", name));
         if(max <= min) throw new IllegalArgumentException(String.format("Maximum value of IntegerProperty %s must be greater than specified minimum value (%d)", name, min));
-        int id = idSource.getOrGenerateId(name, 1024, Integer.MAX_VALUE, true);
-        long ptr = nativeCreateIntegerProperty(name, id, max - min + 1);
-        return new IntegerProperty(ptr, name, id, min, max);
+        idScope.add(name);
+        long ptr = nativeCreateIntegerProperty(name, 255, max - min + 1);
+        return new IntegerProperty(ptr, name, 255, min, max);
     }
 
 }

@@ -4,7 +4,9 @@
 
 class ItemState {
     public:
-    char filler[64];
+    void** vtable; // 4
+    unsigned int id; // 8
+    char filler[56]; // 64
 };
 
 class VanillaStates {
