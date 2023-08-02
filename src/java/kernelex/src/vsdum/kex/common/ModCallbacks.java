@@ -10,6 +10,7 @@ import vsdum.kex.modules.misc.SmithingTableRecipes;
 import vsdum.kex.modules.tileentity.TileEntityData;
 import vsdum.kex.natives.I18n;
 import vsdum.kex.util.AddonUtils;
+import vsdum.kex.util.AlphabeticIDSource;
 import vsdum.kex.util.ItemAnimHelper;
 import vsdum.kex.util.LangInjector;
 
@@ -61,6 +62,7 @@ public class ModCallbacks {
 
     public static void onModsLoaded()
     {
+        AlphabeticIDSource.instance().onModsLoaded();
         AddonUtils.onModsLoaded();
         LangInjector.run(modDir + "data/lang/");
         ResourceManager.onModsLoaded();
