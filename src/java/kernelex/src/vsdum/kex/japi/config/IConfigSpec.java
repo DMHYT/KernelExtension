@@ -5,12 +5,6 @@ import com.electronwill.nightconfig.core.UnmodifiableConfig;
 
 public interface IConfigSpec<T extends IConfigSpec<T>> extends UnmodifiableConfig {
 
-    @SuppressWarnings("unchecked")
-    public default T self()
-    {
-        return (T) this;
-    }
-
     public void acceptConfig(CommentedConfig data);
 
     public boolean isCorrecting();
