@@ -43,6 +43,7 @@ public class BlockRegistry {
             } catch(Throwable ex) { ex.printStackTrace(); }
         });
 
+    @SuppressWarnings("deprecation")
     public static final IdentifiedComponentFactory<Block> componentFactory = new IdentifiedComponentFactory<Block>()
         .registerIdentifiedComponent(IAnimateTickListener.class, (id, component) -> {
             NativeBlock.setAnimateTickCallback(id, new ScriptableFunctionImpl() {
