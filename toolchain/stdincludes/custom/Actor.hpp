@@ -448,7 +448,6 @@ class Actor {
     void* getSwimAmount(float) const;
     void setCanFly(bool);
     int getSkinID() const;
-    stl::vector<MobEffectInstance>& getAllEffects() const;
     bool hasRider() const;
     void setJumpDuration(int);
     bool isSwimming() const;

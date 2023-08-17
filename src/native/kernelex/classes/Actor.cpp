@@ -201,13 +201,11 @@ extern "C" {
     __EXPORT__(void, RemoveEffects, jboolean harmful, jboolean harmless) {
         Actor* actor = (Actor*) ptr;
         if(actor != nullptr) {
-            auto& effects = actor->getAllEffects();
-            for(const auto& ieffect : effects) {
-                int id = ieffect.getId();
+            for(int id = 0; id < 30; id++) {
                 MobEffect* effect = MobEffect::getById(id);
                 if(effect != nullptr) {
-                    bool eharmful = effect->isHarmful();
-                    if((eharmful && harmful) || (!eharmful && harmless)) {
+                    bool effectHarmful = effect->isHarmful();
+                    if((effectHarmful && harmful) || (!effectHarmful && harmless)) {
                         actor->removeEffect(id);
                     }
                 }
