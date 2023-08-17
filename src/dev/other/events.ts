@@ -15,7 +15,10 @@ const BlockEvents = WRAP_JAVA("vsdum.kex.japi.blocks.BlockEvents");
     Block.__getBlockDropViaItem = Block.getBlockDropViaItem;
     Block.getBlockDropViaItem = (block, item, coords, region) => {
         // @ts-ignore
-        const result = Block.__getBlockDropViaItem(block, item, coords, region) ?? [];
+        const result = Block.__getBlockDropViaItem(block, item, coords, region);
+        // returns null for native tiles
+        // should be left null, not empty array, otherwise many bugs happen
+        if(result == null) return result;
         const iter = BlockEvents.getDrops(block.id, block.data, region.getDimension(), item.id, item.count, item.data, item.extra ?? null, coords.x, coords.y, coords.z)
             .iterator();
         while(iter.hasNext()) {
