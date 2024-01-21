@@ -5,6 +5,7 @@ import vsdum.kex.japi.blocks.BlockRegistry;
 import vsdum.kex.japi.config.ConfigManager;
 import vsdum.kex.japi.internal.ResourceManager;
 import vsdum.kex.japi.internal.block.model.BlockModelManager;
+import vsdum.kex.modules.BiomesModule;
 import vsdum.kex.modules.LootModule;
 import vsdum.kex.modules.misc.SmithingTableRecipes;
 import vsdum.kex.modules.tileentity.TileEntityData;
@@ -40,6 +41,7 @@ public class ModCallbacks {
     {
         TileEntityData.onLevelLeft();
         ConfigManager.onLevelLeft();
+        BiomesModule.onLevelLeft();
     }
 
     public static void onNativeGuiChanged(String screenName)
@@ -64,6 +66,7 @@ public class ModCallbacks {
     {
         AlphabeticIDSource.instance().onModsLoaded();
         AddonUtils.onModsLoaded();
+        BiomesModule.appendBiomeNameTranslations(modDir + "data/biome_names.json");
         LangInjector.run(modDir + "data/lang/");
         ResourceManager.onModsLoaded();
         BlockRegistry.onModsLoaded();

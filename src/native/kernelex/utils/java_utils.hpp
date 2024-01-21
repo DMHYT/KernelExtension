@@ -24,6 +24,7 @@ namespace KEXJavaBridge {
         jclass BlocksModule(JNIEnv* env);
         jclass DamageModule(JNIEnv* env);
         jclass CommandsModule(JNIEnv* env);
+        jclass BiomesModule(JNIEnv* env);
         jclass I18n(JNIEnv* env);
         jclass TileEntityEvents(JNIEnv* env);
     }
@@ -56,6 +57,9 @@ namespace KEXJavaBridge {
     }
     namespace CommandsModule {
         void callAPICommand(const char* commandName, jlong commandPointer, jint overloadIndex, jlong originPtr, jlong outputPtr, int paramsCount);
+    }
+    namespace BiomesModule {
+        void cacheBiomeInterfaces(jintArray id, jobjectArray name, jfloatArray temperature, jfloatArray downfall, jbooleanArray humid, jbooleanArray snow);
     }
     namespace I18n {
         void onChooseLanguage(jlong localizationPtr, const char* languageCode);

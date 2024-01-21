@@ -40,4 +40,9 @@ public class CallbacksModule {
         Callback.invokeAPICallback("ItemTooltip", new Object[]{ stack, tooltip, level });
     }
 
+    public static void onBiomesInitialized()
+    {
+        Callback.invokeAPICallback("BiomesInitialized", new Object[0]);
+    }
+
 }

@@ -50,6 +50,8 @@ namespace KEXJavaBridge {
         JAVA_METHOD(DamageModule, getDeathMessage, "(JLjava/lang/String;J)Ljava/lang/String;")
         JAVA_CLASS(CommandsModule, "vsdum/kex/modules/CommandsModule")
         JAVA_METHOD(CommandsModule, callAPICommand, "(Ljava/lang/String;JIJJ[Z)V")
+        JAVA_CLASS(BiomesModule, "vsdum/kex/modules/BiomesModule")
+        JAVA_METHOD(BiomesModule, cacheBiomeInterfaces, "([I[Ljava/lang/String;[F[F[Z[Z)V")
         JAVA_CLASS(I18n, "vsdum/kex/natives/I18n")
         JAVA_METHOD(I18n, onChooseLanguage, "(JLjava/lang/String;)V")
         JAVA_CLASS(TileEntityEvents, "vsdum/kex/modules/tileentity/TileEntityEvents")
@@ -174,6 +176,11 @@ namespace KEXJavaBridge {
             env->CallStaticVoidMethod(Cache::CommandsModule(), Cache::CommandsModule_callAPICommand(), jCommandName, commandPointer, overloadIndex, originPtr, outputPtr, paramsPresence);
             env->DeleteLocalRef(jCommandName);
             env->DeleteLocalRef(paramsPresence);
+        }
+    }
+    namespace BiomesModule {
+        void cacheBiomeInterfaces(jintArray id, jobjectArray name, jfloatArray temperature, jfloatArray downfall, jbooleanArray humid, jbooleanArray snow) {
+            KEXJavaUtils::attach()->CallStaticVoidMethod(Cache::BiomesModule(), Cache::BiomesModule_cacheBiomeInterfaces(), id, name, temperature, downfall, humid, snow);
         }
     }
     namespace I18n {
