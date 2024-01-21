@@ -1,11 +1,22 @@
 #include <hook.h>
 #include <symbol.h>
 
+#include <innercore/vtable.h>
 #include <innercore/id_conversion_map.h>
 
+#include <commontypes.hpp>
+
+#include <Actor.hpp>
+#include <ActorUniqueID.hpp>
+#include <Attribute.hpp>
 #include <BlockLegacy.hpp>
+#include <Enchant.hpp>
+#include <ItemEnchants.hpp>
 #include <ItemStackBase.hpp>
 #include <ItemStack.hpp>
+#include <MobEffect.hpp>
+#include <MobEffectInstance.hpp>
+#include <Player.hpp>
 #include <items/PickaxeItem.hpp>
 
 #include "../../../utils/java_utils.hpp"
@@ -76,6 +87,59 @@ unsigned char KEXToolPatchesModule::hurtAndBreak(ItemStackBase* stack, int damag
 }
 
 
+int KEXToolPatchesModule::calculateAttackDamage(Actor* actor, Actor* victim) {
+    VTABLE_FIND_OFFSET(Actor_getAttribute, _ZTV5Actor, _ZNK5Actor12getAttributeERK9Attribute);
+    auto attackDamage = VTABLE_CALL<AttributeInstance*>(Actor_getAttribute, actor, &SharedAttributes::ATTACK_DAMAGE);
+    int result = (int) attackDamage->getCurrentValue();
+    VTABLE_FIND_OFFSET(Actor_getCarriedItem, _ZTV5Actor, _ZNK5Actor14getCarriedItemEv);
+    ItemStack* stack = VTABLE_CALL<ItemStack*>(Actor_getCarriedItem, actor);
+    if(stack != nullptr) result += stack->getAttackDamageKEX(actor, victim);
+    VTABLE_FIND_OFFSET(Actor_adjustDamageAmount, _ZTV5Actor, _ZNK5Actor18adjustDamageAmountERi);
+    VTABLE_CALL<void>(Actor_adjustDamageAmount, actor, &result);
+    auto damageBoost = MobEffect::getById(5);
+    auto weakness = MobEffect::getById(18);
+    if(damageBoost != nullptr && actor->hasEffect(*damageBoost)) {
+        int amplifier = actor->getEffect(*damageBoost)->getAmplifier() + 1;
+        for(int i = 0; i < amplifier; i++) result = (int) (((float) result * 1.3f) + 1.0f);
+    }
+    if(weakness != nullptr && actor->hasEffect(*weakness)) {
+        int amplifier = actor->getEffect(*weakness)->getAmplifier() + 1;
+        for(int i = 0; i < amplifier; i++) result = (int) (((float) result * 0.8f) - 0.5f);
+    }
+    if(victim != nullptr) {
+        bool someCheck = *((bool*) victim + 292); // idk what's this
+        if(!someCheck && stack != nullptr && stack && stack->isEnchanted()) {
+            auto enchants = stack->constructItemEnchantsFromUserData();
+            auto enchantsVector = enchants.getAllEnchants();
+            VTABLE_FIND_OFFSET(Enchant_getDamageBonus, _ZTV7Enchant, _ZNK7Enchant14getDamageBonusEiRK5Actor);
+            VTABLE_FIND_OFFSET(Enchant_doPostAttack, _ZTV7Enchant, _ZNK7Enchant12doPostAttackER5ActorS1_i);
+            for(const auto& instance : enchantsVector) {
+                Enchant* enchant = Enchant::mEnchants.at((unsigned char) instance.type).get();
+                result += (int) VTABLE_CALL<float>(Enchant_getDamageBonus, enchant, instance.level, victim);
+                VTABLE_CALL<void>(Enchant_doPostAttack, enchant, actor, victim, instance.level);
+            }
+        }
+    }
+    return result;
+}
+
+
+int ItemStackBase::getAttackDamageKEX(Actor* actor, Actor* victim) const {
+    Item* item = this->getItem();
+    if(item == nullptr) return 0;
+    int id = IdConversion::dynamicToStatic(item->id, IdConversion::ITEM);
+    if(KEXToolsModule::SimpleTests::isCustomTool(id)) {
+        CustomToolFactory* factory = (CustomToolFactory*) LegacyItemRegistry::findFactoryById(id);
+        if(factory != nullptr && factory->dynamicDamageEnabled) {
+            ItemInstanceExtra* extra = new ItemInstanceExtra((ItemStack*) this);
+            int result = factory->baseAttackDamage + KEXJavaBridge::CustomToolEvents::getAttackDamageBonus(id, 1, this->getDamageValue(), (jlong) extra, factory->tier->getAttackDamageBonus(), (jlong) actor->getUniqueID()->id, (jlong) victim->getUniqueID()->id);
+        }
+    }
+    VTABLE_FIND_OFFSET(Item_getAttackDamage, _ZTV4Item, _ZNK4Item15getAttackDamageEv);
+    return VTABLE_CALL<int>(Item_getAttackDamage, item);
+}
+
+
 void KEXToolPatchesModule::initialize() {
 
     DLHandleManager::initializeHandle("libminecraftpe.so", "mcpe");
@@ -124,6 +188,15 @@ void KEXToolPatchesModule::initialize() {
                 *stack = ItemStack(*brokenItem, 1, 0);
                 return true;
             }
+        }, ),
+        HookManager::CALL | HookManager::LISTENER | HookManager::CONTROLLER | HookManager::RESULT
+    );
+
+    HookManager::addCallback(
+        SYMBOL("mcpe", "_ZN5Actor21calculateAttackDamageERS_"),
+        LAMBDA((HookManager::CallbackController* controller, Actor* actor, Actor* victim), {
+            controller->replace();
+            return calculateAttackDamage(actor, victim);
         }, ),
         HookManager::CALL | HookManager::LISTENER | HookManager::CONTROLLER | HookManager::RESULT
     );

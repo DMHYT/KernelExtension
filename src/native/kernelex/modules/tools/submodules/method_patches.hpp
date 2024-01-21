@@ -19,6 +19,7 @@ class KEXToolPatchesModule : public Module {
     static bool hasBlockMaterial(DiggerItem*, const std::string&);
     static bool hasBlock(DiggerItem*, const Block&);
     static unsigned char hurtAndBreak(ItemStackBase*, int);
+    static int calculateAttackDamage(Actor* actor, Actor* victim);
     KEXToolPatchesModule(Module* parent): Module(parent, "kex.tools.patches") {};
     virtual void initialize();
 };

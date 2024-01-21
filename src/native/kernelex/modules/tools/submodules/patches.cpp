@@ -20,7 +20,7 @@ void KEXToolsModule::CustomToolPatches::appendFormattedHovertext(Item* _this, co
     if(factory != nullptr) {
         int damage = factory->baseAttackDamage;
         ItemInstanceExtra* extra = new ItemInstanceExtra((ItemStack*) &stack);
-        damage += KEXJavaBridge::CustomToolEvents::getAttackDamageBonus(staticId, 1, stack.getDamageValue(), (jlong) extra, factory->tier->getAttackDamageBonus());
+        damage += KEXJavaBridge::CustomToolEvents::getAttackDamageBonus(staticId, 1, stack.getDamageValue(), (jlong) extra, factory->tier->getAttackDamageBonus(), 0, 0);
         delete extra;
         damage += (int)((float) EnchantUtils::getEnchantLevel((Enchant::Type) 9, stack) * 1.25);
         text.append(stl::to_string(damage));

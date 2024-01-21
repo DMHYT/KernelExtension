@@ -1,8 +1,6 @@
 #include <hook.h>
 #include <symbol.h>
 
-#include <innercore/id_conversion_map.h>
-
 #include <ActorUniqueID.hpp>
 #include <GameMode.hpp>
 #include <Level.hpp>
@@ -56,20 +54,8 @@ void KEXToolsModule::initialize() {
     HookManager::addCallback(
         SYMBOL("mcpe", "_ZNK13ItemStackBase15getAttackDamageEv"),
         LAMBDA((HookManager::CallbackController* controller, ItemStackBase* stack), {
-            Item* item = stack->getItem();
-            if(item != nullptr) {
-                int id = IdConversion::dynamicToStatic(item->id, IdConversion::ITEM);
-                if(KEXToolsModule::SimpleTests::isCustomTool(id)) {
-                    CustomToolFactory* factory = (CustomToolFactory*) LegacyItemRegistry::findFactoryById(id);
-                    if(factory != nullptr && factory->dynamicDamageEnabled) {
-                        controller->replace();
-                        ItemInstanceExtra* extra = new ItemInstanceExtra((ItemStack*) stack);
-                        int result = factory->baseAttackDamage + KEXJavaBridge::CustomToolEvents::getAttackDamageBonus(id, 1, stack->getDamageValue(), (jlong) extra, factory->tier->getAttackDamageBonus());
-                        delete extra;
-                        return result;
-                    }
-                }
-            }
+            controller->replace();
+            return stack->getAttackDamageKEX(nullptr, nullptr);
         }, ),
         HookManager::CALL | HookManager::LISTENER | HookManager::CONTROLLER | HookManager::RESULT
     );

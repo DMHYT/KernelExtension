@@ -31,7 +31,7 @@ namespace KEXJavaBridge {
         JAVA_CLASS(CustomToolEvents, "vsdum/kex/modules/tools/CustomToolEvents")
         JAVA_METHOD(CustomToolEvents, onBroke, "()Z")
         JAVA_METHOD(CustomToolEvents, calcDestroyTime, "(IIIIIBFFFF)F")
-        JAVA_METHOD(CustomToolEvents, getAttackDamageBonus, "(IIIJI)I")
+        JAVA_METHOD(CustomToolEvents, getAttackDamageBonus, "(IIIJIJJ)I")
         JAVA_CLASS(LootModule, "vsdum/kex/modules/LootModule")
         JAVA_METHOD(LootModule, modify, "(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;")
         JAVA_METHOD(LootModule, onDrop, "(Ljava/lang/String;JIJ)V")
@@ -90,8 +90,8 @@ namespace KEXJavaBridge {
         float calcDestroyTime(int id, int data, int x, int y, int z, char side, float baseDestroyTime, float divider, float modifier, float defaultTime) {
             return KEXJavaUtils::attach()->CallStaticFloatMethod(Cache::CustomToolEvents(), Cache::CustomToolEvents_calcDestroyTime(), id, data, x, y, z, (jbyte) side, baseDestroyTime, divider, modifier, defaultTime);
         }
-        int getAttackDamageBonus(int id, int count, int data, jlong extra, int defaultValue) {
-            return KEXJavaUtils::attach()->CallStaticIntMethod(Cache::CustomToolEvents(), Cache::CustomToolEvents_getAttackDamageBonus(), id, count, data, extra, defaultValue);
+        int getAttackDamageBonus(int id, int count, int data, jlong extra, int defaultValue, jlong attacker, jlong victim) {
+            return KEXJavaUtils::attach()->CallStaticIntMethod(Cache::CustomToolEvents(), Cache::CustomToolEvents_getAttackDamageBonus(), id, count, data, extra, defaultValue, attacker, victim);
         }
     }
     namespace LootModule {

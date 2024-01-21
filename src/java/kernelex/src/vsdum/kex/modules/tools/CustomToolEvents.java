@@ -117,7 +117,7 @@ public class CustomToolEvents {
         }
     }
 
-    public static int getAttackDamageBonus(int id, int count, int data, long extraPtr, int defaultValue)
+    public static int getAttackDamageBonus(int id, int count, int data, long extraPtr, int defaultValue, long attacker, long victim)
     {
         if(DataSets.toolData.containsKey(id))
         {
@@ -125,7 +125,7 @@ public class CustomToolEvents {
             ScriptableObject obj = DataSets.toolData.get(id);
             if(ScriptableObject.hasProperty(obj, "getAttackDamageBonus"))
             {
-                return CommonTypes.callIntJSFunction(obj, "getAttackDamageBonus", new Object[]{ stack }, defaultValue);
+                return CommonTypes.callIntJSFunction(obj, "getAttackDamageBonus", new Object[]{ stack, Long.valueOf(attacker), Long.valueOf(victim) }, defaultValue);
             }
         }
         return defaultValue;

@@ -1132,7 +1132,8 @@ extern "C" {
                 toDelete = true;
             }
         }
-        if(stack != nullptr) result += stack->getAttackDamage();
+        auto victim = Actor::wrap(victimUID);
+        if(stack != nullptr) result += stack->getAttackDamageKEX(actor, victim);
         VTABLE_FIND_OFFSET(Actor_adjustDamageAmount, _ZTV5Actor, _ZNK5Actor18adjustDamageAmountERi);
         VTABLE_CALL<void>(Actor_adjustDamageAmount, actor, &result);
         auto damageBoost = MobEffect::getById(5);
@@ -1145,7 +1146,6 @@ extern "C" {
             int amplifier = actor->getEffect(*weakness)->getAmplifier() + 1;
             for(int i = 0; i < amplifier; i++) result = (int) (((float) result * 0.8f) - 0.5f);
         }
-        auto victim = Actor::wrap(victimUID);
         if(victim != nullptr) {
             bool someCheck = *((bool*) victim + 292); // idk what's this
             if(!someCheck && stack != nullptr && stack && stack->isEnchanted()) {

@@ -34,7 +34,7 @@ namespace KEXJavaBridge {
     namespace CustomToolEvents {
         bool onBroke();
         float calcDestroyTime(int id, int data, int x, int y, int z, char side, float baseDestroyTime, float divider, float modifier, float defaultTime);
-        int getAttackDamageBonus(int id, int count, int data, jlong extra, int defaultValue);
+        int getAttackDamageBonus(int id, int count, int data, jlong extra, int defaultValue, jlong attacker, jlong victim);
     }
     namespace LootModule {
         jstring modify(const char* tableName, const char* json);

@@ -59,6 +59,8 @@ class ItemStackBase {
     // Added by InnerCore
     unsigned short getCount() const;
     int getAuxValue() const;
+    // custom
+    int getAttackDamageKEX(Actor* attacker, Actor* victim) const;
 };
 
 
