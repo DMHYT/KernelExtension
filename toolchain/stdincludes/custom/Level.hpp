@@ -2,6 +2,9 @@
 #define KEX_LEVEL_HPP
 
 
+#ifndef KEX_BIOME_HPP
+    class BiomeRegistry;
+#endif
 class Random;
 class LevelStorage;
 #ifndef KEX_LOOTTABLE_HPP
@@ -11,6 +14,15 @@ class LevelStorage;
     class TickingAreasManager;
 #endif
 
+enum GeneratorType {
+    OLD, DEFAULT, SUPERFLAT
+};
+
+class LevelData {
+    public:
+    GeneratorType getGenerator() const;
+};
+
 class Level {
     public:
     bool isClientSide() const;
@@ -18,6 +30,8 @@ class Level {
     LootTables* getLootTables();
     TickingAreasManager* getTickingAreasMgr();
     LevelStorage* getLevelStorage() const;
+    LevelData* getLevelData() const;
+    BiomeRegistry* getBiomeRegistry() const;
 };
 
 class ServerLevel : public Level {

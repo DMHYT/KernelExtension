@@ -17,6 +17,8 @@ public class ExtendedBlockSource extends NativeBlockSource implements INativeInt
     protected static native long nativeGetBlockState(long ptr, int x, int y, int z);
     protected static native boolean nativeSetBlockState(long ptr, int x, int y, int z, int runtimeID, int flags);
     protected static native boolean nativeSetBlockStateNoUpdate(long ptr, int x, int y, int z, int runtimeID);
+    protected static native int nativeGetBiome(long ptr, int x, int z);
+    protected static native int nativeGetBiomeFast(long ptr, int x, int z);
     
     protected final long pointer;
 
@@ -114,6 +116,16 @@ public class ExtendedBlockSource extends NativeBlockSource implements INativeInt
     public boolean setBlockStateNoUpdate(int x, int y, int z, BlockState state)
     {
         return nativeSetBlockStateNoUpdate(this.pointer, x, y, z, state.getRuntimeID());
+    }
+
+    @Override public int getBiome(int x, int z)
+    {
+        return nativeGetBiome(this.pointer, x, z);
+    }
+
+    public int getBiomeFast(int x, int z)
+    {
+        return nativeGetBiomeFast(this.pointer, x, z);
     }
 
 }

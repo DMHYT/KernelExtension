@@ -166,10 +166,25 @@ class ChunkPos {
     public:
     int x, z;
     ChunkPos(int xIn, int zIn): x(xIn), z(zIn) {}
+    ChunkPos(const BlockPos&);
 };
 
 
 #endif //KEX_CHUNKPOS_HPP
+
+
+#ifndef KEX_CHUNKBLOCKPOS_HPP
+#define KEX_CHUNKBLOCKPOS_HPP
+
+
+class ChunkBlockPos {
+    public:
+    char filler[4];
+    ChunkBlockPos(const BlockPos&, short s = 0);
+};
+
+
+#endif //KEX_CHUNKBLOCKPOS_HPP
 
 
 long long getTimeMilliseconds();

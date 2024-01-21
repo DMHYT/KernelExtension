@@ -17,6 +17,7 @@ class Dimension {
     TickingAreaList* getTickingAreasConst() const;
     AutomaticID<Dimension, int> getDimensionId() const;
     Level* getLevel() const;
+    void* getWorldGenerator() const;
 };
 
 
