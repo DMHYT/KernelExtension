@@ -132,7 +132,7 @@ int ItemStackBase::getAttackDamageKEX(Actor* actor, Actor* victim) const {
         CustomToolFactory* factory = (CustomToolFactory*) LegacyItemRegistry::findFactoryById(id);
         if(factory != nullptr && factory->dynamicDamageEnabled) {
             ItemInstanceExtra* extra = new ItemInstanceExtra((ItemStack*) this);
-            int result = factory->baseAttackDamage + KEXJavaBridge::CustomToolEvents::getAttackDamageBonus(id, 1, this->getDamageValue(), (jlong) extra, factory->tier->getAttackDamageBonus(), (jlong) actor->getUniqueID()->id, (jlong) victim->getUniqueID()->id);
+            return factory->baseAttackDamage + KEXJavaBridge::CustomToolEvents::getAttackDamageBonus(id, 1, this->getDamageValue(), (jlong) extra, factory->tier->getAttackDamageBonus(), (jlong) actor->getUniqueID()->id, (jlong) victim->getUniqueID()->id);
         }
     }
     VTABLE_FIND_OFFSET(Item_getAttackDamage, _ZTV4Item, _ZNK4Item15getAttackDamageEv);
