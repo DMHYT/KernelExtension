@@ -184,7 +184,7 @@ public class ItemsModule {
             callbacksField.setAccessible(true);
             HashMap<String, ArrayList<?>> callbacks = (HashMap<String, ArrayList<?>>) callbacksField.get(null);
             return (callbacks.containsKey("ItemTooltip") && !callbacks.get("ItemTooltip").isEmpty())
-                && !itemOnTooltipCallbacks.isEmpty();
+                || !itemOnTooltipCallbacks.isEmpty();
         } catch(Throwable ex) { return false; }
     }
 
