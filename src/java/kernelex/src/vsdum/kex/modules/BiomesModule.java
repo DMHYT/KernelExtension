@@ -6,7 +6,6 @@ import java.util.function.Consumer;
 
 import org.json.JSONObject;
 
-import com.zhekasmirnov.horizon.runtime.logger.Logger;
 import com.zhekasmirnov.innercore.utils.FileTools;
 
 import android.support.annotation.Nullable;
@@ -57,7 +56,6 @@ public class BiomesModule {
             biomesByName.put(name[i], b);
         }
         CallbacksModule.onBiomesInitialized();
-        forEachBiome(biome -> Logger.debug("KEX-BiomesModule", String.format("Biome %d %s: temp=%f, rain=%f, humid=%s, snow=%s, name=%s", biome.getNumericID(), biome.getNameID(), biome.getTemperature(), biome.getDownfall(), biome.isHumid() ? "true" : "false", biome.isSnowCovered() ? "true" : "false", biome.getName())));
     }
 
     @Nullable public static BiomeInterface getBiomeById(int id)
