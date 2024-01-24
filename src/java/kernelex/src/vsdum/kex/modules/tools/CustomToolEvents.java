@@ -19,12 +19,13 @@ public class CustomToolEvents {
     public static float calcDestroyTime(int id, int data, int x, int y, int z, byte side, float baseDestroyTime, float divider, float modifier, float defaultTime)
     {
         ItemInstance stack = Entity.getCarriedItem(NativeAPI.getLocalPlayer());
-        if(DataSets.toolData.containsKey(id))
+        if(DataSets.toolData.containsKey(stack.getId()))
         {
-            ScriptableObject obj = DataSets.toolData.get(id);
+            ScriptableObject obj = DataSets.toolData.get(stack.getId());
             if(ScriptableObject.hasProperty(obj, "calcDestroyTime"))
             {
                 return CommonTypes.callFloatJSFunction(obj, "calcDestroyTime", new Object[]{
+                    stack,
                     new Coords(x, y, z, side),
                     new FullBlock(id, data),
                     CommonTypes.createTimeDataScriptable(baseDestroyTime, divider, modifier),
