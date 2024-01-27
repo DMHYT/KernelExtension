@@ -5,6 +5,9 @@
 #ifndef KEX_BIOME_HPP
     class BiomeRegistry;
 #endif
+#ifndef KEX_HITRESULT_HPP
+    class HitResult;
+#endif
 class Random;
 class LevelStorage;
 #ifndef KEX_LOOTTABLE_HPP
@@ -32,6 +35,7 @@ class Level {
     LevelStorage* getLevelStorage() const;
     LevelData* getLevelData() const;
     BiomeRegistry* getBiomeRegistry() const;
+    HitResult* getHitResult();
 };
 
 class ServerLevel : public Level {

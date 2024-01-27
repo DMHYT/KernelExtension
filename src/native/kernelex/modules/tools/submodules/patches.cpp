@@ -1,14 +1,34 @@
 #include <static_symbol.h>
 
+#include <innercore/global_context.h>
 #include <innercore/id_conversion_map.h>
 
 #include <EnchantUtils.hpp>
+#include <HitResult.hpp>
 #include <I18n.hpp>
+#include <Level.hpp>
 
 #include "../../../utils/java_utils.hpp"
 #include "../tooltypes/custom.hpp"
 #include "../tooltypes/shears.hpp"
 #include "../module.hpp"
+
+
+float KEXToolsModule::CustomToolPatches::diggerGetDestroySpeed(DiggerItem* _this, const ItemStackBase& stack, const Block& block) {
+    auto hitResult = GlobalContext::getLevel()->getHitResult();
+    if(hitResult == nullptr || hitResult->type != HitResultType::TILE || hitResult->isHitLiquid) {
+        return Data::lastDestroyedBlock->getOrCalculateSpeed(stack, block, _this, BlockPos(0, 0, 0), 0);
+    }
+    return Data::lastDestroyedBlock->getOrCalculateSpeed(stack, block, _this, hitResult->blockPos, hitResult->side);
+}
+
+float KEXToolsModule::CustomToolPatches::weaponGetDestroySpeed(WeaponItem* _this, const ItemStackBase& stack, const Block& block) {
+    auto hitResult = GlobalContext::getLevel()->getHitResult();
+    if(hitResult == nullptr || hitResult->type != HitResultType::TILE || hitResult->isHitLiquid) {
+        return Data::lastDestroyedBlock->getOrCalculateSpeed(stack, block, _this, BlockPos(0, 0, 0), 0);
+    }
+    return Data::lastDestroyedBlock->getOrCalculateSpeed(stack, block, _this, hitResult->blockPos, hitResult->side);
+}
 
 
 void KEXToolsModule::CustomToolPatches::appendFormattedHovertext(Item* _this, const ItemStackBase& stack, Level& level, stl::string& text, bool someBool) {

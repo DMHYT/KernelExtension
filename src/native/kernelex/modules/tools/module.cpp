@@ -1,6 +1,8 @@
 #include <hook.h>
 #include <symbol.h>
 
+#include <innercore/id_conversion_map.h>
+
 #include <ActorUniqueID.hpp>
 #include <GameMode.hpp>
 #include <Level.hpp>
@@ -11,45 +13,25 @@
 #include "module.hpp"
 
 
+int ItemStackBase::getAttackDamageKEX(Actor* actor, Actor* victim) const {
+    Item* item = this->getItem();
+    if(item == nullptr) return 0;
+    int id = IdConversion::dynamicToStatic(item->id, IdConversion::ITEM);
+    if(KEXToolsModule::SimpleTests::isCustomTool(id)) {
+        CustomToolFactory* factory = (CustomToolFactory*) LegacyItemRegistry::findFactoryById(id);
+        if(factory != nullptr && factory->dynamicDamageEnabled) {
+            ItemInstanceExtra* extra = new ItemInstanceExtra((ItemStack*) this);
+            return factory->baseAttackDamage + KEXJavaBridge::CustomToolEvents::getAttackDamageBonus(id, 1, this->getDamageValue(), (jlong) extra, factory->tier->getAttackDamageBonus(), (jlong) actor->getUniqueID()->id, (jlong) victim->getUniqueID()->id);
+        }
+    }
+    VTABLE_FIND_OFFSET(Item_getAttackDamage, _ZTV4Item, _ZNK4Item15getAttackDamageEv);
+    return VTABLE_CALL<int>(Item_getAttackDamage, item);
+}
+
+
 void KEXToolsModule::initialize() {
 
     DLHandleManager::initializeHandle("libminecraftpe.so", "mcpe");
-
-    HookManager::addCallback(
-        SYMBOL("mcpe", "_ZN8GameMode17startDestroyBlockERK8BlockPoshRb"),
-        LAMBDA((GameMode* mode, const BlockPos& pos, unsigned char side, bool& someBoolRef), {
-            if(!mode->player->getLevel()->isClientSide()) {
-                long long player = mode->player->getUniqueID()->id;
-                auto found = KEXToolsModule::Data::last.find(player);
-                if(found == KEXToolsModule::Data::last.end()) {
-                    KEXToolsModule::Data::last.emplace(player, new KEXToolsModule::LastDestroyedBlock());
-                    found = KEXToolsModule::Data::last.find(player);
-                }
-                found->second->onEvent(pos.x, pos.y, pos.z, side);
-            } else {
-                KEXToolsModule::Data::lastClient->onEvent(pos.x, pos.y, pos.z, side);
-            }
-        }, ),
-        HookManager::CALL | HookManager::LISTENER
-    );
-
-    HookManager::addCallback(
-        SYMBOL("mcpe", "_ZN8GameMode12destroyBlockERK8BlockPosh"),
-        LAMBDA((GameMode* mode, const BlockPos& pos, unsigned char side), {
-            if(!mode->player->getLevel()->isClientSide()) {
-                long long player = mode->player->getUniqueID()->id;
-                auto found = KEXToolsModule::Data::last.find(player);
-                if(found == KEXToolsModule::Data::last.end()) {
-                    KEXToolsModule::Data::last.emplace(player, new KEXToolsModule::LastDestroyedBlock());
-                    found = KEXToolsModule::Data::last.find(player);
-                }
-                found->second->onEvent(pos.x, pos.y, pos.z, side);
-            } else {
-                KEXToolsModule::Data::lastClient->onEvent(pos.x, pos.y, pos.z, side);
-            }
-        }, ), 
-        HookManager::CALL | HookManager::LISTENER
-    );
     
     HookManager::addCallback(
         SYMBOL("mcpe", "_ZNK13ItemStackBase15getAttackDamageEv"),

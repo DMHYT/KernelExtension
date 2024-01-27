@@ -45,25 +45,20 @@ class KEXToolsModule : public Module {
     };
     class LastDestroyedBlock {
         public:
-        int x = 0;
-        int y = 0;
-        int z = 0;
-        unsigned char side = 0;
         float destroySpeed = 1.0f;
         int calculatedForX = 0;
         int calculatedForY = 0;
         int calculatedForZ = 0;
+        unsigned char calculatedForSide = 0;
+        short calculatedForId = 0;
+        int calculatedForData = 0;
         LastDestroyedBlock() {};
-        float getOrCalculateSpeed(const ItemStackBase&, const Block&, WeaponItem*);
-        float getOrCalculateSpeed(const ItemStackBase&, const Block&, DiggerItem*);
-        inline void onEvent(int xIn, int yIn, int zIn, unsigned char sideIn) {
-            x = xIn, y = yIn, z = zIn, side = sideIn;
-        }
+        float getOrCalculateSpeed(const ItemStackBase&, const Block&, WeaponItem*, const BlockPos& pos, unsigned char side);
+        float getOrCalculateSpeed(const ItemStackBase&, const Block&, DiggerItem*, const BlockPos& pos, unsigned char side);
     };
     class Data {
         public:
-        static LastDestroyedBlock* lastClient;
-        static std::unordered_map<long long, LastDestroyedBlock*> last;
+        static LastDestroyedBlock* lastDestroyedBlock;
         static std::unordered_map<int, BlockDataInterface*> blockData;
         static std::unordered_map<int, int> toolsToBrokenIds;
         static std::unordered_set<int> customTools;
@@ -84,12 +79,8 @@ class KEXToolsModule : public Module {
     };
     class CustomToolPatches {
         public:
-        static inline float diggerGetDestroySpeed(DiggerItem* _this, const ItemStackBase& stack, const Block& block) {
-            return KEXToolsModule::Data::lastClient->getOrCalculateSpeed(stack, block, _this);
-        }
-        static inline float weaponGetDestroySpeed(WeaponItem* _this, const ItemStackBase& stack, const Block& block) {
-            return KEXToolsModule::Data::lastClient->getOrCalculateSpeed(stack, block, _this);
-        }
+        static float diggerGetDestroySpeed(DiggerItem* _this, const ItemStackBase& stack, const Block& block);
+        static float weaponGetDestroySpeed(WeaponItem* _this, const ItemStackBase& stack, const Block& block);
         static inline bool hurtActor(Item*, ItemStack&, Actor&, Mob&) { return true; }
         static inline bool mineBlock__instance(Item*, ItemInstance&, const Block&, int, int, int, Actor*) { return true; }
         static inline bool mineBlock__stack(Item*, ItemStack&, const Block&, int, int, int, Actor*) { return true; }
