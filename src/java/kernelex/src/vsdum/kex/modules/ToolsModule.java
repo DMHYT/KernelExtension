@@ -23,6 +23,8 @@ import vsdum.kex.util.SoundEffect;
 
 public class ToolsModule {
 
+    public static native void addBlockMaterial(String name, float multiplier);
+    public static native float getBlockMaterialBreakingMultiplier(String materialName);
     public static native float getBlockDestroyTime(int id);
     public static native int getToolLevel(int id);
     public static native int getToolLevelViaBlock(int itemID, int blockID);
@@ -173,16 +175,6 @@ public class ToolsModule {
     public static void registerFlintAndSteel(int id, String nameId, String name, String textureName, int textureMeta, int durability, boolean isTech)
     {
         ToolsNativeAPI.nativeRegisterFlintAndSteel(id, nameId, name, textureName, textureMeta, isTech, durability);
-    }
-
-    public static void addBlockMaterial(String name, float breakingMultiplier)
-    {
-        DataSets.materialNameToBreakingMultiplier.putIfAbsent(name, breakingMultiplier);
-    }
-
-    public static float getBlockMaterialBreakingMultiplier(String name)
-    {
-        return DataSets.materialNameToBreakingMultiplier.getOrDefault(name, 1.0f).floatValue();
     }
 
     public static DataSets.BlockData getBlockData(int blockID)

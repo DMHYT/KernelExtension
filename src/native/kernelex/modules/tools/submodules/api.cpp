@@ -75,6 +75,19 @@ void KEXToolsModule::ToolAPI::setBlockIsNative(int id, bool isNative) {
 }
 
 
+void KEXToolsModule::ToolAPI::addBlockMaterial(const char* name, float multiplier) {
+    if(Data::blockMaterialMultipliers.find(name) != Data::blockMaterialMultipliers.end()) {
+        Data::blockMaterialMultipliers.emplace(name, multiplier);
+    }
+}
+
+
+float KEXToolsModule::ToolAPI::getBlockMaterialMultiplier(const std::string& materialName) {
+    auto found = Data::blockMaterialMultipliers.find(materialName);
+    return found == Data::blockMaterialMultipliers.end() ? 1.0f : found->second;
+}
+
+
 Item::Tier* KEXToolsModule::ToolAPI::getItemTier(DiggerItem* item) {
     int staticId = IdConversion::dynamicToStatic(item->id, IdConversion::ITEM);
     if(staticId < 900) {

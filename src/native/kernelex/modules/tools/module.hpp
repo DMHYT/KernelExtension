@@ -52,6 +52,8 @@ class KEXToolsModule : public Module {
         unsigned char calculatedForSide = 0;
         short calculatedForId = 0;
         int calculatedForData = 0;
+        void* calculatedForItem = nullptr;
+        long long lastTimestamp = 0ll;
         LastDestroyedBlock() {};
         float getOrCalculateSpeed(const ItemStackBase&, const Block&, WeaponItem*, const BlockPos& pos, unsigned char side);
         float getOrCalculateSpeed(const ItemStackBase&, const Block&, DiggerItem*, const BlockPos& pos, unsigned char side);
@@ -62,6 +64,7 @@ class KEXToolsModule : public Module {
         static std::unordered_map<int, BlockDataInterface*> blockData;
         static std::unordered_map<int, int> toolsToBrokenIds;
         static std::unordered_set<int> customTools;
+        static std::unordered_map<std::string, float> blockMaterialMultipliers;
     };
     class ToolAPI {
         public:
@@ -74,6 +77,8 @@ class KEXToolsModule : public Module {
         static void setBlockMaterialName(int id, const char* materialName);
         static void setBlockDestroyLevel(int id, int destroyLevel);
         static void setBlockIsNative(int id, bool isNative);
+        static void addBlockMaterial(const char* name, float multiplier);
+        static float getBlockMaterialMultiplier(const std::string& materialName);
         static Item::Tier* getItemTier(DiggerItem*);
         static bool itemHasMaterial(int id, const std::string& materialName);
     };

@@ -126,6 +126,19 @@ extern "C" {
         iface->destroyLevel = destroyLevel;
         iface->isNative = isNative;
     }
+    JNIEXPORT void JNICALL Java_vsdum_kex_modules_ToolsModule_addBlockMaterial
+    (JNIEnv* env, jclass, jstring name, jfloat multiplier) {
+        const char* cName = env->GetStringUTFChars(name, 0);
+        KEXToolsModule::ToolAPI::addBlockMaterial(cName, multiplier);
+        env->ReleaseStringUTFChars(name, cName);
+    }
+    JNIEXPORT jfloat JNICALL Java_vsdum_kex_modules_ToolsModule_getBlockMaterialBreakingMultiplier
+    (JNIEnv* env, jclass, jstring materialName) {
+        const char* cMaterialName = env->GetStringUTFChars(materialName, 0);
+        float result = KEXToolsModule::ToolAPI::getBlockMaterialMultiplier(cMaterialName);
+        env->ReleaseStringUTFChars(materialName, cMaterialName);
+        return result;
+    }
     JNIEXPORT jint JNICALL Java_vsdum_kex_modules_ToolsModule_getToolLevel
     (JNIEnv*, jclass, jint id) {
         int dynamicId = IdConversion::staticToDynamic(id, IdConversion::ITEM);

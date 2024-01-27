@@ -24,16 +24,6 @@ public class DataSets {
         .add("netherite", new ItemTier(vanillaTierPointers[5]))
         .build();
 
-    public static final Map<String, Float> materialNameToBreakingMultiplier = new MapBuilder<String, Float>()
-        .add("stone", 10.0f / 3.0f)
-        .add("wood", 1.0f)
-        .add("dirt", 1.0f)
-        .add("plant", 1.0f)
-        .add("fibre", 1.0f)
-        .add("cobweb", 10.0f / 3.0f)
-        .add("unbreaking", 999999999f)
-        .build();
-
     public static final class BlockData {
 
         @Nullable public final String materialName;

@@ -9,10 +9,12 @@
 #endif
 class ActorDamageSource;
 class BlockSource;
-class Enchant {
-    public:
-    enum Type: unsigned char {};
-};
+#ifndef KEX_ENCHANT_HPP
+    class Enchant {
+        public:
+        enum Type: unsigned char {};
+    };
+#endif
 class EnchantmentInstance;
 #ifndef KEX_ITEM_HPP
     class Item;
