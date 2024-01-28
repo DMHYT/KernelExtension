@@ -15,6 +15,7 @@ import vsdum.kex.util.LangInjector;
 public class BiomesModule {
 
     private static final Map<String, String> customBiomeTranslationKeys = new HashMap<>();
+    private static final Map<String, String> biomeToModName = new HashMap<>();
     private static final Map<Integer, BiomeInterface> biomesById = new HashMap<>();
     private static final Map<String, BiomeInterface> biomesByName = new HashMap<>();
     private static boolean biomesInitialized = false;
@@ -22,6 +23,11 @@ public class BiomesModule {
     public static void setBiomeTranslationKey(String biomeNameID, String key)
     {
         customBiomeTranslationKeys.put(biomeNameID, key);
+    }
+
+    public static void setModNameForBiome(String biomeNameID, String modName)
+    {
+        biomeToModName.put(biomeNameID, modName);
     }
 
     public static void appendBiomeNameTranslations(String biomeNamesPath)
@@ -145,6 +151,12 @@ public class BiomesModule {
         public final String getName()
         {
             return I18n.translate(this.getTranslationKey());
+        }
+
+        public final String getModName()
+        {
+            if(this.isVanilla()) return "Minecraft";
+            return biomeToModName.getOrDefault(this.getNameID(), "InnerCore");
         }
 
     }
