@@ -27,6 +27,210 @@ declare function WRAP_JAVA(clazz: "vsdum.kex.util.ItemFactoryHelper"): typeof vs
 
 declare module vsdum {
     export module kex {
+        export module util {
+            export module mcmath {
+                export class Vec2f extends java.lang.Object {
+                    static class: java.lang.Class<Vec2f>;
+                    static readonly ZERO: Vec2f;
+                    static readonly ONE: Vec2f;
+                    static readonly UNIT_X: Vec2f;
+                    static readonly NEGATIVE_UNIT_X: Vec2f;
+                    static readonly UNIT_Y: Vec2f;
+                    static readonly NEGATIVE_UNIT_Y: Vec2f;
+                    static readonly MAX: Vec2f;
+                    static readonly MIN: Vec2f;
+                    readonly x: number;
+                    readonly y: number;
+                    constructor(x: number, y: number);
+                }
+                export class Vec3d extends java.lang.Object {
+                    static class: java.lang.Class<Vec3d>;
+                    static readonly ZERO: Vec3d;
+                    readonly x: number;
+                    readonly y: number;
+                    readonly z: number;
+                    constructor(x: number, y: number, z: number);
+                    constructor(vector: Vec3d);
+                    subtractReverse(vec: Vec3d): Vec3d;
+                    normalize(): Vec3d;
+                    dotProduct(vec: Vec3d): number;
+                    crossProduct(vec: Vec3d): Vec3d;
+                    subtract(vec: Vec3d): Vec3d;
+                    subtract(x: number, y: number, z: number): Vec3d;
+                    add(vec: Vec3d): Vec3d;
+                    addVector(x: number, y: number, z: number): Vec3d;
+                    distanceTo(vec: Vec3d): number;
+                    squareDistanceTo(vec: Vec3d): number;
+                    squareDistanceTo(x: number, y: number, z: number): number;
+                    scale(factor: number): Vec3d;
+                    lengthVector(): number;
+                    lengthSquared(): number;
+                    getIntermediateWithXValue(vec: Vec3d, x: number): Nullable<Vec3d>;
+                    getIntermediateWithYValue(vec: Vec3d, y: number): Nullable<Vec3d>;
+                    getIntermediateWithZValue(vec: Vec3d, z: number): Nullable<Vec3d>;
+                    rotatePitch(pitch: number): Vec3d;
+                    rotateYaw(yaw: number): Vec3d;
+                    fromPitchYawVector(pitchYawVec: Vec2f): Vec3d;
+                    fromPitchYaw(pitch: number, yaw: number): Vec3d;
+                }
+                export class Vec3i extends java.lang.Object implements java.lang.Comparable<Vec3i> {
+                    static class: java.lang.Class<Vec3i>;
+                    static readonly NULL_VECTOR: Vec3i;
+                    readonly x: number;
+                    readonly y: number;
+                    readonly z: number;
+                    readonly vec: Vec3d;
+                    readonly side: number;
+                    constructor(x: number, y: number, z: number, side: number, vec: Vec3d);
+                    constructor(x: number, y: number, z: number, side: number, dx: number, dy: number, dz: number);
+                    constructor(x: number, y: number, z: number);
+                    compareTo(vec: Vec3i): number;
+                    getX(): number;
+                    getY(): number;
+                    getZ(): number;
+                    crossProduct(vec: Vec3i): Vec3i;
+                    getDistance(x: number, y: number, z: number): number;
+                    distanceSq(toX: number, toY: number, toZ: number): number;
+                    distanceSqToCenter(x: number, y: number, z: number): number;
+                    distanceSq(to: Vec3i): number;
+                }
+                export class Direction extends java.lang.Object {
+                    static class: java.lang.Class<Direction>;
+                    private constructor(index: number, opposite: number, horizontalIndex: number, name: any_string, axisDirection: Direction.AxisDirection, axis: Direction.Axis, directionVec: Vec3i);
+                    getIndex(): number;
+                    getAxisDirection(): Direction.AxisDirection;
+                    getOpposite(): Direction;
+                    rotateAround(axis: Direction.Axis): Direction;
+                    rotateY(): Direction;
+                    rotateX(): Direction;
+                    rotateZ(): Direction;
+                    rotateYCCW(): Direction;
+                    getFrontOffsetX(): number;
+                    getFrontOffsetY(): number;
+                    getFrontOffsetZ(): number;
+                    getAxis(): Direction.Axis;
+                    static byName(name: any_string): Nullable<Direction>;
+                    static getFront(index: number): Direction;
+                    static getHorizontal(index: number): Direction;
+                    static fromAngle(angle: number): Direction;
+                    getHorizontalAngle(): number;
+                    static random(rand: java.util.Random): Direction;
+                    static getFacingFromVector(x: number, y: number, z: number): Direction;
+                    static getFacingFromAxis(axisDir: Direction.AxisDirection, axis: Direction.Axis): Direction;
+                    getDirectionVec(): Vec3i;
+                    getClockWise(axis: Direction.Axis): Direction;
+                    getCounterClockWise(axis: Direction.Axis): Direction;
+                    getClockWise(): Direction;
+                    getCounterClockWise(): Direction;
+                    getClockWiseX(): Direction;
+                    getCounterClockWiseX(): Direction;
+                    getClockWiseZ(): Direction;
+                    getCounterClockWiseZ(): Direction;
+                }
+                export module Direction {
+                    export const DOWN: Direction;
+                    export const UP: Direction;
+                    export const NORTH: Direction;
+                    export const SOUTH: Direction;
+                    export const WEST: Direction;
+                    export const EAST: Direction;
+                    export class Axis extends java.lang.Object {
+                        static class: java.lang.Class<Axis>;
+                        static readonly X: Axis;
+                        static readonly Y: Axis;
+                        static readonly Z: Axis;
+                        private constructor(name: any_string, plane: Plane);
+                        static byName(name: any_string): Nullable<Axis>;
+                        isVertical(): boolean;
+                        isHorizontal(): boolean;
+                        apply(to: Nullable<Direction>): boolean;
+                        test(dir: Direction): boolean;
+                        getPlane(): Plane;
+                    }
+                    export class AxisDirection extends java.lang.Object {
+                        static class: java.lang.Class<AxisDirection>;
+                        static readonly POSITIVE: AxisDirection;
+                        static readonly NEGATIVE: AxisDirection;
+                        private constructor(offset: number, description: any_string);
+                        getOffset(): number;
+                    }
+                    export class Plane extends java.lang.Object {
+                        static class: java.lang.Class<Plane>;
+                        static readonly HORIZONTAL: Plane;
+                        static readonly VERTICAL: Plane;
+                        facings(): Direction[];
+                        random(rand: java.util.Random): Direction;
+                        apply(dir: Nullable<Direction>): boolean;
+                        test(dir: Direction): boolean;
+                        iterator(): java.util.Iterator<Direction>;
+                    }
+                }
+                export class BlockPos extends Vec3i {
+                    static class: java.lang.Class<BlockPos>;
+                    static readonly ORIGIN: BlockPos;
+                    constructor(x: number, y: number, z: number, side: number, vec: Vec3d);
+                    constructor(x: number, y: number, z: number, side: number, dx: number, dy: number, dz: number);
+                    constructor(x: number, y: number, z: number);
+                    constructor(vec: Vec3d);
+                    constructor(vec: Vec3i);
+                    add(x: number, y: number, z: number): BlockPos;
+                    add(vec: Vec3i): BlockPos;
+                    subtract(vec: Vec3i): BlockPos;
+                    up(): BlockPos;
+                    up(n: number): BlockPos;
+                    down(): BlockPos;
+                    down(n: number): BlockPos;
+                    north(): BlockPos;
+                    north(n: number): BlockPos;
+                    south(): BlockPos;
+                    south(n: number): BlockPos;
+                    west(): BlockPos;
+                    west(n: number): BlockPos;
+                    east(): BlockPos;
+                    east(n: number): BlockPos;
+                    offset(facing: Direction): BlockPos;
+                    offset(facing: Direction, n: number): BlockPos;
+                    crossProduct(vec: Vec3i): BlockPos;
+                    toLong(): number;
+                    static fromLong(serialized: number): BlockPos;
+                }
+                export class Rotation extends java.lang.Object {
+                    static class: java.lang.Class<Rotation>;
+                    static readonly NONE: Rotation;
+                    static readonly CLOCKWISE_90: Rotation;
+                    static readonly CLOCKWISE_180: Rotation;
+                    static readonly COUNTERCLOCKWISE_90: Rotation;
+                    private constructor();
+                    getRotated(rot: Rotation): Rotation;
+                    rotate(dir: Direction): Direction;
+                    // TODO rotate(i: number, j: number): number;
+                    getRandom(rand: java.util.Random): Rotation;
+                    getShuffled(rand: java.util.Random): java.util.List<Rotation>;
+                }
+                export class Mirror extends java.lang.Object {
+                    static class: java.lang.Class<Mirror>;
+                    static readonly NONE: Mirror;
+                    static readonly LEFT_RIGHT: Mirror;
+                    static readonly FRONT_BACK: Mirror;
+                    private constructor();
+                    // TODO mirror(k: number, l: number): number;
+                    getRotation(dir: Direction): Rotation;
+                    mirror(dir: Direction): Direction;
+                }
+            }
+        }
+    }
+}
+declare function WRAP_JAVA(clazz: "vsdum.kex.util.mcmath.Vec2f"): typeof vsdum.kex.util.mcmath.Vec2f;
+declare function WRAP_JAVA(clazz: "vsdum.kex.util.mcmath.Vec3d"): typeof vsdum.kex.util.mcmath.Vec3d;
+declare function WRAP_JAVA(clazz: "vsdum.kex.util.mcmath.Vec3i"): typeof vsdum.kex.util.mcmath.Vec3i;
+declare function WRAP_JAVA(clazz: "vsdum.kex.util.mcmath.Direction"): typeof vsdum.kex.util.mcmath.Direction;
+declare function WRAP_JAVA(clazz: "vsdum.kex.util.mcmath.BlockPos"): typeof vsdum.kex.util.mcmath.BlockPos;
+declare function WRAP_JAVA(clazz: "vsdum.kex.util.mcmath.Rotation"): typeof vsdum.kex.util.mcmath.Rotation;
+declare function WRAP_JAVA(clazz: "vsdum.kex.util.mcmath.Mirror"): typeof vsdum.kex.util.mcmath.Mirror;
+
+declare module vsdum {
+    export module kex {
         export module common {
             export class INativeInterface extends java.lang.Object {
                 static class: java.lang.Class<INativeInterface>;
@@ -835,7 +1039,14 @@ declare module vsdum {
                 static getDefaultForDimension(dimensionId: number): Nullable<ExtendedBlockSource>;
                 getLevel(): Nullable<Level>;
                 getDimensionObject(): Nullable<Dimension>;
+                getCustomBlockEntity(pos: util.mcmath.BlockPos): Nullable<modules.TileEntityModule.BlockActor>;
                 getCustomBlockEntity(x: number, y: number, z: number): Nullable<modules.TileEntityModule.BlockActor>;
+                getBlockState(pos: util.mcmath.BlockPos): Nullable<modules.states.BlockState>;
+                getBlockState(x: number, y: number, z: number): Nullable<modules.states.BlockState>;
+                setBlockState(x: number, y: number, z: number, state: modules.states.BlockState, flags: number): boolean;
+                setBlockStateNoUpdate(x: number, y: number, z: number, state: modules.states.BlockState): boolean;
+                getBiome(x: number, z: number): number;
+                getBiomeFast(x: number, z: number): number;
             }
         }
     }
@@ -1167,7 +1378,7 @@ declare module vsdum {
     export module kex {
         export module modules {
             interface ExtendedToolParams extends ToolAPI.ToolParams {
-                getAttackDamageBonus?: (item: ItemInstance) => number;
+                getAttackDamageBonus?: (item: ItemInstance, attacker: number, victim: number) => number;
             }
             interface BlockData {
                 readonly materialName: Nullable<jstring>;
@@ -1235,12 +1446,17 @@ declare module vsdum {
             export class BlocksModule extends java.lang.Object {
                 static class: java.lang.Class<BlocksModule>;
                 static registerComparatorSignalCallbackJS(id: number, callback: BlocksModule.ComparatorSignalCallbackJS, isCallbackForced?: boolean): void;
+                static registerComparatorSignalCallback(id: number, callback: BlocksModule.ComparatorSignalCallback, isCallbackForced?: boolean): void;
                 static registerOnStepOnCallback(id: number, callback: BlocksModule.OnStepOnCallback): void;
                 static registerOnStepOffCallback(id: number, callback: BlocksModule.OnStepOffCallback): void;
                 static setLightEmission(id: number, data: number, lightLevel: number): void;
                 static getLightEmission(id: number, data: number): number;
+                static registerStateForBlock(id: number, state: NonNullable<states.properties.Property<any>>): void;
             }
             export module BlocksModule {
+                export interface ComparatorSignalCallback {
+                    (block: BlockState, world: natives.ExtendedBlockSource, pos: util.mcmath.BlockPos, side: util.mcmath.Direction): number;
+                }
                 export interface ComparatorSignalCallbackJS {
                     (block: BlockState, world: natives.ExtendedBlockSource, coords: Callback.ItemUseCoordinates): number;
                 }
@@ -1409,7 +1625,7 @@ declare module vsdum {
         export module modules {
             export module TileEntityModule {
                 export interface TileEntityCreationCallback {
-                    (pointer: number, type: number, pos: Vector): BlockActor;
+                    (pointer: number, type: number, pos: util.mcmath.BlockPos): BlockActor;
                 }
                 export function registerTileEntityType(typeName: any_string, callback: TileEntityCreationCallback): number;
                 export function registerForBlock(blockID: number, type: number): void;
@@ -1418,7 +1634,7 @@ declare module vsdum {
                     networkEntity: Nullable<NetworkEntity>;
                     networkData: Nullable<SyncedNetworkData>;
                     container: Nullable<ItemContainer>;
-                    getBlockPos(): Vector;
+                    getBlockPos(): util.mcmath.BlockPos;
                     getDimension(): number;
                     updateBlockPos(): BlockActor;
                     getBlockState(): Nullable<BlockState>;
@@ -1442,12 +1658,13 @@ declare module vsdum {
                     onMove(): void;
                     onRemoved(): void;
                     triggerEvent(id: number, type: number): void;
+                    onNeighborChanged(pos: util.mcmath.BlockPos): void;
                     getCustomName(): Nullable<jstring>;
                     setCustomName(customName: any_string): void;
                     getName(): Nullable<jstring>;
                     onChunkLoaded(): void;
                     onChunkUnloaded(): void;
-                    onUse(player: natives.Player, side: number, vec: Vector): boolean;
+                    onUse(player: natives.Player, side: number, vec: util.mcmath.Vec3d): boolean;
                     getScreenByName(container: ItemContainer, screenName: any_string): Nullable<UI.IWindow>;
                 }
             }
@@ -1455,6 +1672,220 @@ declare module vsdum {
     }
 }
 declare function WRAP_JAVA(clazz: "vsdum.kex.modules.TileEntityModule"): typeof vsdum.kex.modules.TileEntityModule;
+
+declare module vsdum {
+    export module kex {
+        export module modules {
+            export module BiomesModule {
+                export function setBiomeTranslationKey(biomeNameID: any_string, key: any_string): void;
+                export function setModNameForBiome(biomeNameID: any_string, modName: any_string): void;
+                export function getBiomeById(id: number): Nullable<BiomeInterface>;
+                export function getBiomeByName(name: any_string): Nullable<BiomeInterface>;
+                export function forEachBiome(callback: (biome: BiomeInterface) => void): void;
+                export interface BiomeInterface {
+                    getNumericID(): number;
+                    getNameID(): jstring;
+                    getTemperature(): number;
+                    getDownfall(): number;
+                    isHumid(): boolean;
+                    isSnowCovered(): boolean;
+                    isVanilla(): boolean;
+                    isModded(): boolean;
+                    getTranslationKey(): jstring;
+                    getName(): jstring;
+                    getModName(): jstring;
+                }
+            }
+        }
+    }
+}
+declare function WRAP_JAVA(clazz: "vsdum.kex.modules.BiomesModule"): typeof vsdum.kex.modules.BiomesModule;
+
+declare module vsdum {
+    export module kex {
+        export module modules {
+            export module states {
+                export module properties {
+                    export abstract class Property<T extends java.lang.Comparable<T>> extends java.lang.Object implements common.INativeInterface {
+                        static class: java.lang.Class<Property<any>>;
+                        getPointer(): number;
+                        equals(other: any): boolean;
+                        hashCode(): number;
+                        generateHashCode(): number;
+                        getName(): jstring;
+                        getNumericID(): number;
+                        getValueClass(): java.lang.Class<T>;
+                        abstract getIndex(value: T): number;
+                        abstract getPossibleValues(): java.util.Collection<T>;
+                        abstract getValue(index: number): java.util.Optional<T>;
+                    }
+                    export class IntegerProperty extends Property<java.lang.Integer> {
+                        equals(other: any): boolean;
+                        generateHashCode(): number;
+                        getPossibleValues(): java.util.Collection<java.lang.Integer>;
+                        getIndex(value: java.lang.Integer): number;
+                        getValue(index: number): java.util.Optional<java.lang.Integer>;
+                        static create(name: any_string, min: number, max: number): IntegerProperty;
+                    }
+                    export class BooleanProperty extends Property<java.lang.Boolean> {
+                        equals(other: any): boolean;
+                        generateHashCode(): number;
+                        getPossibleValues(): java.util.Collection<java.lang.Boolean>;
+                        getIndex(value: java.lang.Boolean): number;
+                        getValue(index: number): java.util.Optional<java.lang.Boolean>;
+                        static create(name: any_string): BooleanProperty;
+                    }
+                    export class EnumProperty<T extends java.lang.Enum<T>> extends Property<T> {
+                        equals(other: any): boolean;
+                        generateHashCode(): number;
+                        getPossibleValues(): java.util.Collection<T>;
+                        getIndex(value: T): number;
+                        getValue(index: number): java.util.Optional<T>;
+                        toIntegerProperty(): IntegerProperty;
+                    }
+                }
+                export class BlockState extends java.lang.Object {
+                    static class: java.lang.Class<BlockState>;
+                    constructor(id: number, data: number);
+                    getRuntimeID(): number;
+                    hasBlockEntity(): boolean;
+                    getProperties(): java.util.Collection<properties.Property<any>>;
+                    hasProperty<T extends java.lang.Comparable<T>>(property: properties.Property<T>): boolean;
+                    getValue<T extends java.lang.Comparable<T>>(property: properties.Property<T>): T;
+                    getOptionalValue<T extends java.lang.Comparable<T>>(properties: properties.Property<T>): java.util.Optional<T>;
+                    setValue<T extends java.lang.Comparable<T>, V extends T>(property: properties.Property<T>, value: V): BlockState;
+                    cycle<T extends java.lang.Comparable<T>>(property: properties.Property<T>): BlockState;
+                    rotate(rotation: util.mcmath.Rotation): BlockState;
+                    mirror(m: util.mcmath.Mirror): BlockState;
+                    getFriction(): number;
+                    getDestroySpeed(): number;
+                    getLightBlock(): number;
+                    getLightEmission(): number;
+                }
+                export module VanillaStates {
+                    export const AGE_BIT: properties.BooleanProperty;
+                    export const AGE: properties.IntegerProperty;
+                    export const ATTACHED_BIT: properties.BooleanProperty;
+                    export const PORTAL_AXIS: properties.EnumProperty<any>;
+                    export const BITE_COUNTER: properties.IntegerProperty;
+                    export const BREWING_STAND_SLOT_A_BIT: properties.BooleanProperty;
+                    export const BREWING_STAND_SLOT_B_BIT: properties.BooleanProperty;
+                    export const BREWING_STAND_SLOT_C_BIT: properties.BooleanProperty;
+                    export const BUTTON_PRESSED_BIT: properties.BooleanProperty;
+                    export const CONDITIONAL_BIT: properties.BooleanProperty;
+                    export const COVERED_BIT: properties.BooleanProperty;
+                    export const ANVIL_DAMAGE: properties.EnumProperty<any>;
+                    export const DISARMED_BIT: properties.BooleanProperty;
+                    export const DOOR_HINGE_BIT: properties.BooleanProperty;
+                    export const UPPER_BLOCK_BIT: properties.BooleanProperty;
+                    export const HORIZONTAL_FACING: properties.EnumProperty<any>;
+                    export const END_PORTAL_EYE_BIT: properties.BooleanProperty;
+                    export const EXPLODE_BIT: properties.BooleanProperty;
+                    export const FACING_DIRECTION: properties.EnumProperty<any>;
+                    export const CAULDRON_FILL_LEVEL: properties.IntegerProperty;
+                    export const GROWTH: properties.IntegerProperty;
+                    export const HEAD_PIECE_BIT: properties.BooleanProperty;
+                    export const HEIGHT: properties.IntegerProperty;
+                    export const INFINIBURN_BIT: properties.BooleanProperty;
+                    export const IN_WALL_BIT: properties.BooleanProperty;
+                    export const LIQUID_DEPTH: properties.IntegerProperty;
+                    export const MOISTURIZED_AMOUNT: properties.IntegerProperty;
+                    export const NO_DROP_BIT: properties.BooleanProperty;
+                    export const KELP_AGE: properties.IntegerProperty;
+                    export const OCCUPIED_BIT: properties.BooleanProperty;
+                    export const OPEN_BIT: properties.BooleanProperty;
+                    export const OUTPUT_SUBTRACT_BIT: properties.BooleanProperty;
+                    export const OUTPUT_LIT_BIT: properties.BooleanProperty;
+                    export const PERSISTENT_BIT: properties.BooleanProperty;
+                    export const POWERED_BIT: properties.BooleanProperty;
+                    export const RAIL_DATA_BIT: properties.BooleanProperty;
+                    export const RAIL_DIRECTION: properties.EnumProperty<any>;
+                    export const REDSTONE_SIGNAL: properties.IntegerProperty;
+                    export const REPEATER_DELAY: properties.IntegerProperty;
+                    export const SUSPENDED_BIT: properties.BooleanProperty;
+                    export const TOGGLE_BIT: properties.BooleanProperty;
+                    export const TOP_SLOT_BIT: properties.BooleanProperty;
+                    export const TRIGGERED_BIT: properties.BooleanProperty;
+                    export const UPDATE_BIT: properties.BooleanProperty;
+                    export const UPSIDE_DOWN_BIT: properties.BooleanProperty;
+                    export const VINE_DIRECTION_BITS: properties.IntegerProperty;
+                    export const ALLOW_UNDERWATER_BIT: properties.BooleanProperty;
+                    export const COLOR_BIT: properties.BooleanProperty;
+                    export const DEAD_BIT: properties.BooleanProperty;
+                    export const CLUSTER_COUNT: properties.IntegerProperty;
+                    export const ITEM_FRAME_MAP_BIT: properties.BooleanProperty;
+                    export const SAPLING_TYPE: properties.IntegerProperty;
+                    export const TORCH_FACING_DIRECTION: properties.EnumProperty<any>;
+                    export const DRAG_DOWN: properties.BooleanProperty;
+                    export const TURTLE_EGG_COUNT: properties.IntegerProperty;
+                    export const HATCH_LEVEL: properties.EnumProperty<any>;
+                    export const GROUND_SIGN_DIRECTION: properties.IntegerProperty;
+                    export const WEIRDO_DIRECTION: properties.IntegerProperty;
+                    export const CORAL_DIRECTION: properties.IntegerProperty;
+                    export const BLOCK_COLOR: properties.EnumProperty<any>;
+                    export const BAMBOO_THICKNESS: properties.EnumProperty<any>;
+                    export const BAMBOO_LEAF_SIZE: properties.EnumProperty<any>;
+                    export const STABILITY: properties.IntegerProperty;
+                    export const STABILITY_CHECK_BIT: properties.BooleanProperty;
+                    export const WOOD_TYPE: properties.IntegerProperty;
+                    export const STONE_TYPE: properties.IntegerProperty;
+                    export const DIRT_TYPE: properties.IntegerProperty;
+                    export const SAND_TYPE: properties.IntegerProperty;
+                    export const OLD_LOG_TYPE: properties.IntegerProperty;
+                    export const NEW_LOG_TYPE: properties.IntegerProperty;
+                    export const CHISEL_TYPE: properties.IntegerProperty;
+                    export const DEPRECATED: properties.IntegerProperty;
+                    export const OLD_LEAF_TYPE: properties.IntegerProperty;
+                    export const NEW_LEAF_TYPE: properties.IntegerProperty;
+                    export const SPONGE_TYPE: properties.IntegerProperty;
+                    export const SAND_STONE_TYPE: properties.IntegerProperty;
+                    export const TALL_GRASS_TYPE: properties.IntegerProperty;
+                    export const FLOWER_TYPE: properties.IntegerProperty;
+                    export const STONE_SLAB_TYPE: properties.IntegerProperty;
+                    export const STONE_SLAB_TYPE_2: properties.IntegerProperty;
+                    export const STONE_SLAB_TYPE_3: properties.IntegerProperty;
+                    export const STONE_SLAB_TYPE_4: properties.IntegerProperty;
+                    export const MONSTER_EGG_STONE_TYPE: properties.IntegerProperty;
+                    export const STONE_BRICK_TYPE: properties.IntegerProperty;
+                    export const HUGE_MUSHROOM_BITS: properties.IntegerProperty;
+                    export const WALL_BLOCK_TYPE: properties.IntegerProperty;
+                    export const PRISMARINE_BLOCK_TYPE: properties.IntegerProperty;
+                    export const DOUBLE_PLANT_TYPE: properties.IntegerProperty;
+                    export const CHEMISTRY_TABLE_TYPE: properties.IntegerProperty;
+                    export const SEA_GRASS_TYPE: properties.IntegerProperty;
+                    export const CORAL_COLOR: properties.EnumProperty<any>;
+                    export const CAULDRON_LIQUID_TYPE: properties.IntegerProperty;
+                    export const HANGING_BIT: properties.BooleanProperty;
+                    export const STRIPPED_BIT: properties.BooleanProperty;
+                    export const CORAL_HANG_TYPE_BIT: properties.BooleanProperty;
+                    export const BELL_ATTACHMENT: properties.EnumProperty<any>;
+                    export const STRUCTURE_VOID_TYPE: properties.EnumProperty<any>;
+                    export const STRUCTURE_BLOCK_TYPE: properties.EnumProperty<any>;
+                    export const EXTINGUISHED: properties.BooleanProperty;
+                    export const COMPOSTER_FILL_LEVEL: properties.IntegerProperty;
+                    export const CORAL_FAN_DIRECTION: properties.IntegerProperty;
+                    export const LEVER_DIRECTION: properties.EnumProperty<any>;
+                    export const PILLAR_AXIS: properties.EnumProperty<any>;
+                    export const BLOCK_LIGHT_LEVEL: properties.IntegerProperty;
+                    export const HONEY_LEVEL: properties.IntegerProperty;
+                    export const WEEPING_VINES_AGE: properties.IntegerProperty;
+                    export const WALL_POST_BIT: properties.BooleanProperty;
+                    export const WALL_CONNECTION_TYPE_NORTH: properties.EnumProperty<any>;
+                    export const WALL_CONNECTION_TYPE_EAST: properties.EnumProperty<any>;
+                    export const WALL_CONNECTION_TYPE_SOUTH: properties.EnumProperty<any>;
+                    export const WALL_CONNECTION_TYPE_WEST: properties.EnumProperty<any>;
+                    export const ROTATION: properties.IntegerProperty;
+                    export const TWISTING_VINES_AGE: properties.IntegerProperty;
+                    export const RESPAWN_ANCHOR_CHARGE: properties.IntegerProperty;
+                }
+            }
+        }
+    }
+}
+declare function WRAP_JAVA(clazz: "vsdum.kex.modules.states.properties.IntegerProperty"): typeof vsdum.kex.modules.states.properties.IntegerProperty;
+declare function WRAP_JAVA(clazz: "vsdum.kex.modules.states.properties.BooleanProperty"): typeof vsdum.kex.modules.states.properties.BooleanProperty;
+declare function WRAP_JAVA(clazz: "vsdum.kex.modules.states.BlockState"): typeof vsdum.kex.modules.states.BlockState;
+declare function WRAP_JAVA(clazz: "vsdum.kex.modules.states.VanillaStates"): typeof vsdum.kex.modules.states.VanillaStates;
 
 declare module vsdum {
     export module kex {
@@ -1633,6 +2064,7 @@ declare namespace Callback {
     export function addCallback(name: "EntitySneakChanged", func: (entity: number, sneaking: boolean) => void, priority?: number): void;
     export function addCallback(name: "ItemTooltip", func: vsdum.kex.modules.OnTooltipCallback, priority?: number): void;
     export function addCallback(name: "BlockEventEntityStepOff", func: Block.EntityStepOffFunction, priority?: number): void;
+    export function addCallback(name: "BiomesInitialized", func: () => void, priority?: number): void;
     export var on: typeof addCallback;
     export var once: typeof addCallback;
     export var off: typeof addCallback;

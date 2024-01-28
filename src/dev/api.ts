@@ -1,11 +1,23 @@
 /// <reference path="./modules/commands.ts" />
 /// <reference path="./modules/blocks.ts" />
+/// <reference path="./modules/states.ts" />
 
+
+namespace KEXMath {
+    export const Vec2f = WRAP_JAVA("vsdum.kex.util.mcmath.Vec2f");
+    export const Vec3d = WRAP_JAVA("vsdum.kex.util.mcmath.Vec3d");
+    export const Vec3i = WRAP_JAVA("vsdum.kex.util.mcmath.Vec3i");
+    export const Direction = WRAP_JAVA("vsdum.kex.util.mcmath.Direction");
+    export const BlockPos = WRAP_JAVA("vsdum.kex.util.mcmath.BlockPos");
+    export const Rotation = WRAP_JAVA("vsdum.kex.util.mcmath.Rotation");
+    export const Mirror = WRAP_JAVA("vsdum.kex.util.mcmath.Mirror");
+}
 
 const LootModule = WRAP_JAVA("vsdum.kex.modules.LootModule");
 const DamageModule = WRAP_JAVA("vsdum.kex.modules.DamageModule");
 const ChunksModule = WRAP_JAVA("vsdum.kex.modules.ChunksModule");
 const TileEntityModule = WRAP_JAVA("vsdum.kex.modules.TileEntityModule");
+const BiomesModule = WRAP_JAVA("vsdum.kex.modules.BiomesModule");
 
 const LootTableContext = WRAP_JAVA("vsdum.kex.natives.LootTableContext");
 const MobEffect = WRAP_JAVA("vsdum.kex.natives.MobEffect");
@@ -27,6 +39,8 @@ const TextureWorker = WRAP_JAVA("vsdum.kex.util.TextureWorker");
 const ItemAnimHelper = WRAP_JAVA("vsdum.kex.util.ItemAnimHelper");
 
 ModAPI.registerAPI("KernelExtension", {
+    Math: KEXMath,
+
     ItemsModule,
     LootModule,
     ToolsModule,
@@ -35,6 +49,11 @@ ModAPI.registerAPI("KernelExtension", {
     ChunksModule,
     TileEntityModule,
     BlocksModule,
+    BiomesModule,
+
+    BlockState: KEXBlockState,
+    VanillaStates,
+    BlockStates,
 
     LootTableContext,
     MobEffect,
