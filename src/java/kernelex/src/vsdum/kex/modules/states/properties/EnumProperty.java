@@ -57,7 +57,11 @@ public class EnumProperty<T extends Enum<T> & IStringSerializable> extends Prope
 
     @Override public int getIndex(T value)
     {
-        return this.objectToIndex.containsKey(value.ordinal()) ? this.objectToIndex.get(value.ordinal()) : -1;
+        if(this.objectToIndex.containsKey(value.ordinal()))
+        {
+            return this.objectToIndex.get(value.ordinal());
+        }
+        throw new IllegalArgumentException(String.format("Value %s is not possible for EnumProperty %s", value.toString(), this.getName()));
     }
 
     @Override public Optional<T> getValue(int index)

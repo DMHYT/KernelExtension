@@ -70,8 +70,8 @@ declare module vsdum {
                     getIntermediateWithZValue(vec: Vec3d, z: number): Nullable<Vec3d>;
                     rotatePitch(pitch: number): Vec3d;
                     rotateYaw(yaw: number): Vec3d;
-                    fromPitchYawVector(pitchYawVec: Vec2f): Vec3d;
-                    fromPitchYaw(pitch: number, yaw: number): Vec3d;
+                    static fromPitchYawVector(pitchYawVec: Vec2f): Vec3d;
+                    static fromPitchYaw(pitch: number, yaw: number): Vec3d;
                 }
                 export class Vec3i extends java.lang.Object implements java.lang.Comparable<Vec3i> {
                     static class: java.lang.Class<Vec3i>;
@@ -1017,7 +1017,7 @@ declare module vsdum {
                 getDamagingEntity(): Nullable<Actor>;
                 getCause(): number;
                 setCause(cause: number): void;
-                getBlock(): Nullable<BlockState>;
+                getBlock(): Nullable<modules.states.BlockState>;
             }
         }
     }
@@ -1455,13 +1455,13 @@ declare module vsdum {
             }
             export module BlocksModule {
                 export interface ComparatorSignalCallback {
-                    (block: BlockState, world: natives.ExtendedBlockSource, pos: util.mcmath.BlockPos, side: util.mcmath.Direction): number;
+                    (block: states.BlockState, world: natives.ExtendedBlockSource, pos: util.mcmath.BlockPos, side: util.mcmath.Direction): number;
                 }
                 export interface ComparatorSignalCallbackJS {
-                    (block: BlockState, world: natives.ExtendedBlockSource, coords: Callback.ItemUseCoordinates): number;
+                    (block: states.BlockState, world: natives.ExtendedBlockSource, coords: Callback.ItemUseCoordinates): number;
                 }
                 export interface OnStepOnCallback {
-                    (world: natives.ExtendedBlockSource, pos: Vector, state: BlockState, entity: natives.Actor): void;
+                    (world: natives.ExtendedBlockSource, pos: Vector, state: states.BlockState, entity: natives.Actor): void;
                 }
                 export type OnStepOffCallback = OnStepOnCallback;
             }
@@ -1637,7 +1637,7 @@ declare module vsdum {
                     getBlockPos(): util.mcmath.BlockPos;
                     getDimension(): number;
                     updateBlockPos(): BlockActor;
-                    getBlockState(): Nullable<BlockState>;
+                    getBlockState(): Nullable<states.BlockState>;
                     getWorld(): Nullable<natives.ExtendedBlockSource>;
                     hasWorld(): boolean;
                     getType(): number;

@@ -80,6 +80,8 @@ public class BiomesModule {
 
     public static final void forEachBiome(Consumer<BiomeInterface> callback)
     {
+        if(!biomesInitialized)
+            throw new IllegalStateException("Cannot call BiomesModule.forEachBiome before biomes initialized (when entering the world). Create a handler for \"BiomesInitialized\" callback to solve this problem.");
         biomesById.values().forEach(callback);
     }
 

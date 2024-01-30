@@ -97,11 +97,11 @@ public enum Direction implements IStringSerializable {
         switch(this)
         {
             case NORTH: return DOWN;
-            case EAST: case WEST: default:
-                throw new IllegalStateException("Unable to get X-rotated facing of " + this);
             case SOUTH: return UP;
             case UP: return NORTH;
             case DOWN: return SOUTH;
+            default:
+                throw new IllegalStateException("Unable to get X-rotated facing of " + this);
         }
     }
 
@@ -110,11 +110,11 @@ public enum Direction implements IStringSerializable {
         switch(this)
         {
             case EAST: return DOWN;
-            case SOUTH: default:
-                throw new IllegalStateException("Unable to get Z-rotated facing of " + this);
             case WEST: return UP;
             case UP: return EAST;
             case DOWN: return WEST;
+            default:
+                throw new IllegalStateException("Unable to get Z-rotated facing of " + this);
         }
     }
 

@@ -38,7 +38,11 @@ public class IntegerProperty extends Property<Integer> {
 
     @Override public int getIndex(Integer value)
     {
-        return value.intValue() + this.indexOffset;
+        if(this.possibleValues.contains(value))
+        {
+            return value.intValue() + this.indexOffset;
+        }
+        throw new IllegalArgumentException(String.format("Value %d is not possible for IntegerProperty %s", value.intValue(), this.getName()));
     }
 
     @Override public Optional<Integer> getValue(int index)
